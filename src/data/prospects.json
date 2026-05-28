@@ -164,6 +164,28 @@
           "stats": { "ppg": 13.1, "rpg": 11.8, "apg": 1.6, "spg": 0.6, "bpg": 3.9, "fgPct": 64.2, "threePct": 0.0, "ftPct": 58.3 }
         }
       ]
+    },
+    {
+      "id": "isaiahmartin",
+      "name": "Isaiah Martin",
+      "position": "F",
+      "gradYear": 2028,
+      "school": "South County",
+      "city": "Lorton",
+      "state": "VA",
+      "county": "Fairfax",
+      "heightInches": null,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "stars": null,
+      "rankings": { "national": null, "position": null, "state": null },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "summary": "REAL PROSPECT — profile in progress. South County forward who led the team in scoring and rebounding in 2026 Capitol Hoops Summer League play (small sample — see GP). Measurements, rankings, offers, and a full scouting report are pending. The summer stat line below is real Capitol Hoops data, pulled in automatically via the name match.",
+      "statLines": []
     }
   ]
 }

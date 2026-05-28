@@ -621,11 +621,78 @@ function tdStyle(align, color) {
 }
 
 // ---------------------------------------------------------------------------
+// COMMITMENTS TRACKER — prospects who've committed / signed
+// ---------------------------------------------------------------------------
+function CommitmentsTracker({ onOpen }) {
+  const committed = useMemo(
+    () => PROSPECTS
+      .filter((p) => p.status === "committed" || p.status === "signed")
+      .sort((a, b) => (a.rankings?.national ?? 999) - (b.rankings?.national ?? 999)),
+    []
+  );
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div>
+        <SectionLabel>Commitments · 2026 Class</SectionLabel>
+        <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
+          DMV prospects who've made their college choice. Updates as commitments roll in.
+        </p>
+      </div>
+
+      {committed.length === 0 ? (
+        <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "40px 24px", textAlign: "center" }}>
+          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: T.textMute, textTransform: "uppercase" }}>
+            No commitments tracked yet
+          </div>
+          <div style={{ fontSize: 13, color: T.textDim, marginTop: 10, maxWidth: 380, margin: "10px auto 0", lineHeight: 1.5 }}>
+            Once a prospect's status is set to committed or signed, they'll appear here with their college choice.
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 8 }}>
+          {committed.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => onOpen(p.id)}
+              style={{
+                display: "grid", gridTemplateColumns: "56px 1fr auto", gap: 14, alignItems: "center", textAlign: "left",
+                background: T.surface, border: `1px solid ${T.border}`, padding: "12px 16px", cursor: "pointer", color: T.text,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+            >
+              <Avatar name={p.name} size={48} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{p.name}</div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 3 }}>
+                  {p.position} · {p.school} · {STATE_LABELS[p.state] || p.state} · '{String(p.gradYear).slice(2)}
+                </div>
+              </div>
+              <div style={{ display: "grid", gap: 6, justifyItems: "end" }}>
+                <span style={{ ...mono, fontSize: 13, color: T.positive, fontWeight: 700, letterSpacing: "0.04em" }}>
+                  → {p.commitment}
+                </span>
+                <span style={{ ...mono, fontSize: 9, letterSpacing: "0.14em", color: T.textMute, textTransform: "uppercase" }}>
+                  {p.status}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // APP
 // ---------------------------------------------------------------------------
 const NAV = [
   { key: "board", label: "Big Board" },
   { key: "summer", label: "Summer League" },
+  { key: "commitments", label: "Commitments" },
 ];
 
 export default function App() {
@@ -671,6 +738,8 @@ export default function App() {
           <Profile prospect={open} onBack={() => setOpenId(null)} />
         ) : view === "summer" ? (
           <SummerLeague onOpenProfile={setOpenId} />
+        ) : view === "commitments" ? (
+          <CommitmentsTracker onOpen={setOpenId} />
         ) : (
           <Board onOpen={setOpenId} />
         )}
