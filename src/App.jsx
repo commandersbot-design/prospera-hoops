@@ -105,6 +105,14 @@ function fmtHeight(inches) {
   return `${ft}'${inch}"`;
 }
 
+// Consistent stat formatting across the whole app.
+//   perGame → always 1 decimal (22.0, 3.5, 0.0); null → "—"
+//   pct     → 1 decimal + % sign (53.3%); null → "—"
+const perGame = (v) => (v == null || v === "" ? "—" : Number(v).toFixed(1));
+const pct = (v) => (v == null || v === "" ? "—" : `${Number(v).toFixed(1)}%`);
+const isPctKey = (k) => k === "fgPct" || k === "threePct" || k === "ftPct";
+const fmtStat = (key, v) => (isPctKey(key) ? pct(v) : perGame(v));
+
 function gradeColor(grade) {
   if (grade >= 8) return "var(--prospera-pct-elite)";
   if (grade >= 7) return "var(--prospera-pct-great)";
@@ -399,21 +407,21 @@ function HeadlineStats({ p }) {
   if (!line || !line.stats) return null;
   const s = line.stats;
   const items = [
-    { label: "PPG", value: s.ppg },
-    { label: "RPG", value: s.rpg },
-    { label: "APG", value: s.apg },
-    { label: "GP",  value: s.gp != null ? s.gp : line.gp },
+    { label: "PTS", value: perGame(s.ppg), accent: true },
+    { label: "REB", value: perGame(s.rpg), accent: true },
+    { label: "AST", value: perGame(s.apg), accent: true },
+    { label: "GP",  value: perGame(s.gp != null ? s.gp : line.gp), accent: false },
   ];
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "16px 20px" }}>
       <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginBottom: 12 }}>
         {line.context}{line.season ? ` · ${line.season}` : ""}{line.league ? ` · ${line.league}` : ""}
       </div>
-      <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
         {items.map((it) => (
           <div key={it.label}>
-            <div style={{ fontSize: 34, color: it.label === "GP" ? T.textDim : T.accent, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.02em" }}>
-              {it.value != null ? it.value : "—"}
+            <div style={{ fontSize: 34, color: it.accent ? T.accent : T.textDim, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>
+              {it.value}
             </div>
             <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginTop: 6 }}>{it.label}</div>
           </div>
@@ -536,29 +544,34 @@ function SectionLabel({ children }) {
   );
 }
 
-function StatCell({ label, value, highlight = false }) {
+function StatCell({ label, value, tone = "default" }) {
+  const accent = tone === "accent";
+  const lead = tone === "lead";
   return (
     <div style={{
       textAlign: "center",
-      background: highlight ? "var(--prospera-accent-bg)" : T.surface2,
-      border: `1px solid ${highlight ? "var(--prospera-accent-border)" : T.borderSoft}`,
-      padding: "10px 6px",
+      background: lead ? "var(--prospera-accent-bg)" : T.surface2,
+      border: `1px solid ${lead ? "var(--prospera-accent-border)" : T.borderSoft}`,
+      padding: "11px 6px",
     }}>
-      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: highlight ? T.accent : T.textMute, textTransform: "uppercase" }}>{label}</div>
-      <div style={{ fontSize: 18, color: T.text, fontWeight: 700, marginTop: 4 }}>{value != null ? value : "—"}</div>
+      <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.14em", color: lead ? T.accent : T.textMute, textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 19, color: accent || lead ? T.accent : T.text, fontWeight: 700, marginTop: 5, fontVariantNumeric: "tabular-nums" }}>
+        {value}
+      </div>
     </div>
   );
 }
 
-// One stat context (HS Season / Summer / Capitol Hoops / Fall) — a labeled
-// header above the per-game grid. GP leads (highlighted) so small-sample
-// summer lines can't be misread as stable averages.
+// One stat context (HS Season / Summer / Capitol Hoops / Fall). Split into two
+// labeled bands — Per Game and Shooting — so a profile reads in clean groups
+// instead of one undifferentiated row of nine numbers. GP leads (highlighted).
 function StatLineBlock({ line }) {
   const s = line.stats || {};
-  const smallSample = line.gp != null && line.gp <= 3;
+  const gp = s.gp != null ? s.gp : line.gp;
+  const smallSample = gp != null && gp <= 3;
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+    <div style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
         <span style={{ ...mono, fontSize: 11, letterSpacing: "0.1em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>
           {line.context}
         </span>
@@ -566,21 +579,34 @@ function StatLineBlock({ line }) {
           {[line.season, line.team, line.league].filter(Boolean).join(" · ")}
         </span>
         {smallSample && (
-          <span style={{ ...mono, fontSize: 9, letterSpacing: "0.1em", color: T.warn, textTransform: "uppercase" }}>
-            · small sample
-          </span>
+          <span style={{ ...mono, fontSize: 9, letterSpacing: "0.1em", color: T.warn, textTransform: "uppercase" }}>· small sample</span>
         )}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))", gap: 8 }}>
-        <StatCell label="GP" value={s.gp != null ? s.gp : line.gp} highlight />
-        <StatCell label="PPG" value={s.ppg} />
-        <StatCell label="RPG" value={s.rpg} />
-        <StatCell label="APG" value={s.apg} />
-        <StatCell label="SPG" value={s.spg} />
-        <StatCell label="BPG" value={s.bpg} />
-        <StatCell label="FG%" value={s.fgPct} />
-        <StatCell label="3P%" value={s.threePct} />
-        <StatCell label="FT%" value={s.ftPct} />
+
+      <StatGroup label="Per Game" cols={[
+        { label: "GP", value: perGame(gp), tone: "lead" },
+        { label: "PTS", value: perGame(s.ppg), tone: "accent" },
+        { label: "REB", value: perGame(s.rpg) },
+        { label: "AST", value: perGame(s.apg) },
+        { label: "STL", value: perGame(s.spg) },
+        { label: "BLK", value: perGame(s.bpg) },
+      ]} />
+
+      <StatGroup label="Shooting" cols={[
+        { label: "FG%", value: pct(s.fgPct) },
+        { label: "3P%", value: pct(s.threePct) },
+        { label: "FT%", value: pct(s.ftPct) },
+      ]} />
+    </div>
+  );
+}
+
+function StatGroup({ label, cols }) {
+  return (
+    <div>
+      <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.18em", color: T.textMute, textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols.length}, minmax(0, 1fr))`, gap: 8 }}>
+        {cols.map((c) => <StatCell key={c.label} label={c.label} value={c.value} tone={c.tone} />)}
       </div>
     </div>
   );
@@ -721,8 +747,8 @@ function LeaderboardCard({ cat, players, onOpenProfile }) {
                     {p.teamName} · {p.stats.gp} GP
                   </div>
                 </div>
-                <span style={{ ...mono, fontSize: 16, color: T.accent, fontWeight: 800 }}>
-                  {p.stats[cat.key]}{cat.unit}
+                <span style={{ ...mono, fontSize: 16, color: T.accent, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
+                  {cat.unit === "%" ? pct(p.stats[cat.key]) : perGame(p.stats[cat.key])}
                 </span>
               </div>
             );
@@ -765,12 +791,12 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
               <th style={thStyle("left")}>Player</th>
               <th style={thStyle("left")}>Pos</th>
               <th style={thStyle("left")}>Class</th>
-              <th style={{ ...thStyle("right"), color: T.accent }}>GP</th>
+              <th style={{ ...thStyle("right"), color: T.accent, borderLeft: `1px solid ${T.border}` }}>GP</th>
               {SUMMER_STAT_COLS.map((c) => (
                 <th
                   key={c.key}
                   onClick={() => setSortKey(c.key)}
-                  style={{ ...thStyle("right"), cursor: "pointer", color: sortKey === c.key ? T.accent : T.textDim }}
+                  style={{ ...thStyle("right"), cursor: "pointer", color: sortKey === c.key ? T.accent : T.textDim, borderLeft: c.key === "fgPct" ? `1px solid ${T.border}` : undefined }}
                 >
                   {c.label}{sortKey === c.key ? " ↓" : ""}
                 </th>
@@ -778,10 +804,11 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((pl) => {
+            {sorted.map((pl, ri) => {
               const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+              const zebra = ri % 2 === 1 ? "var(--prospera-surface-2)" : "transparent";
               return (
-                <tr key={pl.number + pl.name} style={{ borderBottom: `1px solid ${T.borderSoft}` }}>
+                <tr key={pl.number + pl.name} style={{ borderBottom: `1px solid ${T.borderSoft}`, background: zebra }}>
                   <td style={tdStyle("left", T.textMute)}>{pl.number}</td>
                   <td style={tdStyle("left", T.text)}>
                     {tracked ? (
@@ -795,11 +822,16 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
                     ) : pl.name}
                   </td>
                   <td style={tdStyle("left", T.textDim)}>{pl.position}</td>
-                  <td style={tdStyle("left", T.textDim)}>'{String(pl.classYear).slice(2)}</td>
-                  <td style={{ ...tdStyle("right", T.text), fontWeight: 700, background: "var(--prospera-accent-bg-faint)" }}>{pl.stats?.gp ?? "—"}</td>
+                  <td style={tdStyle("left", T.textDim)}>{pl.classYear ? `'${String(pl.classYear).slice(2)}` : "—"}</td>
+                  <td style={{ ...tdStyle("right", T.text), fontWeight: 700, fontVariantNumeric: "tabular-nums", borderLeft: `1px solid ${T.border}` }}>{pl.stats?.gp ?? "—"}</td>
                   {SUMMER_STAT_COLS.map((c) => (
-                    <td key={c.key} style={tdStyle("right", sortKey === c.key ? T.text : T.textDim)}>
-                      {pl.stats?.[c.key] != null ? pl.stats[c.key] : "—"}
+                    <td key={c.key} style={{
+                      ...tdStyle("right", c.key === "ppg" ? T.accent : (sortKey === c.key ? T.text : T.textDim)),
+                      fontWeight: c.key === "ppg" || sortKey === c.key ? 700 : 400,
+                      fontVariantNumeric: "tabular-nums",
+                      borderLeft: c.key === "fgPct" ? `1px solid ${T.border}` : undefined,
+                    }}>
+                      {fmtStat(c.key, pl.stats?.[c.key])}
                     </td>
                   ))}
                 </tr>
@@ -901,8 +933,8 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
                 {p.position || "—"}{p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : ""}
               </div>
             </div>
-            <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, textAlign: "right" }}>
-              {ppg != null ? `${ppg} ppg` : "—"}{gp != null ? <span style={{ color: T.textMute, fontWeight: 400 }}> · {gp} GP</span> : null}
+            <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+              {ppg != null ? `${perGame(ppg)} PPG` : "—"}{gp != null ? <span style={{ color: T.textMute, fontWeight: 400 }}> · {gp} GP</span> : null}
             </div>
           </button>
         ))}
