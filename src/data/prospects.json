@@ -19,6 +19,7 @@
     "commitment": "Committed college (null if uncommitted)",
     "offers": "Array of college names",
     "traits": "Array of { name, grade (1-10), note }",
+    "comp": "{ player, note } — single authored pro/college stylistic comparison (eye-test, not computed)",
     "summary": "Scouting synopsis",
     "statLines": "Array of stat sets by context (HS Season / Summer (AAU) / Fall League). Each: { context, season, team, league, gp, stats: { ppg, rpg, apg, spg, bpg, fgPct, threePct, ftPct } }"
   },
@@ -49,6 +50,7 @@
         { "name": "Athleticism", "grade": 7, "note": "Good burst, average vertical." },
         { "name": "Feel / IQ", "grade": 8, "note": "Controls tempo, rarely sped up." }
       ],
+      "comp": { "player": "Tyrese Maxey", "note": "Downhill three-level scorer who runs the pick-and-roll; the pull-up jumper is what keeps defenses honest at the next level." },
       "summary": "[SAMPLE DATA] Lead guard with WCAC-tested poise. Best in pick-and-roll, projects as a high-major starter if the jumper holds up against length.",
       "statLines": [
         {
@@ -103,6 +105,7 @@
         { "name": "Playmaking", "grade": 6, "note": "Secondary creator; not the primary engine yet." },
         { "name": "Feel / IQ", "grade": 7, "note": "Reads improving; can over-hunt his shot." }
       ],
+      "comp": { "player": "Paul George", "note": "Two-way scoring wing with positional size; the switchable defense plus shotmaking points to an All-Star ceiling if the playmaking grows." },
       "summary": "[SAMPLE DATA] Five-star wing and the headliner of the DMV's 2027 class. Two-way upside with a rare size-and-skill blend. National recruitment.",
       "statLines": [
         {
@@ -149,6 +152,7 @@
         { "name": "Shooting", "grade": 4, "note": "Non-shooter; FT a question mark." },
         { "name": "Feel / IQ", "grade": 7, "note": "Good passer out of the post." }
       ],
+      "comp": { "player": "Walker Kessler", "note": "Rim-running shot-blocker who anchors a defense and finishes lobs; the offense stays around the rim but the rim protection translates immediately." },
       "summary": "[SAMPLE DATA] Committed to Virginia. Defensive anchor with lob-threat finishing. Offensive game is rim-bound but the rim protection translates immediately.",
       "statLines": [
         {

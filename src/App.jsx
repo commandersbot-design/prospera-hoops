@@ -295,6 +295,23 @@ function OverviewTab({ p }) {
         </div>
       )}
 
+      {/* Pro stylistic comp — single authored "plays like" read */}
+      {p.comp && p.comp.player && (
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18, display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
+          <div style={{ flex: "0 0 auto" }}>
+            <SectionLabel>Pro Comp</SectionLabel>
+            <div style={{ fontSize: 26, color: T.accent, fontWeight: 800, marginTop: 8, letterSpacing: "-0.01em" }}>
+              {p.comp.player}
+            </div>
+          </div>
+          {p.comp.note && (
+            <p style={{ flex: "1 1 280px", fontSize: 13, color: T.textDim, lineHeight: 1.6, margin: 0, borderLeft: `2px solid ${T.borderSoft}`, paddingLeft: 16 }}>
+              {p.comp.note}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Traits */}
       {Array.isArray(p.traits) && p.traits.length > 0 && (
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
