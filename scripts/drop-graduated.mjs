@@ -42,13 +42,16 @@ file.prospects = file.prospects.filter((p) => {
   return true;
 });
 
-// Null impossible future years (keep the player, drop the bogus class).
+// Normalize every kept player's gradYear to a clean 4-digit value (so "28" and
+// 2028 don't form separate classes), and null anything implausible.
 for (const p of file.prospects) {
   const y = norm(p.gradYear);
   if (y != null && y > MAX_PLAUSIBLE) {
     console.log(`Nulled implausible gradYear ${p.gradYear} on ${p.name} (${p.school})`);
     p.gradYear = null;
     fixedTypos++;
+  } else if (y !== p.gradYear) {
+    p.gradYear = y; // e.g. 28 → 2028, "2028" → 2028
   }
 }
 

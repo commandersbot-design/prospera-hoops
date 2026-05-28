@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import NEWS_DATA from "./data/news.json";
+import TEAM_STATS from "./data/teamStats.json";
 import ProspectFilm from "./components/ProspectFilm";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -286,7 +287,7 @@ function Board({ onOpen }) {
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{p.name}</div>
               <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 3 }}>
-                {p.position} · {p.school} · {STATE_LABELS[p.state] || p.state} · '{String(p.gradYear).slice(2)}
+                {p.position} · {p.school} · {STATE_LABELS[p.state] || p.state}{classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : ""}
               </div>
             </div>
             <div style={{ display: "grid", gap: 6, justifyItems: "end" }}>
@@ -347,6 +348,17 @@ function normGradYear(y) {
   return n < 100 ? 2000 + n : n; // "27" → 2027
 }
 
+// The only recruiting classes the site tracks. Anything outside this set
+// (graduated, null, or scrape garbage like 2039/"6") is treated as "no class":
+// it gets no class tag and never forms its own section.
+const ACTIVE_CLASSES = [2027, 2028, 2029, 2030];
+
+// Normalized class tag for display, e.g. 2028 / "28" → "'28"; invalid → null.
+function classTag(y) {
+  const n = normGradYear(y);
+  return n && ACTIVE_CLASSES.includes(n) ? `'${String(n).slice(2)}` : null;
+}
+
 function posBucket(pos) {
   const primary = String(pos || "").split("/")[0].trim().toUpperCase();
   if (!primary) return null;
@@ -393,11 +405,10 @@ function ProspectsDirectory({ onOpen }) {
     });
   }, []);
 
-  const classYears = useMemo(() => {
-    const counts = {};
-    for (const r of rows) if (r.yr) counts[r.yr] = (counts[r.yr] || 0) + 1;
-    return Object.keys(counts).map(Number).filter((y) => counts[y] >= 3).sort();
-  }, [rows]);
+  const classYears = useMemo(
+    () => ACTIVE_CLASSES.filter((y) => rows.some((r) => r.yr === y)),
+    [rows]
+  );
 
   const filtered = useMemo(() => {
     const k = q.trim().toLowerCase();
@@ -470,7 +481,7 @@ function ProspectsDirectory({ onOpen }) {
                 {stars ? <Stars count={stars} /> : null}
               </div>
               <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {p.position || "—"} · {p.school}{st ? ` · ${st}` : ""}{p.gradYear ? ` · '${String(normGradYear(p.gradYear)).slice(2)}` : ""}
+                {p.position || "—"} · {p.school}{st ? ` · ${st}` : ""}{classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : ""}
               </div>
             </div>
             <div style={{ display: "grid", gap: 4, justifyItems: "end" }}>
@@ -541,7 +552,7 @@ function Profile({ prospect, onBack }) {
           {/* Chip row — only non-empty facts */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
             <Chip>{p.position || "—"}</Chip>
-            <Chip>Class of {p.gradYear || "—"}</Chip>
+            <Chip>Class of {normGradYear(p.gradYear) || "—"}</Chip>
             {p.heightInches ? <Chip>{fmtHeight(p.heightInches)}{p.wingspanInches ? ` · ${fmtHeight(p.wingspanInches)} ws` : ""}{p.weightLbs ? ` · ${p.weightLbs} lb` : ""}</Chip> : null}
           </div>
           <div style={{ ...mono, fontSize: 11, color: T.textMute, letterSpacing: "0.06em", marginTop: 10 }}>
@@ -1039,30 +1050,18 @@ function LeaderboardCard({ cat, players, onOpenProfile }) {
   );
 }
 
-function SummerTeam({ team, onBack, onOpenProfile }) {
+// Capitol Hoops summer-league roster + stats table. Extracted so it can render
+// both in the Summer League browser and inside a school's Stats tab (where the
+// season vs. summer split matters — small summer samples shouldn't be confused
+// with full HS-season numbers).
+function SummerStatsTable({ team, onOpenProfile }) {
   const [sortKey, setSortKey] = useState("ppg");
   const sorted = useMemo(() => {
     return [...team.players].sort((a, b) => (b.stats?.[sortKey] ?? -1) - (a.stats?.[sortKey] ?? -1));
   }, [team, sortKey]);
 
   return (
-    <div style={{ display: "grid", gap: 18 }}>
-      <button
-        type="button"
-        onClick={onBack}
-        style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}
-      >
-        ← All summer teams
-      </button>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
-        <h2 style={{ fontSize: 22, margin: 0, color: T.text, fontWeight: 800 }}>{team.name}</h2>
-        <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
-          Capitol Hoops {team.season} · {team.headCoach} · {team.players.length} players
-        </div>
-      </div>
-
-      {/* Roster + stats table — GP leads, sortable by stat columns */}
+    <>
       <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
           <thead>
@@ -1102,7 +1101,7 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
                     ) : pl.name}
                   </td>
                   <td style={tdStyle("left", T.textDim)}>{pl.position}</td>
-                  <td style={tdStyle("left", T.textDim)}>{pl.classYear ? `'${String(pl.classYear).slice(2)}` : "—"}</td>
+                  <td style={tdStyle("left", T.textDim)}>{classTag(pl.classYear) || "—"}</td>
                   <td style={{ ...tdStyle("right", T.text), fontWeight: 700, fontVariantNumeric: "tabular-nums", borderLeft: `1px solid ${T.border}` }}>{pl.stats?.gp ?? "—"}</td>
                   {SUMMER_STAT_COLS.map((c) => (
                     <td key={c.key} style={{
@@ -1123,6 +1122,29 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
         Source: Capitol Hoops Summer League. Small samples — read GP first. Orange names link to tracked prospect profiles.
       </div>
+    </>
+  );
+}
+
+function SummerTeam({ team, onBack, onOpenProfile }) {
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <button
+        type="button"
+        onClick={onBack}
+        style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}
+      >
+        ← All summer teams
+      </button>
+
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+        <h2 style={{ fontSize: 22, margin: 0, color: T.text, fontWeight: 800 }}>{team.name}</h2>
+        <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
+          Capitol Hoops {team.season} · {team.headCoach} · {team.players.length} players
+        </div>
+      </div>
+
+      <SummerStatsTable team={team} onOpenProfile={onOpenProfile} />
     </div>
   );
 }
@@ -1132,6 +1154,176 @@ function thStyle(align) {
 }
 function tdStyle(align, color) {
   return { padding: "9px 12px", textAlign: align, color, whiteSpace: "nowrap" };
+}
+
+// ---------------------------------------------------------------------------
+// TEAM STATS — season-stats panel for a school's varsity team. Data lives in
+// src/data/teamStats.json, keyed by canonical school name; only teams present
+// there get a Stats tab (Hayfield is the reference build). Each view mirrors a
+// tab from the source stat sheet. `lead` flags the headline column.
+// ---------------------------------------------------------------------------
+const TEAM_STAT_VIEWS = [
+  { key: "gameStats", label: "Game Stats", cols: [
+    { key: "ppg", label: "PPG", fmt: "dec", lead: true },
+    { key: "rpg", label: "RPG", fmt: "dec" },
+    { key: "oreb", label: "OREB", fmt: "dec" },
+    { key: "dreb", label: "DREB", fmt: "dec" },
+    { key: "apg", label: "APG", fmt: "dec" },
+    { key: "spg", label: "SPG", fmt: "dec" },
+    { key: "bpg", label: "BPG", fmt: "dec" },
+    { key: "tpg", label: "TPG", fmt: "dec" },
+    { key: "pf", label: "PF", fmt: "dec" },
+  ] },
+  { key: "shooting", label: "Shooting", cols: [
+    { key: "pts", label: "PTS", fmt: "int", lead: true },
+    { key: "fgm", label: "FGM", fmt: "int" },
+    { key: "fga", label: "FGA", fmt: "int" },
+    { key: "fgPct", label: "FG%", fmt: "pct" },
+    { key: "tpm", label: "3PM", fmt: "int" },
+    { key: "tpa", label: "3PA", fmt: "int" },
+    { key: "tpPct", label: "3P%", fmt: "pct" },
+    { key: "ftm", label: "FTM", fmt: "int" },
+    { key: "fta", label: "FTA", fmt: "int" },
+    { key: "ftPct", label: "FT%", fmt: "pct" },
+    { key: "twoPm", label: "2FGM", fmt: "int" },
+    { key: "twoPa", label: "2FGA", fmt: "int" },
+    { key: "twoPct", label: "2FG%", fmt: "pct" },
+    { key: "pps", label: "PPS", fmt: "dec" },
+    { key: "afgPct", label: "AFG%", fmt: "pct" },
+  ] },
+  // Columns for these arrive with the source paste; until then they render an
+  // "awaiting data" state (players carry null for the view).
+  { key: "totals", label: "Totals", cols: [] },
+  { key: "misc", label: "Misc Totals", cols: [] },
+  { key: "per32", label: "Per 32", cols: [] },
+];
+
+function fmtTeamStat(fmt, v) {
+  if (v == null || v === "") return "—";
+  if (fmt === "pct") return `${v}%`;
+  if (fmt === "int") return String(v);
+  return Number(v).toFixed(1);
+}
+
+function StaffItem({ role, name }) {
+  return (
+    <div style={{ minWidth: 0 }}>
+      <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>{role}</div>
+      <div style={{ fontSize: 13, color: T.text, fontWeight: 600, marginTop: 2 }}>{name}</div>
+    </div>
+  );
+}
+
+function TeamStatsPanel({ teamStats, summerTeam, onOpenProfile }) {
+  const [source, setSource] = useState("season"); // "season" (HS) | "summer" (Capitol Hoops)
+  const [view, setView] = useState("gameStats");
+  const def = TEAM_STAT_VIEWS.find((v) => v.key === view);
+  const players = teamStats.players || [];
+  const [sortKey, setSortKey] = useState(def.cols.find((c) => c.lead)?.key || null);
+
+  const colMeta = useMemo(() => def.cols.find((c) => c.key === sortKey) || def.cols.find((c) => c.lead) || def.cols[0] || null, [def, sortKey]);
+  const activeSort = colMeta?.key || null;
+
+  const rows = useMemo(() => {
+    const withData = players.filter((pl) => pl[view] && Object.keys(pl[view]).length);
+    if (!activeSort) return [...withData].sort((a, b) => a.number - b.number);
+    return [...withData].sort((a, b) => (b[view]?.[activeSort] ?? -Infinity) - (a[view]?.[activeSort] ?? -Infinity));
+  }, [players, view, activeSort]);
+
+  const showSummer = source === "summer" && summerTeam;
+
+  return (
+    <div style={{ display: "grid", gap: 14 }}>
+      {summerTeam && (
+        <Segmented value={source} onChange={setSource} options={[["season", "HS Season"], ["summer", "Summer League"]]} />
+      )}
+
+      {showSummer ? (
+        <div style={{ display: "grid", gap: 10 }}>
+          <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+            Capitol Hoops Summer League {summerTeam.season} · {summerTeam.players.length} players
+          </div>
+          <SummerStatsTable team={summerTeam} onOpenProfile={onOpenProfile} />
+        </div>
+      ) : (
+      <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <Segmented value={view} onChange={(v) => { setView(v); const lead = TEAM_STAT_VIEWS.find((x) => x.key === v).cols.find((c) => c.lead)?.key || null; setSortKey(lead); }} options={TEAM_STAT_VIEWS.map((v) => [v.key, v.label])} />
+        <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+          {teamStats.season ? `Season ${teamStats.season}` : ""}{teamStats.updated ? ` · updated ${teamStats.updated}` : ""}
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "32px 24px", textAlign: "center" }}>
+          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: T.textMute, textTransform: "uppercase" }}>
+            {def.label} — awaiting data
+          </div>
+        </div>
+      ) : (
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                <th style={thStyle("left")}>#</th>
+                <th style={thStyle("left")}>Player</th>
+                <th style={thStyle("left")}>Class</th>
+                <th style={{ ...thStyle("right"), color: T.accent, borderLeft: `1px solid ${T.border}` }}>GP</th>
+                {def.cols.map((c) => (
+                  <th
+                    key={c.key}
+                    onClick={() => setSortKey(c.key)}
+                    style={{ ...thStyle("right"), cursor: "pointer", color: activeSort === c.key ? T.accent : T.textDim }}
+                  >
+                    {c.label}{activeSort === c.key ? " ↓" : ""}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((pl, ri) => {
+                const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+                const zebra = ri % 2 === 1 ? "var(--prospera-surface-2)" : "transparent";
+                const cls = pl.classYear || (tracked ? classTag(tracked.gradYear) : null);
+                return (
+                  <tr key={pl.id || pl.number} style={{ borderBottom: `1px solid ${T.borderSoft}`, background: zebra }}>
+                    <td style={tdStyle("left", T.textMute)}>{pl.number}</td>
+                    <td style={tdStyle("left", T.text)}>
+                      {tracked ? (
+                        <button
+                          type="button"
+                          onClick={() => onOpenProfile(tracked.id)}
+                          style={{ ...mono, fontSize: 12, color: T.accent, background: "transparent", border: "none", padding: 0, cursor: "pointer", fontWeight: 600 }}
+                        >
+                          {pl.name} ↗
+                        </button>
+                      ) : pl.name}
+                    </td>
+                    <td style={tdStyle("left", T.textDim)}>{cls || "—"}</td>
+                    <td style={{ ...tdStyle("right", T.text), fontWeight: 700, fontVariantNumeric: "tabular-nums", borderLeft: `1px solid ${T.border}` }}>{pl.gp ?? "—"}</td>
+                    {def.cols.map((c) => (
+                      <td key={c.key} style={{
+                        ...tdStyle("right", c.lead ? T.accent : (activeSort === c.key ? T.text : T.textDim)),
+                        fontWeight: c.lead || activeSort === c.key ? 700 : 400,
+                        fontVariantNumeric: "tabular-nums",
+                      }}>
+                        {fmtTeamStat(c.fmt, pl[view]?.[c.key])}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        Varsity HS-season stats. Tap a column to sort; orange names link to tracked prospect profiles.
+      </div>
+      </>
+      )}
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -1243,11 +1435,21 @@ function Schools({ onOpenProfile }) {
 function SchoolDetail({ school, onBack, onOpenProfile }) {
   const loc = SCHOOL_LOCATIONS[school.name] || {};
   const state = loc.state || school.state || null; // geocoded location wins
+  const teamStats = TEAM_STATS[school.name] || null; // varsity season stats, where authored
+  const assistants = teamStats?.staff?.assistants || [];
+  const [tab, setTab] = useState("roster");
   const roster = useMemo(() => {
     return [...school.prospects].map((p) => {
       const line = primaryStatLine(p);
       return { p, ppg: line?.stats?.ppg ?? null, gp: line?.stats?.gp ?? line?.gp ?? null };
     }).sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
+  }, [school]);
+  // Capitol Hoops summer team for this school (separate from HS-season stats).
+  const summerTeam = useMemo(() => {
+    for (const [slug, t] of Object.entries(CH_TEAMS)) {
+      if (canonicalSchool(slug, t.name) === school.name) return t;
+    }
+    return null;
   }, [school]);
 
   return (
@@ -1258,32 +1460,47 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
       <div style={{ background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`, padding: 22 }}>
         <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{school.name}</h2>
         <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 8 }}>
-          {school.prospects.length} players{school.coach ? ` · ${school.coach}` : ""}{loc.county ? ` · ${loc.county}` : ""}{state ? ` · ${STATE_LABELS[state] || state}` : ""}
+          {school.prospects.length} players{loc.county ? ` · ${loc.county}` : ""}{state ? ` · ${STATE_LABELS[state] || state}` : ""}
         </div>
+        {(school.coach || assistants.length > 0) && (
+          <div style={{ display: "flex", gap: 22, flexWrap: "wrap", marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.borderSoft}` }}>
+            {school.coach && <StaffItem role="Head Coach" name={school.coach} />}
+            {assistants.map((a) => <StaffItem key={a} role="Assistant Coach" name={a} />)}
+          </div>
+        )}
       </div>
-      <div style={{ display: "grid", gap: 8 }}>
-        {roster.map(({ p, ppg, gp }) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => onOpenProfile(p.id)}
-            style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 14, alignItems: "center", textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 16px", cursor: "pointer", color: T.text }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
-          >
-            <Avatar name={p.name} headshot={p.headshot} size={40} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{p.name}</div>
-              <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>
-                {p.position || "—"}{p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : ""}
+
+      {teamStats && (
+        <Segmented value={tab} onChange={setTab} options={[["roster", "Roster"], ["stats", "Stats"]]} />
+      )}
+
+      {teamStats && tab === "stats" ? (
+        <TeamStatsPanel teamStats={teamStats} summerTeam={summerTeam} onOpenProfile={onOpenProfile} />
+      ) : (
+        <div style={{ display: "grid", gap: 8 }}>
+          {roster.map(({ p, ppg, gp }) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => onOpenProfile(p.id)}
+              style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 14, alignItems: "center", textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 16px", cursor: "pointer", color: T.text }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+            >
+              <Avatar name={p.name} headshot={p.headshot} size={40} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{p.name}</div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>
+                  {p.position || "—"}{classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : ""}
+                </div>
               </div>
-            </div>
-            <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-              {ppg != null ? `${perGame(ppg)} PPG` : "—"}{gp != null ? <span style={{ color: T.textMute, fontWeight: 400 }}> · {gp} GP</span> : null}
-            </div>
-          </button>
-        ))}
-      </div>
+              <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                {ppg != null ? `${perGame(ppg)} PPG` : "—"}{gp != null ? <span style={{ color: T.textMute, fontWeight: 400 }}> · {gp} GP</span> : null}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -1371,7 +1588,7 @@ function CommitmentsTracker({ onOpen }) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{p.name}</div>
                 <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 3 }}>
-                  {p.position} · {p.school} · {STATE_LABELS[p.state] || p.state} · '{String(p.gradYear).slice(2)}
+                  {p.position} · {p.school} · {STATE_LABELS[p.state] || p.state}{classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : ""}
                 </div>
               </div>
               <div style={{ display: "grid", gap: 6, justifyItems: "end" }}>
@@ -1425,7 +1642,7 @@ function buildMapSchools() {
 }
 
 function posLabel(p) {
-  const yr = p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : "";
+  const yr = classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : "";
   return `${p.position || ""}${yr}`.trim().replace(/^·\s*/, "");
 }
 
@@ -1501,7 +1718,7 @@ function SearchBox({ onOpen }) {
             >
               <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div>
               <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>
-                {p.position || "—"} · {p.school}{p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : ""}
+                {p.position || "—"} · {p.school}{classTag(p.gradYear) ? ` · ${classTag(p.gradYear)}` : ""}
               </div>
             </button>
           ))}
@@ -1519,13 +1736,13 @@ function Classes({ onOpen }) {
   const byYear = useMemo(() => {
     const m = {};
     for (const p of PROSPECTS) {
-      const y = p.gradYear || null;
-      if (!y) continue;
+      const y = normGradYear(p.gradYear);
+      if (!y || !ACTIVE_CLASSES.includes(y)) continue; // only the four tracked classes
       (m[y] = m[y] || []).push(p);
     }
     return m;
   }, []);
-  const years = Object.keys(byYear).map(Number).sort();
+  const years = ACTIVE_CLASSES.filter((y) => byYear[y]);
 
   if (year) {
     const roster = [...byYear[year]]
