@@ -34,6 +34,13 @@ const TEAM_LOCATION = {
 
 const slug = (n) => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
+// Derive the actual high-school name from the Capitol Hoops team name.
+// "Bengals (Blake)" → "Blake"; "Hawks (Hayfield)" → "Hayfield"; "Bullis" → "Bullis".
+function deriveSchool(teamName) {
+  const paren = String(teamName || "").match(/\(([^)]+)\)/);
+  return paren ? paren[1].trim() : String(teamName || "").trim();
+}
+
 const prospectsFile = JSON.parse(fs.readFileSync(prospectsPath, "utf8"));
 const ch = JSON.parse(fs.readFileSync(chPath, "utf8"));
 const existing = new Set((prospectsFile.prospects || []).map((p) => slug(p.name)));
@@ -50,7 +57,7 @@ for (const [teamSlug, team] of Object.entries(ch.teams || {})) {
       name: pl.name,
       position: pl.position || null,
       gradYear: pl.classYear || null,
-      school: loc.school || team.name,
+      school: loc.school || deriveSchool(team.name),
       city: loc.city || null,
       state: loc.state || null,
       county: loc.county || null,

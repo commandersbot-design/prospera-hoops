@@ -50,6 +50,29 @@ const PROSPECT_BY_NAMEKEY = (() => {
   return m;
 })();
 
+// Derive the high-school name from a Capitol Hoops team name (same rule the
+// promote script uses): "Bengals (Blake)" → "Blake"; "Bullis" → "Bullis".
+function deriveSchool(teamName) {
+  const m = String(teamName || "").match(/\(([^)]+)\)/);
+  return m ? m[1].trim() : String(teamName || "").trim();
+}
+
+// Schools, grouped from the prospect list, with coach pulled from the matching
+// Capitol Hoops team where derivable.
+const SCHOOLS = (() => {
+  const map = {};
+  for (const p of PROSPECTS) {
+    const s = p.school || "Unknown";
+    if (!map[s]) map[s] = { name: s, state: p.state || null, prospects: [] };
+    map[s].prospects.push(p);
+  }
+  for (const t of Object.values(CH_TEAMS)) {
+    const s = deriveSchool(t.name);
+    if (map[s]) { map[s].coach = t.headCoach || null; map[s].teamName = t.name; }
+  }
+  return map;
+})();
+
 // Summer stat lines for a prospect, pulled from any Capitol Hoops team they
 // appear on (by name match). Returned in statLine shape so the profile's
 // stats section renders them alongside authored HS/summer/fall lines.
@@ -800,6 +823,95 @@ function tdStyle(align, color) {
 }
 
 // ---------------------------------------------------------------------------
+// SCHOOLS — every DMV school in the database, each with its roster
+// ---------------------------------------------------------------------------
+function Schools({ onOpenProfile }) {
+  const [schoolName, setSchoolName] = useState(null);
+  const school = schoolName ? SCHOOLS[schoolName] : null;
+
+  if (school) return <SchoolDetail school={school} onBack={() => setSchoolName(null)} onOpenProfile={onOpenProfile} />;
+
+  const list = useMemo(
+    () => Object.values(SCHOOLS).sort((a, b) => b.prospects.length - a.prospects.length || a.name.localeCompare(b.name)),
+    []
+  );
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div>
+        <SectionLabel>DMV Schools</SectionLabel>
+        <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
+          Every school in the database. Tap one for its roster and player profiles.
+        </p>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
+        {list.map((s) => (
+          <button
+            key={s.name}
+            type="button"
+            onClick={() => setSchoolName(s.name)}
+            style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 16, cursor: "pointer", color: T.text }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+          >
+            <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{s.name}</div>
+            <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
+              {s.prospects.length} players{s.coach ? ` · ${s.coach}` : ""}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SchoolDetail({ school, onBack, onOpenProfile }) {
+  const roster = useMemo(() => {
+    return [...school.prospects].map((p) => {
+      const line = primaryStatLine(p);
+      return { p, ppg: line?.stats?.ppg ?? null, gp: line?.stats?.gp ?? line?.gp ?? null };
+    }).sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
+  }, [school]);
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <button type="button" onClick={onBack} style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}>
+        ← All schools
+      </button>
+      <div style={{ background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`, padding: 22 }}>
+        <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{school.name}</h2>
+        <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 8 }}>
+          {school.prospects.length} players{school.coach ? ` · ${school.coach}` : ""}{school.state ? ` · ${STATE_LABELS[school.state] || school.state}` : ""}
+        </div>
+      </div>
+      <div style={{ display: "grid", gap: 8 }}>
+        {roster.map(({ p, ppg, gp }) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => onOpenProfile(p.id)}
+            style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 14, alignItems: "center", textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 16px", cursor: "pointer", color: T.text }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+          >
+            <Avatar name={p.name} headshot={p.headshot} size={40} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{p.name}</div>
+              <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>
+                {p.position || "—"}{p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : ""}
+              </div>
+            </div>
+            <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, textAlign: "right" }}>
+              {ppg != null ? `${ppg} ppg` : "—"}{gp != null ? <span style={{ color: T.textMute, fontWeight: 400 }}> · {gp} GP</span> : null}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // BIG BOARD — placeholder until rankings are authored. The Board component
 // above is fully built and stays in the codebase; flip APP render back to
 // <Board onOpen={...}/> once the founder rankings exist.
@@ -907,6 +1019,7 @@ function CommitmentsTracker({ onOpen }) {
 const NAV = [
   { key: "board", label: "Big Board" },
   { key: "summer", label: "Summer League" },
+  { key: "schools", label: "Schools" },
   { key: "commitments", label: "Commitments" },
 ];
 
@@ -955,6 +1068,8 @@ export default function App() {
           <Profile prospect={open} onBack={() => setOpenId(null)} />
         ) : view === "summer" ? (
           <SummerLeague onOpenProfile={setOpenId} />
+        ) : view === "schools" ? (
+          <Schools onOpenProfile={setOpenId} />
         ) : view === "commitments" ? (
           <CommitmentsTracker onOpen={setOpenId} />
         ) : (
