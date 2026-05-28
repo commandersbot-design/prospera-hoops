@@ -1,0 +1,31 @@
+{
+  "_README": "Capitol Hoops Summer League team + player + stat data. Source: capitolhoopssummerleague.com. Keyed by team slug so additional teams drop in the same shape. Each player merges roster bio + season stats. 2026 season only.",
+  "_source": "https://capitolhoopssummerleague.com",
+  "_note": "Player social handles are captured from the public source page. These are high-school athletes (often minors) — review privacy posture before surfacing handles in the public UI.",
+  "teams": {
+    "hawks-hayfield": {
+      "name": "Hawks (Hayfield)",
+      "headCoach": "Carlos Poindexter",
+      "social": { "twitter": "@Hayfieldbball", "instagram": "@Hayfieldbball" },
+      "sourceUrl": "https://capitolhoopssummerleague.com/team/hawks-hayfield/",
+      "season": "2026",
+      "players": [
+        { "number": 1,  "name": "Christian Towe",   "position": "PG", "classYear": 2029, "social": { "twitter": "Official_Ctowe", "instagram": "young_kingtowe" },   "stats": { "gp": 1, "fgPct": 53.3, "ftPct": 71.4, "threePct": 20.0,  "rpg": 8.0, "apg": 3.0, "spg": 1.0, "bpg": 1.0, "ppg": 22.0 } },
+        { "number": 2,  "name": "Grant Cage",       "position": "G",  "classYear": 2027, "social": { "twitter": "GCage20", "instagram": "G2shmoove" },                "stats": { "gp": 2, "fgPct": 18.2, "ftPct": 25.0, "threePct": 0.0,   "rpg": 3.0, "apg": 3.0, "spg": 2.0, "bpg": 0.5, "ppg": 5.0 } },
+        { "number": 3,  "name": "Chase Jackson",    "position": "G",  "classYear": 2028, "social": { "twitter": "chasejackson_3", "instagram": "envyy12._" },          "stats": { "gp": 2, "fgPct": 34.6, "ftPct": 42.9, "threePct": 43.8,  "rpg": 3.0, "apg": 1.5, "spg": 1.5, "bpg": 0.0, "ppg": 14.0 } },
+        { "number": 4,  "name": "Noah Philips",     "position": "W",  "classYear": 2027, "social": { "twitter": "noah_philips07", "instagram": "noah_philips00" },     "stats": { "gp": 2, "fgPct": 40.0, "ftPct": 50.0, "threePct": 0.0,   "rpg": 2.0, "apg": 0.5, "spg": 2.0, "bpg": 0.0, "ppg": 3.0 } },
+        { "number": 5,  "name": "Gavin Payne",      "position": "G",  "classYear": 2027, "social": { "twitter": null, "instagram": "sirgpayne" },                     "stats": { "gp": 1, "fgPct": 0.0,  "ftPct": 0.0,  "threePct": 0.0,   "rpg": 0.0, "apg": 0.0, "spg": 0.0, "bpg": 0.0, "ppg": 0.0 } },
+        { "number": 10, "name": "Elijah Small",     "position": "PG", "classYear": 2029, "social": { "twitter": null, "instagram": "eli.getactive0" },                "stats": { "gp": 1, "fgPct": 0.0,  "ftPct": 0.0,  "threePct": 0.0,   "rpg": 0.0, "apg": 2.0, "spg": 0.0, "bpg": 0.0, "ppg": 0.0 } },
+        { "number": 11, "name": "Chris Moore",      "position": "W",  "classYear": 2028, "social": { "twitter": null, "instagram": "xzy.chris17" },                   "stats": { "gp": 2, "fgPct": 50.0, "ftPct": 0.0,  "threePct": 50.0,  "rpg": 6.0, "apg": 0.0, "spg": 0.5, "bpg": 0.5, "ppg": 3.5 } },
+        { "number": 12, "name": "Leo Thompson",     "position": "G",  "classYear": 2028, "social": { "twitter": null, "instagram": "leo.ochi" },                      "stats": { "gp": 1, "fgPct": 50.0, "ftPct": 0.0,  "threePct": 100.0, "rpg": 2.0, "apg": 2.0, "spg": 0.0, "bpg": 0.0, "ppg": 3.0 } },
+        { "number": 13, "name": "Miles Willis",     "position": "G",  "classYear": 2028, "social": { "twitter": null, "instagram": "balluptop.3" },                   "stats": { "gp": 2, "fgPct": 0.0,  "ftPct": 66.7, "threePct": 0.0,   "rpg": 0.0, "apg": 0.0, "spg": 0.0, "bpg": 0.0, "ppg": 1.0 } },
+        { "number": 15, "name": "Noah Laster",      "position": "W",  "classYear": 2028, "social": { "twitter": null, "instagram": "noahlaster09" },                  "stats": { "gp": 1, "fgPct": 100.0,"ftPct": 0.0,  "threePct": 0.0,   "rpg": 3.0, "apg": 0.0, "spg": 1.0, "bpg": 0.0, "ppg": 2.0 } },
+        { "number": 20, "name": "Reid Bauman",      "position": "G",  "classYear": 2029, "social": { "twitter": null, "instagram": "reid_bauman2029" },               "stats": { "gp": 1, "fgPct": 100.0,"ftPct": 0.0,  "threePct": 100.0, "rpg": 1.0, "apg": 0.0, "spg": 1.0, "bpg": 0.0, "ppg": 3.0 } },
+        { "number": 22, "name": "Candin Sweet",     "position": "W",  "classYear": 2028, "social": { "twitter": null, "instagram": "cs.th3don" },                     "stats": { "gp": 2, "fgPct": 33.3, "ftPct": 80.0, "threePct": 0.0,   "rpg": 4.0, "apg": 0.5, "spg": 0.5, "bpg": 0.0, "ppg": 4.0 } },
+        { "number": 23, "name": "Isaiah Burroughs", "position": "W",  "classYear": 2029, "social": { "twitter": null, "instagram": "zae_the_baller" },                "stats": { "gp": 0, "fgPct": 0.0,  "ftPct": 0.0,  "threePct": 0.0,   "rpg": 0.0, "apg": 0.0, "spg": 0.0, "bpg": 0.0, "ppg": 0.0 } },
+        { "number": 32, "name": "Sean Colbert",     "position": "C",  "classYear": 2027, "social": { "twitter": null, "instagram": "tallmanseen" },                   "stats": { "gp": 2, "fgPct": 16.7, "ftPct": 0.0,  "threePct": 0.0,   "rpg": 4.5, "apg": 0.0, "spg": 0.5, "bpg": 0.0, "ppg": 1.0 } },
+        { "number": 34, "name": "Max Sow",          "position": "F",  "classYear": 2028, "social": { "twitter": null, "instagram": null },                            "stats": { "gp": 1, "fgPct": 0.0,  "ftPct": 0.0,  "threePct": 0.0,   "rpg": 0.0, "apg": 0.0, "spg": 0.0, "bpg": 0.0, "ppg": 0.0 } }
+      ]
+    }
+  }
+}
