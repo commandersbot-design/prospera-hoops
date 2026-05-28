@@ -1,5 +1,5 @@
 {
-  "_README": "Verified DMV-area ranked recruits (classes 2027 & 2028), transcribed from a manual capture of 247Sports state boards + the ESPN/SC-Next national top-100 (May 2026). Per-service data lives under each player's 'services'. 247 stars are DERIVED from 247's numeric rating via 247's published bands (>=98=5*, 90-97=4*, 80-89=3*); ESPN entries carry ESPN's national rank + 0-100 grade (ESPN doesn't publish a clean star on this view, so espn.stars stays null). Rivals isn't in the source, so it's omitted (renders 'Not listed'). DMV scope only — out-of-region players (Oak Hill, Petersburg, Hargrave, and the ~95 non-DMV ESPN kids) were excluded. School names normalized to existing DB entries. Re-run: node scripts/add-ranked-prospects.mjs",
+  "_README": "Verified DMV-area ranked recruits (classes 2027 & 2028), transcribed from a manual capture of 247Sports state boards + the ESPN/SC-Next national top-100 (May 2026). Per-service data lives under each player's 'services'. 247 stars are DERIVED from 247's numeric rating via 247's published bands (>=98=5*, 90-97=4*, 80-89=3*); ESPN entries carry ESPN's national rank + 0-100 grade (ESPN doesn't publish a clean star on this view, so espn.stars stays null). Rivals isn't in the source, so it's omitted (renders 'Not listed'). DMV scope: out-of-region SCHOOLS (Oak Hill, Petersburg, and the ~95 non-DMV ESPN kids) are excluded, EXCEPT confirmed DMV-native players who attend an out-of-area prep (e.g. Jordan Hunter at Hargrave) — those are included but intentionally not given a map location, so the geographic DMV map stays focused. School names normalized to existing DB entries. Re-run: node scripts/add-ranked-prospects.mjs",
   "espnUrlByClass": { "2027": "https://www.espn.com/college-sports/basketball/recruiting/playerrankings/_/class/2027" },
   "players": [
     { "name": "Zion Green", "class": 2027, "pos": "PF", "h": 81, "w": 190, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
@@ -22,6 +22,8 @@
       "services": { "247": { "rating": 89, "national": 127, "stateRank": 3, "positionRank": 32 } } },
     { "name": "Jacoby Briscoe", "class": 2027, "pos": "SF", "h": 78, "w": 185, "school": "The St. James", "city": "Springfield", "state": "VA",
       "services": { "247": { "rating": 88, "national": null, "stateRank": 4, "positionRank": null } } },
+    { "name": "Jordan Hunter", "class": 2027, "pos": "SG", "h": 74, "w": 170, "school": "Hargrave Military Academy", "city": null, "state": "VA",
+      "services": { "247": { "rating": 88, "national": null, "stateRank": 5, "positionRank": null } } },
     { "name": "Jymin Veney", "class": 2027, "pos": "PG", "h": 75, "w": 170, "school": "St. John's DC", "city": "Washington", "state": "DC",
       "services": { "247": { "rating": 89, "national": 120, "stateRank": 1, "positionRank": 26 } } },
     { "name": "Andrew Ross", "class": 2027, "pos": "SG", "h": 77, "w": 180, "school": "Sidwell Friends School", "city": "Washington", "state": "DC",

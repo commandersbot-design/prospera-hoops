@@ -25455,6 +25455,50 @@
       }
     },
     {
+      "id": "jordanhunter",
+      "name": "Jordan Hunter",
+      "position": "SG",
+      "gradYear": 2027,
+      "school": "Hargrave Military Academy",
+      "city": null,
+      "state": "VA",
+      "county": null,
+      "heightInches": 74,
+      "weightLbs": 170,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 5
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 5,
+            "positionRank": null,
+            "rating": 88,
+            "url": "https://247sports.com/season/2027-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
       "id": "jyminveney",
       "name": "Jymin Veney",
       "position": "PG",
