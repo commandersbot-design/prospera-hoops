@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import PROSPECTS_DATA from "./data/prospects.json";
+import CAPITOL_HOOPS from "./data/capitolHoops.json";
 import ProspectFilm from "./components/ProspectFilm";
 
 // ---------------------------------------------------------------------------
@@ -30,6 +31,48 @@ const mono = {
 const PROSPECTS = PROSPECTS_DATA.prospects || [];
 
 const STATE_LABELS = { DC: "D.C.", MD: "Maryland", VA: "Virginia" };
+
+// ---------------------------------------------------------------------------
+// Capitol Hoops Summer League join. Players are matched to tracked prospects
+// by name-slug (same bridge pattern used across the framework). Two directions:
+//   - capitolHoopsLinesFor(name) → summer stat lines to merge into a profile
+//   - PROSPECT_BY_NAMEKEY        → does a summer player have a tracked profile?
+// ---------------------------------------------------------------------------
+const CH_TEAMS = CAPITOL_HOOPS.teams || {};
+
+function nameKey(name) {
+  return String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const PROSPECT_BY_NAMEKEY = (() => {
+  const m = {};
+  for (const p of PROSPECTS) m[nameKey(p.name)] = p;
+  return m;
+})();
+
+// Summer stat lines for a prospect, pulled from any Capitol Hoops team they
+// appear on (by name match). Returned in statLine shape so the profile's
+// stats section renders them alongside authored HS/summer/fall lines.
+function capitolHoopsLinesFor(prospectName) {
+  const key = nameKey(prospectName);
+  if (!key) return [];
+  const out = [];
+  for (const team of Object.values(CH_TEAMS)) {
+    for (const pl of team.players || []) {
+      if (nameKey(pl.name) === key) {
+        out.push({
+          context: "Summer (Capitol Hoops)",
+          season: team.season,
+          team: team.name,
+          league: "Capitol Hoops Summer League",
+          gp: pl.stats?.gp,
+          stats: pl.stats,
+        });
+      }
+    }
+  }
+  return out;
+}
 
 // inches → feet-inches display, e.g. 74 → 6'2"
 function fmtHeight(inches) {
@@ -284,7 +327,9 @@ function RankStat({ label, value }) {
 }
 
 function OverviewTab({ p }) {
-  const statLines = Array.isArray(p.statLines) ? p.statLines : [];
+  // Authored stat lines + any Capitol Hoops summer lines matched by name.
+  const authoredLines = Array.isArray(p.statLines) ? p.statLines : [];
+  const statLines = [...authoredLines, ...capitolHoopsLinesFor(p.name)];
   return (
     <div style={{ display: "grid", gap: 18 }}>
       {/* Summary */}
@@ -380,19 +425,26 @@ function SectionLabel({ children }) {
   );
 }
 
-function StatCell({ label, value }) {
+function StatCell({ label, value, highlight = false }) {
   return (
-    <div style={{ textAlign: "center", background: T.surface2, border: `1px solid ${T.borderSoft}`, padding: "10px 6px" }}>
-      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: T.textMute, textTransform: "uppercase" }}>{label}</div>
+    <div style={{
+      textAlign: "center",
+      background: highlight ? "var(--prospera-accent-bg)" : T.surface2,
+      border: `1px solid ${highlight ? "var(--prospera-accent-border)" : T.borderSoft}`,
+      padding: "10px 6px",
+    }}>
+      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: highlight ? T.accent : T.textMute, textTransform: "uppercase" }}>{label}</div>
       <div style={{ fontSize: 18, color: T.text, fontWeight: 700, marginTop: 4 }}>{value != null ? value : "—"}</div>
     </div>
   );
 }
 
-// One stat context (HS Season / Summer (AAU) / Fall League) — a labeled
-// header (team · league · GP) above the per-game grid.
+// One stat context (HS Season / Summer / Capitol Hoops / Fall) — a labeled
+// header above the per-game grid. GP leads (highlighted) so small-sample
+// summer lines can't be misread as stable averages.
 function StatLineBlock({ line }) {
   const s = line.stats || {};
+  const smallSample = line.gp != null && line.gp <= 3;
   return (
     <div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
@@ -400,10 +452,16 @@ function StatLineBlock({ line }) {
           {line.context}
         </span>
         <span style={{ ...mono, fontSize: 10, letterSpacing: "0.06em", color: T.textMute }}>
-          {[line.season, line.team, line.league, line.gp != null ? `${line.gp} GP` : null].filter(Boolean).join(" · ")}
+          {[line.season, line.team, line.league].filter(Boolean).join(" · ")}
         </span>
+        {smallSample && (
+          <span style={{ ...mono, fontSize: 9, letterSpacing: "0.1em", color: T.warn, textTransform: "uppercase" }}>
+            · small sample
+          </span>
+        )}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(66px, 1fr))", gap: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))", gap: 8 }}>
+        <StatCell label="GP" value={s.gp != null ? s.gp : line.gp} highlight />
         <StatCell label="PPG" value={s.ppg} />
         <StatCell label="RPG" value={s.rpg} />
         <StatCell label="APG" value={s.apg} />
@@ -418,27 +476,201 @@ function StatLineBlock({ line }) {
 }
 
 // ---------------------------------------------------------------------------
+// SUMMER LEAGUE — Capitol Hoops team browser (team list → roster + stats)
+// ---------------------------------------------------------------------------
+const SUMMER_STAT_COLS = [
+  { key: "ppg", label: "PPG" },
+  { key: "rpg", label: "RPG" },
+  { key: "apg", label: "APG" },
+  { key: "spg", label: "SPG" },
+  { key: "bpg", label: "BPG" },
+  { key: "fgPct", label: "FG%" },
+  { key: "threePct", label: "3P%" },
+  { key: "ftPct", label: "FT%" },
+];
+
+function SummerLeague({ onOpenProfile }) {
+  const [teamSlug, setTeamSlug] = useState(null);
+  const team = teamSlug ? CH_TEAMS[teamSlug] : null;
+
+  if (!team) {
+    const slugs = Object.keys(CH_TEAMS);
+    return (
+      <div style={{ display: "grid", gap: 18 }}>
+        <div>
+          <SectionLabel>Capitol Hoops Summer League · 2026</SectionLabel>
+          <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
+            Live summer-league rosters and box-score averages across the DMV. Small samples —
+            games played leads every line. Tap a team to see its roster.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
+          {slugs.map((slug) => {
+            const t = CH_TEAMS[slug];
+            return (
+              <button
+                key={slug}
+                type="button"
+                onClick={() => setTeamSlug(slug)}
+                style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 16, cursor: "pointer", color: T.text }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+              >
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>{t.name}</div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
+                  {t.players.length} players · {t.headCoach}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  return <SummerTeam team={team} onBack={() => setTeamSlug(null)} onOpenProfile={onOpenProfile} />;
+}
+
+function SummerTeam({ team, onBack, onOpenProfile }) {
+  const [sortKey, setSortKey] = useState("ppg");
+  const sorted = useMemo(() => {
+    return [...team.players].sort((a, b) => (b.stats?.[sortKey] ?? -1) - (a.stats?.[sortKey] ?? -1));
+  }, [team, sortKey]);
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <button
+        type="button"
+        onClick={onBack}
+        style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}
+      >
+        ← All summer teams
+      </button>
+
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+        <h2 style={{ fontSize: 22, margin: 0, color: T.text, fontWeight: 800 }}>{team.name}</h2>
+        <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
+          Capitol Hoops {team.season} · {team.headCoach} · {team.players.length} players
+        </div>
+      </div>
+
+      {/* Roster + stats table — GP leads, sortable by stat columns */}
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
+          <thead>
+            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+              <th style={thStyle("left")}>#</th>
+              <th style={thStyle("left")}>Player</th>
+              <th style={thStyle("left")}>Pos</th>
+              <th style={thStyle("left")}>Class</th>
+              <th style={{ ...thStyle("right"), color: T.accent }}>GP</th>
+              {SUMMER_STAT_COLS.map((c) => (
+                <th
+                  key={c.key}
+                  onClick={() => setSortKey(c.key)}
+                  style={{ ...thStyle("right"), cursor: "pointer", color: sortKey === c.key ? T.accent : T.textDim }}
+                >
+                  {c.label}{sortKey === c.key ? " ↓" : ""}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((pl) => {
+              const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+              return (
+                <tr key={pl.number + pl.name} style={{ borderBottom: `1px solid ${T.borderSoft}` }}>
+                  <td style={tdStyle("left", T.textMute)}>{pl.number}</td>
+                  <td style={tdStyle("left", T.text)}>
+                    {tracked ? (
+                      <button
+                        type="button"
+                        onClick={() => onOpenProfile(tracked.id)}
+                        style={{ ...mono, fontSize: 12, color: T.accent, background: "transparent", border: "none", padding: 0, cursor: "pointer", fontWeight: 600 }}
+                      >
+                        {pl.name} ↗
+                      </button>
+                    ) : pl.name}
+                  </td>
+                  <td style={tdStyle("left", T.textDim)}>{pl.position}</td>
+                  <td style={tdStyle("left", T.textDim)}>'{String(pl.classYear).slice(2)}</td>
+                  <td style={{ ...tdStyle("right", T.text), fontWeight: 700, background: "var(--prospera-accent-bg-faint)" }}>{pl.stats?.gp ?? "—"}</td>
+                  {SUMMER_STAT_COLS.map((c) => (
+                    <td key={c.key} style={tdStyle("right", sortKey === c.key ? T.text : T.textDim)}>
+                      {pl.stats?.[c.key] != null ? pl.stats[c.key] : "—"}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        Source: Capitol Hoops Summer League. Small samples — read GP first. Orange names link to tracked prospect profiles.
+      </div>
+    </div>
+  );
+}
+
+function thStyle(align) {
+  return { ...mono, fontSize: 9, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--prospera-text-mute)", textAlign: align, padding: "10px 12px", whiteSpace: "nowrap" };
+}
+function tdStyle(align, color) {
+  return { padding: "9px 12px", textAlign: align, color, whiteSpace: "nowrap" };
+}
+
+// ---------------------------------------------------------------------------
 // APP
 // ---------------------------------------------------------------------------
+const NAV = [
+  { key: "board", label: "Big Board" },
+  { key: "summer", label: "Summer League" },
+];
+
 export default function App() {
+  const [view, setView] = useState("board"); // "board" | "summer"
   const [openId, setOpenId] = useState(null);
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
+
+  const goView = (v) => { setOpenId(null); setView(v); };
 
   return (
     <div style={{ minHeight: "100vh", color: T.text }}>
       {/* Header */}
-      <header style={{ borderBottom: `1px solid ${T.border}`, padding: "18px 28px", display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
+      <header style={{ borderBottom: `1px solid ${T.border}`, padding: "16px 28px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
         <div style={{ ...mono, fontSize: 16, letterSpacing: "0.18em", color: T.accent, fontWeight: 800, textTransform: "uppercase" }}>
           Prospera Preps
         </div>
-        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>
-          DMV Recruiting Board · Basketball
+        <nav style={{ display: "flex", gap: 4 }}>
+          {NAV.map((n) => {
+            const active = view === n.key && !open;
+            return (
+              <button
+                key={n.key}
+                type="button"
+                onClick={() => goView(n.key)}
+                style={{
+                  ...mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase",
+                  color: active ? T.bg : T.textDim, background: active ? T.accent : "transparent",
+                  border: `1px solid ${active ? T.accent : T.border}`, padding: "7px 12px", fontWeight: active ? 700 : 500,
+                }}
+              >
+                {n.label}
+              </button>
+            );
+          })}
+        </nav>
+        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginLeft: "auto" }}>
+          DMV · Basketball
         </div>
       </header>
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
         {open ? (
           <Profile prospect={open} onBack={() => setOpenId(null)} />
+        ) : view === "summer" ? (
+          <SummerLeague onOpenProfile={setOpenId} />
         ) : (
           <Board onOpen={setOpenId} />
         )}
