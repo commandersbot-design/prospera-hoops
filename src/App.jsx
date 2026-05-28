@@ -1185,14 +1185,18 @@ function Classes({ onOpen }) {
 // ---------------------------------------------------------------------------
 function buildTickerItems() {
   const items = [];
-  for (const n of NEWS_DATA.items || []) {
-    items.push({ tag: "NEWS", prospectId: n.prospectId || null, text: n.headline });
+  // Hand-authored items, newest first by date.
+  const authored = [...(NEWS_DATA.items || [])].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  for (const n of authored) {
+    items.push({ tag: "NEWS", prospectId: n.prospectId || null, url: n.url || null, text: n.headline });
   }
+  // Auto: commitments (factual events).
   for (const p of PROSPECTS) {
     if ((p.status === "committed" || p.status === "signed") && p.commitment) {
       items.push({ tag: "COMMIT", prospectId: p.id, text: `${p.name} commits to ${p.commitment}` });
     }
   }
+  // Auto: top summer performers (derived from Capitol Hoops, 2+ GP).
   const all = [];
   for (const t of Object.values(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, team: t.name });
   const top = all.filter((p) => (p.stats?.gp ?? 0) >= 2).sort((a, b) => b.stats.ppg - a.stats.ppg).slice(0, 8);
@@ -1215,13 +1219,20 @@ function NewsTicker({ onOpen }) {
       </div>
       <div style={{ flex: 1, overflow: "hidden", maskImage: "linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent)" }}>
         <div className="preps-ticker" style={{ display: "flex", gap: 28, whiteSpace: "nowrap", paddingLeft: 24 }}>
-          {loop.map((it, i) => (
-            <button key={i} type="button" onClick={() => it.prospectId && onOpen(it.prospectId)}
-              style={{ ...mono, fontSize: 11, color: T.textDim, background: "transparent", border: "none", padding: 0, cursor: it.prospectId ? "pointer" : "default", display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}>
-              <span style={{ color: tagColor[it.tag] || T.signal, fontWeight: 700, fontSize: 9, letterSpacing: "0.1em", border: `1px solid ${tagColor[it.tag] || T.signal}`, padding: "1px 5px" }}>{it.tag}</span>
-              <span>{it.text}</span>
-            </button>
-          ))}
+          {loop.map((it, i) => {
+            const clickable = it.prospectId || it.url;
+            const handle = () => {
+              if (it.prospectId) onOpen(it.prospectId);
+              else if (it.url) window.open(it.url, "_blank", "noopener,noreferrer");
+            };
+            return (
+              <button key={i} type="button" onClick={clickable ? handle : undefined}
+                style={{ ...mono, fontSize: 11, color: T.textDim, background: "transparent", border: "none", padding: 0, cursor: clickable ? "pointer" : "default", display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}>
+                <span style={{ color: tagColor[it.tag] || T.signal, fontWeight: 700, fontSize: 9, letterSpacing: "0.1em", border: `1px solid ${tagColor[it.tag] || T.signal}`, padding: "1px 5px" }}>{it.tag}</span>
+                <span>{it.text}{it.url && !it.prospectId ? " ↗" : ""}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
