@@ -41,6 +41,21 @@ button:hover .prospera-film-play-circle {
   button:hover .prospera-film-play-circle { transform: none; }
 }
 
+/* News ticker marquee */
+.preps-ticker {
+  animation: preps-ticker-scroll 80s linear infinite;
+}
+.preps-ticker:hover {
+  animation-play-state: paused;
+}
+@keyframes preps-ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preps-ticker { animation: none; }
+}
+
 /* Thin scrollbars to match the dark terminal aesthetic */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--prospera-bg); }

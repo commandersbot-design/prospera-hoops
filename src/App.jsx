@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import PROSPECTS_DATA from "./data/prospects.json";
 import CAPITOL_HOOPS from "./data/capitolHoops.json";
+import NEWS_DATA from "./data/news.json";
 import ProspectFilm from "./components/ProspectFilm";
 
 // ---------------------------------------------------------------------------
@@ -1046,12 +1047,183 @@ function CommitmentsTracker({ onOpen }) {
 }
 
 // ---------------------------------------------------------------------------
+// SEARCH — global name/school lookup, in the header
+// ---------------------------------------------------------------------------
+function SearchBox({ onOpen }) {
+  const [q, setQ] = useState("");
+  const [focused, setFocused] = useState(false);
+  const matches = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    if (k.length < 2) return [];
+    return PROSPECTS
+      .filter((p) => p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k))
+      .slice(0, 8);
+  }, [q]);
+
+  return (
+    <div style={{ position: "relative", flex: "1 1 200px", maxWidth: 340 }}>
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setTimeout(() => setFocused(false), 150)}
+        placeholder="Search players or schools…"
+        style={{ width: "100%", background: T.surface2, border: `1px solid ${T.border}`, color: T.text, padding: "8px 11px", fontSize: 13, outline: "none" }}
+      />
+      {focused && matches.length > 0 && (
+        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: T.surface, border: `1px solid ${T.accent}`, zIndex: 200, maxHeight: 360, overflowY: "auto", boxShadow: "0 12px 32px rgba(0,0,0,0.5)" }}>
+          {matches.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onMouseDown={() => { onOpen(p.id); setQ(""); }}
+              style={{ display: "block", width: "100%", textAlign: "left", background: "transparent", border: "none", borderBottom: `1px solid ${T.borderSoft}`, padding: "10px 12px", cursor: "pointer", color: T.text }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--prospera-accent-bg-soft)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            >
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div>
+              <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>
+                {p.position || "—"} · {p.school}{p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : ""}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// CLASSES — browse prospects by graduating class
+// ---------------------------------------------------------------------------
+function Classes({ onOpen }) {
+  const [year, setYear] = useState(null);
+  const byYear = useMemo(() => {
+    const m = {};
+    for (const p of PROSPECTS) {
+      const y = p.gradYear || null;
+      if (!y) continue;
+      (m[y] = m[y] || []).push(p);
+    }
+    return m;
+  }, []);
+  const years = Object.keys(byYear).map(Number).sort();
+
+  if (year) {
+    const roster = [...byYear[year]]
+      .map((p) => ({ p, ppg: primaryStatLine(p)?.stats?.ppg ?? null }))
+      .sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
+    return (
+      <div style={{ display: "grid", gap: 18 }}>
+        <button type="button" onClick={() => setYear(null)} style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}>
+          ← All classes
+        </button>
+        <div>
+          <SectionLabel>Class of {year}</SectionLabel>
+          <p style={{ fontSize: 13, color: T.textDim, margin: "8px 0 0" }}>{roster.length} prospects · sorted by summer PPG</p>
+        </div>
+        <div style={{ display: "grid", gap: 8 }}>
+          {roster.map(({ p, ppg }) => (
+            <button key={p.id} type="button" onClick={() => onOpen(p.id)}
+              style={{ display: "grid", gridTemplateColumns: "40px 1fr auto", gap: 14, alignItems: "center", textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 16px", cursor: "pointer", color: T.text }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}>
+              <Avatar name={p.name} headshot={p.headshot} size={36} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{p.name}</div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 2 }}>{p.position || "—"} · {p.school}</div>
+              </div>
+              <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                {ppg != null ? `${perGame(ppg)} PPG` : "—"}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div>
+        <SectionLabel>Recruiting Classes</SectionLabel>
+        <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
+          Browse the DMV database by graduating class.
+        </p>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
+        {years.map((y) => (
+          <button key={y} type="button" onClick={() => setYear(y)}
+            style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 18, cursor: "pointer", color: T.text }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: T.accent }}>'{String(y).slice(2)}</div>
+            <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
+              Class of {y} · {byYear[y].length}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// NEWS TICKER — hand-authored items + auto commitments + summer standouts
+// ---------------------------------------------------------------------------
+function buildTickerItems() {
+  const items = [];
+  for (const n of NEWS_DATA.items || []) {
+    items.push({ tag: "NEWS", prospectId: n.prospectId || null, text: n.headline });
+  }
+  for (const p of PROSPECTS) {
+    if ((p.status === "committed" || p.status === "signed") && p.commitment) {
+      items.push({ tag: "COMMIT", prospectId: p.id, text: `${p.name} commits to ${p.commitment}` });
+    }
+  }
+  const all = [];
+  for (const t of Object.values(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, team: t.name });
+  const top = all.filter((p) => (p.stats?.gp ?? 0) >= 2).sort((a, b) => b.stats.ppg - a.stats.ppg).slice(0, 8);
+  for (const pl of top) {
+    const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+    items.push({ tag: "SUMMER", prospectId: tracked?.id || null, text: `${pl.name} — ${perGame(pl.stats.ppg)} PPG, ${deriveSchool(pl.team)} (Capitol Hoops)` });
+  }
+  return items;
+}
+
+function NewsTicker({ onOpen }) {
+  const items = useMemo(buildTickerItems, []);
+  if (items.length === 0) return null;
+  const loop = [...items, ...items]; // duplicate for seamless marquee
+  const tagColor = { COMMIT: "var(--prospera-positive)", SUMMER: "var(--prospera-cyan)", NEWS: "var(--prospera-signal)" };
+  return (
+    <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, height: 32, display: "flex", alignItems: "center", overflow: "hidden", position: "relative" }}>
+      <div style={{ flexShrink: 0, padding: "0 12px", background: T.accent, color: T.bg, height: "100%", display: "flex", alignItems: "center", ...mono, fontSize: 9, letterSpacing: "0.2em", fontWeight: 800 }}>
+        LIVE WIRE
+      </div>
+      <div style={{ flex: 1, overflow: "hidden", maskImage: "linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent)" }}>
+        <div className="preps-ticker" style={{ display: "flex", gap: 28, whiteSpace: "nowrap", paddingLeft: 24 }}>
+          {loop.map((it, i) => (
+            <button key={i} type="button" onClick={() => it.prospectId && onOpen(it.prospectId)}
+              style={{ ...mono, fontSize: 11, color: T.textDim, background: "transparent", border: "none", padding: 0, cursor: it.prospectId ? "pointer" : "default", display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}>
+              <span style={{ color: tagColor[it.tag] || T.signal, fontWeight: 700, fontSize: 9, letterSpacing: "0.1em", border: `1px solid ${tagColor[it.tag] || T.signal}`, padding: "1px 5px" }}>{it.tag}</span>
+              <span>{it.text}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // APP
 // ---------------------------------------------------------------------------
 const NAV = [
   { key: "board", label: "Big Board" },
   { key: "summer", label: "Summer League" },
   { key: "schools", label: "Schools" },
+  { key: "classes", label: "Classes" },
   { key: "commitments", label: "Commitments" },
 ];
 
@@ -1066,12 +1238,15 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", color: T.text }}>
+      {/* News ticker */}
+      <NewsTicker onOpen={setOpenId} />
+
       {/* Header */}
-      <header style={{ borderBottom: `1px solid ${T.border}`, padding: "16px 28px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+      <header style={{ borderBottom: `1px solid ${T.border}`, padding: "16px 28px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
         <div style={{ ...mono, fontSize: 16, letterSpacing: "0.18em", color: T.accent, fontWeight: 800, textTransform: "uppercase" }}>
           Prospera Preps
         </div>
-        <nav style={{ display: "flex", gap: 4 }}>
+        <nav style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {NAV.map((n) => {
             const active = view === n.key && !open;
             return (
@@ -1090,8 +1265,8 @@ export default function App() {
             );
           })}
         </nav>
-        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginLeft: "auto" }}>
-          DMV · Basketball
+        <div style={{ marginLeft: "auto" }}>
+          <SearchBox onOpen={setOpenId} />
         </div>
       </header>
 
@@ -1102,6 +1277,8 @@ export default function App() {
           <SummerLeague onOpenProfile={setOpenId} />
         ) : view === "schools" ? (
           <Schools onOpenProfile={setOpenId} />
+        ) : view === "classes" ? (
+          <Classes onOpen={setOpenId} />
         ) : view === "commitments" ? (
           <CommitmentsTracker onOpen={setOpenId} />
         ) : (
