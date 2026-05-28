@@ -114,18 +114,30 @@ function StatusBadge({ status, commitment }) {
   );
 }
 
-function Avatar({ name, size = 56 }) {
+function Avatar({ name, headshot, size = 56 }) {
+  const [errored, setErrored] = useState(false);
   const initials = (name || "").split(/\s+/).map((s) => s[0] || "").join("").slice(0, 2).toUpperCase() || "?";
+  const showImg = headshot && !errored;
   return (
     <div
       style={{
         width: size, height: size,
         background: `linear-gradient(135deg, ${T.surface2}, ${T.surface})`,
         border: `1px solid ${T.accent}`,
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden",
       }}
     >
-      <span style={{ ...mono, fontSize: size * 0.32, color: T.accent, fontWeight: 700 }}>{initials}</span>
+      {showImg ? (
+        <img
+          src={headshot}
+          alt={name}
+          loading="lazy"
+          onError={() => setErrored(true)}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+        />
+      ) : (
+        <span style={{ ...mono, fontSize: size * 0.32, color: T.accent, fontWeight: 700 }}>{initials}</span>
+      )}
     </div>
   );
 }
@@ -200,7 +212,7 @@ function Board({ onOpen }) {
             <div style={{ ...mono, fontSize: 15, color: T.accent, fontWeight: 700 }}>
               {p.rankings?.national ? `#${p.rankings.national}` : "—"}
             </div>
-            <Avatar name={p.name} size={48} />
+            <Avatar name={p.name} headshot={p.headshot} size={48} />
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{p.name}</div>
               <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 3 }}>
@@ -262,33 +274,47 @@ function Profile({ prospect, onBack }) {
         ← Back to board
       </button>
 
-      {/* Hero */}
-      <div style={{ display: "flex", gap: 18, alignItems: "flex-start", flexWrap: "wrap", background: T.surface, border: `1px solid ${T.border}`, padding: 20 }}>
-        <Avatar name={p.name} size={80} />
-        <div style={{ flex: "1 1 260px", minWidth: 0 }}>
+      {/* Hero — headshot-forward, immersive. Measurables/rankings render only
+          when present so thin (auto-promoted) profiles stay clean. */}
+      <div style={{
+        background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 55%)`,
+        border: `1px solid ${T.border}`,
+        borderLeft: `3px solid ${T.accent}`,
+        padding: 22,
+        display: "flex", gap: 22, alignItems: "center", flexWrap: "wrap",
+      }}>
+        <Avatar name={p.name} headshot={p.headshot} size={120} />
+        <div style={{ flex: "1 1 280px", minWidth: 0 }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            <h1 style={{ fontSize: 28, margin: 0, color: T.text, fontWeight: 800, letterSpacing: "-0.02em" }}>{p.name}</h1>
-            <Stars count={p.stars} />
+            <h1 style={{ fontSize: 32, margin: 0, color: T.text, fontWeight: 800, letterSpacing: "-0.02em" }}>{p.name}</h1>
+            {p.stars ? <Stars count={p.stars} /> : null}
           </div>
-          <div style={{ ...mono, fontSize: 11, color: T.textDim, letterSpacing: "0.08em", marginTop: 8 }}>
-            {p.position} · {fmtHeight(p.heightInches)}
-            {p.wingspanInches ? ` · ${fmtHeight(p.wingspanInches)} ws` : ""}
-            {p.weightLbs ? ` · ${p.weightLbs} lb` : ""} · Class of {p.gradYear}
+          {/* Chip row — only non-empty facts */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+            <Chip>{p.position || "—"}</Chip>
+            <Chip>Class of {p.gradYear || "—"}</Chip>
+            {p.heightInches ? <Chip>{fmtHeight(p.heightInches)}{p.wingspanInches ? ` · ${fmtHeight(p.wingspanInches)} ws` : ""}{p.weightLbs ? ` · ${p.weightLbs} lb` : ""}</Chip> : null}
           </div>
-          <div style={{ ...mono, fontSize: 11, color: T.textMute, letterSpacing: "0.06em", marginTop: 4 }}>
-            {p.school} · {STATE_LABELS[p.state] || p.state}{p.aau ? ` · ${p.aau}` : ""}
+          <div style={{ ...mono, fontSize: 11, color: T.textMute, letterSpacing: "0.06em", marginTop: 10 }}>
+            {p.school}{p.city ? ` · ${p.city}, ${p.state}` : (p.state ? ` · ${STATE_LABELS[p.state] || p.state}` : "")}{p.aau ? ` · ${p.aau}` : ""}
           </div>
           <div style={{ marginTop: 12 }}>
             <StatusBadge status={p.status} commitment={p.commitment} />
           </div>
         </div>
-        {/* Rankings block */}
-        <div style={{ display: "flex", gap: 18 }}>
-          <RankStat label="National" value={p.rankings?.national} />
-          <RankStat label="Position" value={p.rankings?.position} />
-          <RankStat label={STATE_LABELS[p.state] || "State"} value={p.rankings?.state} />
-        </div>
+        {/* Rankings — only show the block if at least one rank exists */}
+        {(p.rankings?.national || p.rankings?.position || p.rankings?.state) ? (
+          <div style={{ display: "flex", gap: 18 }}>
+            <RankStat label="National" value={p.rankings?.national} />
+            <RankStat label="Position" value={p.rankings?.position} />
+            <RankStat label={STATE_LABELS[p.state] || "State"} value={p.rankings?.state} />
+          </div>
+        ) : null}
       </div>
+
+      {/* Headline stats — the at-a-glance line so the profile leads with a
+          visual, not a wall of numbers. Pulled from the primary stat context. */}
+      <HeadlineStats p={p} />
 
       {/* Tabs */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
@@ -326,12 +352,74 @@ function RankStat({ label, value }) {
   );
 }
 
+function Chip({ children }) {
+  return (
+    <span style={{
+      ...mono, fontSize: 10, letterSpacing: "0.08em", color: T.text,
+      background: T.surface2, border: `1px solid ${T.border}`, padding: "5px 10px", textTransform: "uppercase",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+// Pick the primary stat context for the at-a-glance strip: prefer HS Season,
+// otherwise the first available line (authored or Capitol Hoops summer).
+function primaryStatLine(p) {
+  const all = [...(Array.isArray(p.statLines) ? p.statLines : []), ...capitolHoopsLinesFor(p.name)];
+  if (all.length === 0) return null;
+  return all.find((l) => /hs/i.test(l.context || "")) || all[0];
+}
+
+function HeadlineStats({ p }) {
+  const line = primaryStatLine(p);
+  if (!line || !line.stats) return null;
+  const s = line.stats;
+  const items = [
+    { label: "PPG", value: s.ppg },
+    { label: "RPG", value: s.rpg },
+    { label: "APG", value: s.apg },
+    { label: "GP",  value: s.gp != null ? s.gp : line.gp },
+  ];
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "16px 20px" }}>
+      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginBottom: 12 }}>
+        {line.context}{line.season ? ` · ${line.season}` : ""}{line.league ? ` · ${line.league}` : ""}
+      </div>
+      <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
+        {items.map((it) => (
+          <div key={it.label}>
+            <div style={{ fontSize: 34, color: it.label === "GP" ? T.textDim : T.accent, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.02em" }}>
+              {it.value != null ? it.value : "—"}
+            </div>
+            <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginTop: 6 }}>{it.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function OverviewTab({ p }) {
   // Authored stat lines + any Capitol Hoops summer lines matched by name.
   const authoredLines = Array.isArray(p.statLines) ? p.statLines : [];
   const statLines = [...authoredLines, ...capitolHoopsLinesFor(p.name)];
+  const isThin = !p.summary && !p.comp && (!Array.isArray(p.traits) || p.traits.length === 0);
   return (
     <div style={{ display: "grid", gap: 18 }}>
+      {/* Thin auto-promoted profile — no authored scouting yet */}
+      {isThin && (
+        <div style={{ background: "var(--prospera-accent-bg-faint)", border: `1px dashed var(--prospera-accent-border-faint)`, padding: 16 }}>
+          <div style={{ ...mono, fontSize: 9, letterSpacing: "0.18em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>
+            Profile in progress
+          </div>
+          <div style={{ fontSize: 13, color: T.textDim, lineHeight: 1.55, marginTop: 8 }}>
+            {p.name} is tracked in the DMV database. Scouting report, measurables, rankings,
+            and recruitment are pending — the stats below are real where available.
+          </div>
+        </div>
+      )}
+
       {/* Summary */}
       {p.summary && (
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
@@ -663,7 +751,7 @@ function CommitmentsTracker({ onOpen }) {
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
             >
-              <Avatar name={p.name} size={48} />
+              <Avatar name={p.name} headshot={p.headshot} size={48} />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{p.name}</div>
                 <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 3 }}>
