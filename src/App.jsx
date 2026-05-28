@@ -610,7 +610,6 @@ function RankStat({ label, value }) {
 const RECRUIT_SERVICES = [
   { key: "247", label: "247Sports" },
   { key: "espn", label: "ESPN" },
-  { key: "rivals", label: "Rivals" },
 ];
 
 function RecruitingBlock({ p }) {
