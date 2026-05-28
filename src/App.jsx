@@ -1118,19 +1118,22 @@ function DmvMap({ onOpenProfile }) {
       const palette = { DC: cssColor("--prospera-signal"), MD: cssColor("--prospera-blue"), VA: cssColor("--prospera-positive") };
 
       const latlngs = [];
-      for (const p of points) {
+      // Bigger rosters drawn first so smaller markers land on top and stay
+      // clickable in dense clusters. Small, crisp pinpoints — not blobs.
+      const ordered = [...points].sort((a, b) => b.count - a.count);
+      for (const p of ordered) {
         const color = palette[p.state] || "#94A3B8";
+        const r = 3 + Math.sqrt(p.count) * 1.15; // ~4px (1 player) → ~7.7px (15)
         const marker = L.circleMarker([p.lat, p.lng], {
-          radius: 5 + Math.sqrt(p.count) * 2.2,
-          color, weight: 1.5, fillColor: color, fillOpacity: 0.5,
+          radius: r, color, weight: 1, fillColor: color, fillOpacity: 0.75,
         }).addTo(map);
         marker.bindTooltip(`${p.name} · ${p.count} player${p.count === 1 ? "" : "s"}`, { direction: "top" });
-        marker.on("mouseover", () => marker.setStyle({ fillOpacity: 0.85, weight: 2.5 }));
-        marker.on("mouseout", () => marker.setStyle({ fillOpacity: 0.5, weight: 1.5 }));
+        marker.on("mouseover", () => marker.setStyle({ fillOpacity: 1, weight: 2, radius: r + 2 }));
+        marker.on("mouseout", () => marker.setStyle({ fillOpacity: 0.75, weight: 1, radius: r }));
         marker.on("click", () => setOpenSchool(p.name));
         latlngs.push([p.lat, p.lng]);
       }
-      if (latlngs.length) map.fitBounds(L.latLngBounds(latlngs).pad(0.08));
+      if (latlngs.length) map.fitBounds(L.latLngBounds(latlngs).pad(0.05));
       else map.setView([38.9, -77.0], 9);
     });
     return () => { cancelled = true; if (map) map.remove(); };
