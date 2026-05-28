@@ -630,7 +630,7 @@ function RecruitingBlock({ p }) {
               <div style={{ ...mono, fontSize: 10, letterSpacing: "0.12em", color: T.text, textTransform: "uppercase", fontWeight: 700 }}>{label}</div>
               {s ? (
                 <>
-                  <div style={{ marginTop: 8 }}>{s.stars ? <Stars count={s.stars} /> : <span style={{ color: T.textMute, fontSize: 12 }}>NR</span>}</div>
+                  {s.stars ? <div style={{ marginTop: 8 }}><Stars count={s.stars} /></div> : null}
                   <div style={{ display: "grid", gap: 3, marginTop: 10 }}>
                     {s.national ? <RankLine label="National" value={`#${s.national}`} /> : null}
                     {s.stateRank ? <RankLine label={stateLabel} value={`#${s.stateRank}`} /> : null}

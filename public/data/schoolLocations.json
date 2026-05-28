@@ -448,5 +448,29 @@
     "lng": -77.208,
     "state": "MD",
     "county": "Montgomery"
+  },
+  "Calvert Hall College": {
+    "lat": 39.408,
+    "lng": -76.61,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "Highland School": {
+    "lat": 38.717,
+    "lng": -77.795,
+    "state": "VA",
+    "county": "Fauquier"
+  },
+  "St. Frances Academy": {
+    "lat": 39.301,
+    "lng": -76.601,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "The St. James": {
+    "lat": 38.776,
+    "lng": -77.165,
+    "state": "VA",
+    "county": "Fairfax"
   }
 }

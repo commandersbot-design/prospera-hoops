@@ -46,6 +46,12 @@ const OVERRIDES = {
   "Our Lady Of Mount Carmel":  { lat: 39.310, lng: -76.456, state: "MD", county: "Baltimore" },       // Essex
   "Archbishop Carroll":        { lat: 38.939, lng: -76.994, state: "DC", county: null },
   "Sidwell Friends School":    { lat: 38.948, lng: -77.078, state: "DC", county: null },
+  // Schools introduced by the 2027/2028 ranked-recruits import (DMV-area).
+  "The St. James":             { lat: 38.776, lng: -77.165, state: "VA", county: "Fairfax" },        // Springfield
+  "St. Frances Academy":       { lat: 39.301, lng: -76.601, state: "MD", county: "Baltimore" },
+  "Archbishop Spalding":       { lat: 39.137, lng: -76.696, state: "MD", county: "Anne Arundel" },   // Severn
+  "Calvert Hall College":      { lat: 39.408, lng: -76.610, state: "MD", county: "Baltimore" },      // Towson
+  "Highland School":           { lat: 38.717, lng: -77.795, state: "VA", county: "Fauquier" },       // Warrenton
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
