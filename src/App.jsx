@@ -332,8 +332,12 @@ function Segmented({ value, onChange, options }) {
 // positions are bucketed for filtering. Default sort is summer PPG, since
 // authored rankings don't exist yet.
 // ---------------------------------------------------------------------------
+// A school's geocoded location (with hand-verified overrides) is the
+// authoritative source for which state it's physically in, so it wins over the
+// prospect's own state field — which can be stale from team-location derivation
+// (e.g. Flint Hill players carry "MD" but the school is in Fairfax, VA).
 function prospectState(p) {
-  return p.state || SCHOOL_LOCATIONS[p.school]?.state || null;
+  return SCHOOL_LOCATIONS[p.school]?.state || p.state || null;
 }
 
 function normGradYear(y) {
@@ -1060,47 +1064,112 @@ function tdStyle(align, color) {
 // ---------------------------------------------------------------------------
 // SCHOOLS — every DMV school in the database, each with its roster
 // ---------------------------------------------------------------------------
+const STATE_DOT = { DC: "var(--prospera-signal)", MD: "var(--prospera-blue)", VA: "var(--prospera-positive)" };
+
 function Schools({ onOpenProfile }) {
   const [schoolName, setSchoolName] = useState(null);
-  const school = schoolName ? SCHOOLS[schoolName] : null;
+  const [q, setQ] = useState("");
+  const [stateF, setStateF] = useState("ALL");
+  const [sort, setSort] = useState("players"); // "players" | "name"
 
-  if (school) return <SchoolDetail school={school} onBack={() => setSchoolName(null)} onOpenProfile={onOpenProfile} />;
-
-  const list = useMemo(
-    () => Object.values(SCHOOLS).sort((a, b) => b.prospects.length - a.prospects.length || a.name.localeCompare(b.name)),
+  // All hooks run unconditionally (the detail view is a render branch at the
+  // end), so hook order stays stable across navigation.
+  const all = useMemo(
+    () =>
+      Object.values(SCHOOLS).map((s) => ({
+        s,
+        name: s.name,
+        state: SCHOOL_LOCATIONS[s.name]?.state || s.state || null,
+        county: SCHOOL_LOCATIONS[s.name]?.county || null,
+        count: s.prospects.length,
+        coach: s.coach || null,
+      })),
     []
   );
+
+  const filtered = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    const out = all.filter((r) => {
+      if (stateF !== "ALL" && r.state !== stateF) return false;
+      if (k && !`${r.name} ${r.coach || ""} ${r.county || ""} ${STATE_LABELS[r.state] || r.state || ""}`.toLowerCase().includes(k)) return false;
+      return true;
+    });
+    out.sort(
+      sort === "name"
+        ? (a, b) => a.name.localeCompare(b.name)
+        : (a, b) => b.count - a.count || a.name.localeCompare(b.name)
+    );
+    return out;
+  }, [all, q, stateF, sort]);
+
+  if (schoolName && SCHOOLS[schoolName]) {
+    return <SchoolDetail school={SCHOOLS[schoolName]} onBack={() => setSchoolName(null)} onOpenProfile={onOpenProfile} />;
+  }
 
   return (
     <div style={{ display: "grid", gap: 18 }}>
       <div>
         <SectionLabel>DMV Schools</SectionLabel>
         <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
-          Every school in the database. Tap one for its roster and player profiles.
+          Every school in the database. Search by name, coach, or county; filter by state; tap one for its roster.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
-        {list.map((s) => (
-          <button
-            key={s.name}
-            type="button"
-            onClick={() => setSchoolName(s.name)}
-            style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 16, cursor: "pointer", color: T.text }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
-          >
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{s.name}</div>
-            <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
-              {s.prospects.length} players{s.coach ? ` · ${s.coach}` : ""}
-            </div>
-          </button>
-        ))}
+
+      {/* Filter bar */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search schools, coaches, counties…"
+          style={{ flex: "1 1 240px", background: T.surface2, border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 13, outline: "none" }}
+        />
+        <Segmented value={stateF} onChange={setStateF} options={[["ALL", "All"], ["DC", "D.C."], ["MD", "MD"], ["VA", "VA"]]} />
+        <Segmented value={sort} onChange={setSort} options={[["players", "Players"], ["name", "A–Z"]]} />
       </div>
+
+      <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>
+        {filtered.length} school{filtered.length === 1 ? "" : "s"}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "32px 24px", textAlign: "center", ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.textMute, textTransform: "uppercase" }}>
+          No schools match
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
+          {filtered.map((r) => (
+            <button
+              key={r.name}
+              type="button"
+              onClick={() => setSchoolName(r.name)}
+              style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 16, cursor: "pointer", color: T.text }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {r.state ? <span style={{ width: 8, height: 8, borderRadius: "50%", background: STATE_DOT[r.state] || T.textMute, flexShrink: 0 }} /> : null}
+                <div style={{ fontSize: 15, fontWeight: 700, color: T.text, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</div>
+              </div>
+              <div style={{ ...mono, fontSize: 10, color: T.accent, letterSpacing: "0.08em", marginTop: 8, fontWeight: 700 }}>
+                {r.count} player{r.count === 1 ? "" : "s"}
+                <span style={{ color: T.textMute, fontWeight: 400 }}>
+                  {r.county ? ` · ${r.county}` : ""}{r.state ? ` · ${r.state}` : ""}
+                </span>
+              </div>
+              {r.coach ? (
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 4 }}>{r.coach}</div>
+              ) : null}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 function SchoolDetail({ school, onBack, onOpenProfile }) {
+  const loc = SCHOOL_LOCATIONS[school.name] || {};
+  const state = loc.state || school.state || null; // geocoded location wins
   const roster = useMemo(() => {
     return [...school.prospects].map((p) => {
       const line = primaryStatLine(p);
@@ -1116,7 +1185,7 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
       <div style={{ background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`, padding: 22 }}>
         <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{school.name}</h2>
         <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 8 }}>
-          {school.prospects.length} players{school.coach ? ` · ${school.coach}` : ""}{school.state ? ` · ${STATE_LABELS[school.state] || school.state}` : ""}
+          {school.prospects.length} players{school.coach ? ` · ${school.coach}` : ""}{loc.county ? ` · ${loc.county}` : ""}{state ? ` · ${STATE_LABELS[state] || state}` : ""}
         </div>
       </div>
       <div style={{ display: "grid", gap: 8 }}>
@@ -1259,7 +1328,7 @@ function buildMapSchools() {
   for (const [name, loc] of Object.entries(SCHOOL_LOCATIONS)) {
     const s = SCHOOLS[name];
     if (!s || loc.lat == null || loc.lng == null) continue;
-    const state = s.state || loc.state || null;
+    const state = loc.state || s.state || null; // geocoded location is authoritative
 
     // Top prospect = highest summer PPG; fall back to first roster name.
     let top = null;
