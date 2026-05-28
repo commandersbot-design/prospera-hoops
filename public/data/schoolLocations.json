@@ -1,0 +1,368 @@
+{
+  "Annapolis Area Christian": {
+    "lat": 39.1063849,
+    "lng": -76.6790883,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "BCC": {
+    "lat": 38.9865633,
+    "lng": -77.0884166,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Bethel Academy": {
+    "lat": 39.1388614,
+    "lng": -76.8233448,
+    "state": "MD",
+    "county": "Howard"
+  },
+  "Blake": {
+    "lat": 39.1133885,
+    "lng": -77.0192939,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Boys' Latin": {
+    "lat": 39.3713334,
+    "lng": -76.6402065,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "Broadneck": {
+    "lat": 39.039945,
+    "lng": -76.4534833,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "Bullis": {
+    "lat": 39.0292221,
+    "lng": -77.1979568,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "CG Woodson": {
+    "lat": 38.8415303,
+    "lng": -77.2797078,
+    "state": "VA",
+    "county": null
+  },
+  "Churchill": {
+    "lat": 39.0433602,
+    "lng": -77.1737054,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Clinton Grace": {
+    "lat": 38.75536,
+    "lng": -76.89401,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Coolidge": {
+    "lat": 38.9674871,
+    "lng": -77.0185372,
+    "state": "DC",
+    "county": null
+  },
+  "Crofton": {
+    "lat": 39.0009345,
+    "lng": -76.6679982,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "Damascus": {
+    "lat": 39.2827324,
+    "lng": -77.2094463,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "DeMatha Catholic": {
+    "lat": 38.9581808,
+    "lng": -76.9421548,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Eleanor Roosevelt": {
+    "lat": 38.9946354,
+    "lng": -76.8695519,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Flint Hill": {
+    "lat": 38.88,
+    "lng": -77.3,
+    "state": "VA",
+    "county": "Fairfax"
+  },
+  "Forest Park": {
+    "lat": 39.3320353,
+    "lng": -76.6891831,
+    "state": "MD",
+    "county": null
+  },
+  "Glenelg Country": {
+    "lat": 39.2544554,
+    "lng": -76.9586042,
+    "state": "MD",
+    "county": "Howard"
+  },
+  "Gonzaga": {
+    "lat": 38.9017585,
+    "lng": -77.0104038,
+    "state": "DC",
+    "county": null
+  },
+  "Gonzaga College HS": {
+    "lat": 38.9017585,
+    "lng": -77.0104038,
+    "state": "DC",
+    "county": null
+  },
+  "Good Counsel": {
+    "lat": 39.1408435,
+    "lng": -77.0452122,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Hayfield Secondary": {
+    "lat": 38.7514488,
+    "lng": -77.1430557,
+    "state": "VA",
+    "county": "Fairfax"
+  },
+  "Heritage": {
+    "lat": 39.0833986,
+    "lng": -77.5699489,
+    "state": "VA",
+    "county": "Loudoun"
+  },
+  "Huntingtown": {
+    "lat": 38.6192886,
+    "lng": -76.6088655,
+    "state": "MD",
+    "county": "Calvert"
+  },
+  "Jackson Reed": {
+    "lat": 38.9491369,
+    "lng": -77.0774363,
+    "state": "DC",
+    "county": null
+  },
+  "John Carroll": {
+    "lat": 39.5375584,
+    "lng": -76.3322847,
+    "state": "MD",
+    "county": "Harford"
+  },
+  "Kennedy": {
+    "lat": 39.0656797,
+    "lng": -77.0391725,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Kent Island": {
+    "lat": 38.990733,
+    "lng": -76.3092283,
+    "state": "MD",
+    "county": "Queen Anne's"
+  },
+  "Landon": {
+    "lat": 38.9819826,
+    "lng": -77.1273839,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Magruder": {
+    "lat": 39.1321771,
+    "lng": -77.1178673,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Meade": {
+    "lat": 39.1224256,
+    "lng": -76.7380056,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "New Hope Academy": {
+    "lat": 39.2984327,
+    "lng": -76.6253557,
+    "state": "MD",
+    "county": null
+  },
+  "Northwest": {
+    "lat": 39.1510845,
+    "lng": -77.2796602,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Oxon Hill": {
+    "lat": 38.7971937,
+    "lng": -76.9944035,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Patriot": {
+    "lat": 38.7265764,
+    "lng": -77.5803788,
+    "state": "VA",
+    "county": "Prince William"
+  },
+  "Paul VI Catholic": {
+    "lat": 38.9053899,
+    "lng": -77.5381552,
+    "state": "VA",
+    "county": "Loudoun"
+  },
+  "Potomac School": {
+    "lat": 39.0433602,
+    "lng": -77.1737054,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "River Hill": {
+    "lat": 39.2160779,
+    "lng": -76.9266709,
+    "state": "MD",
+    "county": "Howard"
+  },
+  "Sandy Spring": {
+    "lat": 39.1408435,
+    "lng": -77.0452122,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Seneca V": {
+    "lat": 39.078719,
+    "lng": -77.3391513,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Severn": {
+    "lat": 39.1213829,
+    "lng": -76.641301,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "South County": {
+    "lat": 38.7188969,
+    "lng": -77.2401354,
+    "state": "VA",
+    "county": "Fairfax"
+  },
+  "South River": {
+    "lat": 38.9218557,
+    "lng": -76.5600313,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "Spalding": {
+    "lat": 39.1247473,
+    "lng": -76.6464682,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "Springbrook": {
+    "lat": 39.058254,
+    "lng": -77.0068678,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "St. John's DC": {
+    "lat": 38.9004097,
+    "lng": -77.0361063,
+    "state": "DC",
+    "county": null
+  },
+  "St. Mary's Annapolis": {
+    "lat": 38.9759588,
+    "lng": -76.5074771,
+    "state": "MD",
+    "county": "Anne Arundel"
+  },
+  "Takoma Academy": {
+    "lat": 38.99241,
+    "lng": -76.9952595,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "VA": {
+    "lat": 38.7847975,
+    "lng": -77.2407469,
+    "state": "VA",
+    "county": "Fairfax"
+  },
+  "Virginia Academy": {
+    "lat": 39.0660336,
+    "lng": -77.4772179,
+    "state": "VA",
+    "county": "Loudoun"
+  },
+  "Whitman": {
+    "lat": 38.9819826,
+    "lng": -77.1273839,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Wootton": {
+    "lat": 39.0764087,
+    "lng": -77.1836166,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Yorktown": {
+    "lat": 38.9025141,
+    "lng": -77.1401233,
+    "state": "VA",
+    "county": "Arlington"
+  },
+  "Concordia Prep": {
+    "lat": 39.398,
+    "lng": -76.601,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "DOZA": {
+    "lat": 38.922,
+    "lng": -77.027,
+    "state": "DC",
+    "county": null
+  },
+  "John Handley": {
+    "lat": 39.173,
+    "lng": -78.175,
+    "state": "VA",
+    "county": "Winchester"
+  },
+  "Loyola Blakefield": {
+    "lat": 39.411,
+    "lng": -76.632,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "RM": {
+    "lat": 39.09,
+    "lng": -77.153,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "So MD Christian": {
+    "lat": 38.539,
+    "lng": -76.844,
+    "state": "MD",
+    "county": "Charles"
+  },
+  "St. Stephen's & St. Agnes": {
+    "lat": 38.811,
+    "lng": -77.09,
+    "state": "VA",
+    "county": "Alexandria"
+  },
+  "WJ": {
+    "lat": 39.03,
+    "lng": -77.118,
+    "state": "MD",
+    "county": "Montgomery"
+  }
+}

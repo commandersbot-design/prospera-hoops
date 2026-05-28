@@ -64,12 +64,14 @@ function deriveSchool(teamName) {
 // Schools, grouped from the prospect list, with coach pulled from the matching
 // Capitol Hoops team where derivable.
 let SCHOOLS = {};
+let SCHOOL_LOCATIONS = {}; // { schoolName: { lat, lng, state, county } }
 
 // Populate the module-level stores from the fetched datasets. Called once,
 // before the app renders.
-function initData(prospectsData, capitolHoops) {
+function initData(prospectsData, capitolHoops, schoolLocations) {
   PROSPECTS = (prospectsData && prospectsData.prospects) || [];
   CH_TEAMS = (capitolHoops && capitolHoops.teams) || {};
+  SCHOOL_LOCATIONS = schoolLocations || {};
 
   PROSPECT_BY_NAMEKEY = {};
   for (const p of PROSPECTS) PROSPECT_BY_NAMEKEY[nameKey(p.name)] = p;
@@ -83,6 +85,10 @@ function initData(prospectsData, capitolHoops) {
   for (const t of Object.values(CH_TEAMS)) {
     const s = deriveSchool(t.name);
     if (SCHOOLS[s]) { SCHOOLS[s].coach = t.headCoach || null; SCHOOLS[s].teamName = t.name; }
+  }
+  // Backfill state on schools from geocoded locations where missing.
+  for (const [name, loc] of Object.entries(SCHOOL_LOCATIONS)) {
+    if (SCHOOLS[name] && !SCHOOLS[name].state && loc.state) SCHOOLS[name].state = loc.state;
   }
 }
 
@@ -1059,6 +1065,107 @@ function CommitmentsTracker({ onOpen }) {
 }
 
 // ---------------------------------------------------------------------------
+// DMV MAP — schools plotted by real geocoded coordinates
+// ---------------------------------------------------------------------------
+const MAP_STATE_COLOR = { DC: "var(--prospera-signal)", MD: "var(--prospera-blue)", VA: "var(--prospera-positive)" };
+
+function DmvMap({ onOpenProfile }) {
+  const [openSchool, setOpenSchool] = useState(null);
+  const [hover, setHover] = useState(null);
+
+  const points = useMemo(() => {
+    const out = [];
+    for (const [name, loc] of Object.entries(SCHOOL_LOCATIONS)) {
+      const s = SCHOOLS[name];
+      if (!s || loc.lat == null || loc.lng == null) continue;
+      out.push({ name, lat: loc.lat, lng: loc.lng, state: s.state || loc.state || null, count: s.prospects.length });
+    }
+    return out;
+  }, []);
+
+  if (openSchool && SCHOOLS[openSchool]) {
+    return <SchoolDetail school={SCHOOLS[openSchool]} onBack={() => setOpenSchool(null)} onOpenProfile={onOpenProfile} />;
+  }
+
+  const W = 820, H = 560, pad = 46;
+  const lats = points.map((p) => p.lat), lngs = points.map((p) => p.lng);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  const project = (lat, lng) => [
+    pad + ((lng - minLng) / (maxLng - minLng || 1)) * (W - 2 * pad),
+    pad + ((maxLat - lat) / (maxLat - minLat || 1)) * (H - 2 * pad),
+  ];
+  const radius = (count) => 5 + Math.sqrt(count) * 2.2;
+  // draw biggest first so small markers sit on top and stay clickable
+  const ordered = [...points].sort((a, b) => b.count - a.count);
+
+  return (
+    <div style={{ display: "grid", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, flexWrap: "wrap" }}>
+        <div>
+          <SectionLabel>DMV Talent Map</SectionLabel>
+          <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 620 }}>
+            Every school in the database, plotted by location. Marker size = roster count. Tap a school for its page.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 14 }}>
+          {Object.entries(MAP_STATE_COLOR).map(([st, c]) => (
+            <span key={st} style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", color: T.textDim, display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 9, height: 9, borderRadius: "50%", background: c, display: "inline-block" }} />
+              {STATE_LABELS[st] || st}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 8, position: "relative" }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }}>
+          {/* faint dot grid backdrop */}
+          <defs>
+            <pattern id="dmvgrid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="var(--prospera-grid)" />
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width={W} height={H} fill="url(#dmvgrid)" />
+          {ordered.map((p) => {
+            const [x, y] = project(p.lat, p.lng);
+            const color = MAP_STATE_COLOR[p.state] || T.textMute;
+            const isHover = hover === p.name;
+            return (
+              <g key={p.name} style={{ cursor: "pointer" }}
+                 onMouseEnter={() => setHover(p.name)} onMouseLeave={() => setHover(null)}
+                 onClick={() => setOpenSchool(p.name)}>
+                <circle cx={x} cy={y} r={radius(p.count)} fill={color} fillOpacity={isHover ? 0.95 : 0.55} stroke={color} strokeWidth={isHover ? 2 : 1} />
+              </g>
+            );
+          })}
+          {/* hover label on top */}
+          {hover && (() => {
+            const p = points.find((q) => q.name === hover);
+            if (!p) return null;
+            const [x, y] = project(p.lat, p.lng);
+            const label = `${p.name} · ${p.count}`;
+            const w = label.length * 6.2 + 16;
+            const lx = Math.min(Math.max(x - w / 2, 4), W - w - 4);
+            const ly = y - radius(p.count) - 26;
+            return (
+              <g pointerEvents="none">
+                <rect x={lx} y={ly} width={w} height={20} fill="var(--prospera-bg)" stroke={MAP_STATE_COLOR[p.state] || T.textMute} />
+                <text x={lx + w / 2} y={ly + 14} textAnchor="middle" fontSize="11" fill="var(--prospera-text)" style={mono}>{label}</text>
+              </g>
+            );
+          })()}
+        </svg>
+      </div>
+
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        {points.length} schools mapped · coordinates via OpenStreetMap · relative positions approximate
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // SEARCH — global name/school lookup, in the header
 // ---------------------------------------------------------------------------
 function SearchBox({ onOpen }) {
@@ -1246,6 +1353,7 @@ const NAV = [
   { key: "board", label: "Big Board" },
   { key: "summer", label: "Summer League" },
   { key: "schools", label: "Schools" },
+  { key: "map", label: "Map" },
   { key: "classes", label: "Classes" },
   { key: "commitments", label: "Commitments" },
 ];
@@ -1277,8 +1385,9 @@ export default function App() {
     Promise.all([
       fetch("/data/prospects.json").then((r) => { if (!r.ok) throw new Error(`prospects ${r.status}`); return r.json(); }),
       fetch("/data/capitolHoops.json").then((r) => { if (!r.ok) throw new Error(`capitolHoops ${r.status}`); return r.json(); }),
+      fetch("/data/schoolLocations.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
     ])
-      .then(([prospects, ch]) => { initData(prospects, ch); setReady(true); })
+      .then(([prospects, ch, locations]) => { initData(prospects, ch, locations); setReady(true); })
       .catch((e) => setError(e.message));
   }, []);
 
@@ -1333,6 +1442,8 @@ export default function App() {
           <SummerLeague onOpenProfile={setOpenId} />
         ) : view === "schools" ? (
           <Schools onOpenProfile={setOpenId} />
+        ) : view === "map" ? (
+          <DmvMap onOpenProfile={setOpenId} />
         ) : view === "classes" ? (
           <Classes onOpen={setOpenId} />
         ) : view === "commitments" ? (
