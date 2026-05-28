@@ -709,6 +709,42 @@ function tdStyle(align, color) {
 }
 
 // ---------------------------------------------------------------------------
+// BIG BOARD — placeholder until rankings are authored. The Board component
+// above is fully built and stays in the codebase; flip APP render back to
+// <Board onOpen={...}/> once the founder rankings exist.
+// ---------------------------------------------------------------------------
+function BoardComingSoon() {
+  const count = PROSPECTS.length;
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{
+        background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`,
+        border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`,
+        padding: "48px 32px", textAlign: "center",
+      }}>
+        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.28em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>
+          Big Board
+        </div>
+        <div style={{ fontSize: 34, color: T.text, fontWeight: 800, letterSpacing: "-0.02em", marginTop: 12 }}>
+          Coming Soon
+        </div>
+        <p style={{ fontSize: 14, color: T.textDim, lineHeight: 1.6, maxWidth: 460, margin: "14px auto 0" }}>
+          Our DMV rankings are being hand-authored — tiers, evaluations, and a
+          full ordered board. We're not publishing a board until the scouting
+          work behind it is real.
+        </p>
+        <div style={{ ...mono, fontSize: 11, letterSpacing: "0.12em", color: T.textMute, textTransform: "uppercase", marginTop: 22 }}>
+          {count} DMV prospects already in the database
+        </div>
+        <p style={{ ...mono, fontSize: 11, color: T.signal, letterSpacing: "0.06em", marginTop: 8 }}>
+          Browse them now via Summer League →
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // COMMITMENTS TRACKER — prospects who've committed / signed
 // ---------------------------------------------------------------------------
 function CommitmentsTracker({ onOpen }) {
@@ -784,7 +820,9 @@ const NAV = [
 ];
 
 export default function App() {
-  const [view, setView] = useState("board"); // "board" | "summer"
+  // Default to Summer League — the Big Board is a "coming soon" placeholder
+  // until rankings are authored, so we land users on real content.
+  const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
 
@@ -829,7 +867,7 @@ export default function App() {
         ) : view === "commitments" ? (
           <CommitmentsTracker onOpen={setOpenId} />
         ) : (
-          <Board onOpen={setOpenId} />
+          <BoardComingSoon />
         )}
       </main>
     </div>
