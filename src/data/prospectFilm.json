@@ -1,0 +1,11 @@
+{
+  "_README": "Per-prospect video/film. Keyed by prospect id (matches prospects.json). Each entry: url (YouTube / Vimeo / Streamable), title, type, optional notes. Empty by default — add clips as you build out profiles.",
+  "_types": {
+    "game":       "Full or partial game",
+    "highlights": "Highlight reel / mixtape",
+    "scrimmage":  "Practice / scrimmage / camp tape",
+    "workout":    "Skills / workout footage",
+    "interview":  "Interview / commitment announcement"
+  },
+  "videos": {}
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prospera Preps · DMV Recruiting</title>
+    <meta name="description" content="Scouting profiles for the DMV's top high school basketball and football prospects — rankings, traits, film, and recruiting status." />
+    <meta name="theme-color" content="#050a12" />
+    <style>
+      html, body { margin: 0; padding: 0; background: #050a12; }
+      body {
+        font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #cbd5e1;
+      }
+      #loading {
+        position: fixed; inset: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 12px;
+        background: #050a12; z-index: 9999;
+      }
+      #loading .brand {
+        font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+        font-size: 11px; letter-spacing: 0.32em; color: #f97316;
+        text-transform: uppercase; font-weight: 700;
+      }
+      #loading .sub {
+        font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+        font-size: 9px; letter-spacing: 0.24em; color: #475569; text-transform: uppercase;
+      }
+      #loading .pulse {
+        width: 36px; height: 1px; background: #f97316; opacity: 0.5;
+        animation: prospera-pulse 1.2s ease-in-out infinite;
+      }
+      @keyframes prospera-pulse {
+        0%, 100% { opacity: 0.15; transform: scaleX(0.4); }
+        50%      { opacity: 0.85; transform: scaleX(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <div class="brand">Prospera Preps</div>
+      <div class="pulse"></div>
+      <div class="sub">Loading DMV recruiting board…</div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

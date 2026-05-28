@@ -1,0 +1,60 @@
+/* PROSPERA · Signal Orange identity tokens — carried from the NBA Draft HQ
+ * framework. Single source of truth for every color used by the dark scout
+ * terminal UI. Change a value here once and every component reading
+ * var(--prospera-*) updates without code edits.
+ */
+
+:root {
+  /* === SURFACES =========================================================== */
+  --prospera-bg:        #050A12;
+  --prospera-surface:   #0A0F1C;
+  --prospera-surface-2: #0F172A;
+  --prospera-card:      rgba(17, 24, 39, 0.72);
+  --prospera-surface-translucent:    rgba(15, 23, 42, 0.6);
+  --prospera-surface-2-translucent:  rgba(10, 15, 28, 0.92);
+
+  /* === LINES ============================================================== */
+  --prospera-border:        #1F2937;
+  --prospera-border-soft:   rgba(31, 41, 55, 0.6);
+
+  /* === TEXT TIERS ========================================================= */
+  --prospera-text:       #E2E8F0;
+  --prospera-text-dim:   #94A3B8;
+  --prospera-text-mute:  #64748B;
+
+  /* === PRIMARY ACCENT — Bloomberg-orange ================================== */
+  --prospera-cyan:           #F97316;
+  --prospera-accent-bright:  #FB923C;
+  --prospera-accent-bg-faint:    rgba(249, 115, 22, 0.03);
+  --prospera-accent-bg-soft:     rgba(249, 115, 22, 0.04);
+  --prospera-accent-bg-mid:      rgba(249, 115, 22, 0.06);
+  --prospera-accent-bg:          rgba(249, 115, 22, 0.08);
+  --prospera-accent-bg-10:       rgba(249, 115, 22, 0.1);
+  --prospera-accent-bg-strong:   rgba(249, 115, 22, 0.12);
+  --prospera-accent-border-faint:rgba(249, 115, 22, 0.3);
+  --prospera-accent-border:      rgba(249, 115, 22, 0.4);
+  --prospera-accent-border-strong: rgba(249, 115, 22, 0.5);
+
+  /* === SECONDARY ACCENT — cyan for "click hint" cues ===================== */
+  --prospera-signal:      #22D3EE;
+  --prospera-signal-dim:  rgba(34, 211, 238, 0.4);
+
+  /* === DATA-VIZ palette =================================================== */
+  --prospera-blue:    #3B82F6;
+  --prospera-purple:  #A855F7;
+  --prospera-positive: #10B981;
+  --prospera-warn:    #F59E0B;
+  --prospera-danger:  #EF4444;
+
+  /* === SIGNATURE ELEMENTS ================================================ */
+  --prospera-grid:        rgba(59, 130, 246, 0.08);
+  --prospera-dot-grid:    rgba(249, 115, 22, 0.06);
+
+  /* === STAR / RATING TIERS (recruiting-standard) ========================= */
+  --prospera-pct-elite:  #16A34A;
+  --prospera-pct-great:  #84CC16;
+  --prospera-pct-avg:    #FBBF24;
+  --prospera-pct-below:  #F59E0B;
+  --prospera-pct-poor:   #EF4444;
+  --prospera-pct-track:  rgba(148, 163, 184, 0.18);
+}
