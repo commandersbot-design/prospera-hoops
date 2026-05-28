@@ -1,24 +1,26 @@
 {
-  "_README": "DMV (DC / Maryland / Virginia) high school basketball prospects. SAMPLE/PLACEHOLDER records — fictional names and data to demonstrate the schema. Replace with real prospects. Keyed list; `id` is a lowercase-alphanumeric slug of the name.",
+  "_README": "DMV (DC / Maryland / Virginia) high school basketball prospects. SAMPLE/PLACEHOLDER records — fictional names and data to demonstrate the schema. Replace with real prospects. `id` is a lowercase-alphanumeric slug of the name (join key, matches prospectFilm.json).",
   "_schema": {
-    "id": "lowercase-alphanumeric slug of name (join key, matches prospectFilm.json)",
+    "id": "lowercase-alphanumeric slug of name",
     "name": "Full name",
-    "position": "PG | SG | SF | PF | C (combos allowed, e.g. 'PG/SG')",
+    "position": "PG | SG | SF | PF | C (combos allowed)",
     "gradYear": "Graduating class year (number)",
-    "school": "High school name",
+    "school": "High school",
     "city": "City",
     "state": "DC | MD | VA",
-    "heightInches": "Height in inches (number)",
-    "weightLbs": "Weight in lbs (number)",
-    "stars": "Recruiting star rating 3-5 (number, null if unrated)",
-    "rankings": "{ national, position, state } — composite ranks (null where unknown)",
+    "county": "County (PG, Montgomery, Fairfax, etc.) — powers the DMV map later",
+    "heightInches": "Height in inches",
+    "weightLbs": "Weight in lbs",
+    "wingspanInches": "Wingspan in inches (null if unmeasured)",
+    "stars": "Star rating 3-5 (null if unrated)",
+    "rankings": "{ national, position, state }",
     "aau": "AAU / grassroots program",
     "status": "uncommitted | committed | signed",
     "commitment": "Committed college (null if uncommitted)",
-    "offers": "Array of college names with offers out",
-    "traits": "Array of { name, grade (1-10), note } — scout grades",
-    "summary": "Free-text scouting synopsis",
-    "stats": "{ ppg, rpg, apg, spg, bpg, fgPct, threePct, ftPct } — season averages"
+    "offers": "Array of college names",
+    "traits": "Array of { name, grade (1-10), note }",
+    "summary": "Scouting synopsis",
+    "statLines": "Array of stat sets by context (HS Season / Summer (AAU) / Fall League). Each: { context, season, team, league, gp, stats: { ppg, rpg, apg, spg, bpg, fgPct, threePct, ftPct } }"
   },
   "prospects": [
     {
@@ -29,8 +31,10 @@
       "school": "DeMatha Catholic",
       "city": "Hyattsville",
       "state": "MD",
+      "county": "Prince George's",
       "heightInches": 74,
       "weightLbs": 175,
+      "wingspanInches": 76,
       "stars": 4,
       "rankings": { "national": 38, "position": 6, "state": 2 },
       "aau": "Team Takeover",
@@ -46,7 +50,32 @@
         { "name": "Feel / IQ", "grade": 8, "note": "Controls tempo, rarely sped up." }
       ],
       "summary": "[SAMPLE DATA] Lead guard with WCAC-tested poise. Best in pick-and-roll, projects as a high-major starter if the jumper holds up against length.",
-      "stats": { "ppg": 18.4, "rpg": 4.1, "apg": 6.2, "spg": 1.8, "bpg": 0.2, "fgPct": 47.1, "threePct": 36.4, "ftPct": 80.2 }
+      "statLines": [
+        {
+          "context": "HS Season",
+          "season": "2025-26",
+          "team": "DeMatha Catholic",
+          "league": "WCAC",
+          "gp": 28,
+          "stats": { "ppg": 18.4, "rpg": 4.1, "apg": 6.2, "spg": 1.8, "bpg": 0.2, "fgPct": 47.1, "threePct": 36.4, "ftPct": 80.2 }
+        },
+        {
+          "context": "Summer (AAU)",
+          "season": "2025",
+          "team": "Team Takeover",
+          "league": "Nike EYBL",
+          "gp": 21,
+          "stats": { "ppg": 16.9, "rpg": 3.6, "apg": 7.1, "spg": 2.0, "bpg": 0.1, "fgPct": 44.8, "threePct": 34.0, "ftPct": 78.5 }
+        },
+        {
+          "context": "Fall League",
+          "season": "2025",
+          "team": "DMV Live Fall",
+          "league": "Fall Showcase",
+          "gp": 9,
+          "stats": { "ppg": 20.1, "rpg": 4.4, "apg": 6.8, "spg": 1.6, "bpg": 0.3, "fgPct": 49.2, "threePct": 38.1, "ftPct": 82.0 }
+        }
+      ]
     },
     {
       "id": "samplewing",
@@ -56,8 +85,10 @@
       "school": "Gonzaga College HS",
       "city": "Washington",
       "state": "DC",
+      "county": "District of Columbia",
       "heightInches": 79,
       "weightLbs": 195,
+      "wingspanInches": 82,
       "stars": 5,
       "rankings": { "national": 9, "position": 2, "state": 1 },
       "aau": "Team Durant",
@@ -73,7 +104,24 @@
         { "name": "Feel / IQ", "grade": 7, "note": "Reads improving; can over-hunt his shot." }
       ],
       "summary": "[SAMPLE DATA] Five-star wing and the headliner of the DMV's 2027 class. Two-way upside with a rare size-and-skill blend. National recruitment.",
-      "stats": { "ppg": 22.7, "rpg": 7.3, "apg": 2.9, "spg": 2.1, "bpg": 1.4, "fgPct": 52.8, "threePct": 38.9, "ftPct": 76.5 }
+      "statLines": [
+        {
+          "context": "HS Season",
+          "season": "2025-26",
+          "team": "Gonzaga College HS",
+          "league": "WCAC",
+          "gp": 30,
+          "stats": { "ppg": 22.7, "rpg": 7.3, "apg": 2.9, "spg": 2.1, "bpg": 1.4, "fgPct": 52.8, "threePct": 38.9, "ftPct": 76.5 }
+        },
+        {
+          "context": "Summer (AAU)",
+          "season": "2025",
+          "team": "Team Durant",
+          "league": "Nike EYBL",
+          "gp": 18,
+          "stats": { "ppg": 24.4, "rpg": 8.0, "apg": 3.1, "spg": 1.9, "bpg": 1.6, "fgPct": 50.1, "threePct": 36.2, "ftPct": 74.8 }
+        }
+      ]
     },
     {
       "id": "samplebig",
@@ -83,8 +131,10 @@
       "school": "Paul VI Catholic",
       "city": "Chantilly",
       "state": "VA",
+      "county": "Fairfax",
       "heightInches": 82,
       "weightLbs": 235,
+      "wingspanInches": 87,
       "stars": 4,
       "rankings": { "national": 51, "position": 7, "state": 3 },
       "aau": "Team Takeover",
@@ -100,7 +150,16 @@
         { "name": "Feel / IQ", "grade": 7, "note": "Good passer out of the post." }
       ],
       "summary": "[SAMPLE DATA] Committed to Virginia. Defensive anchor with lob-threat finishing. Offensive game is rim-bound but the rim protection translates immediately.",
-      "stats": { "ppg": 13.1, "rpg": 11.8, "apg": 1.6, "spg": 0.6, "bpg": 3.9, "fgPct": 64.2, "threePct": 0.0, "ftPct": 58.3 }
+      "statLines": [
+        {
+          "context": "HS Season",
+          "season": "2025-26",
+          "team": "Paul VI Catholic",
+          "league": "WCAC",
+          "gp": 29,
+          "stats": { "ppg": 13.1, "rpg": 11.8, "apg": 1.6, "spg": 0.6, "bpg": 3.9, "fgPct": 64.2, "threePct": 0.0, "ftPct": 58.3 }
+        }
+      ]
     }
   ]
 }

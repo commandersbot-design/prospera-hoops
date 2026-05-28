@@ -228,7 +228,9 @@ function Profile({ prospect, onBack }) {
             <Stars count={p.stars} />
           </div>
           <div style={{ ...mono, fontSize: 11, color: T.textDim, letterSpacing: "0.08em", marginTop: 8 }}>
-            {p.position} · {fmtHeight(p.heightInches)} · {p.weightLbs} lb · Class of {p.gradYear}
+            {p.position} · {fmtHeight(p.heightInches)}
+            {p.wingspanInches ? ` · ${fmtHeight(p.wingspanInches)} ws` : ""}
+            {p.weightLbs ? ` · ${p.weightLbs} lb` : ""} · Class of {p.gradYear}
           </div>
           <div style={{ ...mono, fontSize: 11, color: T.textMute, letterSpacing: "0.06em", marginTop: 4 }}>
             {p.school} · {STATE_LABELS[p.state] || p.state}{p.aau ? ` · ${p.aau}` : ""}
@@ -282,7 +284,7 @@ function RankStat({ label, value }) {
 }
 
 function OverviewTab({ p }) {
-  const s = p.stats || {};
+  const statLines = Array.isArray(p.statLines) ? p.statLines : [];
   return (
     <div style={{ display: "grid", gap: 18 }}>
       {/* Summary */}
@@ -312,19 +314,14 @@ function OverviewTab({ p }) {
         </div>
       )}
 
-      {/* Stats */}
-      {Object.keys(s).length > 0 && (
+      {/* Stats — one section per context (HS Season / Summer (AAU) / Fall League) */}
+      {statLines.length > 0 && (
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
-          <SectionLabel>Season Averages</SectionLabel>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(70px, 1fr))", gap: 12, marginTop: 14 }}>
-            <StatCell label="PPG" value={s.ppg} />
-            <StatCell label="RPG" value={s.rpg} />
-            <StatCell label="APG" value={s.apg} />
-            <StatCell label="SPG" value={s.spg} />
-            <StatCell label="BPG" value={s.bpg} />
-            <StatCell label="FG%" value={s.fgPct} />
-            <StatCell label="3P%" value={s.threePct} />
-            <StatCell label="FT%" value={s.ftPct} />
+          <SectionLabel>Stats by Context</SectionLabel>
+          <div style={{ display: "grid", gap: 18, marginTop: 14 }}>
+            {statLines.map((line, i) => (
+              <StatLineBlock key={`${line.context}-${line.season}-${i}`} line={line} />
+            ))}
           </div>
         </div>
       )}
@@ -371,6 +368,34 @@ function StatCell({ label, value }) {
     <div style={{ textAlign: "center", background: T.surface2, border: `1px solid ${T.borderSoft}`, padding: "10px 6px" }}>
       <div style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: T.textMute, textTransform: "uppercase" }}>{label}</div>
       <div style={{ fontSize: 18, color: T.text, fontWeight: 700, marginTop: 4 }}>{value != null ? value : "—"}</div>
+    </div>
+  );
+}
+
+// One stat context (HS Season / Summer (AAU) / Fall League) — a labeled
+// header (team · league · GP) above the per-game grid.
+function StatLineBlock({ line }) {
+  const s = line.stats || {};
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+        <span style={{ ...mono, fontSize: 11, letterSpacing: "0.1em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>
+          {line.context}
+        </span>
+        <span style={{ ...mono, fontSize: 10, letterSpacing: "0.06em", color: T.textMute }}>
+          {[line.season, line.team, line.league, line.gp != null ? `${line.gp} GP` : null].filter(Boolean).join(" · ")}
+        </span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(66px, 1fr))", gap: 8 }}>
+        <StatCell label="PPG" value={s.ppg} />
+        <StatCell label="RPG" value={s.rpg} />
+        <StatCell label="APG" value={s.apg} />
+        <StatCell label="SPG" value={s.spg} />
+        <StatCell label="BPG" value={s.bpg} />
+        <StatCell label="FG%" value={s.fgPct} />
+        <StatCell label="3P%" value={s.threePct} />
+        <StatCell label="FT%" value={s.ftPct} />
+      </div>
     </div>
   );
 }
