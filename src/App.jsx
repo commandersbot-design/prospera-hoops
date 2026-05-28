@@ -326,6 +326,170 @@ function Segmented({ value, onChange, options }) {
 }
 
 // ---------------------------------------------------------------------------
+// PROSPECTS — the full searchable database (complements the "coming soon"
+// ranked Big Board). State is resolved from the school's geocoded location
+// (most prospects carry no explicit state), grad years are normalized, and
+// positions are bucketed for filtering. Default sort is summer PPG, since
+// authored rankings don't exist yet.
+// ---------------------------------------------------------------------------
+function prospectState(p) {
+  return p.state || SCHOOL_LOCATIONS[p.school]?.state || null;
+}
+
+function normGradYear(y) {
+  if (y == null || y === "") return null;
+  const n = Number(y);
+  if (Number.isNaN(n)) return null;
+  return n < 100 ? 2000 + n : n; // "27" → 2027
+}
+
+function posBucket(pos) {
+  const primary = String(pos || "").split("/")[0].trim().toUpperCase();
+  if (!primary) return null;
+  if (["PG", "SG", "G", "CG", "LG", "GUARD"].includes(primary)) return "G";
+  if (["W", "WF", "WING"].includes(primary)) return "W";
+  if (primary === "C") return "C";
+  if (["F", "SF", "PF", "FF", "FORWARD"].includes(primary)) return "F";
+  const c = primary[0];
+  if (c === "G") return "G";
+  if (c === "W") return "W";
+  if (c === "C") return "C";
+  if (c === "F" || c === "P" || c === "S") return "F";
+  return null;
+}
+
+const POS_LABEL = { G: "Guards", W: "Wings", F: "Forwards", C: "Centers" };
+
+function ProspectsDirectory({ onOpen }) {
+  const [q, setQ] = useState("");
+  const [stateF, setStateF] = useState("ALL");
+  const [classF, setClassF] = useState("ALL");
+  const [posF, setPosF] = useState("ALL");
+  const [sort, setSort] = useState("ppg"); // "ppg" | "name"
+  const [limit, setLimit] = useState(60);
+
+  // Enrich every prospect once: a single pass over Capitol Hoops builds a
+  // name→best-summer-PPG index (avoids the O(prospects × players) scan that
+  // calling capitolHoopsLinesFor per row would cost across 865 prospects).
+  const rows = useMemo(() => {
+    const summer = {};
+    for (const t of Object.values(CH_TEAMS)) {
+      for (const pl of t.players || []) {
+        const k = nameKey(pl.name);
+        const ppg = pl.stats?.ppg;
+        if (ppg != null && (summer[k] == null || ppg > summer[k])) summer[k] = ppg;
+      }
+    }
+    return PROSPECTS.map((p) => {
+      const authored = Array.isArray(p.statLines)
+        ? p.statLines.find((l) => /hs/i.test(l.context || "")) || p.statLines[0]
+        : null;
+      const ppg = authored?.stats?.ppg != null ? authored.stats.ppg : summer[nameKey(p.name)] ?? null;
+      return { p, ppg, st: prospectState(p), yr: normGradYear(p.gradYear), bucket: posBucket(p.position) };
+    });
+  }, []);
+
+  const classYears = useMemo(() => {
+    const counts = {};
+    for (const r of rows) if (r.yr) counts[r.yr] = (counts[r.yr] || 0) + 1;
+    return Object.keys(counts).map(Number).filter((y) => counts[y] >= 3).sort();
+  }, [rows]);
+
+  const filtered = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    const out = rows.filter((r) => {
+      if (stateF !== "ALL" && r.st !== stateF) return false;
+      if (classF !== "ALL" && String(r.yr) !== classF) return false;
+      if (posF !== "ALL" && r.bucket !== posF) return false;
+      if (k && !`${r.p.name} ${r.p.school || ""} ${r.p.position || ""}`.toLowerCase().includes(k)) return false;
+      return true;
+    });
+    out.sort(
+      sort === "name"
+        ? (a, b) => a.p.name.localeCompare(b.p.name)
+        : (a, b) => (b.ppg ?? -1) - (a.ppg ?? -1) || a.p.name.localeCompare(b.p.name)
+    );
+    return out;
+  }, [rows, q, stateF, classF, posF, sort]);
+
+  useEffect(() => { setLimit(60); }, [q, stateF, classF, posF, sort]);
+
+  const shown = filtered.slice(0, limit);
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div>
+        <SectionLabel>Prospects</SectionLabel>
+        <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
+          The full DMV database — every tracked player across {PROSPECTS.length} profiles. Search and
+          filter by state, class, or position; tap any name to open their profile. Ranked Big Board coming soon.
+        </p>
+      </div>
+
+      {/* Filter bar */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search players or schools…"
+          style={{ flex: "1 1 240px", background: T.surface2, border: `1px solid ${T.border}`, color: T.text, padding: "10px 12px", fontSize: 13, outline: "none" }}
+        />
+        <Segmented value={stateF} onChange={setStateF} options={[["ALL", "All"], ["DC", "D.C."], ["MD", "MD"], ["VA", "VA"]]} />
+        <Segmented value={posF} onChange={setPosF} options={[["ALL", "All Pos"], ["G", "G"], ["W", "W"], ["F", "F"], ["C", "C"]]} />
+        <Segmented value={classF} onChange={setClassF} options={[["ALL", "All Classes"], ...classYears.map((y) => [String(y), `'${String(y).slice(2)}`])]} />
+        <Segmented value={sort} onChange={setSort} options={[["ppg", "PPG"], ["name", "A–Z"]]} />
+      </div>
+
+      <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>
+        {filtered.length} prospect{filtered.length === 1 ? "" : "s"}
+      </div>
+
+      {/* Cards */}
+      <div style={{ display: "grid", gap: 8 }}>
+        {shown.map(({ p, ppg, st }) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => onOpen(p.id)}
+            style={{ display: "grid", gridTemplateColumns: "44px 1fr auto", gap: 14, alignItems: "center", textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 16px", cursor: "pointer", color: T.text }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+          >
+            <Avatar name={p.name} headshot={p.headshot} size={40} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{p.name}</div>
+              <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {p.position || "—"} · {p.school}{st ? ` · ${st}` : ""}{p.gradYear ? ` · '${String(normGradYear(p.gradYear)).slice(2)}` : ""}
+              </div>
+            </div>
+            <div style={{ display: "grid", gap: 4, justifyItems: "end" }}>
+              <span style={{ ...mono, fontSize: 13, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                {ppg != null ? `${perGame(ppg)} PPG` : "—"}
+              </span>
+              {(p.status === "committed" || p.status === "signed") && p.commitment ? (
+                <span style={{ ...mono, fontSize: 9, letterSpacing: "0.08em", color: T.positive }}>→ {p.commitment}</span>
+              ) : null}
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {filtered.length > limit ? (
+        <button
+          type="button"
+          onClick={() => setLimit((l) => l + 60)}
+          style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: T.signal, background: "transparent", border: `1px solid ${T.border}`, padding: "12px", cursor: "pointer", justifySelf: "center", width: "100%" }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}
+        >
+          Show more · {filtered.length - limit} remaining
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // PROFILE — hero + tabs
 // ---------------------------------------------------------------------------
 const PROFILE_TABS = ["Overview", "Film"];
@@ -1344,6 +1508,7 @@ function NewsTicker({ onOpen }) {
 // ---------------------------------------------------------------------------
 const NAV = [
   { key: "board", label: "Big Board" },
+  { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Summer League" },
   { key: "schools", label: "Schools" },
   { key: "map", label: "Map" },
@@ -1431,6 +1596,8 @@ export default function App() {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
         {open ? (
           <Profile prospect={open} onBack={() => setOpenId(null)} />
+        ) : view === "prospects" ? (
+          <ProspectsDirectory onOpen={setOpenId} />
         ) : view === "summer" ? (
           <SummerLeague onOpenProfile={setOpenId} />
         ) : view === "schools" ? (
