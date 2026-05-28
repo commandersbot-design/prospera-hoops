@@ -1,8 +1,13 @@
-import React, { useMemo, useState } from "react";
-import PROSPECTS_DATA from "./data/prospects.json";
-import CAPITOL_HOOPS from "./data/capitolHoops.json";
+import React, { useEffect, useMemo, useState } from "react";
 import NEWS_DATA from "./data/news.json";
 import ProspectFilm from "./components/ProspectFilm";
+
+// Big datasets (prospects + Capitol Hoops) are fetched at runtime from
+// /data/*.json (served out of public/) instead of bundled into the JS, to
+// keep the app bundle small as the database grows. initData() populates the
+// module-level stores below before the app renders (the App component gates
+// render on a successful load), so every component can keep reading PROSPECTS
+// / CH_TEAMS / SCHOOLS synchronously without prop-drilling or context.
 
 // ---------------------------------------------------------------------------
 // Design tokens — read the CSS custom properties so the whole app stays in
@@ -29,7 +34,9 @@ const mono = {
   fontFamily: 'ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace',
 };
 
-const PROSPECTS = PROSPECTS_DATA.prospects || [];
+// Module-level data stores — populated by initData() after the runtime fetch,
+// before any component renders. Declared with `let` so they can be replaced.
+let PROSPECTS = [];
 
 const STATE_LABELS = { DC: "D.C.", MD: "Maryland", VA: "Virginia" };
 
@@ -39,17 +46,13 @@ const STATE_LABELS = { DC: "D.C.", MD: "Maryland", VA: "Virginia" };
 //   - capitolHoopsLinesFor(name) → summer stat lines to merge into a profile
 //   - PROSPECT_BY_NAMEKEY        → does a summer player have a tracked profile?
 // ---------------------------------------------------------------------------
-const CH_TEAMS = CAPITOL_HOOPS.teams || {};
+let CH_TEAMS = {};
 
 function nameKey(name) {
   return String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-const PROSPECT_BY_NAMEKEY = (() => {
-  const m = {};
-  for (const p of PROSPECTS) m[nameKey(p.name)] = p;
-  return m;
-})();
+let PROSPECT_BY_NAMEKEY = {};
 
 // Derive the high-school name from a Capitol Hoops team name (same rule the
 // promote script uses): "Bengals (Blake)" → "Blake"; "Bullis" → "Bullis".
@@ -60,19 +63,28 @@ function deriveSchool(teamName) {
 
 // Schools, grouped from the prospect list, with coach pulled from the matching
 // Capitol Hoops team where derivable.
-const SCHOOLS = (() => {
-  const map = {};
+let SCHOOLS = {};
+
+// Populate the module-level stores from the fetched datasets. Called once,
+// before the app renders.
+function initData(prospectsData, capitolHoops) {
+  PROSPECTS = (prospectsData && prospectsData.prospects) || [];
+  CH_TEAMS = (capitolHoops && capitolHoops.teams) || {};
+
+  PROSPECT_BY_NAMEKEY = {};
+  for (const p of PROSPECTS) PROSPECT_BY_NAMEKEY[nameKey(p.name)] = p;
+
+  SCHOOLS = {};
   for (const p of PROSPECTS) {
     const s = p.school || "Unknown";
-    if (!map[s]) map[s] = { name: s, state: p.state || null, prospects: [] };
-    map[s].prospects.push(p);
+    if (!SCHOOLS[s]) SCHOOLS[s] = { name: s, state: p.state || null, prospects: [] };
+    SCHOOLS[s].prospects.push(p);
   }
   for (const t of Object.values(CH_TEAMS)) {
     const s = deriveSchool(t.name);
-    if (map[s]) { map[s].coach = t.headCoach || null; map[s].teamName = t.name; }
+    if (SCHOOLS[s]) { SCHOOLS[s].coach = t.headCoach || null; SCHOOLS[s].teamName = t.name; }
   }
-  return map;
-})();
+}
 
 // Summer stat lines for a prospect, pulled from any Capitol Hoops team they
 // appear on (by name match). Returned in statLine shape so the profile's
@@ -1227,13 +1239,46 @@ const NAV = [
   { key: "commitments", label: "Commitments" },
 ];
 
+function LoadingScreen({ error }) {
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14 }}>
+      <div style={{ ...mono, fontSize: 12, letterSpacing: "0.3em", color: T.accent, textTransform: "uppercase", fontWeight: 800 }}>
+        Prospera Preps
+      </div>
+      {error ? (
+        <div style={{ ...mono, fontSize: 11, color: T.danger, letterSpacing: "0.06em", maxWidth: 360, textAlign: "center", lineHeight: 1.6 }}>
+          Couldn't load the database.<br />{error}
+        </div>
+      ) : (
+        <div style={{ ...mono, fontSize: 9, letterSpacing: "0.24em", color: T.textMute, textTransform: "uppercase" }}>
+          Loading DMV database…
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/data/prospects.json").then((r) => { if (!r.ok) throw new Error(`prospects ${r.status}`); return r.json(); }),
+      fetch("/data/capitolHoops.json").then((r) => { if (!r.ok) throw new Error(`capitolHoops ${r.status}`); return r.json(); }),
+    ])
+      .then(([prospects, ch]) => { initData(prospects, ch); setReady(true); })
+      .catch((e) => setError(e.message));
+  }, []);
+
   // Default to Summer League — the Big Board is a "coming soon" placeholder
   // until rankings are authored, so we land users on real content.
   const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
-  const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
 
+  if (!ready) return <LoadingScreen error={error} />;
+
+  const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
   const goView = (v) => { setOpenId(null); setView(v); };
 
   return (

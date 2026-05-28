@@ -138,7 +138,7 @@ async function run() {
     _scrapedAt: new Date().toISOString(),
     teams,
   };
-  const outPath = path.join(process.cwd(), "src", "data", "capitolHoops.json");
+  const outPath = path.join(process.cwd(), "public", "data", "capitolHoops.json");
   fs.writeFileSync(outPath, JSON.stringify(out, null, 2) + "\n");
   const totalPlayers = Object.values(teams).reduce((s, t) => s + t.players.length, 0);
   console.log(`\nWrote ${Object.keys(teams).length} teams, ${totalPlayers} players → src/data/capitolHoops.json`);

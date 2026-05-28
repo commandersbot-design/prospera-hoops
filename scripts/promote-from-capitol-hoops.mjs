@@ -20,8 +20,8 @@ import fs from "fs";
 import path from "path";
 
 const root = process.cwd();
-const prospectsPath = path.join(root, "src", "data", "prospects.json");
-const chPath = path.join(root, "src", "data", "capitolHoops.json");
+const prospectsPath = path.join(root, "public", "data", "prospects.json");
+const chPath = path.join(root, "public", "data", "capitolHoops.json");
 
 // Capitol Hoops team slug → the player's actual high school + location.
 const TEAM_LOCATION = {
