@@ -54,11 +54,26 @@ function nameKey(name) {
 
 let PROSPECT_BY_NAMEKEY = {};
 
-// Derive the high-school name from a Capitol Hoops team name (same rule the
-// promote script uses): "Bengals (Blake)" → "Blake"; "Bullis" → "Bullis".
-function deriveSchool(teamName) {
-  const m = String(teamName || "").match(/\(([^)]+)\)/);
-  return m ? m[1].trim() : String(teamName || "").trim();
+// Canonical high-school name for a Capitol Hoops team (must match the
+// cleanup-school-names script that writes prospect.school):
+//   - per-slug overrides for fuller/corrected names
+//   - "School (VA)" → "School" (state qualifier, not a mascot)
+//   - "Mascot (School)" → "School"
+//   - plain "School" → "School"
+const SCHOOL_CANON = {
+  "dematha": "DeMatha Catholic",
+  "hawks-hayfield": "Hayfield Secondary",
+  "cardozo": "Cardozo",
+};
+function canonicalSchool(slug, teamName) {
+  if (SCHOOL_CANON[slug]) return SCHOOL_CANON[slug];
+  const m = String(teamName || "").match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  if (m) {
+    const before = m[1].trim(), paren = m[2].trim();
+    if (/^(VA|MD|DC)$/i.test(paren)) return before;
+    return paren;
+  }
+  return String(teamName || "").trim();
 }
 
 // Schools, grouped from the prospect list, with coach pulled from the matching
@@ -82,8 +97,8 @@ function initData(prospectsData, capitolHoops, schoolLocations) {
     if (!SCHOOLS[s]) SCHOOLS[s] = { name: s, state: p.state || null, prospects: [] };
     SCHOOLS[s].prospects.push(p);
   }
-  for (const t of Object.values(CH_TEAMS)) {
-    const s = deriveSchool(t.name);
+  for (const [slug, t] of Object.entries(CH_TEAMS)) {
+    const s = canonicalSchool(slug, t.name);
     if (SCHOOLS[s]) { SCHOOLS[s].coach = t.headCoach || null; SCHOOLS[s].teamName = t.name; }
   }
   // Backfill state on schools from geocoded locations where missing.
@@ -1305,11 +1320,11 @@ function buildTickerItems() {
   }
   // Auto: top summer performers (derived from Capitol Hoops, 2+ GP).
   const all = [];
-  for (const t of Object.values(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, team: t.name });
+  for (const [slug, t] of Object.entries(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, school: canonicalSchool(slug, t.name) });
   const top = all.filter((p) => (p.stats?.gp ?? 0) >= 2).sort((a, b) => b.stats.ppg - a.stats.ppg).slice(0, 8);
   for (const pl of top) {
     const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
-    items.push({ tag: "SUMMER", prospectId: tracked?.id || null, text: `${pl.name} — ${perGame(pl.stats.ppg)} PPG, ${deriveSchool(pl.team)} (Capitol Hoops)` });
+    items.push({ tag: "SUMMER", prospectId: tracked?.id || null, text: `${pl.name} — ${perGame(pl.stats.ppg)} PPG, ${pl.school} (Capitol Hoops)` });
   }
   return items;
 }

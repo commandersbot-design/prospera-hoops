@@ -24,7 +24,9 @@ const STATE_CODE = { Virginia: "VA", Maryland: "MD", "District of Columbia": "DC
 // Approximate but accurate-enough coordinates for known DMV schools.
 const OVERRIDES = {
   "Concordia Prep":            { lat: 39.398, lng: -76.601, state: "MD", county: "Baltimore" },
-  "DOZA":                      { lat: 38.922, lng: -77.027, state: "DC", county: null },          // Cardozo
+  "Cardozo":                   { lat: 38.922, lng: -77.027, state: "DC", county: null },
+  "Potomac":                   { lat: 38.594, lng: -77.323, state: "VA", county: "Prince William" }, // Potomac Sr, Dumfries
+  "Riverside":                 { lat: 39.078, lng: -77.514, state: "VA", county: "Loudoun" },         // Riverside, Lansdowne
   "John Handley":              { lat: 39.173, lng: -78.175, state: "VA", county: "Winchester" },
   "Loyola Blakefield":         { lat: 39.411, lng: -76.632, state: "MD", county: "Baltimore" },
   "RM":                        { lat: 39.090, lng: -77.153, state: "MD", county: "Montgomery" },  // Richard Montgomery

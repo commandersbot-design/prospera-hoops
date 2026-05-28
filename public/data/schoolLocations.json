@@ -364,5 +364,23 @@
     "lng": -77.118,
     "state": "MD",
     "county": "Montgomery"
+  },
+  "Cardozo": {
+    "lat": 38.922,
+    "lng": -77.027,
+    "state": "DC",
+    "county": null
+  },
+  "Potomac": {
+    "lat": 38.594,
+    "lng": -77.323,
+    "state": "VA",
+    "county": "Prince William"
+  },
+  "Riverside": {
+    "lat": 39.078,
+    "lng": -77.514,
+    "state": "VA",
+    "county": "Loudoun"
   }
 }
