@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import "leaflet/dist/leaflet.css";
 import NEWS_DATA from "./data/news.json";
 import ProspectFilm from "./components/ProspectFilm";
 
@@ -1086,7 +1087,7 @@ const MAP_STATE_COLOR = { DC: "var(--prospera-signal)", MD: "var(--prospera-blue
 
 function DmvMap({ onOpenProfile }) {
   const [openSchool, setOpenSchool] = useState(null);
-  const [hover, setHover] = useState(null);
+  const containerRef = useRef(null);
 
   const points = useMemo(() => {
     const out = [];
@@ -1098,21 +1099,46 @@ function DmvMap({ onOpenProfile }) {
     return out;
   }, []);
 
+  // Build a real Leaflet map with dark basemap tiles. Leaflet is dynamically
+  // imported so it stays out of the main bundle (loads only on this tab).
+  useEffect(() => {
+    if (openSchool || !containerRef.current) return undefined;
+    let map;
+    let cancelled = false;
+    import("leaflet").then(({ default: L }) => {
+      if (cancelled || !containerRef.current) return;
+      map = L.map(containerRef.current, { scrollWheelZoom: true, attributionControl: true });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        subdomains: "abcd",
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+      }).addTo(map);
+
+      const cssColor = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || v;
+      const palette = { DC: cssColor("--prospera-signal"), MD: cssColor("--prospera-blue"), VA: cssColor("--prospera-positive") };
+
+      const latlngs = [];
+      for (const p of points) {
+        const color = palette[p.state] || "#94A3B8";
+        const marker = L.circleMarker([p.lat, p.lng], {
+          radius: 5 + Math.sqrt(p.count) * 2.2,
+          color, weight: 1.5, fillColor: color, fillOpacity: 0.5,
+        }).addTo(map);
+        marker.bindTooltip(`${p.name} · ${p.count} player${p.count === 1 ? "" : "s"}`, { direction: "top" });
+        marker.on("mouseover", () => marker.setStyle({ fillOpacity: 0.85, weight: 2.5 }));
+        marker.on("mouseout", () => marker.setStyle({ fillOpacity: 0.5, weight: 1.5 }));
+        marker.on("click", () => setOpenSchool(p.name));
+        latlngs.push([p.lat, p.lng]);
+      }
+      if (latlngs.length) map.fitBounds(L.latLngBounds(latlngs).pad(0.08));
+      else map.setView([38.9, -77.0], 9);
+    });
+    return () => { cancelled = true; if (map) map.remove(); };
+  }, [openSchool, points]);
+
   if (openSchool && SCHOOLS[openSchool]) {
     return <SchoolDetail school={SCHOOLS[openSchool]} onBack={() => setOpenSchool(null)} onOpenProfile={onOpenProfile} />;
   }
-
-  const W = 820, H = 560, pad = 46;
-  const lats = points.map((p) => p.lat), lngs = points.map((p) => p.lng);
-  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
-  const project = (lat, lng) => [
-    pad + ((lng - minLng) / (maxLng - minLng || 1)) * (W - 2 * pad),
-    pad + ((maxLat - lat) / (maxLat - minLat || 1)) * (H - 2 * pad),
-  ];
-  const radius = (count) => 5 + Math.sqrt(count) * 2.2;
-  // draw biggest first so small markers sit on top and stay clickable
-  const ordered = [...points].sort((a, b) => b.count - a.count);
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
@@ -1120,7 +1146,7 @@ function DmvMap({ onOpenProfile }) {
         <div>
           <SectionLabel>DMV Talent Map</SectionLabel>
           <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 620 }}>
-            Every school in the database, plotted by location. Marker size = roster count. Tap a school for its page.
+            Every school in the database, plotted on the map. Marker size = roster count. Click a school for its page.
           </p>
         </div>
         <div style={{ display: "flex", gap: 14 }}>
@@ -1133,48 +1159,13 @@ function DmvMap({ onOpenProfile }) {
         </div>
       </div>
 
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 8, position: "relative" }}>
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }}>
-          {/* faint dot grid backdrop */}
-          <defs>
-            <pattern id="dmvgrid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="var(--prospera-grid)" />
-            </pattern>
-          </defs>
-          <rect x="0" y="0" width={W} height={H} fill="url(#dmvgrid)" />
-          {ordered.map((p) => {
-            const [x, y] = project(p.lat, p.lng);
-            const color = MAP_STATE_COLOR[p.state] || T.textMute;
-            const isHover = hover === p.name;
-            return (
-              <g key={p.name} style={{ cursor: "pointer" }}
-                 onMouseEnter={() => setHover(p.name)} onMouseLeave={() => setHover(null)}
-                 onClick={() => setOpenSchool(p.name)}>
-                <circle cx={x} cy={y} r={radius(p.count)} fill={color} fillOpacity={isHover ? 0.95 : 0.55} stroke={color} strokeWidth={isHover ? 2 : 1} />
-              </g>
-            );
-          })}
-          {/* hover label on top */}
-          {hover && (() => {
-            const p = points.find((q) => q.name === hover);
-            if (!p) return null;
-            const [x, y] = project(p.lat, p.lng);
-            const label = `${p.name} · ${p.count}`;
-            const w = label.length * 6.2 + 16;
-            const lx = Math.min(Math.max(x - w / 2, 4), W - w - 4);
-            const ly = y - radius(p.count) - 26;
-            return (
-              <g pointerEvents="none">
-                <rect x={lx} y={ly} width={w} height={20} fill="var(--prospera-bg)" stroke={MAP_STATE_COLOR[p.state] || T.textMute} />
-                <text x={lx + w / 2} y={ly + 14} textAnchor="middle" fontSize="11" fill="var(--prospera-text)" style={mono}>{label}</text>
-              </g>
-            );
-          })()}
-        </svg>
-      </div>
+      <div
+        ref={containerRef}
+        style={{ height: 600, width: "100%", background: T.surface, border: `1px solid ${T.border}` }}
+      />
 
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
-        {points.length} schools mapped · coordinates via OpenStreetMap · relative positions approximate
+        {points.length} schools mapped · tiles &copy; CARTO / OpenStreetMap · scroll to zoom, drag to pan
       </div>
     </div>
   );
