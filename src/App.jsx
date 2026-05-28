@@ -579,21 +579,29 @@ const SUMMER_STAT_COLS = [
 
 function SummerLeague({ onOpenProfile }) {
   const [teamSlug, setTeamSlug] = useState(null);
+  const [mode, setMode] = useState("teams"); // "teams" | "leaders"
   const team = teamSlug ? CH_TEAMS[teamSlug] : null;
 
-  if (!team) {
-    const slugs = Object.keys(CH_TEAMS);
-    return (
-      <div style={{ display: "grid", gap: 18 }}>
+  if (team) {
+    return <SummerTeam team={team} onBack={() => setTeamSlug(null)} onOpenProfile={onOpenProfile} />;
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, flexWrap: "wrap" }}>
         <div>
           <SectionLabel>Capitol Hoops Summer League · 2026</SectionLabel>
           <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
-            Live summer-league rosters and box-score averages across the DMV. Small samples —
-            games played leads every line. Tap a team to see its roster.
+            Live summer-league rosters, box-score averages, and statistical leaders across the DMV.
+            Small samples — games played leads every line.
           </p>
         </div>
+        <Segmented value={mode} onChange={setMode} options={[["teams", "Teams"], ["leaders", "Leaders"]]} />
+      </div>
+
+      {mode === "teams" ? (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
-          {slugs.map((slug) => {
+          {Object.keys(CH_TEAMS).map((slug) => {
             const t = CH_TEAMS[slug];
             return (
               <button
@@ -612,11 +620,94 @@ function SummerLeague({ onOpenProfile }) {
             );
           })}
         </div>
-      </div>
-    );
-  }
+      ) : (
+        <SummerLeaders onOpenProfile={onOpenProfile} />
+      )}
+    </div>
+  );
+}
 
-  return <SummerTeam team={team} onBack={() => setTeamSlug(null)} onOpenProfile={onOpenProfile} />;
+// Statistical leaders across all Capitol Hoops players. One leaderboard card
+// per stat. GP shown on every line; percentage boards require 2+ games so a
+// single make doesn't top the board.
+const LEADER_CATS = [
+  { key: "ppg",      label: "Points",   minGp: 1, unit: "" },
+  { key: "rpg",      label: "Rebounds", minGp: 1, unit: "" },
+  { key: "apg",      label: "Assists",  minGp: 1, unit: "" },
+  { key: "spg",      label: "Steals",   minGp: 1, unit: "" },
+  { key: "bpg",      label: "Blocks",   minGp: 1, unit: "" },
+  { key: "fgPct",    label: "FG%",      minGp: 2, unit: "%" },
+  { key: "threePct", label: "3P%",      minGp: 2, unit: "%" },
+  { key: "ftPct",    label: "FT%",      minGp: 2, unit: "%" },
+];
+
+function SummerLeaders({ onOpenProfile }) {
+  const allPlayers = useMemo(() => {
+    const out = [];
+    for (const t of Object.values(CH_TEAMS)) {
+      for (const pl of t.players || []) out.push({ ...pl, teamName: t.name });
+    }
+    return out;
+  }, []);
+
+  return (
+    <div>
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em", marginBottom: 14 }}>
+        Across all {allPlayers.length} players · 2026 Capitol Hoops · GP shown on every line · % boards require 2+ games
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
+        {LEADER_CATS.map((cat) => (
+          <LeaderboardCard key={cat.key} cat={cat} players={allPlayers} onOpenProfile={onOpenProfile} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardCard({ cat, players, onOpenProfile }) {
+  const top = useMemo(() => {
+    return players
+      .filter((p) => (p.stats?.gp ?? 0) >= cat.minGp && (p.stats?.[cat.key] ?? 0) > 0)
+      .sort((a, b) => (b.stats[cat.key] ?? 0) - (a.stats[cat.key] ?? 0))
+      .slice(0, 5);
+  }, [cat, players]);
+
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 16 }}>
+      <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.accent, textTransform: "uppercase", fontWeight: 700, marginBottom: 12 }}>
+        {cat.label} Leaders
+      </div>
+      {top.length === 0 ? (
+        <div style={{ ...mono, fontSize: 11, color: T.textMute }}>No qualifiers</div>
+      ) : (
+        <div style={{ display: "grid", gap: 8 }}>
+          {top.map((p, i) => {
+            const tracked = PROSPECT_BY_NAMEKEY[nameKey(p.name)];
+            return (
+              <div key={p.name + p.teamName} style={{ display: "grid", gridTemplateColumns: "16px 1fr auto", gap: 10, alignItems: "center" }}>
+                <span style={{ ...mono, fontSize: 11, color: i === 0 ? T.accent : T.textMute, fontWeight: i === 0 ? 700 : 400 }}>{i + 1}</span>
+                <div style={{ minWidth: 0 }}>
+                  {tracked ? (
+                    <button type="button" onClick={() => onOpenProfile(tracked.id)} style={{ ...mono, fontSize: 12, color: T.text, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontWeight: 600 }}>
+                      {p.name}
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{p.name}</span>
+                  )}
+                  <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em", marginTop: 1 }}>
+                    {p.teamName} · {p.stats.gp} GP
+                  </div>
+                </div>
+                <span style={{ ...mono, fontSize: 16, color: T.accent, fontWeight: 800 }}>
+                  {p.stats[cat.key]}{cat.unit}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function SummerTeam({ team, onBack, onOpenProfile }) {
