@@ -1,0 +1,93 @@
+/* ProspectMap.module.css — light "recruiting atlas" map module.
+ * Ported from the dropped Next.js package and adapted for the Prospera Preps
+ * Vite app: embeds inside <main> with a fixed height (not full-page), and
+ * colors by STATE (DC / MD / VA) rather than recruiting tier. The deliberately
+ * light theme contrasts the dark scout terminal — maps read clearer on white. */
+
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: min(78vh, 720px);
+  min-height: 560px;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #16202B;
+  background: #F3F5F7;
+  border-radius: 14px;
+  border: 1px solid #E4E7EB;
+}
+
+/* ---------- Sidebar ---------- */
+.panel { display: flex; flex-direction: column; background: #fff; border-right: 1px solid #E4E7EB; min-height: 0; }
+.brand { padding: 18px 20px 14px; border-bottom: 1px solid #E4E7EB; }
+.kicker { font: 600 11px/1 'Inter', system-ui; letter-spacing: .16em; text-transform: uppercase; color: #E0552B; }
+.h1 { font: 800 21px/1.1 'Archivo', 'Inter', system-ui; margin: 7px 0 2px; letter-spacing: -.01em; }
+.sub { font: 400 12.5px/1.4 'Inter', system-ui; color: #5A6672; }
+
+.stats { display: flex; gap: 10px; padding: 13px 20px; border-bottom: 1px solid #E4E7EB; }
+.stat { flex: 1; }
+.statV { font: 700 20px/1 'Archivo', 'Inter', system-ui; font-variant-numeric: tabular-nums; }
+.statL { font: 500 10.5px/1 'Inter', system-ui; color: #5A6672; text-transform: uppercase; letter-spacing: .05em; margin-top: 5px; }
+
+.filters { padding: 13px 20px; border-bottom: 1px solid #E4E7EB; }
+.ftitle { font: 600 11px/1 'Inter', system-ui; letter-spacing: .08em; text-transform: uppercase; color: #5A6672; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { font: 500 12.5px/1 'Inter', system-ui; padding: 7px 12px; border: 1px solid #E4E7EB; border-radius: 999px; background: #fff; color: #16202B; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
+.chip:hover { border-color: #C9CFD6; }
+.chip[aria-pressed="true"] { background: #16202B; color: #fff; border-color: #16202B; }
+.chip[aria-pressed="true"] .dot { outline: 1.5px solid rgba(255,255,255,.5); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+.listwrap { flex: 1; overflow-y: auto; min-height: 0; }
+.listhead { font: 600 11px/1 'Inter', system-ui; letter-spacing: .08em; text-transform: uppercase; color: #5A6672; padding: 14px 20px 8px; position: sticky; top: 0; background: #fff; z-index: 1; }
+.school { display: flex; gap: 12px; align-items: center; padding: 10px 20px; cursor: pointer; border-left: 3px solid transparent; transition: background .12s; }
+.school:hover { background: #F7F9FB; }
+.active { background: #F0F5FA; border-left-color: #16202B; }
+.badge { width: 36px; height: 36px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; font: 700 13px/1 'Archivo', 'Inter', system-ui; color: #fff; }
+.meta { min-width: 0; flex: 1; }
+.nm { font: 600 14px/1.2 'Inter', system-ui; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm { font: 400 12px/1.3 'Inter', system-ui; color: #5A6672; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cnt { font: 700 15px/1 'Archivo', 'Inter', system-ui; color: #5A6672; font-variant-numeric: tabular-nums; }
+
+/* ---------- Map ---------- */
+.mapwrap { position: relative; min-width: 0; }
+.map { position: absolute; inset: 0; background: #EAEFF3; }
+
+.legend { position: absolute; right: 14px; bottom: 18px; z-index: 500; background: rgba(255,255,255,.95); backdrop-filter: blur(6px); border: 1px solid #E4E7EB; border-radius: 12px; padding: 11px 13px; box-shadow: 0 6px 22px rgba(22,32,43,.10); }
+.lt { font: 600 10.5px/1 'Inter', system-ui; letter-spacing: .08em; text-transform: uppercase; color: #5A6672; margin-bottom: 9px; }
+.legendRow { display: flex; align-items: center; gap: 9px; margin: 6px 0; font: 500 12.5px/1 'Inter', system-ui; }
+
+/* ---------- Marker pin (referenced from JS-built divIcons) ---------- */
+.pin { position: relative; }
+.pin :global(svg) { display: block; filter: drop-shadow(0 2px 3px rgba(22,32,43,.30)); }
+
+.clusterIco { background: #16202B; color: #fff; border: 3px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 700 14px/1 'Archivo', 'Inter', system-ui; box-shadow: 0 2px 6px rgba(22,32,43,.35); }
+
+/* ---------- Popup card (built as HTML string in JS) ---------- */
+.card {}
+.cardHd { padding: 13px 15px; color: #fff; }
+.cardT { font: 500 10.5px/1 'Inter', system-ui; letter-spacing: .08em; text-transform: uppercase; opacity: .9; }
+.cardN { font: 700 17px/1.15 'Archivo', 'Inter', system-ui; margin-top: 3px; }
+.cardBd { padding: 13px 15px; background: #fff; }
+.cardLine { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0; font: 400 13px/1.4 'Inter', system-ui; color: #5A6672; }
+.cardLine b { font: 600 13px/1.4 'Inter', system-ui; color: #16202B; }
+.cardTop { margin-top: 9px; padding-top: 10px; border-top: 1px solid #E4E7EB; }
+.cardPn { font: 600 14px/1.2 'Inter', system-ui; color: #16202B; }
+.cardPp { font: 400 12px/1.3 'Inter', system-ui; color: #5A6672; margin-top: 2px; }
+.ppg { color: #E0552B; font: 700 12.5px/1 'Archivo', 'Inter', system-ui; }
+.cardCta { display: block; text-align: center; margin-top: 11px; padding: 9px; border-radius: 9px; background: #16202B; color: #fff; font: 600 13px/1 'Inter', system-ui; text-decoration: none; }
+
+/* Leaflet popup overrides (global, since Leaflet owns these nodes) */
+:global(.leaflet-popup-content-wrapper) { border-radius: 14px; padding: 0; overflow: hidden; box-shadow: 0 6px 22px rgba(22,32,43,.10); }
+:global(.leaflet-popup-content) { margin: 0; width: 248px !important; }
+
+/* ---------- Mobile ---------- */
+.mtoggle { display: none; }
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; position: relative; height: min(82vh, 680px); }
+  .panel { position: absolute; z-index: 1000; inset: 0 0 auto 0; height: 62%; border-right: none; border-bottom: 1px solid #E4E7EB; box-shadow: 0 6px 22px rgba(22,32,43,.10); transition: transform .28s ease; border-radius: 0 0 14px 14px; }
+  .collapsed { transform: translateY(calc(-100% + 132px)); }
+  .mapwrap { position: absolute; inset: 0; }
+  .mtoggle { display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; transform: translateX(-50%); bottom: -19px; z-index: 1001; background: #16202B; color: #fff; border: none; border-radius: 999px; padding: 9px 18px; font: 600 12.5px/1 'Inter', system-ui; box-shadow: 0 6px 22px rgba(22,32,43,.10); cursor: pointer; }
+  .legend { bottom: 14px; right: 10px; padding: 9px 11px; }
+}

@@ -1,7 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import NEWS_DATA from "./data/news.json";
 import ProspectFilm from "./components/ProspectFilm";
+
+// The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
+// all of that rides in a separate chunk that only downloads when the Map tab is
+// opened, keeping the main bundle small.
+const ProspectMap = lazy(() => import("./components/ProspectMap"));
 
 // Big datasets (prospects + Capitol Hoops) are fetched at runtime from
 // /data/*.json (served out of public/) instead of bundled into the JS, to
@@ -1083,61 +1087,45 @@ function CommitmentsTracker({ onOpen }) {
 // ---------------------------------------------------------------------------
 // DMV MAP — schools plotted by real geocoded coordinates
 // ---------------------------------------------------------------------------
-const MAP_STATE_COLOR = { DC: "var(--prospera-signal)", MD: "var(--prospera-blue)", VA: "var(--prospera-positive)" };
+// Build the schools array the map module consumes: one row per geocoded school
+// with its top summer scorer (real PPG — no fabricated tiers/stars). Computed
+// once from the module-level data, which is fixed after initData().
+function buildMapSchools() {
+  const out = [];
+  for (const [name, loc] of Object.entries(SCHOOL_LOCATIONS)) {
+    const s = SCHOOLS[name];
+    if (!s || loc.lat == null || loc.lng == null) continue;
+    const state = s.state || loc.state || null;
+
+    // Top prospect = highest summer PPG; fall back to first roster name.
+    let top = null;
+    let bestPpg = -1;
+    for (const p of s.prospects) {
+      const ppg = primaryStatLine(p)?.stats?.ppg ?? null;
+      if (ppg != null && ppg > bestPpg) {
+        bestPpg = ppg;
+        top = { n: p.name, pos: posLabel(p), ppg };
+      }
+    }
+    if (!top && s.prospects[0]) {
+      const p = s.prospects[0];
+      top = { n: p.name, pos: posLabel(p), ppg: null };
+    }
+
+    const city = loc.county ? `${loc.county}, ${state || loc.state || ""}`.replace(/,\s*$/, "") : STATE_LABELS[state] || "";
+    out.push({ id: name, name, city, lat: loc.lat, lng: loc.lng, state, prospects: s.prospects.length, top });
+  }
+  return out;
+}
+
+function posLabel(p) {
+  const yr = p.gradYear ? ` · '${String(p.gradYear).slice(2)}` : "";
+  return `${p.position || ""}${yr}`.trim().replace(/^·\s*/, "");
+}
 
 function DmvMap({ onOpenProfile }) {
   const [openSchool, setOpenSchool] = useState(null);
-  const containerRef = useRef(null);
-
-  const points = useMemo(() => {
-    const out = [];
-    for (const [name, loc] of Object.entries(SCHOOL_LOCATIONS)) {
-      const s = SCHOOLS[name];
-      if (!s || loc.lat == null || loc.lng == null) continue;
-      out.push({ name, lat: loc.lat, lng: loc.lng, state: s.state || loc.state || null, count: s.prospects.length });
-    }
-    return out;
-  }, []);
-
-  // Build a real Leaflet map with dark basemap tiles. Leaflet is dynamically
-  // imported so it stays out of the main bundle (loads only on this tab).
-  useEffect(() => {
-    if (openSchool || !containerRef.current) return undefined;
-    let map;
-    let cancelled = false;
-    import("leaflet").then(({ default: L }) => {
-      if (cancelled || !containerRef.current) return;
-      map = L.map(containerRef.current, { scrollWheelZoom: true, attributionControl: true });
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        subdomains: "abcd",
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-      }).addTo(map);
-
-      const cssColor = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || v;
-      const palette = { DC: cssColor("--prospera-signal"), MD: cssColor("--prospera-blue"), VA: cssColor("--prospera-positive") };
-
-      const latlngs = [];
-      // Bigger rosters drawn first so smaller markers land on top and stay
-      // clickable in dense clusters. Small, crisp pinpoints — not blobs.
-      const ordered = [...points].sort((a, b) => b.count - a.count);
-      for (const p of ordered) {
-        const color = palette[p.state] || "#94A3B8";
-        const r = 3 + Math.sqrt(p.count) * 1.15; // ~4px (1 player) → ~7.7px (15)
-        const marker = L.circleMarker([p.lat, p.lng], {
-          radius: r, color, weight: 1, fillColor: color, fillOpacity: 0.75,
-        }).addTo(map);
-        marker.bindTooltip(`${p.name} · ${p.count} player${p.count === 1 ? "" : "s"}`, { direction: "top" });
-        marker.on("mouseover", () => marker.setStyle({ fillOpacity: 1, weight: 2, radius: r + 2 }));
-        marker.on("mouseout", () => marker.setStyle({ fillOpacity: 0.75, weight: 1, radius: r }));
-        marker.on("click", () => setOpenSchool(p.name));
-        latlngs.push([p.lat, p.lng]);
-      }
-      if (latlngs.length) map.fitBounds(L.latLngBounds(latlngs).pad(0.05));
-      else map.setView([38.9, -77.0], 9);
-    });
-    return () => { cancelled = true; if (map) map.remove(); };
-  }, [openSchool, points]);
+  const mapSchools = useMemo(() => buildMapSchools(), []);
 
   if (openSchool && SCHOOLS[openSchool]) {
     return <SchoolDetail school={SCHOOLS[openSchool]} onBack={() => setOpenSchool(null)} onOpenProfile={onOpenProfile} />;
@@ -1145,30 +1133,26 @@ function DmvMap({ onOpenProfile }) {
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <SectionLabel>DMV Talent Map</SectionLabel>
-          <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 620 }}>
-            Every school in the database, plotted on the map. Marker size = roster count. Click a school for its page.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 14 }}>
-          {Object.entries(MAP_STATE_COLOR).map(([st, c]) => (
-            <span key={st} style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", color: T.textDim, display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 9, height: 9, borderRadius: "50%", background: c, display: "inline-block" }} />
-              {STATE_LABELS[st] || st}
-            </span>
-          ))}
-        </div>
+      <div>
+        <SectionLabel>DMV Talent Map</SectionLabel>
+        <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 620 }}>
+          Every school in the database, plotted by location and colored by state.
+          Filter the sidebar, click a pin for its top summer scorer, or open a school for its full roster.
+        </p>
       </div>
 
-      <div
-        ref={containerRef}
-        style={{ height: 600, width: "100%", background: T.surface, border: `1px solid ${T.border}` }}
-      />
+      <Suspense
+        fallback={
+          <div style={{ height: "min(78vh, 720px)", minHeight: 560, display: "flex", alignItems: "center", justifyContent: "center", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 14, ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.textDim }}>
+            LOADING MAP…
+          </div>
+        }
+      >
+        <ProspectMap schools={mapSchools} onSelectSchool={(s) => setOpenSchool(s.id)} />
+      </Suspense>
 
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
-        {points.length} schools mapped · tiles &copy; CARTO / OpenStreetMap · scroll to zoom, drag to pan
+        {mapSchools.length} schools mapped · tiles &copy; CARTO / OpenStreetMap · scroll to zoom, drag to pan
       </div>
     </div>
   );
