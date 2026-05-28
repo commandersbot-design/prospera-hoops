@@ -389,7 +389,7 @@ function ProspectsDirectory({ onOpen }) {
         ? p.statLines.find((l) => /hs/i.test(l.context || "")) || p.statLines[0]
         : null;
       const ppg = authored?.stats?.ppg != null ? authored.stats.ppg : summer[nameKey(p.name)] ?? null;
-      return { p, ppg, st: prospectState(p), yr: normGradYear(p.gradYear), bucket: posBucket(p.position) };
+      return { p, ppg, st: prospectState(p), yr: normGradYear(p.gradYear), bucket: posBucket(p.position), stars: p.stars ?? null, natl: p.rankings?.national ?? null };
     });
   }, []);
 
@@ -408,11 +408,15 @@ function ProspectsDirectory({ onOpen }) {
       if (k && !`${r.p.name} ${r.p.school || ""} ${r.p.position || ""}`.toLowerCase().includes(k)) return false;
       return true;
     });
-    out.sort(
-      sort === "name"
-        ? (a, b) => a.p.name.localeCompare(b.p.name)
-        : (a, b) => (b.ppg ?? -1) - (a.ppg ?? -1) || a.p.name.localeCompare(b.p.name)
-    );
+    const byName = (a, b) => a.p.name.localeCompare(b.p.name);
+    const byPpg = (a, b) => (b.ppg ?? -1) - (a.ppg ?? -1) || byName(a, b);
+    // Ranked: stars desc, then better (lower) national rank, then state rank.
+    const byRanked = (a, b) =>
+      (b.stars ?? -1) - (a.stars ?? -1) ||
+      (a.natl ?? 99999) - (b.natl ?? 99999) ||
+      ((a.p.rankings?.state ?? 99999) - (b.p.rankings?.state ?? 99999)) ||
+      byName(a, b);
+    out.sort(sort === "name" ? byName : sort === "ranked" ? byRanked : byPpg);
     return out;
   }, [rows, q, stateF, classF, posF, sort]);
 
@@ -441,7 +445,7 @@ function ProspectsDirectory({ onOpen }) {
         <Segmented value={stateF} onChange={setStateF} options={[["ALL", "All"], ["DC", "D.C."], ["MD", "MD"], ["VA", "VA"]]} />
         <Segmented value={posF} onChange={setPosF} options={[["ALL", "All Pos"], ["G", "G"], ["W", "W"], ["F", "F"], ["C", "C"]]} />
         <Segmented value={classF} onChange={setClassF} options={[["ALL", "All Classes"], ...classYears.map((y) => [String(y), `'${String(y).slice(2)}`])]} />
-        <Segmented value={sort} onChange={setSort} options={[["ppg", "PPG"], ["name", "A–Z"]]} />
+        <Segmented value={sort} onChange={setSort} options={[["ppg", "PPG"], ["ranked", "Ranked"], ["name", "A–Z"]]} />
       </div>
 
       <div style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>
@@ -450,7 +454,7 @@ function ProspectsDirectory({ onOpen }) {
 
       {/* Cards */}
       <div style={{ display: "grid", gap: 8 }}>
-        {shown.map(({ p, ppg, st }) => (
+        {shown.map(({ p, ppg, st, stars, natl }) => (
           <button
             key={p.id}
             type="button"
@@ -461,15 +465,22 @@ function ProspectsDirectory({ onOpen }) {
           >
             <Avatar name={p.name} headshot={p.headshot} size={40} />
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{p.name}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: T.text, display: "flex", alignItems: "center", gap: 8 }}>
+                {p.name}
+                {stars ? <Stars count={stars} /> : null}
+              </div>
               <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em", marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {p.position || "—"} · {p.school}{st ? ` · ${st}` : ""}{p.gradYear ? ` · '${String(normGradYear(p.gradYear)).slice(2)}` : ""}
               </div>
             </div>
             <div style={{ display: "grid", gap: 4, justifyItems: "end" }}>
-              <span style={{ ...mono, fontSize: 13, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
-                {ppg != null ? `${perGame(ppg)} PPG` : "—"}
-              </span>
+              {natl ? (
+                <span style={{ ...mono, fontSize: 12, color: T.accent, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>#{natl} Natl</span>
+              ) : (
+                <span style={{ ...mono, fontSize: 13, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                  {ppg != null ? `${perGame(ppg)} PPG` : "—"}
+                </span>
+              )}
               {(p.status === "committed" || p.status === "signed") && p.commitment ? (
                 <span style={{ ...mono, fontSize: 9, letterSpacing: "0.08em", color: T.positive }}>→ {p.commitment}</span>
               ) : null}
@@ -554,6 +565,9 @@ function Profile({ prospect, onBack }) {
           visual, not a wall of numbers. Pulled from the primary stat context. */}
       <HeadlineStats p={p} />
 
+      {/* Industry recruiting rankings (247 / ESPN / Rivals) — only for ranked recruits. */}
+      <RecruitingBlock p={p} />
+
       {/* Tabs */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
         {PROFILE_TABS.map((t) => {
@@ -586,6 +600,66 @@ function RankStat({ label, value }) {
     <div style={{ textAlign: "center" }}>
       <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase" }}>{label}</div>
       <div style={{ fontSize: 24, color: T.accent, fontWeight: 800, marginTop: 4 }}>{value ? `#${value}` : "—"}</div>
+    </div>
+  );
+}
+
+// Industry recruiting rankings, shown per service (247 / ESPN / Rivals).
+// Only the services with verified data render numbers; the rest show "Not
+// listed" so it's clear we cover all three without inventing ranks.
+const RECRUIT_SERVICES = [
+  { key: "247", label: "247Sports" },
+  { key: "espn", label: "ESPN" },
+  { key: "rivals", label: "Rivals" },
+];
+
+function RecruitingBlock({ p }) {
+  const rec = p.recruiting;
+  if (!rec || !rec.services) return null;
+  const stateLabel = STATE_LABELS[p.state] || p.state || "State";
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "16px 20px" }}>
+      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.16em", color: T.textMute, textTransform: "uppercase", marginBottom: 14 }}>
+        Industry Recruiting Rankings{rec.asOf ? ` · as of ${rec.asOf}` : ""}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+        {RECRUIT_SERVICES.map(({ key, label }) => {
+          const s = rec.services[key];
+          return (
+            <div key={key} style={{ border: `1px solid ${T.borderSoft}`, padding: "12px 14px", background: s ? "var(--prospera-accent-bg-faint)" : "transparent", opacity: s ? 1 : 0.55 }}>
+              <div style={{ ...mono, fontSize: 10, letterSpacing: "0.12em", color: T.text, textTransform: "uppercase", fontWeight: 700 }}>{label}</div>
+              {s ? (
+                <>
+                  <div style={{ marginTop: 8 }}>{s.stars ? <Stars count={s.stars} /> : <span style={{ color: T.textMute, fontSize: 12 }}>NR</span>}</div>
+                  <div style={{ display: "grid", gap: 3, marginTop: 10 }}>
+                    {s.national ? <RankLine label="National" value={`#${s.national}`} /> : null}
+                    {s.stateRank ? <RankLine label={stateLabel} value={`#${s.stateRank}`} /> : null}
+                    {s.positionRank ? <RankLine label={`${p.position || "Pos"}`} value={`#${s.positionRank}`} /> : null}
+                    {s.rating != null ? <RankLine label="Rating" value={(s.rating / 100).toFixed(2)} /> : null}
+                  </div>
+                  {s.url ? (
+                    <a href={s.url} target="_blank" rel="noopener noreferrer"
+                      style={{ ...mono, fontSize: 9, letterSpacing: "0.1em", color: T.signal, textTransform: "uppercase", textDecoration: "none", display: "inline-block", marginTop: 10 }}>
+                      View on {label} ↗
+                    </a>
+                  ) : null}
+                </>
+              ) : (
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, marginTop: 10, letterSpacing: "0.04em" }}>Not listed</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RankLine({ label, value }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10 }}>
+      <span style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.06em" }}>{label}</span>
+      <span style={{ ...mono, fontSize: 12, color: T.accent, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{value}</span>
     </div>
   );
 }

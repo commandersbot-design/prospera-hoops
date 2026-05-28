@@ -25324,6 +25324,842 @@
       "summary": null,
       "statLines": [],
       "source": "capitol-hoops-2026"
+    },
+    {
+      "id": "jordansmithjr",
+      "name": "Jordan Smith Jr.",
+      "position": "CG",
+      "gradYear": 2026,
+      "school": "Paul VI Catholic",
+      "city": "Fairfax",
+      "state": "VA",
+      "county": null,
+      "heightInches": 74,
+      "weightLbs": 200,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 5,
+      "rankings": {
+        "national": 2,
+        "position": 1,
+        "state": 1
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 5,
+            "national": 2,
+            "stateRank": 1,
+            "positionRank": 1,
+            "rating": 98,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "marcisponder",
+      "name": "Marcis Ponder",
+      "position": "C",
+      "gradYear": 2026,
+      "school": "Gillion Basketball Academy",
+      "city": "Springfield",
+      "state": "VA",
+      "county": null,
+      "heightInches": 83,
+      "weightLbs": 328,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": 39,
+        "position": 4,
+        "state": 3
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": 39,
+            "stateRank": 3,
+            "positionRank": 4,
+            "rating": 94,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "dariusbivins",
+      "name": "Darius Bivins",
+      "position": "PG",
+      "gradYear": 2026,
+      "school": "Bishop O'Connell",
+      "city": "Arlington",
+      "state": "VA",
+      "county": null,
+      "heightInches": 71,
+      "weightLbs": 160,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 5
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 5,
+            "positionRank": null,
+            "rating": 91,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "willieburnettiii",
+      "name": "Willie Burnett III",
+      "position": "CG",
+      "gradYear": 2026,
+      "school": "Gillion Basketball Academy",
+      "city": "Springfield",
+      "state": "VA",
+      "county": null,
+      "heightInches": 76,
+      "weightLbs": 175,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 6
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 6,
+            "positionRank": null,
+            "rating": 90,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "aaronmcgee",
+      "name": "Aaron McGee",
+      "position": "SG",
+      "gradYear": 2026,
+      "school": "Gillion Basketball Academy",
+      "city": "Springfield",
+      "state": "VA",
+      "county": null,
+      "heightInches": 76,
+      "weightLbs": 175,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 12
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 12,
+            "positionRank": null,
+            "rating": 86,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "phenixcard",
+      "name": "Phenix Card",
+      "position": "PG",
+      "gradYear": 2026,
+      "school": "Hayfield Secondary",
+      "city": "Alexandria",
+      "state": "VA",
+      "county": null,
+      "heightInches": 71,
+      "weightLbs": 160,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 13
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 13,
+            "positionRank": null,
+            "rating": 81,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=VA"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "babaoladotun",
+      "name": "Baba Oladotun",
+      "position": "SF",
+      "gradYear": 2026,
+      "school": "James Hubert Blake",
+      "city": "Silver Spring",
+      "state": "MD",
+      "county": null,
+      "heightInches": 82,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 5,
+      "rankings": {
+        "national": 8,
+        "position": 4,
+        "state": 1
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 5,
+            "national": 8,
+            "stateRank": 1,
+            "positionRank": 4,
+            "rating": 98,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "qaydensamuels",
+      "name": "Qayden Samuels",
+      "position": "SF",
+      "gradYear": 2026,
+      "school": "Bishop McNamara",
+      "city": "District Heights",
+      "state": "MD",
+      "county": null,
+      "heightInches": 77,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 2
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 2,
+            "positionRank": null,
+            "rating": 97,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "sinanhuan",
+      "name": "Sinan Huan",
+      "position": "C",
+      "gradYear": 2026,
+      "school": "Georgetown Preparatory",
+      "city": "Rockville",
+      "state": "MD",
+      "county": null,
+      "heightInches": 84,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 3
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 3,
+            "positionRank": null,
+            "rating": 92,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "princealexandermoody",
+      "name": "Prince-Alexander Moody",
+      "position": "CG",
+      "gradYear": 2026,
+      "school": "Bishop McNamara",
+      "city": "District Heights",
+      "state": "MD",
+      "county": null,
+      "heightInches": 76,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": 86,
+        "position": 8,
+        "state": 4
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": 86,
+            "stateRank": 4,
+            "positionRank": 8,
+            "rating": 91,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "favouribe",
+      "name": "Favour Ibe",
+      "position": "C",
+      "gradYear": 2026,
+      "school": "Mt. Zion Prep",
+      "city": "Lanham",
+      "state": "MD",
+      "county": null,
+      "heightInches": 85,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 5
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 5,
+            "positionRank": null,
+            "rating": 90,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "jaysonpeterson",
+      "name": "Jayson Peterson",
+      "position": "PF",
+      "gradYear": 2026,
+      "school": "St. Andrew's Episcopal",
+      "city": "Potomac",
+      "state": "MD",
+      "county": null,
+      "heightInches": 80,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 6
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 6,
+            "positionRank": null,
+            "rating": 88,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "bjranson",
+      "name": "BJ Ranson",
+      "position": "PG",
+      "gradYear": 2026,
+      "school": "Mount Saint Joseph",
+      "city": "Baltimore",
+      "state": "MD",
+      "county": null,
+      "heightInches": 75,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 7
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 7,
+            "positionRank": null,
+            "rating": 87,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "ashtonmeeks",
+      "name": "Ashton Meeks",
+      "position": "CG",
+      "gradYear": 2026,
+      "school": "DeMatha Catholic",
+      "city": "Hyattsville",
+      "state": "MD",
+      "county": null,
+      "heightInches": 70,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 8
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 8,
+            "positionRank": null,
+            "rating": 86,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "jasiahcannady",
+      "name": "Jasiah Cannady",
+      "position": "PG",
+      "gradYear": 2026,
+      "school": "Mt. Zion Prep",
+      "city": "Lanham",
+      "state": "MD",
+      "county": null,
+      "heightInches": 73,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 9
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 9,
+            "positionRank": null,
+            "rating": 86,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "sifenghuan",
+      "name": "Sifeng Huan",
+      "position": "C",
+      "gradYear": 2026,
+      "school": "St. Andrew's Episcopal",
+      "city": "Potomac",
+      "state": "MD",
+      "county": null,
+      "heightInches": 82,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 10
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 10,
+            "positionRank": null,
+            "rating": 83,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "gagehoward",
+      "name": "Gage Howard",
+      "position": "C",
+      "gradYear": 2026,
+      "school": "Our Lady Of Mount Carmel",
+      "city": "Essex",
+      "state": "MD",
+      "county": null,
+      "heightInches": 78,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 3,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 11
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 3,
+            "national": null,
+            "stateRank": 11,
+            "positionRank": null,
+            "rating": 81,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=MD"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "anthonybrown",
+      "name": "Anthony Brown",
+      "position": "PG",
+      "gradYear": 2026,
+      "school": "Archbishop Carroll",
+      "city": "Washington",
+      "state": "DC",
+      "county": null,
+      "heightInches": 73,
+      "weightLbs": 160,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": 81,
+        "position": 10,
+        "state": 1
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": 81,
+            "stateRank": 1,
+            "positionRank": 10,
+            "rating": 91,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=DC"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
+    },
+    {
+      "id": "jalyncollingwood",
+      "name": "Jalyn Collingwood",
+      "position": "SF",
+      "gradYear": 2026,
+      "school": "Sidwell Friends School",
+      "city": "Washington",
+      "state": "DC",
+      "county": null,
+      "heightInches": 77,
+      "weightLbs": 190,
+      "wingspanInches": null,
+      "headshot": null,
+      "stars": 4,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": 2
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "comp": null,
+      "summary": null,
+      "statLines": [],
+      "source": "industry-rankings-2026",
+      "recruiting": {
+        "asOf": "2026-05",
+        "services": {
+          "247": {
+            "stars": 4,
+            "national": null,
+            "stateRank": 2,
+            "positionRank": null,
+            "rating": 90,
+            "url": "https://247sports.com/season/2026-basketball/RecruitRankings/?InstitutionGroup=highschool&State=DC"
+          },
+          "espn": null,
+          "rivals": null
+        }
+      }
     }
   ]
 }

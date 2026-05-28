@@ -382,5 +382,71 @@
     "lng": -77.514,
     "state": "VA",
     "county": "Loudoun"
+  },
+  "Archbishop Carroll": {
+    "lat": 38.939,
+    "lng": -76.994,
+    "state": "DC",
+    "county": null
+  },
+  "Bishop McNamara": {
+    "lat": 38.843,
+    "lng": -76.889,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Bishop O'Connell": {
+    "lat": 38.884,
+    "lng": -77.135,
+    "state": "VA",
+    "county": "Arlington"
+  },
+  "Georgetown Preparatory": {
+    "lat": 39.027,
+    "lng": -77.118,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Gillion Basketball Academy": {
+    "lat": 38.789,
+    "lng": -77.187,
+    "state": "VA",
+    "county": "Fairfax"
+  },
+  "James Hubert Blake": {
+    "lat": 39.103,
+    "lng": -77.025,
+    "state": "MD",
+    "county": "Montgomery"
+  },
+  "Mount Saint Joseph": {
+    "lat": 39.285,
+    "lng": -76.69,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "Mt. Zion Prep": {
+    "lat": 38.967,
+    "lng": -76.864,
+    "state": "MD",
+    "county": "Prince George's"
+  },
+  "Our Lady Of Mount Carmel": {
+    "lat": 39.31,
+    "lng": -76.456,
+    "state": "MD",
+    "county": "Baltimore"
+  },
+  "Sidwell Friends School": {
+    "lat": 38.948,
+    "lng": -77.078,
+    "state": "DC",
+    "county": null
+  },
+  "St. Andrew's Episcopal": {
+    "lat": 39.038,
+    "lng": -77.208,
+    "state": "MD",
+    "county": "Montgomery"
   }
 }

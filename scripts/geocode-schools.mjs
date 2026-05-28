@@ -34,6 +34,18 @@ const OVERRIDES = {
   "St. Stephen's & St. Agnes": { lat: 38.811, lng: -77.090, state: "VA", county: "Alexandria" },
   "WJ":                        { lat: 39.030, lng: -77.118, state: "MD", county: "Montgomery" },  // Walter Johnson
   "Flint Hill":                { lat: 38.880, lng: -77.300, state: "VA", county: "Fairfax" },     // geocoded wrong (MD)
+  // Schools introduced by the 247 ranked-recruits import (DMV-area).
+  "Gillion Basketball Academy":{ lat: 38.789, lng: -77.187, state: "VA", county: "Fairfax" },        // Springfield
+  "Bishop O'Connell":          { lat: 38.884, lng: -77.135, state: "VA", county: "Arlington" },
+  "James Hubert Blake":        { lat: 39.103, lng: -77.025, state: "MD", county: "Montgomery" },      // Silver Spring
+  "Bishop McNamara":           { lat: 38.843, lng: -76.889, state: "MD", county: "Prince George's" }, // Forestville
+  "Georgetown Preparatory":    { lat: 39.027, lng: -77.118, state: "MD", county: "Montgomery" },      // North Bethesda
+  "Mt. Zion Prep":             { lat: 38.967, lng: -76.864, state: "MD", county: "Prince George's" }, // Lanham
+  "St. Andrew's Episcopal":    { lat: 39.038, lng: -77.208, state: "MD", county: "Montgomery" },      // Potomac
+  "Mount Saint Joseph":        { lat: 39.285, lng: -76.690, state: "MD", county: "Baltimore" },
+  "Our Lady Of Mount Carmel":  { lat: 39.310, lng: -76.456, state: "MD", county: "Baltimore" },       // Essex
+  "Archbishop Carroll":        { lat: 38.939, lng: -76.994, state: "DC", county: null },
+  "Sidwell Friends School":    { lat: 38.948, lng: -77.078, state: "DC", county: null },
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

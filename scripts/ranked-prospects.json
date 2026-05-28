@@ -1,0 +1,29 @@
+{
+  "_README": "Verified DMV-area ranked recruits sourced from 247Sports public state/national ranking pages (May 2026). Stars are DERIVED from 247's numeric rating using 247's published bands (>=98 = 5*, 90-97 = 4*, 80-89 = 3*, 70-79 = 2*) — this matched the national-page stars for every player cross-checked, and is more reliable than scraped star text. 'national'/'posRank' are filled only where confirmed on the national rankings page. espn/rivals are intentionally null: those services block automated access, so they're left blank rather than guessed. Re-run with: node scripts/add-ranked-prospects.mjs",
+  "class": 2026,
+  "service": "247",
+  "asOf": "2026-05",
+  "players": [
+    { "name": "Jordan Smith Jr.", "pos": "CG", "h": 74, "w": 200, "school": "Paul VI Catholic", "city": "Fairfax", "state": "VA", "rating": 98, "national": 2, "stateRank": 1, "posRank": 1 },
+    { "name": "Marcis Ponder", "pos": "C", "h": 83, "w": 328, "school": "Gillion Basketball Academy", "city": "Springfield", "state": "VA", "rating": 94, "national": 39, "stateRank": 3, "posRank": 4 },
+    { "name": "Darius Bivins", "pos": "PG", "h": 71, "w": 160, "school": "Bishop O'Connell", "city": "Arlington", "state": "VA", "rating": 91, "national": null, "stateRank": 5, "posRank": null },
+    { "name": "Willie Burnett III", "pos": "CG", "h": 76, "w": 175, "school": "Gillion Basketball Academy", "city": "Springfield", "state": "VA", "rating": 90, "national": null, "stateRank": 6, "posRank": null },
+    { "name": "Aaron McGee", "pos": "SG", "h": 76, "w": 175, "school": "Gillion Basketball Academy", "city": "Springfield", "state": "VA", "rating": 86, "national": null, "stateRank": 12, "posRank": null },
+    { "name": "Phenix Card", "pos": "PG", "h": 71, "w": 160, "school": "Hayfield Secondary", "city": "Alexandria", "state": "VA", "rating": 81, "national": null, "stateRank": 13, "posRank": null },
+
+    { "name": "Baba Oladotun", "pos": "SF", "h": 82, "w": null, "school": "James Hubert Blake", "city": "Silver Spring", "state": "MD", "rating": 98, "national": 8, "stateRank": 1, "posRank": 4 },
+    { "name": "Qayden Samuels", "pos": "SF", "h": 77, "w": null, "school": "Bishop McNamara", "city": "District Heights", "state": "MD", "rating": 97, "national": null, "stateRank": 2, "posRank": null },
+    { "name": "Sinan Huan", "pos": "C", "h": 84, "w": null, "school": "Georgetown Preparatory", "city": "Rockville", "state": "MD", "rating": 92, "national": null, "stateRank": 3, "posRank": null },
+    { "name": "Prince-Alexander Moody", "pos": "CG", "h": 76, "w": null, "school": "Bishop McNamara", "city": "District Heights", "state": "MD", "rating": 91, "national": 86, "stateRank": 4, "posRank": 8 },
+    { "name": "Favour Ibe", "pos": "C", "h": 85, "w": null, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD", "rating": 90, "national": null, "stateRank": 5, "posRank": null },
+    { "name": "Jayson Peterson", "pos": "PF", "h": 80, "w": null, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD", "rating": 88, "national": null, "stateRank": 6, "posRank": null },
+    { "name": "BJ Ranson", "pos": "PG", "h": 75, "w": null, "school": "Mount Saint Joseph", "city": "Baltimore", "state": "MD", "rating": 87, "national": null, "stateRank": 7, "posRank": null },
+    { "name": "Ashton Meeks", "pos": "CG", "h": 70, "w": null, "school": "DeMatha Catholic", "city": "Hyattsville", "state": "MD", "rating": 86, "national": null, "stateRank": 8, "posRank": null },
+    { "name": "Jasiah Cannady", "pos": "PG", "h": 73, "w": null, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD", "rating": 86, "national": null, "stateRank": 9, "posRank": null },
+    { "name": "Sifeng Huan", "pos": "C", "h": 82, "w": null, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD", "rating": 83, "national": null, "stateRank": 10, "posRank": null },
+    { "name": "Gage Howard", "pos": "C", "h": 78, "w": null, "school": "Our Lady Of Mount Carmel", "city": "Essex", "state": "MD", "rating": 81, "national": null, "stateRank": 11, "posRank": null },
+
+    { "name": "Anthony Brown", "pos": "PG", "h": 73, "w": 160, "school": "Archbishop Carroll", "city": "Washington", "state": "DC", "rating": 91, "national": 81, "stateRank": 1, "posRank": 10 },
+    { "name": "Jalyn Collingwood", "pos": "SF", "h": 77, "w": 190, "school": "Sidwell Friends School", "city": "Washington", "state": "DC", "rating": 90, "national": null, "stateRank": 2, "posRank": null }
+  ]
+}
