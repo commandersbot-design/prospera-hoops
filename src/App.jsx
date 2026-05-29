@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import NEWS_DATA from "./data/news.json";
 import TEAM_STATS from "./data/teamStats.json";
+import SCHEDULE_DATA from "./data/schedule.json";
 import ProspectFilm from "./components/ProspectFilm";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -56,6 +57,49 @@ let CH_TEAMS = {};
 
 function nameKey(name) {
   return String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// ---------------------------------------------------------------------------
+// Summer-league schedule (Capitol Hoops 2026). Built from src/data/schedule.json
+// by scripts/build-schedule.mjs. Home team is always listed first; finals carry
+// scores, upcoming games carry a tip time. Team names match CH_TEAMS exactly
+// (modulo punctuation), so teamNameKey() bridges schedule ↔ team ↔ school.
+// ---------------------------------------------------------------------------
+const SCHEDULE = (SCHEDULE_DATA && SCHEDULE_DATA.games) || [];
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
+
+// Normalize a team name to a punctuation-free key for matching (handles curly
+// vs straight apostrophes, parentheses, ampersands, etc.).
+function teamNameKey(name) {
+  return String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// All schedule games involving a team (by name), sorted by date then tip time.
+function gamesForTeam(teamName) {
+  const k = teamNameKey(teamName);
+  if (!k) return [];
+  return SCHEDULE
+    .filter((g) => teamNameKey(g.home) === k || teamNameKey(g.away) === k)
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
+}
+
+// Capitol Hoops team slug for a team name (lets schedule rows deep-link to the
+// summer-team page). Returns null if no matching team is loaded.
+function chSlugForTeamName(name) {
+  const k = teamNameKey(name);
+  for (const [slug, t] of Object.entries(CH_TEAMS)) {
+    if (teamNameKey(t.name) === k) return slug;
+  }
+  return null;
+}
+
+// Short weekday + month/day label for date headers, e.g. "Thu · May 21".
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function scheduleDayLabel(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return `${WEEKDAYS[dt.getUTCDay()]} · ${MONTHS_SHORT[m - 1]} ${d}`;
 }
 
 let PROSPECT_BY_NAMEKEY = {};
@@ -919,7 +963,7 @@ const SUMMER_STAT_COLS = [
 
 function SummerLeague({ onOpenProfile }) {
   const [teamSlug, setTeamSlug] = useState(null);
-  const [mode, setMode] = useState("teams"); // "teams" | "leaders"
+  const [mode, setMode] = useState("teams"); // "teams" | "leaders" | "schedule"
   const team = teamSlug ? CH_TEAMS[teamSlug] : null;
 
   if (team) {
@@ -936,7 +980,7 @@ function SummerLeague({ onOpenProfile }) {
             Small samples — games played leads every line.
           </p>
         </div>
-        <Segmented value={mode} onChange={setMode} options={[["teams", "Teams"], ["leaders", "Leaders"]]} />
+        <Segmented value={mode} onChange={setMode} options={[["teams", "Teams"], ["schedule", "Schedule"], ["leaders", "Leaders"]]} />
       </div>
 
       {mode === "teams" ? (
@@ -960,6 +1004,8 @@ function SummerLeague({ onOpenProfile }) {
             );
           })}
         </div>
+      ) : mode === "schedule" ? (
+        <FullSchedule onOpenTeam={(slug) => setTeamSlug(slug)} />
       ) : (
         <SummerLeaders onOpenProfile={onOpenProfile} />
       )}
@@ -1127,6 +1173,9 @@ function SummerStatsTable({ team, onOpenProfile }) {
 }
 
 function SummerTeam({ team, onBack, onOpenProfile }) {
+  const [tab, setTab] = useState("roster"); // "roster" | "games"
+  const hasGames = useMemo(() => gamesForTeam(team.name).length > 0, [team]);
+
   return (
     <div style={{ display: "grid", gap: 18 }}>
       <button
@@ -1144,7 +1193,212 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
         </div>
       </div>
 
-      <SummerStatsTable team={team} onOpenProfile={onOpenProfile} />
+      {hasGames && (
+        <Segmented value={tab} onChange={setTab} options={[["roster", "Roster & Stats"], ["games", "Upcoming Games"]]} />
+      )}
+
+      {tab === "games" && hasGames ? (
+        <TeamSchedule teamName={team.name} />
+      ) : (
+        <SummerStatsTable team={team} onOpenProfile={onOpenProfile} />
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SCHEDULE — the full Capitol Hoops slate (Summer League → Schedule tab) plus
+// a per-team slate (Upcoming Games tab on team/school pages). Home team always
+// renders first; finals show the score with the winner bolded, upcoming games
+// show the tip time.
+// ---------------------------------------------------------------------------
+function ResultPill({ status }) {
+  const final = status === "final";
+  return (
+    <span style={{
+      ...mono, fontSize: 8, letterSpacing: "0.14em", textTransform: "uppercase",
+      color: final ? T.textMute : T.signal,
+      border: `1px solid ${final ? T.borderSoft : "var(--prospera-accent-border)"}`,
+      padding: "2px 6px", borderRadius: 2, whiteSpace: "nowrap",
+    }}>
+      {final ? "Final" : "Upcoming"}
+    </span>
+  );
+}
+
+function ScoreOrTime({ g, perspective }) {
+  // perspective: optional team name to render a W/L from that team's view.
+  if (g.status !== "final") {
+    return <span style={{ ...mono, fontSize: 12, color: T.signal, fontWeight: 700, whiteSpace: "nowrap" }}>{g.time || "TBD"}</span>;
+  }
+  const homeWin = g.homeScore > g.awayScore;
+  let wl = null;
+  if (perspective) {
+    const isHome = teamNameKey(g.home) === teamNameKey(perspective);
+    const won = isHome ? homeWin : !homeWin;
+    wl = <span style={{ ...mono, fontSize: 10, fontWeight: 800, color: won ? T.positive : T.danger, marginRight: 6 }}>{won ? "W" : "L"}</span>;
+  }
+  return (
+    <span style={{ ...mono, fontSize: 12, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+      {wl}
+      <span style={{ color: homeWin ? T.text : T.textDim, fontWeight: homeWin ? 800 : 500 }}>{g.homeScore}</span>
+      <span style={{ color: T.textMute }}>–</span>
+      <span style={{ color: !homeWin ? T.text : T.textDim, fontWeight: !homeWin ? 800 : 500 }}>{g.awayScore}</span>
+    </span>
+  );
+}
+
+function TeamName({ name, onOpenTeam, strong }) {
+  const slug = onOpenTeam ? chSlugForTeamName(name) : null;
+  const base = { fontSize: 13, color: strong ? T.text : T.textDim, fontWeight: strong ? 700 : 500 };
+  if (slug) {
+    return (
+      <button type="button" onClick={() => onOpenTeam(slug)}
+        style={{ ...base, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--prospera-cyan)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = strong ? "var(--prospera-text)" : "var(--prospera-text-dim)")}
+      >
+        {name}
+      </button>
+    );
+  }
+  return <span style={base}>{name}</span>;
+}
+
+// Full league schedule, grouped by date, with search + status filter.
+function FullSchedule({ onOpenTeam }) {
+  const [filter, setFilter] = useState("all"); // all | upcoming | results
+  const [q, setQ] = useState("");
+
+  const groups = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    const filtered = SCHEDULE.filter((g) => {
+      if (filter === "upcoming" && g.status !== "scheduled") return false;
+      if (filter === "results" && g.status !== "final") return false;
+      if (k && !(`${g.home} ${g.away} ${g.court}`.toLowerCase().includes(k))) return false;
+      return true;
+    });
+    const byDate = new Map();
+    for (const g of filtered) {
+      if (!byDate.has(g.date)) byDate.set(g.date, []);
+      byDate.get(g.date).push(g);
+    }
+    return [...byDate.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [filter, q]);
+
+  const total = useMemo(() => groups.reduce((n, [, gs]) => n + gs.length, 0), [groups]);
+
+  return (
+    <div style={{ display: "grid", gap: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <Segmented value={filter} onChange={setFilter} options={[["all", "All"], ["upcoming", "Upcoming"], ["results", "Results"]]} />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Filter by team or court…"
+          style={{ ...mono, fontSize: 12, color: T.text, background: T.surface, border: `1px solid ${T.border}`, padding: "9px 12px", minWidth: 220, flex: "0 1 320px" }}
+        />
+      </div>
+
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        {total} {total === 1 ? "game" : "games"} · home team listed first · click a team for its roster
+      </div>
+
+      {groups.length === 0 ? (
+        <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "32px 24px", textAlign: "center" }}>
+          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: T.textMute, textTransform: "uppercase" }}>No games match</div>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 18 }}>
+          {groups.map(([date, gs]) => {
+            const isToday = date === TODAY_ISO;
+            return (
+              <div key={date} style={{ display: "grid", gap: 6 }}>
+                <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: isToday ? T.accent : T.textDim, display: "flex", alignItems: "center", gap: 8, padding: "2px 0", borderBottom: `1px solid ${T.borderSoft}` }}>
+                  {scheduleDayLabel(date)}{isToday ? " · Today" : ""}
+                </div>
+                {gs.map((g, i) => (
+                  <div key={i} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 10, alignItems: "center", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 14px" }}>
+                    <div style={{ display: "grid", gap: 3, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <TeamName name={g.home} onOpenTeam={onOpenTeam} strong />
+                        <span style={{ ...mono, fontSize: 10, color: T.textMute }}>vs</span>
+                        <TeamName name={g.away} onOpenTeam={onOpenTeam} strong />
+                      </div>
+                      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>{g.court}</div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, justifySelf: "end" }}>
+                      <ScoreOrTime g={g} />
+                      <ResultPill status={g.status} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// One team's slate — upcoming games first, then past results (with W/L).
+function TeamSchedule({ teamName }) {
+  const games = useMemo(() => gamesForTeam(teamName), [teamName]);
+  const upcoming = games.filter((g) => g.status !== "final");
+  const results = games.filter((g) => g.status === "final");
+
+  if (games.length === 0) {
+    return (
+      <div style={{ background: T.surface, border: `1px dashed ${T.border}`, padding: "32px 24px", textAlign: "center" }}>
+        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: T.textMute, textTransform: "uppercase" }}>No scheduled games</div>
+      </div>
+    );
+  }
+
+  const Row = ({ g }) => {
+    const isHome = teamNameKey(g.home) === teamNameKey(teamName);
+    const opp = isHome ? g.away : g.home;
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "76px minmax(0,1fr) auto", gap: 12, alignItems: "center", background: T.surface, border: `1px solid ${T.border}`, padding: "10px 14px" }}>
+        <div style={{ ...mono, fontSize: 10, color: T.textDim, letterSpacing: "0.04em" }}>{scheduleDayLabel(g.date)}</div>
+        <div style={{ display: "grid", gap: 3, minWidth: 0 }}>
+          <div style={{ fontSize: 13, color: T.text, fontWeight: 600 }}>
+            <span style={{ ...mono, fontSize: 10, color: T.textMute, marginRight: 6 }}>{isHome ? "vs" : "@"}</span>
+            {opp}
+          </div>
+          <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>{g.court}</div>
+        </div>
+        <div style={{ justifySelf: "end" }}>
+          <ScoreOrTime g={g} perspective={teamName} />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div>
+        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: T.accent, marginBottom: 8 }}>
+          Upcoming{upcoming.length ? ` · ${upcoming.length}` : ""}
+        </div>
+        {upcoming.length === 0 ? (
+          <div style={{ ...mono, fontSize: 11, color: T.textMute, padding: "4px 0" }}>No upcoming games — season complete.</div>
+        ) : (
+          <div style={{ display: "grid", gap: 6 }}>{upcoming.map((g, i) => <Row key={i} g={g} />)}</div>
+        )}
+      </div>
+      {results.length > 0 && (
+        <div>
+          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: T.textDim, marginBottom: 8 }}>
+            Results · {results.length}
+          </div>
+          <div style={{ display: "grid", gap: 6 }}>{results.map((g, i) => <Row key={i} g={g} />)}</div>
+        </div>
+      )}
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        Capitol Hoops Summer League · "vs" = home, "@" = away · W/L from {teamName}'s perspective.
+      </div>
     </div>
   );
 }
@@ -1470,12 +1724,18 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
         )}
       </div>
 
-      {teamStats && (
-        <Segmented value={tab} onChange={setTab} options={[["roster", "Roster"], ["stats", "Stats"]]} />
-      )}
+      {(() => {
+        const hasGames = summerTeam && gamesForTeam(summerTeam.name).length > 0;
+        const tabOptions = [["roster", "Roster"]];
+        if (teamStats) tabOptions.push(["stats", "Stats"]);
+        if (hasGames) tabOptions.push(["games", "Upcoming Games"]);
+        return tabOptions.length > 1 ? <Segmented value={tab} onChange={setTab} options={tabOptions} /> : null;
+      })()}
 
       {teamStats && tab === "stats" ? (
         <TeamStatsPanel teamStats={teamStats} summerTeam={summerTeam} onOpenProfile={onOpenProfile} />
+      ) : tab === "games" && summerTeam ? (
+        <TeamSchedule teamName={summerTeam.name} />
       ) : (
         <div style={{ display: "grid", gap: 8 }}>
           {roster.map(({ p, ppg, gp }) => (
