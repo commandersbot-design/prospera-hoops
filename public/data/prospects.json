@@ -90,7 +90,7 @@
       "city": "Alexandria",
       "state": "VA",
       "county": "Fairfax",
-      "heightInches": null,
+      "heightInches": 71,
       "weightLbs": null,
       "wingspanInches": null,
       "headshot": "/headshots/grantcage.png",
