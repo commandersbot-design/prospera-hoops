@@ -60,6 +60,19 @@ function nameToId(name) {
 // Returns null if unrecognized so callers fall back to a plain link card.
 function parseVideoUrl(url) {
   if (!url) return null;
+  // Self-hosted / direct video files (e.g. /film/clip.mp4). Played inline with
+  // a native <video> element — full playback, no third-party redirect.
+  if (/\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(url)) {
+    return {
+      provider: "file",
+      id: url,
+      embedUrl: url,
+      thumbnailUrl: null,
+      sourceUrl: url,
+      sourceLabel: "Open video file",
+      isFile: true,
+    };
+  }
   let m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
   if (m) {
     const id = m[1];
@@ -94,6 +107,21 @@ function parseVideoUrl(url) {
       thumbnailUrl: null,
       sourceUrl: `https://streamable.com/${id}`,
       sourceLabel: "Open on Streamable",
+    };
+  }
+  // Instagram reels / posts / IGTV — embedded via the /embed endpoint. These
+  // are portrait, so callers render them in a taller frame (see `portrait`).
+  m = url.match(/instagram\.com\/(?:reels?|p|tv)\/([\w-]+)/);
+  if (m) {
+    const id = m[1];
+    return {
+      provider: "instagram",
+      id,
+      embedUrl: `https://www.instagram.com/reel/${id}/embed`,
+      thumbnailUrl: null,
+      sourceUrl: `https://www.instagram.com/reel/${id}/`,
+      sourceLabel: "Open on Instagram",
+      portrait: true,
     };
   }
   return null;
@@ -189,6 +217,14 @@ function FilmCard({ video }) {
 
   const showThumbnail = parsed.thumbnailUrl && !thumbnailFailed;
 
+  // Portrait clips (Instagram reels / vertical files) get a tall, capped,
+  // centered frame; landscape clips keep the standard 16:9 responsive box.
+  const portrait = parsed.portrait || video.portrait;
+  const mediaBox = portrait
+    ? { position: "relative", width: "100%", maxWidth: 380, height: 600, margin: "0 auto", background: "#000", overflow: "hidden" }
+    : { position: "relative", paddingBottom: "56.25%", height: 0, background: "#000", overflow: "hidden" };
+  const fill = { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 };
+
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 16 }}>
       {/* Title + type badge */}
@@ -197,17 +233,28 @@ function FilmCard({ video }) {
         <span style={typeBadge(meta.color)}>{meta.label}</span>
       </div>
 
-      {/* 16:9 responsive container */}
-      <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, background: "#000", overflow: "hidden" }}>
+      {/* Media container — 16:9 for landscape, tall portrait for reels */}
+      <div style={mediaBox}>
         {isPlaying ? (
-          <iframe
-            src={parsed.embedUrl}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            referrerPolicy="strict-origin-when-cross-origin"
-            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
-          />
+          parsed.isFile ? (
+            <video
+              src={parsed.embedUrl}
+              title={video.title}
+              controls
+              autoPlay
+              playsInline
+              style={{ ...fill, objectFit: "contain", background: "#000" }}
+            />
+          ) : (
+            <iframe
+              src={parsed.embedUrl}
+              title={video.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+              style={fill}
+            />
+          )
         ) : (
           <button
             type="button"
@@ -225,7 +272,16 @@ function FilmCard({ video }) {
               background: "transparent",
             }}
           >
-            {showThumbnail ? (
+            {parsed.isFile ? (
+              // First-frame poster pulled from the file itself (no extra asset).
+              <video
+                src={`${parsed.embedUrl}#t=0.1`}
+                muted
+                playsInline
+                preload="metadata"
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", background: "#000" }}
+              />
+            ) : showThumbnail ? (
               <img
                 src={parsed.thumbnailUrl}
                 alt=""
@@ -259,10 +315,11 @@ function FilmCard({ video }) {
         )}
       </div>
 
-      {/* Footer: source-out link */}
+      {/* Footer: source-out link. Self-hosted clips link back to the original
+          post (video.source) for attribution rather than the raw file. */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 12 }}>
         <a
-          href={parsed.sourceUrl}
+          href={video.source || parsed.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -274,7 +331,7 @@ function FilmCard({ video }) {
             textTransform: "uppercase",
           }}
         >
-          ↗ {parsed.sourceLabel}
+          ↗ {video.sourceLabel || (video.source ? "View original" : parsed.sourceLabel)}
         </a>
       </div>
 

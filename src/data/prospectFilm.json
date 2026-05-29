@@ -7,5 +7,28 @@
     "workout":    "Skills / workout footage",
     "interview":  "Interview / commitment announcement"
   },
-  "videos": {}
+  "videos": {
+    "christiantowe": [
+      {
+        "url": "/film/DYsi9ElRfYI.mp4",
+        "title": "Capitol Hoops summer-league reel",
+        "type": "highlights",
+        "portrait": true,
+        "source": "https://www.instagram.com/reel/DYsi9ElRfYI/",
+        "sourceLabel": "View original on Instagram",
+        "notes": "Shared Hayfield reel — also features teammate Chase Jackson."
+      }
+    ],
+    "chasejackson": [
+      {
+        "url": "/film/DYsi9ElRfYI.mp4",
+        "title": "Capitol Hoops summer-league reel",
+        "type": "highlights",
+        "portrait": true,
+        "source": "https://www.instagram.com/reel/DYsi9ElRfYI/",
+        "sourceLabel": "View original on Instagram",
+        "notes": "Shared Hayfield reel — also features teammate Christian Towe."
+      }
+    ]
+  }
 }
