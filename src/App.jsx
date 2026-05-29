@@ -181,6 +181,36 @@ function capitolHoopsLinesFor(prospectName) {
   return out;
 }
 
+// HS varsity-season stat line for a prospect, pulled from src/data/teamStats.json
+// (keyed by school, matched to the player by name). Returned in statLine shape so
+// it renders alongside the summer lines — and, because its context is "HS Season",
+// primaryStatLine() will prefer it as the headline over small-sample summer data.
+function hsSeasonLineFor(prospectName) {
+  const key = nameKey(prospectName);
+  if (!key) return [];
+  const out = [];
+  for (const [school, ts] of Object.entries(TEAM_STATS || {})) {
+    for (const pl of ts.players || []) {
+      if (nameKey(pl.name) !== key) continue;
+      const g = pl.gameStats || {};
+      const sh = pl.shooting || {};
+      if (!pl.gameStats && !pl.shooting) continue;
+      out.push({
+        context: "HS Season",
+        season: ts.season,
+        team: school,
+        gp: pl.gp,
+        stats: {
+          gp: pl.gp,
+          ppg: g.ppg, rpg: g.rpg, apg: g.apg, spg: g.spg, bpg: g.bpg,
+          fgPct: sh.fgPct, threePct: sh.tpPct, ftPct: sh.ftPct,
+        },
+      });
+    }
+  }
+  return out;
+}
+
 // inches → feet-inches display, e.g. 74 → 6'2"
 function fmtHeight(inches) {
   if (inches == null) return "—";
@@ -732,7 +762,7 @@ function Chip({ children }) {
 // Pick the primary stat context for the at-a-glance strip: prefer HS Season,
 // otherwise the first available line (authored or Capitol Hoops summer).
 function primaryStatLine(p) {
-  const all = [...(Array.isArray(p.statLines) ? p.statLines : []), ...capitolHoopsLinesFor(p.name)];
+  const all = [...(Array.isArray(p.statLines) ? p.statLines : []), ...hsSeasonLineFor(p.name), ...capitolHoopsLinesFor(p.name)];
   if (all.length === 0) return null;
   return all.find((l) => /hs/i.test(l.context || "")) || all[0];
 }
@@ -769,7 +799,7 @@ function HeadlineStats({ p }) {
 function OverviewTab({ p }) {
   // Authored stat lines + any Capitol Hoops summer lines matched by name.
   const authoredLines = Array.isArray(p.statLines) ? p.statLines : [];
-  const statLines = [...authoredLines, ...capitolHoopsLinesFor(p.name)];
+  const statLines = [...authoredLines, ...hsSeasonLineFor(p.name), ...capitolHoopsLinesFor(p.name)];
   const isThin = !p.summary && !p.comp && (!Array.isArray(p.traits) || p.traits.length === 0);
   return (
     <div style={{ display: "grid", gap: 18 }}>
