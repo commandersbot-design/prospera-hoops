@@ -223,6 +223,7 @@ function fmtHeight(inches) {
 //   perGame → always 1 decimal (22.0, 3.5, 0.0); null → "—"
 //   pct     → 1 decimal + % sign (53.3%); null → "—"
 const perGame = (v) => (v == null || v === "" ? "—" : Number(v).toFixed(1));
+const fmtCount = (v) => (v == null || v === "" ? "—" : String(Math.round(Number(v)))); // whole-number counts (e.g. GP)
 const pct = (v) => (v == null || v === "" ? "—" : `${Number(v).toFixed(1)}%`);
 const isPctKey = (k) => k === "fgPct" || k === "threePct" || k === "ftPct";
 const fmtStat = (key, v) => (isPctKey(key) ? pct(v) : perGame(v));
@@ -775,7 +776,7 @@ function HeadlineStats({ p }) {
     { label: "PTS", value: perGame(s.ppg), accent: true },
     { label: "REB", value: perGame(s.rpg), accent: true },
     { label: "AST", value: perGame(s.apg), accent: true },
-    { label: "GP",  value: perGame(s.gp != null ? s.gp : line.gp), accent: false },
+    { label: "GP",  value: fmtCount(s.gp != null ? s.gp : line.gp), accent: false },
   ];
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: "16px 20px" }}>
@@ -949,7 +950,7 @@ function StatLineBlock({ line }) {
       </div>
 
       <StatGroup label="Per Game" cols={[
-        { label: "GP", value: perGame(gp), tone: "lead" },
+        { label: "GP", value: fmtCount(gp), tone: "lead" },
         { label: "PTS", value: perGame(s.ppg), tone: "accent" },
         { label: "REB", value: perGame(s.rpg) },
         { label: "AST", value: perGame(s.apg) },
