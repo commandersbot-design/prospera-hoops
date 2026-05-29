@@ -2198,6 +2198,19 @@ function LoadingScreen({ error }) {
   );
 }
 
+// Viewport hook — true when the screen is phone-width. Used to tighten the
+// shell (header padding + single-row scrollable nav) on small screens.
+function useIsMobile(bp = 640) {
+  const [m, setM] = useState(() => typeof window !== "undefined" && window.innerWidth <= bp);
+  useEffect(() => {
+    const f = () => setM(window.innerWidth <= bp);
+    f();
+    window.addEventListener("resize", f);
+    return () => window.removeEventListener("resize", f);
+  }, [bp]);
+  return m;
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
@@ -2216,6 +2229,7 @@ export default function App() {
   // until rankings are authored, so we land users on real content.
   const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
+  const isMobile = useIsMobile(640);
 
   if (!ready) return <LoadingScreen error={error} />;
 
@@ -2227,12 +2241,25 @@ export default function App() {
       {/* News ticker */}
       <NewsTicker onOpen={setOpenId} />
 
-      {/* Header */}
-      <header style={{ borderBottom: `1px solid ${T.border}`, padding: "16px 28px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-        <div style={{ ...mono, fontSize: 16, letterSpacing: "0.18em", color: T.accent, fontWeight: 800, textTransform: "uppercase" }}>
+      {/* Header — on phones the brand + search sit on the top row and the nav
+          becomes a single horizontally-scrollable row (instead of wrapping to
+          ~3 rows and eating vertical space). */}
+      <header style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? "12px 14px" : "16px 28px", display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, flexWrap: "wrap" }}>
+        <div style={{ ...mono, fontSize: isMobile ? 14 : 16, letterSpacing: "0.18em", color: T.accent, fontWeight: 800, textTransform: "uppercase", order: 1 }}>
           Prospera Preps
         </div>
-        <nav style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+        <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3 }}>
+          <SearchBox onOpen={setOpenId} />
+        </div>
+        <nav style={{
+          display: "flex", gap: isMobile ? 6 : 4, order: isMobile ? 3 : 2,
+          flexWrap: isMobile ? "nowrap" : "wrap",
+          flexBasis: isMobile ? "100%" : "auto",
+          overflowX: isMobile ? "auto" : "visible",
+          WebkitOverflowScrolling: "touch",
+          paddingBottom: isMobile ? 4 : 0,
+          scrollbarWidth: "none",
+        }}>
           {NAV.map((n) => {
             const active = view === n.key && !open;
             return (
@@ -2244,6 +2271,7 @@ export default function App() {
                   ...mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase",
                   color: active ? T.bg : T.textDim, background: active ? T.accent : "transparent",
                   border: `1px solid ${active ? T.accent : T.border}`, padding: "7px 12px", fontWeight: active ? 700 : 500,
+                  flexShrink: 0, whiteSpace: "nowrap",
                 }}
               >
                 {n.label}
@@ -2251,12 +2279,9 @@ export default function App() {
             );
           })}
         </nav>
-        <div style={{ marginLeft: "auto" }}>
-          <SearchBox onOpen={setOpenId} />
-        </div>
       </header>
 
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "18px 14px 48px" : "28px 24px 60px" }}>
         {open ? (
           <Profile prospect={open} onBack={() => setOpenId(null)} />
         ) : view === "prospects" ? (
