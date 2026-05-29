@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "rea
 import NEWS_DATA from "./data/news.json";
 import TEAM_STATS from "./data/teamStats.json";
 import SCHEDULE_DATA from "./data/schedule.json";
+import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -124,6 +125,15 @@ function canonicalSchool(slug, teamName) {
     return paren;
   }
   return String(teamName || "").trim();
+}
+
+// Official school name for display (Map labels, school-page title, directory).
+// Maps the internal school key → official name from the DMV directory; falls
+// back to the key itself. Internal keys, geocode joins, and Capitol Hoops
+// Summer League team names are unchanged — this is display-only.
+const OFFICIAL_NAMES = (OFFICIAL_SCHOOL_NAMES && OFFICIAL_SCHOOL_NAMES.names) || {};
+function officialSchoolName(key) {
+  return OFFICIAL_NAMES[key] || key;
 }
 
 // Schools, grouped from the prospect list, with coach pulled from the matching
@@ -1628,7 +1638,8 @@ function Schools({ onOpenProfile }) {
     () =>
       Object.values(SCHOOLS).map((s) => ({
         s,
-        name: s.name,
+        name: s.name, // internal key (used for navigation)
+        official: officialSchoolName(s.name), // display label
         state: SCHOOL_LOCATIONS[s.name]?.state || s.state || null,
         county: SCHOOL_LOCATIONS[s.name]?.county || null,
         count: s.prospects.length,
@@ -1641,13 +1652,13 @@ function Schools({ onOpenProfile }) {
     const k = q.trim().toLowerCase();
     const out = all.filter((r) => {
       if (stateF !== "ALL" && r.state !== stateF) return false;
-      if (k && !`${r.name} ${r.coach || ""} ${r.county || ""} ${STATE_LABELS[r.state] || r.state || ""}`.toLowerCase().includes(k)) return false;
+      if (k && !`${r.official} ${r.name} ${r.coach || ""} ${r.county || ""} ${STATE_LABELS[r.state] || r.state || ""}`.toLowerCase().includes(k)) return false;
       return true;
     });
     out.sort(
       sort === "name"
-        ? (a, b) => a.name.localeCompare(b.name)
-        : (a, b) => b.count - a.count || a.name.localeCompare(b.name)
+        ? (a, b) => a.official.localeCompare(b.official)
+        : (a, b) => b.count - a.count || a.official.localeCompare(b.official)
     );
     return out;
   }, [all, q, stateF, sort]);
@@ -1698,7 +1709,7 @@ function Schools({ onOpenProfile }) {
             >
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {r.state ? <span style={{ width: 8, height: 8, borderRadius: "50%", background: STATE_DOT[r.state] || T.textMute, flexShrink: 0 }} /> : null}
-                <div style={{ fontSize: 15, fontWeight: 700, color: T.text, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: T.text, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.official}</div>
               </div>
               <div style={{ ...mono, fontSize: 10, color: T.accent, letterSpacing: "0.08em", marginTop: 8, fontWeight: 700 }}>
                 {r.count} player{r.count === 1 ? "" : "s"}
@@ -1743,7 +1754,7 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
         ← All schools
       </button>
       <div style={{ background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`, padding: 22 }}>
-        <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{school.name}</h2>
+        <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{officialSchoolName(school.name)}</h2>
         <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 8 }}>
           {school.prospects.length} players{loc.county ? ` · ${loc.county}` : ""}{state ? ` · ${STATE_LABELS[state] || state}` : ""}
         </div>
@@ -1927,7 +1938,9 @@ function buildMapSchools() {
     }
 
     const city = loc.county ? `${loc.county}, ${state || loc.state || ""}`.replace(/,\s*$/, "") : STATE_LABELS[state] || "";
-    out.push({ id: name, name, city, lat: loc.lat, lng: loc.lng, state, prospects: s.prospects.length, top });
+    // id stays the internal key (used to open the school page); name is the
+    // official display label.
+    out.push({ id: name, name: officialSchoolName(name), city, lat: loc.lat, lng: loc.lng, state, prospects: s.prospects.length, top });
   }
   return out;
 }
