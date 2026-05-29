@@ -82,12 +82,25 @@
 :global(.leaflet-popup-content) { margin: 0; width: 248px !important; }
 
 /* ---------- Mobile ---------- */
+/* Stack the map on top (fully interactive, full width) with the school list
+ * scrolling below it — instead of overlaying the list on top of the map. */
 .mtoggle { display: none; }
 @media (max-width: 760px) {
-  .app { grid-template-columns: 1fr; position: relative; height: min(82vh, 680px); }
-  .panel { position: absolute; z-index: 1000; inset: 0 0 auto 0; height: 62%; border-right: none; border-bottom: 1px solid #E4E7EB; box-shadow: 0 6px 22px rgba(22,32,43,.10); transition: transform .28s ease; border-radius: 0 0 14px 14px; }
-  .collapsed { transform: translateY(calc(-100% + 132px)); }
-  .mapwrap { position: absolute; inset: 0; }
-  .mtoggle { display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; transform: translateX(-50%); bottom: -19px; z-index: 1001; background: #16202B; color: #fff; border: none; border-radius: 999px; padding: 9px 18px; font: 600 12.5px/1 'Inter', system-ui; box-shadow: 0 6px 22px rgba(22,32,43,.10); cursor: pointer; }
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 0;
+  }
+  .mapwrap { order: 1; position: relative; height: 56vh; min-height: 300px; }
+  .map { position: absolute; inset: 0; }
+  .panel {
+    order: 2; position: static; height: auto;
+    border-right: none; border-top: 1px solid #E4E7EB;
+    border-radius: 0 0 14px 14px; box-shadow: none; transform: none;
+  }
+  .collapsed { transform: none; }
+  .listwrap { max-height: 360px; }
+  .mtoggle { display: none; }
   .legend { bottom: 14px; right: 10px; padding: 9px 11px; }
 }

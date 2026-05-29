@@ -227,7 +227,9 @@ export default function ProspectMap({
       const s = dataRef.current.find((x) => String(x.id) === String(id));
       if (!map || !s) return;
       setActiveId(id);
-      if (window.innerWidth <= 760) setPanelCollapsed(true);
+      // On mobile the map sits above the list — scroll it into view so the
+      // fly-to is visible after tapping a school.
+      if (window.innerWidth <= 760) mapEl.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       // The marker may currently be hidden inside a cluster — zoomToShowLayer
       // declusters/zooms to it first, then we open its popup in the callback.
       if (cluster && marker) {
