@@ -1206,7 +1206,7 @@ function LeaderboardCard({ cat, players, onOpenProfile }) {
                 <span style={{ ...mono, fontSize: 11, color: i === 0 ? T.accent : T.textMute, fontWeight: i === 0 ? 700 : 400 }}>{i + 1}</span>
                 <div style={{ minWidth: 0 }}>
                   {tracked ? (
-                    <button type="button" onClick={() => onOpenProfile(tracked.id)} style={{ ...mono, fontSize: 12, color: T.text, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontWeight: 600 }}>
+                    <button type="button" onClick={() => onOpenProfile(tracked.id)} style={{ ...mono, fontSize: 12, color: T.accent, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontWeight: 600 }}>
                       {p.name}
                     </button>
                   ) : (
