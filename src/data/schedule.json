@@ -1,6 +1,8 @@
 {
   "season": "2026",
   "source": "Capitol Hoops Summer League",
+  "sourceUrl": "https://capitolhoopssummerleague.com/schedule/",
+  "scrapedAt": "2026-06-03T14:59:24.798Z",
   "games": [
     {
       "date": "2026-05-18",
@@ -511,23 +513,23 @@
     {
       "date": "2026-05-27",
       "dateLabel": "May 27, 2026",
-      "home": "Seahawks (South River)",
-      "away": "Bengals (Blake)",
-      "homeScore": 66,
-      "awayScore": 80,
-      "time": null,
-      "court": "Dematha-Court 1",
-      "status": "final"
-    },
-    {
-      "date": "2026-05-27",
-      "dateLabel": "May 27, 2026",
       "home": "Bullis",
       "away": "Vikes (Whitman)",
       "homeScore": 62,
       "awayScore": 44,
       "time": null,
       "court": "Dematha-Court 2",
+      "status": "final"
+    },
+    {
+      "date": "2026-05-27",
+      "dateLabel": "May 27, 2026",
+      "home": "Seahawks (South River)",
+      "away": "Bengals (Blake)",
+      "homeScore": 66,
+      "awayScore": 80,
+      "time": null,
+      "court": "Dematha-Court 1",
       "status": "final"
     },
     {
@@ -568,605 +570,605 @@
       "dateLabel": "May 27, 2026",
       "home": "Mustangs (Meade)",
       "away": "Patriots (Wootton)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 67,
+      "awayScore": 75,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-27",
       "dateLabel": "May 27, 2026",
       "home": "Crofton",
       "away": "JFK (Kennedy)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 39,
+      "awayScore": 58,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-27",
       "dateLabel": "May 27, 2026",
       "home": "Wildcats (WJ)",
       "away": "Virginia Academy",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 86,
+      "awayScore": 78,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Good Counsel",
       "away": "Wildcats (WJ)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 60,
+      "awayScore": 38,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "JFK (Kennedy)",
       "away": "Coolidge",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 60,
+      "awayScore": 51,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "John Carroll",
       "away": "GrindHouse (Huntingtown)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 67,
+      "awayScore": 30,
+      "time": null,
       "court": "Annapolis-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Bruins (Broadneck)",
       "away": "Clarksville (River Hill)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 36,
+      "awayScore": 24,
+      "time": null,
       "court": "Annapolis-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Boys’ Latin",
       "away": "Heritage",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 61,
+      "awayScore": 62,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "New Hope Academy",
       "away": "Forest Park",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 80,
+      "awayScore": 37,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Annapolis Area Christian",
       "away": "Crofton",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 67,
+      "awayScore": 53,
+      "time": null,
       "court": "Annapolis-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Buccaneers (Kent Island)",
       "away": "Bulldogs (Churchill)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 50,
+      "awayScore": 62,
+      "time": null,
       "court": "Annapolis-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Good Fellas (Oxon Hill)",
       "away": "Greenbelt (Eleanor Roosevelt)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 42,
+      "awayScore": 64,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-05-29",
-      "dateLabel": "May 29, 2026",
-      "home": "Purple Storm (DOZA)",
-      "away": "The West (Northwest)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
-      "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "GrindHouse (Huntingtown)",
       "away": "Bruins (Broadneck)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 51,
+      "awayScore": 43,
+      "time": null,
       "court": "Annapolis-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Clarksville (River Hill)",
       "away": "Screaming Eagles (Seneca V)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 19,
+      "awayScore": 63,
+      "time": null,
       "court": "Annapolis-Court 2",
-      "status": "scheduled"
+      "status": "final"
+    },
+    {
+      "date": "2026-05-29",
+      "dateLabel": "May 29, 2026",
+      "home": "Purple Storm (DOZA)",
+      "away": "The West (Northwest)",
+      "homeScore": 74,
+      "awayScore": 63,
+      "time": null,
+      "court": "Dematha-Court 2",
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Gonzaga",
       "away": "Heritage",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 68,
+      "awayScore": 53,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Forest Park",
       "away": "Boys’ Latin",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 48,
+      "awayScore": 46,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "Annapolis Area Christian",
       "away": "Bulldogs (Churchill)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 38,
+      "awayScore": 45,
+      "time": null,
       "court": "Annapolis-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-29",
       "dateLabel": "May 29, 2026",
       "home": "BCC",
       "away": "Concordia Prep",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 28,
+      "awayScore": 61,
+      "time": null,
       "court": "Annapolis-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Severn",
       "away": "Colonels (Magruder)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "10:00 am",
+      "homeScore": 61,
+      "awayScore": 49,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Loyola Blakefield",
       "away": "JFK (Kennedy)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "11:15 am",
+      "homeScore": 73,
+      "awayScore": 74,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Bullis",
       "away": "Severn",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "12:30 pm",
+      "homeScore": 76,
+      "awayScore": 48,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Screaming Eagles (Seneca V)",
       "away": "South County",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:45 pm",
+      "homeScore": 56,
+      "awayScore": 55,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Good Fellas (Oxon Hill)",
       "away": "Bengals (Blake)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "3:00 pm",
+      "homeScore": 39,
+      "awayScore": 89,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Landon",
       "away": "South County",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "4:15 pm",
+      "homeScore": 72,
+      "awayScore": 41,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Patriots (Wootton)",
       "away": "St. Mary’s Annapolis",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:30 pm",
+      "homeScore": 46,
+      "awayScore": 74,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-30",
       "dateLabel": "May 30, 2026",
       "home": "Good Counsel",
       "away": "BCC",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:45 pm",
+      "homeScore": 79,
+      "awayScore": 39,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Screaming Eagles (Seneca V)",
       "away": "St. Mary’s Annapolis",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "10:00 am",
+      "homeScore": 66,
+      "awayScore": 70,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Takoma Academy",
       "away": "Heritage",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "10:30 am",
+      "homeScore": 51,
+      "awayScore": 72,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Potomac (VA)",
       "away": "RM",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "10:30 am",
+      "homeScore": 62,
+      "awayScore": 81,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Good Counsel",
       "away": "Coolidge",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "11:15 am",
+      "homeScore": 67,
+      "awayScore": 50,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Purple Storm (DOZA)",
       "away": "Cavaliers (CG Woodson)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "11:45 am",
+      "homeScore": 80,
+      "awayScore": 66,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Severn",
       "away": "Forest Park",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "11:45 am",
+      "homeScore": 0,
+      "awayScore": 66,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Spalding",
       "away": "Potomac School",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "12:30 pm",
+      "homeScore": 53,
+      "awayScore": 57,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Hawks (Hayfield)",
       "away": "Virginia Academy",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:00 pm",
+      "homeScore": 62,
+      "awayScore": 56,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Heritage",
       "away": "Potomac (VA)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:00 pm",
+      "homeScore": 71,
+      "awayScore": 39,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "DeMatha",
       "away": "Bullis",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:45 pm",
+      "homeScore": 60,
+      "awayScore": 57,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Good Fellas (Oxon Hill)",
       "away": "Forest Park",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "2:15 pm",
+      "homeScore": 48,
+      "awayScore": 62,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Cavaliers (CG Woodson)",
       "away": "St. Stephen’s & St. Agnes",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "2:15 pm",
+      "homeScore": 70,
+      "awayScore": 55,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "New Hope Academy",
       "away": "Bulldogs (Churchill)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "3:00 pm",
+      "homeScore": 69,
+      "awayScore": 49,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Hawks (Hayfield)",
       "away": "JFK (Kennedy)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "3:30 pm",
+      "homeScore": 64,
+      "awayScore": 61,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Mustangs (Meade)",
       "away": "Clarksville (River Hill)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "3:30 pm",
+      "homeScore": 45,
+      "awayScore": 32,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Patriots (Wootton)",
       "away": "Bruins (Broadneck)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "4:15 pm",
+      "homeScore": 51,
+      "awayScore": 64,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Concordia Prep",
       "away": "Vikes (Whitman)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "4:45 pm",
+      "homeScore": 63,
+      "awayScore": 77,
+      "time": null,
       "court": "Hayfield-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "Boys’ Latin",
       "away": "St. John’s DC",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "4:45 pm",
+      "homeScore": 82,
+      "awayScore": 81,
+      "time": null,
       "court": "Hayfield-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "New Hope Academy",
       "away": "GrindHouse (Huntingtown)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:30 pm",
+      "homeScore": 78,
+      "awayScore": 44,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-05-31",
       "dateLabel": "May 31, 2026",
       "home": "The West (Northwest)",
       "away": "Landon",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:45 pm",
+      "homeScore": 39,
+      "awayScore": 56,
+      "time": null,
       "court": "DeMatha-Main",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "DeMatha",
       "away": "Coolidge",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 101,
+      "awayScore": 51,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Bengals (Blake)",
       "away": "Mustangs (Meade)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "5:00 pm",
+      "homeScore": 79,
+      "awayScore": 50,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Clinton Grace",
       "away": "Gonzaga",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 49,
+      "awayScore": 48,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Riverside (VA)",
       "away": "Wildcats (WJ)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "6:15 pm",
+      "homeScore": 49,
+      "awayScore": 68,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Tenley Tigers (Jackson Reed)",
       "away": "Bullis",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 66,
+      "awayScore": 85,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Concordia Prep",
       "away": "The West (Northwest)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "7:30 pm",
+      "homeScore": 71,
+      "awayScore": 57,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Patriot",
       "away": "BCC",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 48,
+      "awayScore": 53,
+      "time": null,
       "court": "Dematha-Court 1",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-01",
       "dateLabel": "June 1, 2026",
       "home": "Riverside (VA)",
       "away": "The Brook (Springbrook)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "8:45 pm",
+      "homeScore": 57,
+      "awayScore": 84,
+      "time": null,
       "court": "Dematha-Court 2",
-      "status": "scheduled"
+      "status": "final"
     },
     {
       "date": "2026-06-04",
@@ -1479,7 +1481,7 @@
     {
       "date": "2026-06-05",
       "dateLabel": "June 5, 2026",
-      "home": "St. Stephen’s & St. Agnes",
+      "home": "St. Stephen’s &#038; St. Agnes",
       "away": "Flint Hill",
       "homeScore": null,
       "awayScore": null,
@@ -1517,6 +1519,50 @@
       "homeScore": null,
       "awayScore": null,
       "time": "8:45 pm",
+      "court": "Annapolis-Court 2",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-06",
+      "dateLabel": "June 6, 2026",
+      "home": "Bengals (Blake)",
+      "away": "Purple Storm (DOZA)",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:15 pm",
+      "court": "Hayfield-Court 1",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-06",
+      "dateLabel": "June 6, 2026",
+      "home": "Sandy Spring",
+      "away": "Flint Hill",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:15 pm",
+      "court": "Hayfield-Court 2",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-06",
+      "dateLabel": "June 6, 2026",
+      "home": "Clinton Grace",
+      "away": "Glenelg Country",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:45 pm",
+      "court": "Annapolis-Court 1",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-06",
+      "dateLabel": "June 6, 2026",
+      "home": "Loyola Blakefield",
+      "away": "GrindHouse (Huntingtown)",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:45 pm",
       "court": "Annapolis-Court 2",
       "status": "scheduled"
     },
@@ -1605,50 +1651,6 @@
       "homeScore": null,
       "awayScore": null,
       "time": "12:30 pm",
-      "court": "Annapolis-Court 2",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-06",
-      "dateLabel": "June 6, 2026",
-      "home": "Bengals (Blake)",
-      "away": "Purple Storm (DOZA)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:15 pm",
-      "court": "Hayfield-Court 1",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-06",
-      "dateLabel": "June 6, 2026",
-      "home": "Sandy Spring",
-      "away": "Flint Hill",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:15 pm",
-      "court": "Hayfield-Court 2",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-06",
-      "dateLabel": "June 6, 2026",
-      "home": "Clinton Grace",
-      "away": "Glenelg Country",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:45 pm",
-      "court": "Annapolis-Court 1",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-06",
-      "dateLabel": "June 6, 2026",
-      "home": "Loyola Blakefield",
-      "away": "GrindHouse (Huntingtown)",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:45 pm",
       "court": "Annapolis-Court 2",
       "status": "scheduled"
     },
@@ -1787,6 +1789,39 @@
     {
       "date": "2026-06-07",
       "dateLabel": "June 7, 2026",
+      "home": "Clinton Grace",
+      "away": "John Handley",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:00 pm",
+      "court": "Hayfield-Court 1",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-07",
+      "dateLabel": "June 7, 2026",
+      "home": "Good Fellas (Oxon Hill)",
+      "away": "Yorktown",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:00 pm",
+      "court": "Hayfield-Court 2",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-07",
+      "dateLabel": "June 7, 2026",
+      "home": "Bengals (Blake)",
+      "away": "Takoma Academy",
+      "homeScore": null,
+      "awayScore": null,
+      "time": "1:45 pm",
+      "court": "DeMatha-Main",
+      "status": "scheduled"
+    },
+    {
+      "date": "2026-06-07",
+      "dateLabel": "June 7, 2026",
       "home": "Landon",
       "away": "Screaming Eagles (Seneca V)",
       "homeScore": null,
@@ -1809,7 +1844,7 @@
     {
       "date": "2026-06-07",
       "dateLabel": "June 7, 2026",
-      "home": "St. Stephen’s & St. Agnes",
+      "home": "St. Stephen’s &#038; St. Agnes",
       "away": "Virginia Academy",
       "homeScore": null,
       "awayScore": null,
@@ -1858,39 +1893,6 @@
       "homeScore": null,
       "awayScore": null,
       "time": "12:30 pm",
-      "court": "DeMatha-Main",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-07",
-      "dateLabel": "June 7, 2026",
-      "home": "Clinton Grace",
-      "away": "John Handley",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:00 pm",
-      "court": "Hayfield-Court 1",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-07",
-      "dateLabel": "June 7, 2026",
-      "home": "Good Fellas (Oxon Hill)",
-      "away": "Yorktown",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:00 pm",
-      "court": "Hayfield-Court 2",
-      "status": "scheduled"
-    },
-    {
-      "date": "2026-06-07",
-      "dateLabel": "June 7, 2026",
-      "home": "Bengals (Blake)",
-      "away": "Takoma Academy",
-      "homeScore": null,
-      "awayScore": null,
-      "time": "1:45 pm",
       "court": "DeMatha-Main",
       "status": "scheduled"
     },
@@ -2183,7 +2185,7 @@
     {
       "date": "2026-06-09",
       "dateLabel": "June 9, 2026",
-      "home": "St. Stephen’s & St. Agnes",
+      "home": "St. Stephen’s &#038; St. Agnes",
       "away": "St. John’s DC",
       "homeScore": null,
       "awayScore": null,
@@ -2436,7 +2438,7 @@
     {
       "date": "2026-06-16",
       "dateLabel": "June 16, 2026",
-      "home": "St. Stephen’s & St. Agnes",
+      "home": "St. Stephen’s &#038; St. Agnes",
       "away": "Patriot",
       "homeScore": null,
       "awayScore": null,

@@ -6,21 +6,25 @@
 
 :root {
   /* === SURFACES =========================================================== */
-  --prospera-bg:        #050A12;
-  --prospera-surface:   #0A0F1C;
-  --prospera-surface-2: #0F172A;
-  --prospera-card:      rgba(17, 24, 39, 0.72);
-  --prospera-surface-translucent:    rgba(15, 23, 42, 0.6);
-  --prospera-surface-2-translucent:  rgba(10, 15, 28, 0.92);
+  /* Softened for readability: a lighter slate-charcoal instead of near-black,
+   * so the UI is easier on the eyes (esp. for older readers) while staying dark. */
+  --prospera-bg:        #151B26;
+  --prospera-surface:   #1B2230;
+  --prospera-surface-2: #232C3D;
+  --prospera-card:      rgba(35, 44, 61, 0.80);
+  --prospera-surface-translucent:    rgba(27, 34, 48, 0.72);
+  --prospera-surface-2-translucent:  rgba(21, 27, 38, 0.94);
 
   /* === LINES ============================================================== */
-  --prospera-border:        #1F2937;
-  --prospera-border-soft:   rgba(31, 41, 55, 0.6);
+  /* Stronger borders so cards and rows separate clearly. */
+  --prospera-border:        #38445A;
+  --prospera-border-soft:   rgba(56, 68, 90, 0.7);
 
   /* === TEXT TIERS ========================================================= */
-  --prospera-text:       #E2E8F0;
-  --prospera-text-dim:   #94A3B8;
-  --prospera-text-mute:  #64748B;
+  /* Higher contrast across all three tiers. */
+  --prospera-text:       #F4F7FB;
+  --prospera-text-dim:   #C2CCDA;
+  --prospera-text-mute:  #93A1B5;
 
   /* === PRIMARY ACCENT — Bloomberg-orange ================================== */
   --prospera-cyan:           #F97316;

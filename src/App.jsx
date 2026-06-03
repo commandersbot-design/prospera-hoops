@@ -4,6 +4,7 @@ import TEAM_STATS from "./data/teamStats.json";
 import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
+import PlayerProfileCard from "./components/PlayerProfileCard";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -601,68 +602,126 @@ function ProspectsDirectory({ onOpen }) {
 }
 
 // ---------------------------------------------------------------------------
-// PROFILE — hero + tabs
+// PROFILE — editorial player card + tabs
 // ---------------------------------------------------------------------------
 const PROFILE_TABS = ["Overview", "Film"];
+
+// Real percentile context from the Capitol Hoops player pool — NOT fabricated.
+// Built once, lazily, after initData() populates CH_TEAMS. Lets the editorial
+// card show measured ranks (projected:false) instead of invented percentiles.
+let _chCohort = null;
+function chCohort() {
+  if (_chCohort) return _chCohort;
+  const cols = { ppg: [], apg: [], spg: [], threePct: [] };
+  let n = 0;
+  for (const team of Object.values(CH_TEAMS)) {
+    for (const pl of team.players || []) {
+      const s = pl.stats || {};
+      if (!(s.gp > 0)) continue;
+      n++;
+      for (const k of Object.keys(cols)) if (s[k] != null) cols[k].push(s[k]);
+    }
+  }
+  for (const k of Object.keys(cols)) cols[k].sort((a, b) => a - b);
+  _chCohort = { cols, n };
+  return _chCohort;
+}
+function pctileRank(arr, v) {
+  if (!arr || !arr.length || v == null) return null;
+  let c = 0;
+  for (const x of arr) { if (x <= v) c++; else break; } // arr is sorted ascending
+  return Math.max(1, Math.min(99, Math.round((c / arr.length) * 100)));
+}
+
+// Map a tracked prospect (+ joined stat lines) into the PlayerProfileCard shape.
+// Only real/derivable facts are written; evaluative fields stay null so the card
+// renders its "in progress" states rather than inventing scouting copy.
+function mapProspectToCard(p) {
+  const hsLine = hsSeasonLineFor(p.name)[0] || null;
+  const summerLine = capitolHoopsLinesFor(p.name)[0] || null;
+  const hsS = hsLine?.stats || null;
+  const suS = summerLine?.stats || null;
+  const hasHS = !!(hsS && (hsS.ppg != null || hsS.rpg != null || hsS.apg != null));
+  const hasSummer = !!(suS && suS.gp > 0);
+  const delta = (a, b) => (a != null && b != null ? +(a - b).toFixed(1) : null);
+
+  let trajectory = null;
+  if (hasHS || hasSummer) {
+    trajectory = {
+      hsSampleN: hsLine?.gp ?? hsS?.gp ?? null,
+      summerSampleN: summerLine?.gp ?? suS?.gp ?? null,
+      hs: hasHS ? { pts: hsS.ppg, reb: hsS.rpg, ast: hsS.apg } : null,
+      summer: hasSummer ? {
+        pts: suS.ppg, reb: suS.rpg, ast: suS.apg,
+        dPts: delta(suS.ppg, hsS?.ppg), dReb: delta(suS.rpg, hsS?.rpg), dAst: delta(suS.apg, hsS?.apg),
+      } : null,
+      note: hasHS && hasSummer && suS.gp <= 2 ? "Small summer sample — directional, not predictive." : null,
+    };
+  }
+
+  // Production-in-context: measured percentiles vs the summer pool.
+  let context = null;
+  if (hasSummer) {
+    const { cols, n } = chCohort();
+    const rows = [];
+    const add = (key, detail, statKey, watchIfLow) => {
+      const pr = pctileRank(cols[statKey], suS[statKey]);
+      if (pr == null) return;
+      rows.push({ key, detail, percentile: pr, tone: watchIfLow && pr < 35 ? "watch" : "normal" });
+    };
+    add("Scoring", `${perGame(suS.ppg)} PPG`, "ppg", false);
+    add("Playmaking", `${perGame(suS.apg)} APG`, "apg", false);
+    add("Perimeter shot", `${pct(suS.threePct)} 3P%`, "threePct", true);
+    add("Event steals", `${perGame(suS.spg)} SPG`, "spg", false);
+    if (rows.length) context = { cohortLabel: `vs Capitol Hoops players · n=${n}`, projected: false, rows };
+  }
+
+  const statusLabel = p.commitment
+    ? `Committed · ${p.commitment}`
+    : (p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : null);
+
+  return {
+    name: p.name,
+    position: p.position || null,
+    classYear: normGradYear(p.gradYear) || null,
+    height: p.heightInches != null ? fmtHeight(p.heightInches) : null,
+    weight: p.weightLbs ? `${p.weightLbs} lb` : null,
+    youngForClass: false,
+    school: p.school || null,
+    city: p.city || null,
+    state: p.state || null,
+    status: statusLabel,
+    watchlistTier: "DMV Database",
+    source: hasSummer ? "Capitol Hoops" : null,
+    photo: p.headshot || null,
+    updatedCount: null,
+    snapshot: p.summary || null,
+    trajectory,
+    scoutView: null,
+    context,
+    intel: {
+      circuit: summerLine?.team || null,
+      district: p.county ? `${p.county}${p.state ? " · " + (STATE_LABELS[p.state] || p.state) : ""}` : (p.state ? (STATE_LABELS[p.state] || p.state) : null),
+      ageRelClass: null,
+      frameUpside: null,
+    },
+  };
+}
 
 function Profile({ prospect, onBack }) {
   const [tab, setTab] = useState("Overview");
   const p = prospect;
+  const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
       <button
         type="button"
         onClick={onBack}
-        style={{ ...mono, fontSize: 11, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: 0 }}
+        style={{ ...mono, fontSize: 12, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: "4px 0" }}
       >
         ← Back to board
       </button>
-
-      {/* Hero — headshot-forward, immersive. Measurables/rankings render only
-          when present so thin (auto-promoted) profiles stay clean. */}
-      <div style={{
-        background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 55%)`,
-        border: `1px solid ${T.border}`,
-        borderLeft: `3px solid ${T.accent}`,
-        padding: 22,
-        display: "flex", gap: 22, alignItems: "center", flexWrap: "wrap",
-      }}>
-        <Avatar name={p.name} headshot={p.headshot} size={120} />
-        <div style={{ flex: "1 1 280px", minWidth: 0 }}>
-          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            <h1 style={{ fontSize: 32, margin: 0, color: T.text, fontWeight: 800, letterSpacing: "-0.02em" }}>{p.name}</h1>
-            {p.stars ? <Stars count={p.stars} /> : null}
-          </div>
-          {/* Chip row — only non-empty facts */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
-            <Chip>{p.position || "—"}</Chip>
-            <Chip>Class of {normGradYear(p.gradYear) || "—"}</Chip>
-            {p.heightInches ? <Chip>{fmtHeight(p.heightInches)}{p.wingspanInches ? ` · ${fmtHeight(p.wingspanInches)} ws` : ""}{p.weightLbs ? ` · ${p.weightLbs} lb` : ""}</Chip> : null}
-          </div>
-          <div style={{ ...mono, fontSize: 11, color: T.textMute, letterSpacing: "0.06em", marginTop: 10 }}>
-            {p.school}{p.city ? ` · ${p.city}, ${p.state}` : (p.state ? ` · ${STATE_LABELS[p.state] || p.state}` : "")}{p.aau ? ` · ${p.aau}` : ""}
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <StatusBadge status={p.status} commitment={p.commitment} />
-          </div>
-        </div>
-        {/* Rankings — only show the block if at least one rank exists */}
-        {(p.rankings?.national || p.rankings?.position || p.rankings?.state) ? (
-          <div style={{ display: "flex", gap: 18 }}>
-            <RankStat label="National" value={p.rankings?.national} />
-            <RankStat label="Position" value={p.rankings?.position} />
-            <RankStat label={STATE_LABELS[p.state] || "State"} value={p.rankings?.state} />
-          </div>
-        ) : null}
-      </div>
-
-      {/* Headline stats — the at-a-glance line so the profile leads with a
-          visual, not a wall of numbers. Pulled from the primary stat context. */}
-      <HeadlineStats p={p} />
-
-      {/* Industry recruiting rankings (247 / ESPN / Rivals) — only for ranked recruits. */}
-      <RecruitingBlock p={p} />
 
       {/* Tabs */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
@@ -674,9 +733,9 @@ function Profile({ prospect, onBack }) {
               type="button"
               onClick={() => setTab(t)}
               style={{
-                ...mono, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase",
+                ...mono, fontSize: 13, letterSpacing: "0.14em", textTransform: "uppercase",
                 color: active ? T.accent : T.textDim, background: "transparent", border: "none",
-                padding: "12px 18px", borderBottom: `2px solid ${active ? T.accent : "transparent"}`,
+                padding: "14px 20px", borderBottom: `2px solid ${active ? T.accent : "transparent"}`,
               }}
             >
               {t}
@@ -685,7 +744,38 @@ function Profile({ prospect, onBack }) {
         })}
       </div>
 
-      {tab === "Overview" && <OverviewTab p={p} />}
+      {tab === "Overview" && (
+        <div style={{ display: "grid", gap: 18 }}>
+          {/* Editorial scout card — the profile's Overview. Real facts + measured
+              stats; evaluative copy shows its "in progress" state until authored. */}
+          <PlayerProfileCard player={cardPlayer} />
+
+          {/* Real authored data the card doesn't cover, kept below it. */}
+          <RecruitingBlock p={p} />
+
+          {Array.isArray(p.offers) && p.offers.length > 0 && (
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+              <SectionLabel>Offers</SectionLabel>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+                {p.offers.map((o) => {
+                  const committed = p.commitment && o === p.commitment;
+                  return (
+                    <span key={o} style={{
+                      ...mono, fontSize: 12, letterSpacing: "0.06em",
+                      color: committed ? T.bg : T.textDim,
+                      background: committed ? T.positive : "transparent",
+                      border: `1px solid ${committed ? T.positive : T.border}`,
+                      padding: "6px 11px",
+                    }}>
+                      {o}{committed ? " ✓" : ""}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
     </div>
   );
@@ -913,8 +1003,9 @@ function OverviewTab({ p }) {
 }
 
 function SectionLabel({ children }) {
+  // Sans (not mono) + larger for readability; still an uppercase signal-cyan eyebrow.
   return (
-    <div style={{ ...mono, fontSize: 9, letterSpacing: "0.2em", color: T.signal, textTransform: "uppercase", fontWeight: 700 }}>
+    <div style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, letterSpacing: "0.1em", color: T.signal, textTransform: "uppercase", fontWeight: 800 }}>
       {children}
     </div>
   );
@@ -2231,6 +2322,15 @@ export default function App() {
   const [openId, setOpenId] = useState(null);
   const isMobile = useIsMobile(640);
 
+  // Standalone preview of the editorial player card: open #card in the URL.
+  if (typeof window !== "undefined" && window.location.hash === "#card") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0a0e16", padding: "40px 16px" }}>
+        <PlayerProfileCard />
+      </div>
+    );
+  }
+
   if (!ready) return <LoadingScreen error={error} />;
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
@@ -2268,9 +2368,9 @@ export default function App() {
                 type="button"
                 onClick={() => goView(n.key)}
                 style={{
-                  ...mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase",
+                  ...mono, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase",
                   color: active ? T.bg : T.textDim, background: active ? T.accent : "transparent",
-                  border: `1px solid ${active ? T.accent : T.border}`, padding: "7px 12px", fontWeight: active ? 700 : 500,
+                  border: `1px solid ${active ? T.accent : T.border}`, padding: "10px 15px", fontWeight: active ? 700 : 600,
                   flexShrink: 0, whiteSpace: "nowrap",
                 }}
               >
