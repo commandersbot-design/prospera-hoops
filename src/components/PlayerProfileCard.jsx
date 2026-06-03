@@ -45,7 +45,9 @@ const C = {
   amber: "#c97a3a",
 };
 const SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
-const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
+// Clean, official sans for all labels/body (was JetBrains Mono); Fraunces stays
+// as the editorial display face for the name, big stat numbers, and snapshot.
+const MONO = "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 const TONE = { normal: C.accent, watch: C.amber, strong: C.green };
 
@@ -151,7 +153,7 @@ function Header({ p }) {
         {p.snapshot ? (
           <div style={{ background: `${C.accent}0d`, border: `1px solid ${C.accent}33`, borderRadius: 8, padding: "12px 14px" }}>
             <Label color={C.accent} style={{ fontSize: 10, marginBottom: 6 }}>Scout snapshot</Label>
-            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 16, lineHeight: 1.45, color: C.text }}>{p.snapshot}</div>
+            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 16, lineHeight: 1.45, color: C.text, maxWidth: "72ch" }}>{p.snapshot}</div>
           </div>
         ) : (
           <div style={{ border: `1px dashed ${C.border}`, borderRadius: 8, padding: "12px 14px" }}>
@@ -238,7 +240,7 @@ function Trajectory({ t }) {
         </div>
       ) : (hsBlock || summerBlock)}
       {t.note ? (
-        <div style={{ fontFamily: MONO, fontSize: 11, lineHeight: 1.5, color: C.text3, marginTop: 14 }}>{t.note}</div>
+        <div style={{ fontFamily: MONO, fontSize: 12, lineHeight: 1.5, color: C.text3, marginTop: 14, maxWidth: "80ch" }}>{t.note}</div>
       ) : null}
     </Section>
   );
@@ -294,7 +296,7 @@ function ProductionContext({ c }) {
     <Section title="Production in context" subtitle={c.cohortLabel}>
       {c.rows.map((r) => <ContextRow key={r.key} row={r} projected={c.projected} />)}
       {c.projected ? (
-        <div style={{ fontFamily: MONO, fontSize: 10, lineHeight: 1.5, color: C.faint, marginTop: 10 }}>
+        <div style={{ fontFamily: MONO, fontSize: 11.5, lineHeight: 1.5, color: C.faint, marginTop: 10, maxWidth: "80ch" }}>
           Projected percentiles — peer cohort not yet computed. Directional estimates, not measured ranks.
         </div>
       ) : null}
@@ -388,11 +390,11 @@ const RESPONSIVE_CSS = `
 }
 `;
 
-export default function PlayerProfileCard({ player = DEFAULT_PLAYER }) {
+export default function PlayerProfileCard({ player = DEFAULT_PLAYER, maxWidth = 680 }) {
   const p = player;
   return (
     <div style={{
-      maxWidth: 680, margin: "0 auto", background: C.bg, color: C.text,
+      width: "100%", maxWidth, margin: "0 auto", background: C.bg, color: C.text,
       border: `1px solid ${C.border}`, borderRadius: 14, overflow: "hidden",
       fontFamily: MONO,
     }}>

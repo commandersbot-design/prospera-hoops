@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* Inter — clean, official primary UI typeface (replaces the monospace "terminal" labels). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
 /* Editorial profile-card typography: Fraunces (display serif, incl. italic) + JetBrains Mono. */
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 /* Tabler icon webfont (ti ti-*) — used by the player profile card. */
@@ -27,10 +28,11 @@ body {
     linear-gradient(180deg, #11161f 0%, #161d29 40%, #131922 100%);
   background-attachment: fixed;
   color: var(--prospera-text);
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   /* Larger, higher-contrast base type for readability. */
   font-size: 17px;
   line-height: 1.6;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

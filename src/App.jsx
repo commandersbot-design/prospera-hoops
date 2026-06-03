@@ -39,8 +39,11 @@ const T = {
   track:      "var(--prospera-pct-track)",
 };
 
+// Was a monospace "terminal" face; now the clean Inter sans so labels, nav,
+// captions, and stat lines read as a polished, official UI. Numeric columns
+// still align via fontVariantNumeric: "tabular-nums" set at their call sites.
 const mono = {
-  fontFamily: 'ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace',
+  fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 };
 
 // Module-level data stores — populated by initData() after the runtime fetch,
@@ -746,9 +749,10 @@ function Profile({ prospect, onBack }) {
 
       {tab === "Overview" && (
         <div style={{ display: "grid", gap: 18 }}>
-          {/* Editorial scout card — the profile's Overview. Real facts + measured
-              stats; evaluative copy shows its "in progress" state until authored. */}
-          <PlayerProfileCard player={cardPlayer} />
+          {/* Editorial scout card — the profile's Overview. Fills the full width
+              of the content area. Real facts + measured stats; evaluative copy
+              shows its "in progress" state until authored. */}
+          <PlayerProfileCard player={cardPlayer} maxWidth="100%" />
 
           {/* Real authored data the card doesn't cover, kept below it. */}
           <RecruitingBlock p={p} />
