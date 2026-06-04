@@ -46,6 +46,13 @@ const mono = {
   fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 };
 
+// Editorial display serif — matches the player card's headline face (Fraunces).
+// Used for the brand wordmark, large detail-page names, and big display numbers
+// so the "official editorial" identity is consistent app-wide, not card-only.
+const serif = {
+  fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif",
+};
+
 // Module-level data stores — populated by initData() after the runtime fetch,
 // before any component renders. Declared with `let` so they can be replaced.
 let PROSPECTS = [];
@@ -1323,7 +1330,7 @@ function SummerTeam({ team, onBack, onOpenProfile }) {
       </button>
 
       <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
-        <h2 style={{ fontSize: 22, margin: 0, color: T.text, fontWeight: 800 }}>{team.name}</h2>
+        <h2 style={{ ...serif, fontSize: 28, margin: 0, color: T.text, fontWeight: 600, letterSpacing: "-0.01em" }}>{team.name}</h2>
         <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
           Capitol Hoops {team.season} · {team.headCoach} · {team.players.length} players
         </div>
@@ -1849,7 +1856,7 @@ function SchoolDetail({ school, onBack, onOpenProfile }) {
         ← All schools
       </button>
       <div style={{ background: `linear-gradient(135deg, var(--prospera-accent-bg-mid) 0%, ${T.surface} 60%)`, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}`, padding: 22 }}>
-        <h2 style={{ fontSize: 26, margin: 0, color: T.text, fontWeight: 800 }}>{officialSchoolName(school.name)}</h2>
+        <h2 style={{ ...serif, fontSize: 30, margin: 0, color: T.text, fontWeight: 600, letterSpacing: "-0.01em" }}>{officialSchoolName(school.name)}</h2>
         <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 8 }}>
           {school.prospects.length} players{loc.county ? ` · ${loc.county}` : ""}{state ? ` · ${STATE_LABELS[state] || state}` : ""}
         </div>
@@ -2191,7 +2198,7 @@ function Classes({ onOpen }) {
             style={{ textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, padding: 18, cursor: "pointer", color: T.text }}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border)")}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: T.accent }}>'{String(y).slice(2)}</div>
+            <div style={{ ...serif, fontSize: 30, fontWeight: 600, color: T.accent }}>'{String(y).slice(2)}</div>
             <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.08em", marginTop: 6 }}>
               Class of {y} · {byYear[y].length}
             </div>
@@ -2349,7 +2356,7 @@ export default function App() {
           becomes a single horizontally-scrollable row (instead of wrapping to
           ~3 rows and eating vertical space). */}
       <header style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? "12px 14px" : "16px 28px", display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, flexWrap: "wrap" }}>
-        <div style={{ ...mono, fontSize: isMobile ? 14 : 16, letterSpacing: "0.18em", color: T.accent, fontWeight: 800, textTransform: "uppercase", order: 1 }}>
+        <div style={{ ...serif, fontSize: isMobile ? 22 : 26, letterSpacing: "-0.01em", color: T.accent, fontWeight: 600, order: 1 }}>
           Prospera Preps
         </div>
         <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3 }}>

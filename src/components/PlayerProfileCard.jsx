@@ -76,9 +76,10 @@ const Pill = ({ children, color = C.text2, border = C.border, bg = "transparent"
   </span>
 );
 
-// Section wrapper — a top hairline divides every section after the first.
+// Section wrapper. Dividers between sections are drawn by the layout CSS
+// (.ppc-col > * + *) so they work in both single- and two-column modes.
 const Section = ({ title, subtitle, first, bg, children }) => (
-  <div style={{ padding: "20px 22px", borderTop: first ? "none" : `1px solid ${C.border}`, background: bg || "transparent" }}>
+  <div style={{ padding: "20px 22px", background: bg || "transparent" }}>
     {title ? (
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
         <Label>{title}</Label>
@@ -384,6 +385,21 @@ const RESPONSIVE_CSS = `
 .ppc-traj { display: grid; grid-template-columns: 1fr 44px 1fr; align-items: center; gap: 8px; }
 .ppc-scout { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; }
 .ppc-intel { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+
+/* Body layout: single column by default; a hairline divides the header from
+   the body and each stacked section from the next. */
+.ppc-body { border-top: 1px solid rgba(255,255,255,0.06); display: grid; grid-template-columns: 1fr; }
+.ppc-col > * + * { border-top: 1px solid rgba(255,255,255,0.06); }
+.ppc-body > .ppc-col + .ppc-col { border-top: 1px solid rgba(255,255,255,0.06); }
+
+/* Two-column dashboard, but only when the card is rendered full-width
+   (.ppc-wide). The stat story (trajectory + production) sits on the left, the
+   read + intel as a right sidebar. Collapses to one column when there is no
+   right-hand content. The fixed-width standalone preview always stays single. */
+@media (min-width: 880px) {
+  .ppc-wide .ppc-body:not(.ppc-body-single) { grid-template-columns: 1.15fr 0.85fr; }
+  .ppc-wide .ppc-body:not(.ppc-body-single) > .ppc-col + .ppc-col { border-top: none; border-left: 1px solid rgba(255,255,255,0.06); }
+}
 @media (max-width: 560px) {
   .ppc-traj { grid-template-columns: 1fr; }
   .ppc-traj-arrow { transform: rotate(90deg); padding: 4px 0; }
@@ -392,18 +408,38 @@ const RESPONSIVE_CSS = `
 
 export default function PlayerProfileCard({ player = DEFAULT_PLAYER, maxWidth = 680 }) {
   const p = player;
+  const wide = maxWidth === "100%" || maxWidth === "100vw";
   return (
-    <div style={{
+    <div className={wide ? "ppc-wide" : undefined} style={{
       width: "100%", maxWidth, margin: "0 auto", background: C.bg, color: C.text,
       border: `1px solid ${C.border}`, borderRadius: 14, overflow: "hidden",
       fontFamily: MONO,
     }}>
       <style>{RESPONSIVE_CSS}</style>
       <Header p={p} />
-      <Trajectory t={p.trajectory} />
-      <ScoutView s={p.scoutView} />
-      <ProductionContext c={p.context} />
-      <DmvIntel intel={p.intel} />
+      <CardBody p={p} />
+    </div>
+  );
+}
+
+// Splits the four body sections into a left "stat story" column and a right
+// "read + intel" sidebar. Falls back to a single column when the right side
+// has no content (common for auto-promoted profiles with no scouting authored).
+function CardBody({ p }) {
+  const hasIntel = !!(p.intel && (p.intel.circuit || p.intel.district || p.intel.ageRelClass || p.intel.frameUpside));
+  const hasRight = !!p.scoutView || hasIntel;
+  return (
+    <div className={`ppc-body${hasRight ? "" : " ppc-body-single"}`}>
+      <div className="ppc-col">
+        <Trajectory t={p.trajectory} />
+        <ProductionContext c={p.context} />
+      </div>
+      {hasRight ? (
+        <div className="ppc-col">
+          <ScoutView s={p.scoutView} />
+          <DmvIntel intel={p.intel} />
+        </div>
+      ) : null}
     </div>
   );
 }
