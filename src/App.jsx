@@ -5,6 +5,7 @@ import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
+import { SchoolsSection, SummerLeagueSection } from "./components/ScoutingWorkspace";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -2398,9 +2399,9 @@ export default function App() {
         ) : view === "prospects" ? (
           <ProspectsDirectory onOpen={setOpenId} />
         ) : view === "summer" ? (
-          <SummerLeague onOpenProfile={setOpenId} />
+          <SummerLeagueSection />
         ) : view === "schools" ? (
-          <Schools onOpenProfile={setOpenId} />
+          <SchoolsSection />
         ) : view === "map" ? (
           <DmvMap onOpenProfile={setOpenId} />
         ) : view === "classes" ? (
