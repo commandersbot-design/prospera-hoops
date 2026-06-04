@@ -4,11 +4,14 @@
 // a clean date/title/content, so we pull all posts once, keep the game-recap
 // ones, and parse each recap's body into individual games ("Game N: A vs. B").
 //
-// Recap detection is slug-based and tagged by `type` so the site can filter:
+// Detection is slug-based and tagged by `type` so the site can filter:
 //   recap          — day-N / game-recap / *-recap posts (the core game recaps)
 //   notable-games  — "Notable Games of Day N" roundups
 //   takeaways      — "Takeaways from X vs. Y" single-game writeups
-// Previews, features, and players-of-the-week posts are intentionally excluded.
+//   preview        — matchup previews / "face-off" hype for upcoming games
+//   feature        — team & player features, spotlights, profiles, analysis
+// Administrative posts (players-of-the-week, all-league/all-star, MVP, schedule
+// releases, playoff pictures, etc.) are intentionally excluded.
 //
 // Usage:
 //   node scripts/scrape-recaps.mjs            # scrape all, write file
@@ -26,12 +29,15 @@ const decode = (s) => String(s || "")
   .replace(/&amp;/g, "&").replace(/&nbsp;/g, " ")
   .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-// Slug → recap type, or null if not a game recap.
-function recapType(slug) {
+// Slug → content type, or null to skip (admin/awards posts).
+function classify(slug) {
   if (/notable-games-of-day/.test(slug)) return "notable-games";
   if (/^takeaways-from/.test(slug)) return "takeaways";
   if (/recap/.test(slug) || /game-recap/.test(slug) || /^day-\d+/.test(slug)) return "recap";
-  return null;
+  if (/preview|face-off|facing-off|-vs-|-v-/.test(slug)) return "preview";
+  // Exclude administrative / awards / standings posts.
+  if (/players-of-the-week|team-of-the-week|all-star|all-summer-league|all-league|all-defensive|schedule-released|playoff-picture|playoff-update|playoffs?-set|final-4-set|mvp|most-valuable|captures|wrap-up|collaboration|dmv-live|named-20\d\d|^\d+-\d+$/.test(slug)) return null;
+  return "feature";
 }
 
 // Split a post's rendered HTML into ordered blocks (headings + paragraphs), so
@@ -106,11 +112,13 @@ async function run() {
   const recaps = [];
   for (const p of posts) {
     const slug = p.slug || "";
-    const type = recapType(slug);
+    const type = classify(slug);
     if (!type) continue;
     const bs = blocks(p.content?.rendered || "");
     const ps = paragraphsOf(bs);
-    const games = (type === "recap" || type === "notable-games") ? parseGames(bs) : [{ label: null, matchup: null, text: ps.join("\n\n") }];
+    const bodyText = ps.join("\n\n");
+    if (bodyText.length < 120) continue; // skip thin/video-only posts
+    const games = (type === "recap" || type === "notable-games") ? parseGames(bs) : [{ label: null, matchup: null, text: bodyText }];
     recaps.push({
       id: p.id,
       slug,
@@ -123,7 +131,7 @@ async function run() {
       excerpt: decode(p.excerpt?.rendered || "").slice(0, 280),
       gameCount: games.filter((g) => g.matchup).length,
       games,
-      bodyText: ps.join("\n\n"),
+      bodyText,
     });
   }
   recaps.sort((a, b) => (b.date || "").localeCompare(a.date || ""));

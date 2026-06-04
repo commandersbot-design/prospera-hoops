@@ -448,7 +448,7 @@ const REGIONS = ["DC", "MD", "NoVA"];
 const LEAGUES = ["WCAC", "MIAA", "Public", "IND"];
 const CLASSES = ["27", "28", "29", "30"];
 
-export function SummerLeagueSection() {
+export function SummerLeagueSection({ recaps = [] }) {
   const [tab, setTab] = useState("players"); // DEFAULT LANDING = Players
 
   // Teams-workspace state lives here (above the shell) so filters persist across
@@ -523,6 +523,7 @@ export function SummerLeagueSection() {
             {team.conf} · {team.region} · {team.gp} games · {team.coach || "—"}
           </div>
           <RosterTable players={team.roster} mode="stats" />
+          <CoverageList recaps={recaps} teamName={team.name} />
         </div>
       ) : <Empty>No teams match these filters.</Empty>}
     </div>
@@ -537,7 +538,7 @@ export function SummerLeagueSection() {
       topRight={<Segmented value={tab} onChange={setTab} options={[["players", "Players"], ["teams", "Teams"], ["schedule", "Schedule"]]} />}
       rail={tab === "teams" ? rail : null}
     >
-      {tab === "teams" ? teamsDetail : tab === "players" ? <SummerPlayers /> : <SummerSchedule />}
+      {tab === "teams" ? teamsDetail : tab === "players" ? <SummerPlayers /> : <SummerSchedule recaps={recaps} />}
     </WorkspaceShell>
   );
 }
@@ -579,29 +580,50 @@ function SummerPlayers() {
   );
 }
 
-// Tiny seed schedule so the feed renders; wire to schedule.json later.
+// Tiny seed schedule so the feed renders; wire to schedule.json later. Matchups
+// chosen to line up with scraped recaps/previews so the attachment is visible.
 const SEED_GAMES = [
-  { date: "May 31", home: "Hawks (Hayfield)", away: "Gonzaga", hs: 64, as: 61, status: "final" },
-  { date: "May 31", home: "DeMatha", away: "Good Counsel", hs: 78, as: 55, status: "final" },
-  { date: "Jun 1", home: "St. John's DC", away: "Paul VI", hs: 70, as: 66, status: "final" },
-  { date: "Jun 6", home: "Bullis", away: "Boys' Latin", time: "3:45 pm", status: "scheduled" },
-  { date: "Jun 6", home: "DeMatha", away: "Gonzaga", time: "6:15 pm", status: "scheduled" },
+  { date: "Jun 1", home: "Good Counsel", away: "Coolidge", status: "final" },     // Day 10 recap
+  { date: "Jun 1", home: "DeMatha", away: "Bullis", status: "final" },            // Day 10 recap (Ledo's GotW)
+  { date: "Jun 1", home: "Wootton", away: "Broadneck", status: "final" },         // Day 10 recap
+  { date: "Jun 6", home: "Jackson-Reed", away: "Gonzaga", time: "6:15 pm", status: "scheduled" }, // preview
+  { date: "May 31", home: "Blake", away: "South River", time: "1:00 pm", status: "scheduled" },   // preview
 ];
-function SummerSchedule() {
+function SummerSchedule({ recaps = [] }) {
   return (
     <div>
       <ZoneTitle right={`${SEED_GAMES.length} games`}>Games feed</ZoneTitle>
       <div style={{ display: "grid", gap: 8 }}>
-        {SEED_GAMES.map((g, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "64px 1fr auto", gap: 12, alignItems: "center", padding: "10px 12px", background: A.surface, border: `1px solid ${A.border}`, borderRadius: 10 }}>
-            <span style={{ fontFamily: MONO, fontSize: 10, color: A.textMut, letterSpacing: "0.06em" }}>{g.date}</span>
-            <span style={{ fontFamily: SERIF, fontSize: 14, color: A.textHi }}>{g.home} <span style={{ color: A.textFaint, fontFamily: MONO, fontSize: 11 }}>vs</span> {g.away}</span>
-            {g.status === "final"
-              ? <span style={{ fontFamily: SERIF, fontSize: 16, fontWeight: 600, color: A.text, whiteSpace: "nowrap" }}>{g.hs}<span style={{ color: A.textFaint }}>–</span>{g.as}</span>
-              : <span style={{ fontFamily: MONO, fontSize: 12, color: A.accent, fontWeight: 600, whiteSpace: "nowrap" }}>{g.time}</span>}
-          </div>
-        ))}
+        {SEED_GAMES.map((g, i) => <ScheduleRow key={i} g={g} recaps={recaps} />)}
       </div>
+    </div>
+  );
+}
+
+// One schedule game + an inline expander for the matched recap (final) or
+// preview (upcoming), pulled from the scraped coverage by matchup.
+function ScheduleRow({ g, recaps }) {
+  const [open, setOpen] = useState(false);
+  const final = g.status === "final";
+  const match = useMemo(() => gameForMatchup(recaps, g.home, g.away, final ? "recap" : "preview"), [recaps, g, final]);
+  return (
+    <div style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 10, overflow: "hidden" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "64px 1fr auto auto", gap: 12, alignItems: "center", padding: "10px 12px" }}>
+        <span style={{ fontFamily: MONO, fontSize: 10, color: A.textMut, letterSpacing: "0.06em" }}>{g.date}</span>
+        <span style={{ fontFamily: SERIF, fontSize: 14, color: A.textHi }}>{g.home} <span style={{ color: A.textFaint, fontFamily: MONO, fontSize: 11 }}>vs</span> {g.away}</span>
+        {match
+          ? <button type="button" onClick={() => setOpen((v) => !v)} style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: final ? A.accent : A.info, background: "transparent", border: `1px solid ${final ? A.accent : A.info}`, borderRadius: 5, padding: "3px 8px", cursor: "pointer", whiteSpace: "nowrap" }}>{final ? "Recap" : "Preview"} {open ? "▾" : "▸"}</button>
+          : <span />}
+        {final
+          ? <span style={{ fontFamily: MONO, fontSize: 12, color: A.textMut, whiteSpace: "nowrap" }}>{g.hs != null ? `${g.hs}–${g.as}` : "Final"}</span>
+          : <span style={{ fontFamily: MONO, fontSize: 12, color: A.accent, fontWeight: 600, whiteSpace: "nowrap" }}>{g.time}</span>}
+      </div>
+      {open && match ? (
+        <div style={{ padding: "0 12px 12px", fontFamily: MONO, fontSize: 12.5, lineHeight: 1.6, color: A.textMut, whiteSpace: "pre-wrap" }}>
+          {match.text}
+          <a href={match.recap.url} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 8, color: A.info, fontSize: 11, textDecoration: "none" }}>{match.recap.title} ↗</a>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -720,5 +742,155 @@ export function SchoolsSection() {
         </div>
       ) : <Empty>No schools match these filters.</Empty>}
     </WorkspaceShell>
+  );
+}
+
+// =============================================================================
+// RECAP MATCHING — link scraped recaps/previews/features to teams & games.
+// =============================================================================
+const slugify = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+// A team's identity key: the parenthetical alias if present ("Hawks (Hayfield)"
+// → "hayfield"), else the whole name.
+const teamKey = (n) => { const m = String(n || "").match(/\(([^)]+)\)/); return slugify(m ? m[1] : n); };
+const mentions = (text, name) => { const k = teamKey(name); return k.length > 2 && slugify(text).includes(k); };
+
+const TYPE_LABEL = { recap: "Recap", "notable-games": "Notable", takeaways: "Takeaways", preview: "Preview", feature: "Feature" };
+const TYPE_COLOR = { recap: A.accent, "notable-games": A.accent, takeaways: A.accent, preview: A.info, feature: A.accent2 };
+
+// Recaps/coverage that name a given team (in title, a game matchup, or body).
+function coverageForTeam(recaps, teamName) {
+  if (!Array.isArray(recaps)) return [];
+  return recaps.filter((r) =>
+    mentions(r.title, teamName) ||
+    mentions(r.bodyText, teamName) ||
+    (r.games || []).some((g) => g.matchup && mentions(g.matchup, teamName))
+  );
+}
+// The recap (and specific game text) covering a home/away matchup.
+function gameForMatchup(recaps, home, away, kind) {
+  if (!Array.isArray(recaps)) return null;
+  const types = kind === "preview" ? ["preview"] : ["recap", "notable-games", "takeaways"];
+  for (const r of recaps.filter((x) => types.includes(x.type))) {
+    if (kind === "preview") {
+      if (mentions(r.title, home) && mentions(r.title, away)) return { recap: r, text: r.excerpt };
+      continue;
+    }
+    for (const g of r.games || []) {
+      if (g.matchup && mentions(g.matchup, home) && mentions(g.matchup, away)) return { recap: r, text: g.text, game: g };
+    }
+    // single-game recap titled with the matchup
+    if (mentions(r.title, home) && mentions(r.title, away)) return { recap: r, text: r.bodyText };
+  }
+  return null;
+}
+
+const TypeChip = ({ type }) => (
+  <span style={{ fontFamily: MONO, fontSize: 9.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: TYPE_COLOR[type] || A.textMut, border: `1px solid ${TYPE_COLOR[type] || A.border}`, borderRadius: 5, padding: "2px 6px", whiteSpace: "nowrap" }}>
+    {TYPE_LABEL[type] || type}
+  </span>
+);
+
+// --- Coverage list (team detail) ---------------------------------------------
+function CoverageList({ recaps, teamName }) {
+  const [openId, setOpenId] = useState(null);
+  const items = useMemo(() => coverageForTeam(recaps, teamName).slice(0, 6), [recaps, teamName]);
+  if (!items.length) return null;
+  return (
+    <div style={{ marginTop: 22 }}>
+      <ZoneTitle right={`${items.length}`}>Coverage</ZoneTitle>
+      <div style={{ display: "grid", gap: 6 }}>
+        {items.map((r) => {
+          const open = openId === r.id;
+          // prefer the game text that names this team, else the excerpt
+          const g = (r.games || []).find((x) => x.matchup && mentions(x.matchup, teamName));
+          const snippet = open ? (g?.text || r.bodyText) : r.excerpt;
+          return (
+            <div key={r.id} style={{ border: `1px solid ${A.border}`, borderRadius: 8, background: A.surface, overflow: "hidden" }}>
+              <button type="button" onClick={() => setOpenId(open ? null : r.id)} className="a1ws-row" style={{ width: "100%", textAlign: "left", background: "transparent", border: "none", cursor: "pointer", padding: "9px 11px", display: "flex", alignItems: "center", gap: 9 }}>
+                <TypeChip type={r.type} />
+                <span style={{ fontFamily: SERIF, fontSize: 14, color: A.textHi, flex: "1 1 auto", minWidth: 0 }}>{r.title}</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, whiteSpace: "nowrap" }}>{r.date}</span>
+              </button>
+              <div style={{ padding: "0 11px 11px", fontFamily: MONO, fontSize: 12.5, lineHeight: 1.6, color: A.textMut, whiteSpace: "pre-wrap" }}>
+                {snippet}
+                {open ? <a href={r.url} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 8, color: A.info, fontSize: 11, textDecoration: "none" }}>Read full at Capitol Hoops ↗</a> : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// --- Recaps feed (its own nav section) ---------------------------------------
+const FEED_FILTERS = [["all", "All"], ["recap", "Recaps"], ["preview", "Previews"], ["feature", "Features"]];
+const inFilter = (r, f) => f === "all" || (f === "recap" ? ["recap", "notable-games", "takeaways"].includes(r.type) : r.type === f);
+
+export function RecapsFeed({ recaps = [] }) {
+  const [filter, setFilter] = useState("all");
+  const [openId, setOpenId] = useState(null);
+  const items = useMemo(() => recaps.filter((r) => inFilter(r, filter)), [recaps, filter]);
+  const open = openId ? recaps.find((r) => r.id === openId) : null;
+
+  return (
+    <WorkspaceShell
+      eyebrow="Capitol Hoops Coverage"
+      subline={open ? "Full story" : "Game recaps, matchup previews & team features"}
+      topRight={open
+        ? <button type="button" onClick={() => setOpenId(null)} style={{ fontFamily: MONO, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: A.info, background: "transparent", border: `1px solid ${A.border}`, borderRadius: 6, padding: "6px 11px", cursor: "pointer" }}>← All coverage</button>
+        : <div style={{ display: "flex", gap: 6 }}>{FEED_FILTERS.map(([v, l]) => <Chip key={v} active={filter === v} onClick={() => setFilter(v)}>{l}</Chip>)}</div>}
+    >
+      {open ? <RecapReader recap={open} /> : (
+        <div className="a1ws-feed" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
+          <style>{`@media (max-width:560px){.a1ws-feed{grid-template-columns:1fr !important;}}`}</style>
+          {items.map((r) => (
+            <button key={r.id} type="button" onClick={() => setOpenId(r.id)} style={{ textAlign: "left", background: A.surface, border: `1px solid ${A.border}`, borderRadius: 12, overflow: "hidden", cursor: "pointer", padding: 0, display: "flex", flexDirection: "column" }}>
+              <div style={{ height: 140, background: A.inset, position: "relative", overflow: "hidden" }}>
+                {r.image
+                  ? <img src={r.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="ballpark" style={{ fontSize: 30, color: A.textFaint }} /></div>}
+                <span style={{ position: "absolute", top: 8, left: 8 }}><TypeChip type={r.type} /></span>
+              </div>
+              <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 7, flex: 1 }}>
+                <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.06em" }}>{r.date}{r.gameCount ? ` · ${r.gameCount} games` : ""}</div>
+                <div style={{ fontFamily: SERIF, fontSize: 17, fontWeight: 600, color: A.textHi, lineHeight: 1.2 }}>{r.title}</div>
+                <div style={{ fontFamily: MONO, fontSize: 12, color: A.textMut, lineHeight: 1.5, flex: 1 }}>{r.excerpt}</div>
+                <div style={{ fontFamily: MONO, fontSize: 11, color: A.accent, textTransform: "uppercase", letterSpacing: "0.08em" }}>Read →</div>
+              </div>
+            </button>
+          ))}
+          {items.length === 0 ? <Empty>No coverage in this filter.</Empty> : null}
+        </div>
+      )}
+    </WorkspaceShell>
+  );
+}
+
+function RecapReader({ recap }) {
+  const r = recap;
+  const games = (r.games || []).filter((g) => g.matchup);
+  return (
+    <article style={{ maxWidth: 760 }}>
+      {r.image ? <img src={r.image} alt="" style={{ width: "100%", maxHeight: 320, objectFit: "cover", borderRadius: 12, marginBottom: 16 }} /> : null}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+        <TypeChip type={r.type} />
+        <span style={{ fontFamily: MONO, fontSize: 11, color: A.textFaint }}>{r.date}</span>
+      </div>
+      <h2 style={{ fontFamily: SERIF, fontSize: 30, fontWeight: 600, color: A.textHi, margin: "0 0 16px", lineHeight: 1.1 }}>{r.title}</h2>
+      {games.length ? (
+        <div style={{ display: "grid", gap: 18 }}>
+          {r.games.map((g, i) => (
+            <div key={i}>
+              {g.matchup ? <Label style={{ color: A.accent, marginBottom: 8 }}>{g.label || g.matchup}</Label> : null}
+              <div style={{ fontFamily: MONO, fontSize: 14, lineHeight: 1.7, color: A.text, whiteSpace: "pre-wrap" }}>{g.text}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ fontFamily: MONO, fontSize: 14, lineHeight: 1.7, color: A.text, whiteSpace: "pre-wrap" }}>{r.bodyText}</div>
+      )}
+      <a href={r.url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 18, color: A.info, fontFamily: MONO, fontSize: 12, textDecoration: "none" }}>Read on Capitol Hoops ↗</a>
+    </article>
   );
 }

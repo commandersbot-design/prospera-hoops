@@ -5,7 +5,7 @@ import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
-import { SchoolsSection, SummerLeagueSection } from "./components/ScoutingWorkspace";
+import { SchoolsSection, SummerLeagueSection, RecapsFeed } from "./components/ScoutingWorkspace";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -2276,6 +2276,7 @@ const NAV = [
   // Big Board is parked for now — no rankings product yet.
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Summer League" },
+  { key: "recaps", label: "Recaps" },
   { key: "schools", label: "Schools" },
   { key: "map", label: "Map" },
   { key: "classes", label: "Classes" },
@@ -2317,14 +2318,16 @@ function useIsMobile(bp = 640) {
 export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
+  const [recaps, setRecaps] = useState([]);
 
   useEffect(() => {
     Promise.all([
       fetch("/data/prospects.json").then((r) => { if (!r.ok) throw new Error(`prospects ${r.status}`); return r.json(); }),
       fetch("/data/capitolHoops.json").then((r) => { if (!r.ok) throw new Error(`capitolHoops ${r.status}`); return r.json(); }),
       fetch("/data/schoolLocations.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+      fetch("/data/gameRecaps.json").then((r) => (r.ok ? r.json() : { recaps: [] })).catch(() => ({ recaps: [] })),
     ])
-      .then(([prospects, ch, locations]) => { initData(prospects, ch, locations); setReady(true); })
+      .then(([prospects, ch, locations, gameRecaps]) => { initData(prospects, ch, locations); setRecaps(gameRecaps.recaps || []); setReady(true); })
       .catch((e) => setError(e.message));
   }, []);
 
@@ -2399,7 +2402,9 @@ export default function App() {
         ) : view === "prospects" ? (
           <ProspectsDirectory onOpen={setOpenId} />
         ) : view === "summer" ? (
-          <SummerLeagueSection />
+          <SummerLeagueSection recaps={recaps} />
+        ) : view === "recaps" ? (
+          <RecapsFeed recaps={recaps} />
         ) : view === "schools" ? (
           <SchoolsSection />
         ) : view === "map" ? (
