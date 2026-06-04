@@ -46,9 +46,12 @@ const SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
 const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
 
 // --- Gold-tier config — the SINGLE source that drives every gold element ------
-// Change the threshold here only. Keep it to ONE top tier; a second gold tier
-// destroys the signal.
-const isGoldTier = (p) => p && p.boardRank != null && p.boardRank <= 25;
+// Gold tier = a VERIFIED high-major D1 recruiting status (a high-major offer or
+// commitment). It's a fact, not an opinion, so it auto-populates from recruiting
+// data and never sits empty. Change the definition here only; keep it to ONE top
+// tier — a second gold tier destroys the signal.
+// (We are not running a Big Board right now, so board rank no longer drives gold.)
+const isGoldTier = (p) => !!(p && p.highMajor);
 const GOLD_TIER_LABEL = "Gold Tier";
 
 // --- tiny primitives ----------------------------------------------------------
@@ -75,14 +78,6 @@ const TierBadge = ({ label = GOLD_TIER_LABEL, compact }) => (
   }}>
     <Icon name="crown" style={{ fontSize: compact ? 10 : 11 }} />{label}
   </span>
-);
-
-// Big gold rank number — rule 2. Gradient text only (≥18px) so it doesn't go muddy.
-const GoldRank = ({ n }) => (
-  <span style={{
-    fontFamily: SERIF, fontSize: 19, fontWeight: 600,
-    background: A.goldGradient, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
-  }}>{n}</span>
 );
 
 // Orange tracked pip "●N" and gold elite pip "◆N" — sit side by side (rule 3).
@@ -212,6 +207,15 @@ const TH = ({ children, active, dir, onClick, right }) => (
   </th>
 );
 
+// Recruiting status cell — commitment > high-major offers > nothing. Gold-tier
+// players (high-major) read in gold-solid; commitments and everything else stay
+// orange/faint (gold is identity, not function).
+function RecruitingStatus({ p }) {
+  if (p.commit) return <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.accent, fontWeight: 600 }}>→ {p.commit}</span>;
+  if (isGoldTier(p)) return <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.goldSolid, fontWeight: 600 }}>High-major</span>;
+  return <span style={{ fontFamily: MONO, fontSize: 12, color: A.textFaint }}>—</span>;
+}
+
 export function RosterTable({ players, mode = "stats" }) {
   const [sortKey, setSortKey] = useState("pts");
   const [dir, setDir] = useState("desc");
@@ -223,9 +227,11 @@ export function RosterTable({ players, mode = "stats" }) {
 
   const rows = useMemo(() => {
     const list = [...players];
-    if (mode === "board") {
-      // Sorted by rank asc; unranked ("—") sink to the bottom.
-      return list.sort((a, b) => (a.boardRank ?? Infinity) - (b.boardRank ?? Infinity));
+    if (mode === "recruiting") {
+      // Recruiting status, most-notable first: gold (high-major) → committed →
+      // tracked → the rest; ties broken A–Z.
+      const score = (p) => (isGoldTier(p) ? 0 : p.commit ? 1 : p.tracked ? 2 : 3);
+      return list.sort((a, b) => score(a) - score(b) || a.name.localeCompare(b.name));
     }
     const m = dir === "desc" ? -1 : 1;
     return list.sort((a, b) => ((a[sortKey] ?? -Infinity) - (b[sortKey] ?? -Infinity)) * m);
@@ -236,24 +242,18 @@ export function RosterTable({ players, mode = "stats" }) {
     ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` }
     : { borderLeft: "2px solid transparent" };
 
-  if (mode === "board") {
+  if (mode === "recruiting") {
     return (
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead><tr>
-          <TH>#</TH><TH>Player</TH><TH right>Board</TH>
+          <TH>#</TH><TH>Player</TH><TH right>Recruiting</TH>
         </tr></thead>
         <tbody>
           {rows.map((p, i) => (
             <tr key={p.name} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}` }}>
               <td style={{ padding: "9px 10px", fontFamily: MONO, fontSize: 12, color: A.textFaint, width: 36 }}>{i + 1}</td>
               <td style={{ padding: "9px 10px" }}><PlayerCell p={p} /></td>
-              <td style={{ padding: "9px 10px", textAlign: "right" }}>
-                {p.boardRank == null
-                  ? <span style={{ fontFamily: MONO, fontSize: 13, color: A.textFaint }}>—</span>
-                  : isGoldTier(p)
-                    ? <GoldRank n={`#${p.boardRank}`} />
-                    : <span style={{ fontFamily: SERIF, fontSize: 16, color: A.text }}>#{p.boardRank}</span>}
-              </td>
+              <td style={{ padding: "9px 10px", textAlign: "right" }}><RecruitingStatus p={p} /></td>
             </tr>
           ))}
         </tbody>
@@ -309,11 +309,12 @@ function ZoneTitle({ children, right }) {
 // SEED DATA — replace with adapters over the real stores when wiring live data.
 // =============================================================================
 
-// Summer League teams + rosters (stats mode). boardRank null unless joined.
+// Summer League teams + rosters (stats mode). highMajor=true marks a verified
+// high-major D1 offer/commit (→ gold tier); commit names the school when known.
 const SEED_SUMMER_TEAMS = [
   { name: "DeMatha", conf: "WCAC", region: "MD", gp: 6, coach: "Mike G. Jones III", roster: [
-    { name: "A. Whitfield", pos: "SF", class: "27", gp: 6, pts: 18.2, reb: 6.1, ast: 2.4, boardRank: 61, tracked: true },
-    { name: "M. Okafor", pos: "C", class: "28", gp: 6, pts: 11.0, reb: 9.3, ast: 1.1, boardRank: 88, tracked: true },
+    { name: "A. Whitfield", pos: "SF", class: "27", gp: 6, pts: 18.2, reb: 6.1, ast: 2.4, tracked: true},
+    { name: "M. Okafor", pos: "C", class: "28", gp: 6, pts: 11.0, reb: 9.3, ast: 1.1, tracked: true},
     { name: "J. Ellis", pos: "PG", class: "27", gp: 6, pts: 14.5, reb: 3.0, ast: 5.2 },
     { name: "D. Carter", pos: "SG", class: "29", gp: 5, pts: 9.8, reb: 2.1, ast: 1.4 },
     { name: "R. Banks", pos: "PF", class: "28", gp: 6, pts: 7.2, reb: 5.5, ast: 0.8 },
@@ -330,7 +331,7 @@ const SEED_SUMMER_TEAMS = [
     { name: "P. Nwosu", pos: "C", class: "29", gp: 4, pts: 8.5, reb: 8.0, ast: 0.9 },
   ] },
   { name: "St. John's DC", conf: "WCAC", region: "DC", gp: 3, coach: "—", roster: [
-    { name: "Drew Hill", pos: "SG", class: "27", gp: 3, pts: 31.5, reb: 4.0, ast: 3.2, boardRank: 9, tracked: true },
+    { name: "Drew Hill", pos: "SG", class: "27", gp: 3, pts: 31.5, reb: 4.0, ast: 3.2, highMajor: true, commit: "Kansas", tracked: true },
     { name: "L. Park", pos: "PF", class: "28", gp: 3, pts: 9.0, reb: 6.2, ast: 1.0 },
   ] },
   { name: "Paul VI", conf: "WCAC", region: "NoVA", gp: 5, coach: "—", roster: [
@@ -355,38 +356,38 @@ const SEED_SUMMER_TEAMS = [
 // so most directory rows stay badge-less — that contrast is the point.
 const SEED_SCHOOLS = [
   { name: "DeMatha Catholic", conf: "WCAC", county: "Prince George's", st: "MD", players: 18, coach: "Mike G. Jones III", roster: [
-    { name: "J. Marshall", pos: "SF", class: "26", boardRank: 14, tracked: true },
-    { name: "A. Whitfield", pos: "SF", class: "27", boardRank: 61, tracked: true },
-    { name: "M. Okafor", pos: "C", class: "28", boardRank: 88, tracked: true },
-    { name: "J. Ellis", pos: "PG", class: "27", boardRank: null },
-    { name: "D. Carter", pos: "SG", class: "29", boardRank: null },
-    { name: "R. Banks", pos: "PF", class: "28", boardRank: null },
+    { name: "J. Marshall", pos: "SF", class: "26", highMajor: true, commit: "Maryland", tracked: true },
+    { name: "A. Whitfield", pos: "SF", class: "27", tracked: true},
+    { name: "M. Okafor", pos: "C", class: "28", tracked: true},
+    { name: "J. Ellis", pos: "PG", class: "27" },
+    { name: "D. Carter", pos: "SG", class: "29" },
+    { name: "R. Banks", pos: "PF", class: "28" },
   ] },
   { name: "Gonzaga College HS", conf: "WCAC", county: "Washington", st: "DC", players: 20, coach: "Keith Urgo", roster: [
-    { name: "T. Bennett", pos: "PG", class: "26", boardRank: 7, tracked: true },
-    { name: "R. Maddox", pos: "PG", class: "27", boardRank: null, tracked: true },
-    { name: "S. Bell", pos: "SF", class: "28", boardRank: null },
-    { name: "P. Nwosu", pos: "C", class: "29", boardRank: null },
+    { name: "T. Bennett", pos: "PG", class: "26", highMajor: true, commit: "Georgetown", tracked: true },
+    { name: "R. Maddox", pos: "PG", class: "27", tracked: true },
+    { name: "S. Bell", pos: "SF", class: "28" },
+    { name: "P. Nwosu", pos: "C", class: "29" },
   ] },
   { name: "Paul VI", conf: "WCAC", county: "Fairfax", st: "VA", players: 16, coach: "—", roster: [
-    { name: "C. Adeyemi", pos: "SF", class: "27", boardRank: null, tracked: true },
-    { name: "V. Russo", pos: "PG", class: "29", boardRank: null },
+    { name: "C. Adeyemi", pos: "SF", class: "27", tracked: true },
+    { name: "V. Russo", pos: "PG", class: "29" },
   ] },
   { name: "Bullis School", conf: "IND", county: "Montgomery", st: "MD", players: 15, coach: "Bruce Kelley", roster: [
-    { name: "F. Lowe", pos: "PG", class: "29", boardRank: null },
-    { name: "G. Tran", pos: "SF", class: "28", boardRank: null },
+    { name: "F. Lowe", pos: "PG", class: "29" },
+    { name: "G. Tran", pos: "SF", class: "28" },
   ] },
   { name: "Forest Park HS", conf: "Public", county: "Prince William", st: "VA", players: 21, coach: "Mak Dogbatse", roster: [
-    { name: "E. Santos", pos: "SG", class: "28", boardRank: null },
-    { name: "D. Pierre", pos: "PF", class: "27", boardRank: null },
+    { name: "E. Santos", pos: "SG", class: "28" },
+    { name: "D. Pierre", pos: "PF", class: "27" },
   ] },
   { name: "Loyola Blakefield", conf: "MIAA", county: "Baltimore", st: "MD", players: 21, coach: "Roger Garfield", roster: [
-    { name: "C. Walsh", pos: "PG", class: "28", boardRank: null },
-    { name: "M. Doyle", pos: "C", class: "27", boardRank: null },
+    { name: "C. Walsh", pos: "PG", class: "28" },
+    { name: "M. Doyle", pos: "C", class: "27" },
   ] },
   { name: "The Potomac School", conf: "IND", county: "Fairfax", st: "VA", players: 22, coach: "Jeremy Myers", roster: [
-    { name: "A. Klein", pos: "SF", class: "29", boardRank: null },
-    { name: "R. Vance", pos: "SG", class: "28", boardRank: null },
+    { name: "A. Klein", pos: "SF", class: "29" },
+    { name: "R. Vance", pos: "SG", class: "28" },
   ] },
 ];
 
@@ -704,12 +705,10 @@ export function SchoolsSection() {
             <div style={{ marginBottom: 20 }}>
               <ZoneTitle>Notable prospects</ZoneTitle>
               <div style={{ display: "grid", gap: 2 }}>
-                {notable.sort((a, b) => (a.boardRank ?? Infinity) - (b.boardRank ?? Infinity)).map((p) => (
+                {notable.sort((a, b) => (isGoldTier(b) - isGoldTier(a)) || a.name.localeCompare(b.name)).map((p) => (
                   <div key={p.name} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center", padding: "8px 10px", borderRadius: 8, ...(isGoldTier(p) ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }) }}>
                     <PlayerCell p={p} />
-                    <span style={{ fontFamily: SERIF, fontSize: 15, color: p.boardRank == null ? A.textFaint : A.text, whiteSpace: "nowrap" }}>
-                      {p.boardRank == null ? "—" : (isGoldTier(p) ? <GoldRank n={`#${p.boardRank}`} /> : `#${p.boardRank}`)}
-                    </span>
+                    <RecruitingStatus p={p} />
                   </div>
                 ))}
               </div>
@@ -717,7 +716,7 @@ export function SchoolsSection() {
           ) : null}
 
           <ZoneTitle right={`${school.roster.length} shown`}>Full roster · {school.players}</ZoneTitle>
-          <RosterTable players={school.roster} mode="board" />
+          <RosterTable players={school.roster} mode="recruiting" />
         </div>
       ) : <Empty>No schools match these filters.</Empty>}
     </WorkspaceShell>

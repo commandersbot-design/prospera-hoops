@@ -2273,7 +2273,7 @@ function NewsTicker({ onOpen }) {
 // APP
 // ---------------------------------------------------------------------------
 const NAV = [
-  { key: "board", label: "Big Board" },
+  // Big Board is parked for now — no rankings product yet.
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Summer League" },
   { key: "schools", label: "Schools" },
