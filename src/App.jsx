@@ -6,6 +6,7 @@ import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
 import { SchoolsSection, SummerLeagueSection, RecapsFeed } from "./components/ScoutingWorkspace";
+import { useGold } from "./lib/goldTier";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -723,16 +724,36 @@ function Profile({ prospect, onBack }) {
   const [tab, setTab] = useState("Overview");
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
+  const gold = useGold();
+  const marked = gold.isGold(p.id);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
-      <button
-        type="button"
-        onClick={onBack}
-        style={{ ...mono, fontSize: 12, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", justifySelf: "start", padding: "4px 0" }}
-      >
-        ← Back to board
-      </button>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{ ...mono, fontSize: 12, letterSpacing: "0.14em", color: T.signal, background: "transparent", border: "none", textTransform: "uppercase", padding: "4px 0" }}
+        >
+          ← Back
+        </button>
+        {/* In-app manual gold-tier mark — the user's "this kid is elite" conviction. */}
+        <button
+          type="button"
+          onClick={() => gold.toggleGold(p.id)}
+          title="Gold tier is your manual apex mark; saved on this device."
+          style={{
+            ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
+            borderRadius: 6, padding: "7px 12px", cursor: "pointer",
+            color: marked ? "#2a2410" : "#d2af52",
+            background: marked ? "linear-gradient(135deg,#f1e3a8 0%,#d2af52 55%,#a9842f 100%)" : "transparent",
+            border: `1px solid ${marked ? "transparent" : "rgba(210,175,82,0.5)"}`,
+            boxShadow: marked ? "inset 0 1px 0 rgba(255,255,255,0.45)" : "none",
+          }}
+        >
+          {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
+        </button>
+      </div>
 
       {/* Tabs */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
@@ -2315,6 +2336,45 @@ function useIsMobile(bp = 640) {
   return m;
 }
 
+// --- Real-data adapters for the A1 scouting workspace ------------------------
+// Shape the live PROSPECTS / SCHOOLS / CH_TEAMS stores into the workspace's
+// {name, conf, region/county/st, gp, coach, roster:[...]} contract. Every roster
+// player carries its real prospect `id` so the workspace can open the profile.
+function buildWorkspaceSchools() {
+  return Object.entries(SCHOOLS).map(([name, s]) => {
+    const loc = SCHOOL_LOCATIONS[name] || {};
+    const roster = (s.prospects || []).map((pr) => ({
+      name: pr.name, pos: pr.position || null,
+      class: pr.gradYear ? String(normGradYear(pr.gradYear)).slice(2) : null,
+      tracked: false, id: pr.id, goldTier: !!pr.goldTier, commit: pr.commitment || null,
+    }));
+    return {
+      name: officialSchoolName(name), conf: null,
+      county: loc.county || null, st: loc.state || s.state || null,
+      players: roster.length, coach: s.coach || null, roster,
+    };
+  }).filter((s) => s.roster.length).sort((a, b) => a.name.localeCompare(b.name));
+}
+function buildWorkspaceTeams() {
+  return Object.entries(CH_TEAMS).map(([slug, t]) => {
+    const school = canonicalSchool(slug, t.name);
+    const loc = SCHOOL_LOCATIONS[school] || {};
+    const roster = (t.players || []).map((pl) => {
+      const pr = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+      return {
+        name: pl.name, pos: pl.position || null,
+        class: pl.classYear ? String(pl.classYear).slice(2) : null,
+        gp: pl.stats?.gp ?? 0, pts: pl.stats?.ppg ?? null, reb: pl.stats?.rpg ?? null, ast: pl.stats?.apg ?? null,
+        tracked: false, id: pr?.id || null, goldTier: !!pr?.goldTier, commit: pr?.commitment || null,
+      };
+    });
+    return {
+      name: t.name, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
+      gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
@@ -2350,6 +2410,8 @@ export default function App() {
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
   const goView = (v) => { setOpenId(null); setView(v); };
+  const workspaceSchools = ready ? buildWorkspaceSchools() : [];
+  const workspaceTeams = ready ? buildWorkspaceTeams() : [];
 
   return (
     <div style={{ minHeight: "100vh", color: T.text }}>
@@ -2402,11 +2464,11 @@ export default function App() {
         ) : view === "prospects" ? (
           <ProspectsDirectory onOpen={setOpenId} />
         ) : view === "summer" ? (
-          <SummerLeagueSection recaps={recaps} />
+          <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} />
         ) : view === "recaps" ? (
           <RecapsFeed recaps={recaps} />
         ) : view === "schools" ? (
-          <SchoolsSection />
+          <SchoolsSection schools={workspaceSchools} onOpenProfile={setOpenId} />
         ) : view === "map" ? (
           <DmvMap onOpenProfile={setOpenId} />
         ) : view === "classes" ? (

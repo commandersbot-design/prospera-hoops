@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { isGold as isGoldMarked, useGold } from "../lib/goldTier";
 
 /**
  * Scouting Workspace — the shared two-pane shell behind both the Schools and
@@ -53,7 +54,9 @@ const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monosp
 // prospect) — never auto-derived from offers, commits, or a consensus board, so
 // it carries our point of view, not someone else's. Keep it to ONE top tier; a
 // second gold tier destroys the signal. Change the definition here only.
-const isGoldTier = (p) => !!(p && p.goldTier);
+// Honored from two places: a baked `goldTier` flag in the data OR the user's
+// in-app manual mark (localStorage, keyed by prospect id) — see src/lib/goldTier.
+const isGoldTier = (p) => !!(p && (p.goldTier || isGoldMarked(p.id)));
 const GOLD_TIER_LABEL = "Gold Tier";
 
 // --- tiny primitives ----------------------------------------------------------
@@ -182,14 +185,16 @@ function Segmented({ value, onChange, options }) {
 
 // --- COMPONENT 2 · RosterTable (mode="stats" | "board") ----------------------
 // Reused on team / school / summer pages.
-function PlayerCell({ p }) {
+function PlayerCell({ p, onOpen }) {
   const gold = isGoldTier(p);
+  const clickable = !!(onOpen && p.id);
+  const nameStyle = { fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, textAlign: "left", cursor: clickable ? "pointer" : "default", textDecoration: clickable ? "none" : undefined };
   return (
     <div style={{ minWidth: 0 }}>
       <span style={{ display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-        <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi }}>
-          {p.tracked ? "● " : ""}{p.name}
-        </span>
+        {clickable
+          ? <button type="button" onClick={(e) => { e.stopPropagation(); onOpen(p.id); }} title="Open profile" style={nameStyle}>{p.tracked ? "● " : ""}{p.name}</button>
+          : <span style={nameStyle}>{p.tracked ? "● " : ""}{p.name}</span>}
         {gold ? <TierBadge compact /> : null}
       </span>
       <div style={{ fontFamily: MONO, fontSize: 10.5, color: A.textMut, letterSpacing: "0.04em", marginTop: 2 }}>
@@ -216,7 +221,8 @@ function RecruitingStatus({ p }) {
   return <span style={{ fontFamily: MONO, fontSize: 12, color: A.textFaint }}>—</span>;
 }
 
-export function RosterTable({ players, mode = "stats" }) {
+export function RosterTable({ players, mode = "stats", onOpen }) {
+  useGold(); // re-render when a gold mark toggles
   const [sortKey, setSortKey] = useState("pts");
   const [dir, setDir] = useState("desc");
 
@@ -252,7 +258,7 @@ export function RosterTable({ players, mode = "stats" }) {
           {rows.map((p, i) => (
             <tr key={p.name} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}` }}>
               <td style={{ padding: "9px 10px", fontFamily: MONO, fontSize: 12, color: A.textFaint, width: 36 }}>{i + 1}</td>
-              <td style={{ padding: "9px 10px" }}><PlayerCell p={p} /></td>
+              <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               <td style={{ padding: "9px 10px", textAlign: "right" }}><RecruitingStatus p={p} /></td>
             </tr>
           ))}
@@ -282,7 +288,7 @@ export function RosterTable({ players, mode = "stats" }) {
           const low = (p.gp ?? 0) < 2; // small-sample discipline
           return (
             <tr key={p.name} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
-              <td style={{ padding: "9px 10px" }}><PlayerCell p={p} /></td>
+              <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               {numCell(p.gp, low, true)}
               {numCell(p.pts, low)}
               {numCell(p.reb, low)}
@@ -320,7 +326,7 @@ const SEED_SUMMER_TEAMS = [
     { name: "D. Carter", pos: "SG", class: "29", gp: 5, pts: 9.8, reb: 2.1, ast: 1.4 },
     { name: "R. Banks", pos: "PF", class: "28", gp: 6, pts: 7.2, reb: 5.5, ast: 0.8 },
   ] },
-  { name: "Hawks (Hayfield)", conf: "Public", region: "NoVA", gp: 4, coach: "Carlos Poindexter", roster: [
+  { name: "Hawks (Hayfield)", conf: "Public", region: "VA", gp: 4, coach: "Carlos Poindexter", roster: [
     { name: "Christian Towe", pos: "PG", class: "29", gp: 1, pts: 22.0, reb: 8.0, ast: 3.0, tracked: true },
     { name: "K. Reyes", pos: "SG", class: "28", gp: 4, pts: 13.4, reb: 3.2, ast: 2.0 },
     { name: "T. Diallo", pos: "PF", class: "27", gp: 4, pts: 10.1, reb: 7.0, ast: 1.2 },
@@ -335,7 +341,7 @@ const SEED_SUMMER_TEAMS = [
     { name: "Drew Hill", pos: "SG", class: "27", gp: 3, pts: 31.5, reb: 4.0, ast: 3.2, goldTier: true, commit: "Kansas", tracked: true },
     { name: "L. Park", pos: "PF", class: "28", gp: 3, pts: 9.0, reb: 6.2, ast: 1.0 },
   ] },
-  { name: "Paul VI", conf: "WCAC", region: "NoVA", gp: 5, coach: "—", roster: [
+  { name: "Paul VI", conf: "WCAC", region: "VA", gp: 5, coach: "—", roster: [
     { name: "C. Adeyemi", pos: "SF", class: "27", gp: 5, pts: 17.3, reb: 6.6, ast: 2.1, tracked: true },
     { name: "V. Russo", pos: "PG", class: "29", gp: 5, pts: 11.0, reb: 2.4, ast: 4.8 },
   ] },
@@ -399,12 +405,13 @@ const countTracked = (roster) => roster.filter((p) => p.tracked).length;
 const countElite = (roster) => roster.filter(isGoldTier).length;
 
 // Watchlist module — global, ignores rail filters (fork b: default).
-function Watchlist({ teams }) {
+function Watchlist({ teams, onOpen }) {
   const tracked = useMemo(() => {
     const out = [];
     for (const t of teams) for (const p of t.roster) if (p.tracked) out.push({ ...p, team: t.name });
     return out.sort((a, b) => (b.pts ?? 0) - (a.pts ?? 0)).slice(0, 3);
   }, [teams]);
+  if (!tracked.length) return null; // no watchlist yet — hide the module
   return (
     <div style={{ background: "rgba(232,122,60,0.06)", border: `1px solid rgba(232,122,60,0.28)`, borderRadius: 10, padding: "14px 16px", marginBottom: 18 }}>
       <ZoneTitle right="across all teams">My guys this summer</ZoneTitle>
@@ -413,7 +420,9 @@ function Watchlist({ teams }) {
           const low = (p.gp ?? 0) < 2;
           return (
             <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 10, opacity: low ? 0.62 : 1 }}>
-              <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: A.accent, flex: "0 0 auto" }}>{p.name}</span>
+              {onOpen && p.id
+                ? <button type="button" onClick={() => onOpen(p.id)} style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: A.accent, flex: "0 0 auto", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}>{p.name}</button>
+                : <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: A.accent, flex: "0 0 auto" }}>{p.name}</span>}
               {isGoldTier(p) ? <TierBadge compact /> : null}
               <span style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, flex: "1 1 auto", minWidth: 0 }}>{p.team}</span>
               <span style={{ fontFamily: MONO, fontSize: 10, color: low ? A.amber : A.textFaint, whiteSpace: "nowrap" }}>
@@ -445,39 +454,37 @@ function useFacet(all) {
 // =============================================================================
 // 2 · SUMMER LEAGUE SECTION
 // =============================================================================
-const REGIONS = ["DC", "MD", "NoVA"];
-const LEAGUES = ["WCAC", "MIAA", "Public", "IND"];
+const REGIONS = ["DC", "MD", "VA"];   // by state (real data has no NoVA split)
 const CLASSES = ["27", "28", "29", "30"];
 
-export function SummerLeagueSection({ recaps = [] }) {
+export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile }) {
+  useGold();
+  const TEAM_DATA = teamsProp && teamsProp.length ? teamsProp : SEED_SUMMER_TEAMS;
   const [tab, setTab] = useState("players"); // DEFAULT LANDING = Players
 
   // Teams-workspace state lives here (above the shell) so filters persist across
   // team selection and tab switches.
   const region = useFacet(REGIONS);
-  const league = useFacet(LEAGUES);
   const klass = useFacet(CLASSES);
   const [trackedOnly, setTrackedOnly] = useState(false);
   const [goldOnly, setGoldOnly] = useState(false);
-  const [selected, setSelected] = useState("DeMatha");
+  const [selected, setSelected] = useState(null);
 
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
-  const teams = useMemo(() => SEED_SUMMER_TEAMS.filter((t) => {
+  const teams = useMemo(() => TEAM_DATA.filter((t) => {
     if (!region.pass(t.region)) return false;
-    if (!league.pass(t.conf)) return false;
     if (!klass.pass("__all__") && !t.roster.some((p) => klass.on.has(String(p.class)))) return false;
     if (trackedOnly && countTracked(t.roster) === 0) return false;
     if (goldOnly && countElite(t.roster) === 0) return false;
     return true;
-  }).sort((a, b) => a.name.localeCompare(b.name)), [region, league, klass, trackedOnly, goldOnly]);
+  }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, region, klass, trackedOnly, goldOnly]);
 
   const team = teams.find((t) => t.name === selected) || teams[0] || null;
 
   const rail = (
     <div>
       <FacetGroup label="Region">{REGIONS.map((r) => <Chip key={r} active={region.on.has(r)} onClick={() => region.toggle(r)}>{r}</Chip>)}</FacetGroup>
-      <FacetGroup label="League">{LEAGUES.map((l) => <Chip key={l} active={league.on.has(l)} onClick={() => league.toggle(l)}>{l}</Chip>)}</FacetGroup>
       <FacetGroup label="Class">{CLASSES.map((c) => <Chip key={c} active={klass.on.has(c)} onClick={() => klass.toggle(c)}>'{c}</Chip>)}</FacetGroup>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "4px 0 14px" }}>
         <Chip tone="tracked" icon="star" active={trackedOnly} onClick={() => setTrackedOnly((v) => !v)}>My tracked only</Chip>
@@ -497,7 +504,7 @@ export function SummerLeagueSection({ recaps = [] }) {
             }}>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontFamily: SERIF, fontSize: 13, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
-                <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 2 }}>{t.conf} · {t.region} · {t.gp}gp</div>
+                <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 2 }}>{[t.conf, t.region, `${t.gp}gp`].filter(Boolean).join(" · ")}</div>
               </div>
               <div style={{ display: "flex", gap: 7, alignItems: "center" }}>
                 {nE > 0 ? <ElitePip n={nE} /> : null}
@@ -512,7 +519,7 @@ export function SummerLeagueSection({ recaps = [] }) {
 
   const teamsDetail = (
     <div>
-      <Watchlist teams={SEED_SUMMER_TEAMS} />
+      <Watchlist teams={TEAM_DATA} onOpen={onOpenProfile} />
       {team ? (
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -521,9 +528,9 @@ export function SummerLeagueSection({ recaps = [] }) {
             {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
           </div>
           <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, margin: "7px 0 16px", letterSpacing: "0.03em" }}>
-            {team.conf} · {team.region} · {team.gp} games · {team.coach || "—"}
+            {[team.conf, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
           </div>
-          <RosterTable players={team.roster} mode="stats" />
+          <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
           <CoverageList recaps={recaps} teamName={team.name} />
         </div>
       ) : <Empty>No teams match these filters.</Empty>}
@@ -539,35 +546,40 @@ export function SummerLeagueSection({ recaps = [] }) {
       topRight={<Segmented value={tab} onChange={setTab} options={[["players", "Players"], ["teams", "Teams"], ["schedule", "Schedule"]]} />}
       rail={tab === "teams" ? rail : null}
     >
-      {tab === "teams" ? teamsDetail : tab === "players" ? <SummerPlayers /> : <SummerSchedule recaps={recaps} />}
+      {tab === "teams" ? teamsDetail : tab === "players" ? <SummerPlayers teams={TEAM_DATA} onOpen={onOpenProfile} /> : <SummerSchedule recaps={recaps} />}
     </WorkspaceShell>
   );
 }
 
-function SummerPlayers() {
-  // Leaderboard across all teams, GP-gated (GP<2 dimmed). Plus the watchlist.
+function SummerPlayers({ teams = SEED_SUMMER_TEAMS, onOpen }) {
+  useGold();
+  // Leaderboard across all teams, GP-gated (GP<2 dimmed). Top 50 by PPG.
   const all = useMemo(() => {
     const out = [];
-    for (const t of SEED_SUMMER_TEAMS) for (const p of t.roster) out.push({ ...p, team: t.name });
+    for (const t of teams) for (const p of t.roster) if ((p.gp ?? 0) > 0 && p.pts != null) out.push({ ...p, team: t.name });
     return out.sort((a, b) => (b.pts ?? 0) - (a.pts ?? 0));
-  }, []);
+  }, [teams]);
+  const top = all.slice(0, 50);
   return (
     <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 320px", gap: 20 }} className="a1ws-players">
       <style>{`@media (max-width:560px){.a1ws-players{grid-template-columns:1fr !important;}}`}</style>
       <div>
-        <ZoneTitle right={`${all.length} players`}>Scoring leaders</ZoneTitle>
+        <ZoneTitle right={`top ${top.length} of ${all.length}`}>Scoring leaders</ZoneTitle>
         <div style={{ display: "grid", gap: 2 }}>
-          {all.map((p, i) => {
+          {top.map((p, i) => {
             const low = (p.gp ?? 0) < 2;
+            const clickable = onOpen && p.id;
             return (
               <div key={p.name + p.team} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "26px 1fr auto auto", gap: 12, alignItems: "center", padding: "8px 10px", borderRadius: 8, ...(isGoldTier(p) ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }), opacity: low ? 0.62 : 1 }}>
                 <span style={{ fontFamily: MONO, fontSize: 12, color: i === 0 ? A.accent : A.textFaint, fontWeight: i === 0 ? 700 : 400 }}>{i + 1}</span>
                 <div style={{ minWidth: 0 }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi }}>{p.tracked ? "● " : ""}{p.name}</span>
+                    {clickable
+                      ? <button type="button" onClick={() => onOpen(p.id)} style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}>{p.tracked ? "● " : ""}{p.name}</button>
+                      : <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi }}>{p.tracked ? "● " : ""}{p.name}</span>}
                     {isGoldTier(p) ? <TierBadge compact /> : null}
                   </span>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: A.textMut, marginTop: 2 }}>{p.team} · {p.pos} · '{p.class}</div>
+                  <div style={{ fontFamily: MONO, fontSize: 10, color: A.textMut, marginTop: 2 }}>{[p.team, p.pos, p.class ? `'${p.class}` : null].filter(Boolean).join(" · ")}</div>
                 </div>
                 <span style={{ fontFamily: MONO, fontSize: 10, color: low ? A.amber : A.textFaint, whiteSpace: "nowrap" }}>{p.gp} GP{low ? " · small" : ""}</span>
                 <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap" }}>{Number(p.pts).toFixed(1)}</span>
@@ -576,7 +588,7 @@ function SummerPlayers() {
           })}
         </div>
       </div>
-      <Watchlist teams={SEED_SUMMER_TEAMS} />
+      <Watchlist teams={teams} onOpen={onOpen} />
     </div>
   );
 }
@@ -639,7 +651,9 @@ function Empty({ children }) {
 const STATES = ["DC", "MD", "VA"];
 const SORTS = [["az", "A–Z"], ["prospects", "# prospects"], ["tracked", "# tracked"]];
 
-export function SchoolsSection() {
+export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
+  useGold();
+  const SCHOOL_DATA = schoolsData && schoolsData.length ? schoolsData : SEED_SCHOOLS;
   const state = useFacet(STATES);
   const [hasTracked, setHasTracked] = useState(false);
   const [goldOnly, setGoldOnly] = useState(false);
@@ -649,7 +663,7 @@ export function SchoolsSection() {
 
   const schools = useMemo(() => {
     const k = q.trim().toLowerCase();
-    let list = SEED_SCHOOLS.filter((s) => {
+    let list = SCHOOL_DATA.filter((s) => {
       if (!state.pass(s.st)) return false;
       if (hasTracked && countTracked(s.roster) === 0) return false;
       if (goldOnly && countElite(s.roster) === 0) return false;
@@ -660,7 +674,7 @@ export function SchoolsSection() {
     else if (sort === "prospects") list = list.sort((a, b) => b.players - a.players);
     else list = list.sort((a, b) => countTracked(b.roster) - countTracked(a.roster));
     return list;
-  }, [state, hasTracked, goldOnly, sort, q]);
+  }, [SCHOOL_DATA, state, hasTracked, goldOnly, sort, q]);
 
   const school = schools.find((s) => s.name === selected) || schools[0] || null;
 
@@ -730,7 +744,7 @@ export function SchoolsSection() {
               <div style={{ display: "grid", gap: 2 }}>
                 {notable.sort((a, b) => (isGoldTier(b) - isGoldTier(a)) || a.name.localeCompare(b.name)).map((p) => (
                   <div key={p.name} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center", padding: "8px 10px", borderRadius: 8, ...(isGoldTier(p) ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }) }}>
-                    <PlayerCell p={p} />
+                    <PlayerCell p={p} onOpen={onOpenProfile} />
                     <RecruitingStatus p={p} />
                   </div>
                 ))}
@@ -739,7 +753,7 @@ export function SchoolsSection() {
           ) : null}
 
           <ZoneTitle right={`${school.roster.length} shown`}>Full roster · {school.players}</ZoneTitle>
-          <RosterTable players={school.roster} mode="recruiting" />
+          <RosterTable players={school.roster} mode="recruiting" onOpen={onOpenProfile} />
         </div>
       ) : <Empty>No schools match these filters.</Empty>}
     </WorkspaceShell>
