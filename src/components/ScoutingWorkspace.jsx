@@ -17,8 +17,8 @@ import { isGold as isGoldMarked, useGold } from "../lib/goldTier";
  * up immediately; swap the SEED_* objects for adapters over the real
  * CH_TEAMS / SCHOOLS / PROSPECTS stores when wiring to live data.
  *
- * Typography per spec: Fraunces for names/numbers/headings, JetBrains Mono for
- * labels/data. Icons via the Tabler webfont (loaded in src/index.css).
+ * Typography (A1 type system): Saira Condensed for names/headings (nameplate,
+ * uppercase) + Hanken Grotesk for labels/body/numbers. Icons via Tabler webfont.
  */
 
 // --- A1 Graphite tokens (self-contained, mirrors PlayerProfileCard's pattern) -
@@ -43,8 +43,13 @@ const A = {
   chipNeutralBorder: "#5a5d64",
   chipNeutralBg: "rgba(255,255,255,0.04)",
 };
-const SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
-const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
+// A1 type system: SERIF = display/nameplate (Saira Condensed, used uppercase),
+// MONO = body/labels/numbers (Hanken Grotesk). Neither is actually serif/mono —
+// names kept to avoid churn.
+const SERIF = "'Saira Condensed', system-ui, -apple-system, sans-serif";
+const MONO = "'Hanken Grotesk', system-ui, -apple-system, sans-serif";
+// Nameplate style mixin for player names & headings.
+const NAMEPLATE = { fontFamily: SERIF, textTransform: "uppercase", letterSpacing: "0.01em" };
 
 // --- Gold-tier config — the SINGLE source that drives every gold element ------
 // Gold tier = the APEX of the Prospera evaluation: the handful of prospects the
@@ -188,7 +193,7 @@ function Segmented({ value, onChange, options }) {
 function PlayerCell({ p, onOpen }) {
   const gold = isGoldTier(p);
   const clickable = !!(onOpen && p.id);
-  const nameStyle = { fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, textAlign: "left", cursor: clickable ? "pointer" : "default", textDecoration: clickable ? "none" : undefined };
+  const nameStyle = { ...NAMEPLATE, fontSize: 15.5, fontWeight: 700, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, textAlign: "left", cursor: clickable ? "pointer" : "default", textDecoration: clickable ? "none" : undefined };
   return (
     <div style={{ minWidth: 0 }}>
       <span style={{ display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
@@ -256,7 +261,7 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
         </tr></thead>
         <tbody>
           {rows.map((p, i) => (
-            <tr key={p.name} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}` }}>
+            <tr key={`${p.name}-${i}`} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}` }}>
               <td style={{ padding: "9px 10px", fontFamily: MONO, fontSize: 12, color: A.textFaint, width: 36 }}>{i + 1}</td>
               <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               <td style={{ padding: "9px 10px", textAlign: "right" }}><RecruitingStatus p={p} /></td>
@@ -270,7 +275,7 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
   // mode === "stats"
   const numCell = (v, low, isGp) => (
     <td style={{
-      padding: "9px 10px", textAlign: "right", fontFamily: SERIF, fontSize: 15,
+      padding: "9px 10px", textAlign: "right", fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 15,
       color: isGp ? (low ? A.amber : A.text) : A.text, fontWeight: 600,
     }}>{v == null ? "—" : (isGp ? v : Number(v).toFixed(1))}</td>
   );
@@ -284,10 +289,10 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
         <TH right active={sortKey === "ast"} dir={dir} onClick={() => onSort("ast")}>AST</TH>
       </tr></thead>
       <tbody>
-        {rows.map((p) => {
+        {rows.map((p, i) => {
           const low = (p.gp ?? 0) < 2; // small-sample discipline
           return (
-            <tr key={p.name} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
+            <tr key={`${p.name}-${i}`} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
               <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               {numCell(p.gp, low, true)}
               {numCell(p.pts, low)}
@@ -416,19 +421,19 @@ function Watchlist({ teams, onOpen }) {
     <div style={{ background: "rgba(232,122,60,0.06)", border: `1px solid rgba(232,122,60,0.28)`, borderRadius: 10, padding: "14px 16px", marginBottom: 18 }}>
       <ZoneTitle right="across all teams">My guys this summer</ZoneTitle>
       <div style={{ display: "grid", gap: 9 }}>
-        {tracked.map((p) => {
+        {tracked.map((p, i) => {
           const low = (p.gp ?? 0) < 2;
           return (
-            <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 10, opacity: low ? 0.62 : 1 }}>
+            <div key={`${p.name}-${i}`} style={{ display: "flex", alignItems: "center", gap: 10, opacity: low ? 0.62 : 1 }}>
               {onOpen && p.id
-                ? <button type="button" onClick={() => onOpen(p.id)} style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: A.accent, flex: "0 0 auto", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}>{p.name}</button>
-                : <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: A.accent, flex: "0 0 auto" }}>{p.name}</span>}
+                ? <button type="button" onClick={() => onOpen(p.id)} style={{ ...NAMEPLATE, fontSize: 15.5, fontWeight: 700, color: A.accent, flex: "0 0 auto", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}>{p.name}</button>
+                : <span style={{ ...NAMEPLATE, fontSize: 15.5, fontWeight: 700, color: A.accent, flex: "0 0 auto" }}>{p.name}</span>}
               {isGoldTier(p) ? <TierBadge compact /> : null}
               <span style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, flex: "1 1 auto", minWidth: 0 }}>{p.team}</span>
               <span style={{ fontFamily: MONO, fontSize: 10, color: low ? A.amber : A.textFaint, whiteSpace: "nowrap" }}>
                 {p.gp} GP{low ? " · small" : ""}
               </span>
-              <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap" }}>{Number(p.pts).toFixed(1)}</span>
+              <span style={{ fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 18, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap" }}>{Number(p.pts).toFixed(1)}</span>
             </div>
           );
         })}
@@ -503,7 +508,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
               border: `1px solid ${on ? A.accent : "transparent"}`,
             }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontFamily: SERIF, fontSize: 13, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
+                <div style={{ ...NAMEPLATE, fontSize: 13.5, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
                 <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 2 }}>{[t.conf, t.region, `${t.gp}gp`].filter(Boolean).join(" · ")}</div>
               </div>
               <div style={{ display: "flex", gap: 7, alignItems: "center" }}>
@@ -523,7 +528,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
       {team ? (
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <h2 style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 600, color: A.textHi, margin: 0 }}>{team.name}</h2>
+            <h2 style={{ ...NAMEPLATE, fontSize: 25, fontWeight: 700, color: A.textHi, margin: 0 }}>{team.name}</h2>
             {countElite(team.roster) > 0 ? <ElitePip n={`${countElite(team.roster)} elite`} /> : null}
             {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
           </div>
@@ -575,14 +580,14 @@ function SummerPlayers({ teams = SEED_SUMMER_TEAMS, onOpen }) {
                 <div style={{ minWidth: 0 }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                     {clickable
-                      ? <button type="button" onClick={() => onOpen(p.id)} style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}>{p.tracked ? "● " : ""}{p.name}</button>
-                      : <span style={{ fontFamily: SERIF, fontSize: 15, fontWeight: 600, color: p.tracked ? A.accent : A.textHi }}>{p.tracked ? "● " : ""}{p.name}</span>}
+                      ? <button type="button" onClick={() => onOpen(p.id)} style={{ ...NAMEPLATE, fontSize: 15.5, fontWeight: 700, color: p.tracked ? A.accent : A.textHi, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}>{p.tracked ? "● " : ""}{p.name}</button>
+                      : <span style={{ ...NAMEPLATE, fontSize: 15.5, fontWeight: 700, color: p.tracked ? A.accent : A.textHi }}>{p.tracked ? "● " : ""}{p.name}</span>}
                     {isGoldTier(p) ? <TierBadge compact /> : null}
                   </span>
                   <div style={{ fontFamily: MONO, fontSize: 10, color: A.textMut, marginTop: 2 }}>{[p.team, p.pos, p.class ? `'${p.class}` : null].filter(Boolean).join(" · ")}</div>
                 </div>
                 <span style={{ fontFamily: MONO, fontSize: 10, color: low ? A.amber : A.textFaint, whiteSpace: "nowrap" }}>{p.gp} GP{low ? " · small" : ""}</span>
-                <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap" }}>{Number(p.pts).toFixed(1)}</span>
+                <span style={{ fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 18, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap" }}>{Number(p.pts).toFixed(1)}</span>
               </div>
             );
           })}
@@ -699,7 +704,7 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
               border: `1px solid ${on ? A.accent : "transparent"}`,
             }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontFamily: SERIF, fontSize: 13, fontWeight: 600, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.name}</div>
+                <div style={{ ...NAMEPLATE, fontSize: 13.5, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.name}</div>
                 <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 2 }}>{s.county} · {s.st} · {s.players}players</div>
               </div>
               <div style={{ display: "flex", gap: 7, alignItems: "center" }}>
@@ -728,7 +733,7 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             {countElite(school.roster) > 0 ? <Icon name="crown" style={{ fontSize: 20, color: A.goldSolid }} /> : null}
-            <h2 style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 600, color: A.textHi, margin: 0 }}>{school.name}</h2>
+            <h2 style={{ ...NAMEPLATE, fontSize: 25, fontWeight: 700, color: A.textHi, margin: 0 }}>{school.name}</h2>
             <span style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
               {countElite(school.roster) > 0 ? <ElitePip n={`${countElite(school.roster)} elite`} /> : null}
               {countTracked(school.roster) > 0 ? <TrackedPip n={`${countTracked(school.roster)} tracked`} /> : null}
@@ -742,8 +747,8 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
             <div style={{ marginBottom: 20 }}>
               <ZoneTitle>Notable prospects</ZoneTitle>
               <div style={{ display: "grid", gap: 2 }}>
-                {notable.sort((a, b) => (isGoldTier(b) - isGoldTier(a)) || a.name.localeCompare(b.name)).map((p) => (
-                  <div key={p.name} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center", padding: "8px 10px", borderRadius: 8, ...(isGoldTier(p) ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }) }}>
+                {notable.sort((a, b) => (isGoldTier(b) - isGoldTier(a)) || a.name.localeCompare(b.name)).map((p, i) => (
+                  <div key={`${p.name}-${i}`} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "center", padding: "8px 10px", borderRadius: 8, ...(isGoldTier(p) ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }) }}>
                     <PlayerCell p={p} onOpen={onOpenProfile} />
                     <RecruitingStatus p={p} />
                   </div>
@@ -907,5 +912,176 @@ function RecapReader({ recap }) {
       )}
       <a href={r.url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 18, color: A.info, fontFamily: MONO, fontSize: 12, textDecoration: "none" }}>Read on Capitol Hoops ↗</a>
     </article>
+  );
+}
+
+// =============================================================================
+// 1 · PROSPECTS — single-column ranked board + the unranked tail.
+// Lead with judgment (eval), then the rest by summer stat. Honest framing:
+// almost everyone sits in Band B until the eval engine grades them.
+// =============================================================================
+const PROS_STATES = ["DC", "MD", "VA"];
+const PROS_POS = ["G", "W", "F"];
+const PROS_CLASSES = ["27", "28", "29", "30"];
+const PROS_SORTS = [["ranked", "Ranked"], ["ppg", "PPG"], ["az", "A–Z"]];
+
+const posGroup = (pos) => {
+  const x = String(pos || "").toUpperCase();
+  if (x.includes("SF") || x === "W") return "W";
+  if (x.includes("PF") || x.includes("C") || x === "F") return "F";
+  if (x.includes("G")) return "G";
+  return null;
+};
+const monogram = (n) => String(n || "").trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+
+function Monogram({ name, gold }) {
+  return (
+    <div style={{
+      width: 34, height: 34, flex: "0 0 auto", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center",
+      background: A.inset, border: `1px solid ${gold ? A.goldSolid : A.border}`,
+      fontFamily: SERIF, fontWeight: 700, fontSize: 13, letterSpacing: "0.02em",
+      color: gold ? A.goldSolid : A.textMut,
+    }}>{monogram(name)}</div>
+  );
+}
+
+// Neutral recruiting marker (stars / #N Natl) — NOT gold, NOT orange (rule).
+function RecruitMarker({ p }) {
+  if (!p.stars && !p.natl) return null;
+  const txt = [p.stars ? `${p.stars}★` : null, p.natl ? `#${p.natl} Natl` : null].filter(Boolean).join(" · ");
+  return (
+    <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: A.textMut, border: `1px solid ${A.border}`, borderRadius: 5, padding: "1px 6px", whiteSpace: "nowrap" }}>{txt}</span>
+  );
+}
+
+function NameMeta({ p, onOpen, pending }) {
+  const clickable = !!(onOpen && p.id);
+  return (
+    <div style={{ minWidth: 0, flex: "1 1 auto" }}>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
+        {clickable
+          ? <button type="button" onClick={() => onOpen(p.id)} style={{ ...NAMEPLATE, fontSize: 16, fontWeight: 700, color: A.textHi, background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}>{p.name}</button>
+          : <span style={{ ...NAMEPLATE, fontSize: 16, fontWeight: 700, color: A.textHi }}>{p.name}</span>}
+        {isGoldTier(p) ? <TierBadge compact /> : null}
+        <RecruitMarker p={p} />
+      </span>
+      <div style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, marginTop: 1 }}>
+        {[p.pos, p.class ? `'${p.class}` : null, p.school].filter(Boolean).join(" · ")}{pending ? " · eval pending" : ""}
+      </div>
+    </div>
+  );
+}
+
+export function ProspectsBoard({ prospects = [], onOpen }) {
+  useGold();
+  const st = useFacet(PROS_STATES);
+  const pos = useFacet(PROS_POS);
+  const klass = useFacet(PROS_CLASSES);
+  const [trackedOnly, setTrackedOnly] = useState(false);
+  const [goldOnly, setGoldOnly] = useState(false);
+  const [sort, setSort] = useState("ranked");
+  const [q, setQ] = useState("");
+
+  const filtered = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    return prospects.filter((p) => {
+      if (!st.pass(p.state)) return false;
+      if (!pos.pass(posGroup(p.pos))) return false;
+      if (!klass.pass(String(p.class))) return false;
+      if (trackedOnly && !p.tracked) return false;
+      if (goldOnly && !isGoldTier(p)) return false;
+      if (k && !`${p.name} ${p.school || ""}`.toLowerCase().includes(k)) return false;
+      return true;
+    });
+  }, [prospects, st, pos, klass, trackedOnly, goldOnly, q]);
+
+  const rankedAll = filtered.filter((p) => p.boardRank != null || p.evalGrade != null);
+  const notable = filtered.filter((p) => p.boardRank == null && p.evalGrade == null && p.ppg != null);
+
+  let banded = true, single = [];
+  if (sort === "ppg") { banded = false; single = [...filtered].filter((p) => p.ppg != null).sort((a, b) => (b.ppg ?? 0) - (a.ppg ?? 0)); }
+  else if (sort === "az") { banded = false; single = [...filtered].sort((a, b) => a.name.localeCompare(b.name)); }
+
+  const ranked = [...rankedAll].sort((a, b) => (a.boardRank ?? Infinity) - (b.boardRank ?? Infinity) || (b.evalGrade ?? 0) - (a.evalGrade ?? 0));
+  const notableSorted = [...notable].sort((a, b) => (b.ppg ?? 0) - (a.ppg ?? 0));
+  const NOTABLE_CAP = 80;
+
+  const rankedRow = (p, i) => {
+    const gold = isGoldTier(p);
+    return (
+      <div key={p.id} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "34px 34px 1fr auto", gap: 12, alignItems: "center", padding: "9px 10px", borderRadius: 8, ...(gold ? { background: A.goldTint, borderLeft: `2px solid ${A.goldSolid}` } : { borderLeft: "2px solid transparent" }) }}>
+        <span style={gold ? { fontFamily: SERIF, fontWeight: 700, fontSize: 19, background: A.goldGradient, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } : { fontFamily: MONO, fontSize: 13, color: A.textFaint, fontWeight: 700 }}>{p.boardRank != null ? p.boardRank : i + 1}</span>
+        <Monogram name={p.name} gold={gold} />
+        <NameMeta p={p} onOpen={onOpen} />
+        <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+          <div style={{ fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 18, fontWeight: 700, color: A.accent }}>{p.evalGrade != null ? Number(p.evalGrade).toFixed(1) : "—"}</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint }}>{p.ppg != null ? `${p.ppg.toFixed(1)} ppg · ${p.gp}gp` : "eval"}</div>
+        </div>
+      </div>
+    );
+  };
+  const notableRow = (p) => {
+    const low = (p.gp ?? 0) < 2;
+    return (
+      <div key={p.id} className="a1ws-row" style={{ display: "grid", gridTemplateColumns: "34px 1fr auto", gap: 12, alignItems: "center", padding: "9px 10px", borderRadius: 8, borderLeft: "2px solid transparent", opacity: low ? 0.62 : 1 }}>
+        <Monogram name={p.name} gold={isGoldTier(p)} />
+        <NameMeta p={p} onOpen={onOpen} pending />
+        <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+          <div style={{ fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 18, fontWeight: 700, color: A.accent }}>{p.ppg != null ? p.ppg.toFixed(1) : "—"}</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, color: low ? A.amber : A.textFaint }}>ppg · {p.gp}gp{low ? " · small" : ""}</div>
+        </div>
+      </div>
+    );
+  };
+  const BandHead = ({ children, color }) => (
+    <div style={{ ...NAMEPLATE, fontSize: 15, fontWeight: 800, color, margin: "18px 0 8px" }}>{children}</div>
+  );
+
+  return (
+    <div style={{ background: A.bg, color: A.text, border: `1px solid ${A.border}`, borderRadius: 12, overflow: "hidden" }}>
+      <style>{SHELL_CSS}</style>
+      <div style={{ padding: "16px 20px", borderBottom: `1px solid ${A.border}`, display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+          <Eyebrow>Prospects</Eyebrow>
+          <div style={{ fontFamily: MONO, fontSize: 12, color: A.textMut, marginTop: 5 }}>The full DMV database · {prospects.length} profiles · ranked board first, the rest by summer stat</div>
+        </div>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search player or school…" style={{ fontFamily: MONO, fontSize: 13, color: A.text, background: A.inset, border: `1px solid ${A.border}`, borderRadius: 8, padding: "8px 12px", width: 240, outline: "none" }} />
+      </div>
+
+      <div style={{ padding: "14px 20px", maxWidth: 880, margin: "0 auto" }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 6 }}>
+          {PROS_STATES.map((s) => <Chip key={s} active={st.on.has(s)} onClick={() => st.toggle(s)}>{s}</Chip>)}
+          <span style={{ width: 1, height: 18, background: A.border }} />
+          {PROS_POS.map((s) => <Chip key={s} active={pos.on.has(s)} onClick={() => pos.toggle(s)}>{s}</Chip>)}
+          <span style={{ width: 1, height: 18, background: A.border }} />
+          {PROS_CLASSES.map((c) => <Chip key={c} active={klass.on.has(c)} onClick={() => klass.toggle(c)}>'{c}</Chip>)}
+          <span style={{ width: 1, height: 18, background: A.border }} />
+          <Chip tone="tracked" icon="star" active={trackedOnly} onClick={() => setTrackedOnly((v) => !v)}>Tracked</Chip>
+          <Chip tone="gold" icon="crown" active={goldOnly} onClick={() => setGoldOnly((v) => !v)}>{GOLD_TIER_LABEL}</Chip>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", margin: "10px 0" }}>
+          <div style={{ display: "flex", gap: 4 }}>
+            {PROS_SORTS.map(([v, l]) => (
+              <button key={v} type="button" onClick={() => setSort(v)} style={{ fontFamily: MONO, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, padding: "6px 11px", borderRadius: 6, cursor: "pointer", border: `1px solid ${sort === v ? A.accent : A.border}`, background: sort === v ? "rgba(232,122,60,0.14)" : "transparent", color: sort === v ? A.accent : A.textMut }}>{l}</button>
+            ))}
+          </div>
+          <Label style={{ color: A.textFaint }}>{filtered.length} prospects · {rankedAll.length} ranked</Label>
+        </div>
+
+        {banded ? (
+          <>
+            <BandHead color={A.goldSolid}>Ranked board</BandHead>
+            {ranked.length
+              ? <div style={{ display: "grid", gap: 2 }}>{ranked.map(rankedRow)}</div>
+              : <div style={{ fontFamily: MONO, fontSize: 12.5, color: A.textFaint, padding: "10px 0", lineHeight: 1.6 }}>No prospects evaluated yet — the ranked board fills as the eval engine grades players. Until then, the full DMV is below by summer production.</div>}
+            <BandHead color={A.textMut}>Notable · not yet evaluated</BandHead>
+            <div style={{ display: "grid", gap: 2 }}>{notableSorted.slice(0, NOTABLE_CAP).map((p) => notableRow(p))}</div>
+            {notableSorted.length > NOTABLE_CAP ? <Label style={{ color: A.textFaint, marginTop: 10 }}>showing top {NOTABLE_CAP} of {notableSorted.length} by summer PPG</Label> : null}
+          </>
+        ) : (
+          <div style={{ display: "grid", gap: 2 }}>{single.slice(0, 120).map((p) => (p.boardRank != null || p.evalGrade != null) ? rankedRow(p) : notableRow(p))}</div>
+        )}
+      </div>
+    </div>
   );
 }

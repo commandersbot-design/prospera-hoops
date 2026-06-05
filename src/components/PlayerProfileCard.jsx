@@ -44,10 +44,9 @@ const C = {
   green: "#9bc459",
   amber: "#c97a3a",
 };
-const SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
-// Clean, official sans for all labels/body (was JetBrains Mono); Fraunces stays
-// as the editorial display face for the name, big stat numbers, and snapshot.
-const MONO = "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+// A1 type system: Saira Condensed (display nameplate) + Hanken Grotesk (body).
+const SERIF = "'Saira Condensed', system-ui, -apple-system, sans-serif";
+const MONO = "'Hanken Grotesk', system-ui, -apple-system, sans-serif";
 
 const TONE = { normal: C.accent, watch: C.amber, strong: C.green };
 
@@ -127,7 +126,7 @@ function Header({ p }) {
           <div style={{ flex: "1 1 auto", minWidth: 0 }}>
             {/* name + watchlist stack */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 12, justifyContent: "space-between", flexWrap: "wrap" }}>
-              <h2 style={{ fontFamily: SERIF, fontSize: 34, fontWeight: 600, color: "#fff", margin: 0, lineHeight: 1.05 }}>{p.name}</h2>
+              <h2 style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.01em", color: "#fff", margin: 0, lineHeight: 1.02 }}>{p.name}</h2>
               {p.watchlistTier ? (
                 <div style={{ display: "grid", gap: 4, justifyItems: "end", flex: "0 0 auto" }}>
                   <Pill color={C.cyan} border={`${C.cyan}55`} bg={`${C.cyan}14`} icon="radar">{p.watchlistTier}</Pill>

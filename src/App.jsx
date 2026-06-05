@@ -5,7 +5,7 @@ import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
-import { SchoolsSection, SummerLeagueSection, RecapsFeed } from "./components/ScoutingWorkspace";
+import { SchoolsSection, SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
 import { useGold } from "./lib/goldTier";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -41,18 +41,18 @@ const T = {
   track:      "var(--prospera-pct-track)",
 };
 
-// Was a monospace "terminal" face; now the clean Inter sans so labels, nav,
-// captions, and stat lines read as a polished, official UI. Numeric columns
-// still align via fontVariantNumeric: "tabular-nums" set at their call sites.
+// Body / UI face — Hanken Grotesk. Used for all labels, nav, captions, body,
+// and stat lines. (Name kept `mono` to avoid churn; it is NOT monospace.)
+// Numeric columns align via fontVariantNumeric: "tabular-nums" at call sites.
 const mono = {
-  fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+  fontFamily: "'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 };
 
-// Editorial display serif — matches the player card's headline face (Fraunces).
-// Used for the brand wordmark, large detail-page names, and big display numbers
-// so the "official editorial" identity is consistent app-wide, not card-only.
+// Display / nameplate face — Saira Condensed. Used for the brand wordmark,
+// large detail-page names, and big display numbers. The "nameplate" look pairs
+// it with uppercase + weight 700 at the call sites.
 const serif = {
-  fontFamily: "'Fraunces', Georgia, 'Times New Roman', serif",
+  fontFamily: "'Saira Condensed', system-ui, -apple-system, sans-serif",
 };
 
 // Module-level data stores — populated by initData() after the runtime fetch,
@@ -2355,6 +2355,24 @@ function buildWorkspaceSchools() {
     };
   }).filter((s) => s.roster.length).sort((a, b) => a.name.localeCompare(b.name));
 }
+function buildWorkspaceProspects() {
+  return PROSPECTS.map((p) => {
+    const ch = capitolHoopsLinesFor(p.name)[0];
+    const s = ch?.stats || {};
+    return {
+      id: p.id, name: p.name, pos: p.position || null,
+      class: p.gradYear ? String(normGradYear(p.gradYear)).slice(2) : null,
+      state: SCHOOL_LOCATIONS[p.school]?.state || p.state || null,
+      school: p.school || null,
+      boardRank: p.boardRank ?? null,            // eval rank — null until graded
+      evalGrade: p.evalGrade ?? p.eval ?? null,  // composite — null until graded
+      ppg: s.ppg ?? null, gp: s.gp ?? 0,
+      goldTier: !!p.goldTier,
+      stars: p.stars ?? p.recruiting?.services?.["247"]?.stars ?? null,
+      natl: p.rankings?.national ?? p.recruiting?.services?.["247"]?.national ?? null,
+    };
+  });
+}
 function buildWorkspaceTeams() {
   return Object.entries(CH_TEAMS).map(([slug, t]) => {
     const school = canonicalSchool(slug, t.name);
@@ -2412,6 +2430,7 @@ export default function App() {
   const goView = (v) => { setOpenId(null); setView(v); };
   const workspaceSchools = ready ? buildWorkspaceSchools() : [];
   const workspaceTeams = ready ? buildWorkspaceTeams() : [];
+  const workspaceProspects = ready ? buildWorkspaceProspects() : [];
 
   return (
     <div style={{ minHeight: "100vh", color: T.text }}>
@@ -2462,7 +2481,7 @@ export default function App() {
         {open ? (
           <Profile prospect={open} onBack={() => setOpenId(null)} />
         ) : view === "prospects" ? (
-          <ProspectsDirectory onOpen={setOpenId} />
+          <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
           <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} />
         ) : view === "recaps" ? (
