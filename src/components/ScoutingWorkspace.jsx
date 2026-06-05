@@ -46,12 +46,14 @@ const SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
 const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
 
 // --- Gold-tier config — the SINGLE source that drives every gold element ------
-// Gold tier = a VERIFIED high-major D1 recruiting status (a high-major offer or
-// commitment). It's a fact, not an opinion, so it auto-populates from recruiting
-// data and never sits empty. Change the definition here only; keep it to ONE top
-// tier — a second gold tier destroys the signal.
-// (We are not running a Big Board right now, so board rank no longer drives gold.)
-const isGoldTier = (p) => !!(p && p.highMajor);
+// Gold tier = the APEX of the Prospera evaluation: the handful of prospects the
+// 9-axis eval engine grades in its top bucket — "blue-chip / elite." It's our
+// conviction made visible: gold says "Prospera believes this kid is genuinely
+// special." It is set MANUALLY by the user (a stored `goldTier` flag on the
+// prospect) — never auto-derived from offers, commits, or a consensus board, so
+// it carries our point of view, not someone else's. Keep it to ONE top tier; a
+// second gold tier destroys the signal. Change the definition here only.
+const isGoldTier = (p) => !!(p && p.goldTier);
 const GOLD_TIER_LABEL = "Gold Tier";
 
 // --- tiny primitives ----------------------------------------------------------
@@ -207,12 +209,10 @@ const TH = ({ children, active, dir, onClick, right }) => (
   </th>
 );
 
-// Recruiting status cell — commitment > high-major offers > nothing. Gold-tier
-// players (high-major) read in gold-solid; commitments and everything else stay
-// orange/faint (gold is identity, not function).
+// Recruiting status cell — a recruiting FACT (commitment), independent of gold
+// tier. Gold = our eval apex, not recruiting status, so the two never conflate.
 function RecruitingStatus({ p }) {
   if (p.commit) return <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.accent, fontWeight: 600 }}>→ {p.commit}</span>;
-  if (isGoldTier(p)) return <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.goldSolid, fontWeight: 600 }}>High-major</span>;
   return <span style={{ fontFamily: MONO, fontSize: 12, color: A.textFaint }}>—</span>;
 }
 
@@ -309,8 +309,9 @@ function ZoneTitle({ children, right }) {
 // SEED DATA — replace with adapters over the real stores when wiring live data.
 // =============================================================================
 
-// Summer League teams + rosters (stats mode). highMajor=true marks a verified
-// high-major D1 offer/commit (→ gold tier); commit names the school when known.
+// Summer League teams + rosters (stats mode). goldTier=true is a MANUAL apex/
+// elite mark (set by the user, → gold treatment); commit names the recruiting
+// destination when known (a separate recruiting fact, not what drives gold).
 const SEED_SUMMER_TEAMS = [
   { name: "DeMatha", conf: "WCAC", region: "MD", gp: 6, coach: "Mike G. Jones III", roster: [
     { name: "A. Whitfield", pos: "SF", class: "27", gp: 6, pts: 18.2, reb: 6.1, ast: 2.4, tracked: true},
@@ -331,7 +332,7 @@ const SEED_SUMMER_TEAMS = [
     { name: "P. Nwosu", pos: "C", class: "29", gp: 4, pts: 8.5, reb: 8.0, ast: 0.9 },
   ] },
   { name: "St. John's DC", conf: "WCAC", region: "DC", gp: 3, coach: "—", roster: [
-    { name: "Drew Hill", pos: "SG", class: "27", gp: 3, pts: 31.5, reb: 4.0, ast: 3.2, highMajor: true, commit: "Kansas", tracked: true },
+    { name: "Drew Hill", pos: "SG", class: "27", gp: 3, pts: 31.5, reb: 4.0, ast: 3.2, goldTier: true, commit: "Kansas", tracked: true },
     { name: "L. Park", pos: "PF", class: "28", gp: 3, pts: 9.0, reb: 6.2, ast: 1.0 },
   ] },
   { name: "Paul VI", conf: "WCAC", region: "NoVA", gp: 5, coach: "—", roster: [
@@ -356,7 +357,7 @@ const SEED_SUMMER_TEAMS = [
 // so most directory rows stay badge-less — that contrast is the point.
 const SEED_SCHOOLS = [
   { name: "DeMatha Catholic", conf: "WCAC", county: "Prince George's", st: "MD", players: 18, coach: "Mike G. Jones III", roster: [
-    { name: "J. Marshall", pos: "SF", class: "26", highMajor: true, commit: "Maryland", tracked: true },
+    { name: "J. Marshall", pos: "SF", class: "26", goldTier: true, commit: "Maryland", tracked: true },
     { name: "A. Whitfield", pos: "SF", class: "27", tracked: true},
     { name: "M. Okafor", pos: "C", class: "28", tracked: true},
     { name: "J. Ellis", pos: "PG", class: "27" },
@@ -364,7 +365,7 @@ const SEED_SCHOOLS = [
     { name: "R. Banks", pos: "PF", class: "28" },
   ] },
   { name: "Gonzaga College HS", conf: "WCAC", county: "Washington", st: "DC", players: 20, coach: "Keith Urgo", roster: [
-    { name: "T. Bennett", pos: "PG", class: "26", highMajor: true, commit: "Georgetown", tracked: true },
+    { name: "T. Bennett", pos: "PG", class: "26", goldTier: true, commit: "Georgetown", tracked: true },
     { name: "R. Maddox", pos: "PG", class: "27", tracked: true },
     { name: "S. Bell", pos: "SF", class: "28" },
     { name: "P. Nwosu", pos: "C", class: "29" },
