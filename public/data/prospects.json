@@ -19238,7 +19238,7 @@
       "city": null,
       "state": null,
       "county": null,
-      "heightInches": null,
+      "heightInches": 70,
       "weightLbs": null,
       "wingspanInches": null,
       "headshot": null,

@@ -519,12 +519,18 @@ function ProspectsDirectory({ onOpen }) {
     });
     const byName = (a, b) => a.p.name.localeCompare(b.p.name);
     const byPpg = (a, b) => (b.ppg ?? -1) - (a.ppg ?? -1) || byName(a, b);
-    // Ranked: stars desc, then better (lower) national rank, then state rank.
-    const byRanked = (a, b) =>
-      (b.stars ?? -1) - (a.stars ?? -1) ||
-      (a.natl ?? 99999) - (b.natl ?? 99999) ||
-      ((a.p.rankings?.state ?? 99999) - (b.p.rankings?.state ?? 99999)) ||
-      byName(a, b);
+    // Ranked: nationally-ranked players FIRST, in true national order (lower =
+    // better); then star-rated players (stars desc); then state rank; then PPG.
+    // This guarantees the #N Natl guys lead the board, in the right order.
+    const byRanked = (a, b) => {
+      const an = a.natl ?? Infinity, bn = b.natl ?? Infinity;
+      if (an !== bn) return an - bn;
+      const as = a.stars ?? -1, bs = b.stars ?? -1;
+      if (as !== bs) return bs - as;
+      const ast = a.p.rankings?.state ?? Infinity, bst = b.p.rankings?.state ?? Infinity;
+      if (ast !== bst) return ast - bst;
+      return byPpg(a, b);
+    };
     out.sort(sort === "name" ? byName : sort === "ranked" ? byRanked : byPpg);
     return out;
   }, [rows, q, stateF, classF, posF, sort]);
@@ -773,8 +779,14 @@ function RelatedPlayers({ prospect, onOpen }) {
               <Avatar name={x.name} headshot={x.headshot} size={34} />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{x.name}</div>
-                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.04em", marginTop: 2 }}>
-                  {[x.position || "—", normGradYear(x.gradYear) ? `'${String(normGradYear(x.gradYear)).slice(2)}` : null, rel !== "school" ? x.school : null].filter(Boolean).join(" · ")}
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.04em", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {[
+                    x.position || "—",
+                    normGradYear(x.gradYear) ? `'${String(normGradYear(x.gradYear)).slice(2)}` : null,
+                    x.heightInches ? fmtHeight(x.heightInches) : null,
+                    x.weightLbs ? `${x.weightLbs} lb` : null,
+                    rel !== "school" ? x.school : null,
+                  ].filter(Boolean).join(" · ")}
                 </div>
               </div>
               <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
