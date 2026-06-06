@@ -46,3 +46,35 @@ export function useGold() {
   }, []);
   return { isGold, toggleGold, goldIds };
 }
+
+/**
+ * Scout-verified store — "a Prospera scout has confirmed this player's info."
+ * This is the INTERNAL, scout-side verification (a trust signal on the system of
+ * record), persisted to localStorage like the gold mark. It is NOT the public,
+ * player/parent "claim your profile" flow — that needs accounts + a backend and
+ * is left as an owner-decision (see the Verify control's note).
+ */
+const VKEY = "prospera.verified.v1";
+function loadV() {
+  try { return new Set(JSON.parse(localStorage.getItem(VKEY) || "[]")); }
+  catch { return new Set(); }
+}
+let verifiedMarks = loadV();
+
+export function isVerified(id) {
+  return id != null && verifiedMarks.has(id);
+}
+export function toggleVerified(id) {
+  if (id == null) return;
+  if (verifiedMarks.has(id)) verifiedMarks.delete(id); else verifiedMarks.add(id);
+  try { localStorage.setItem(VKEY, JSON.stringify([...verifiedMarks])); } catch { /* private mode */ }
+  listeners.forEach((fn) => fn());
+}
+export function useVerified() {
+  const [, force] = useReducer((n) => n + 1, 0);
+  useEffect(() => {
+    listeners.add(force);
+    return () => listeners.delete(force);
+  }, []);
+  return { isVerified, toggleVerified };
+}

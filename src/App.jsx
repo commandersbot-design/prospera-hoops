@@ -6,7 +6,7 @@ import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
 import { SchoolsSection, SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
-import { useGold } from "./lib/goldTier";
+import { useGold, useVerified } from "./lib/goldTier";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -712,7 +712,7 @@ function mapProspectToCard(p) {
     scoutView: null,
     context,
     intel: {
-      circuit: summerLine?.team || null,
+      circuit: p.aau || summerLine?.team || null,
       district: p.county ? `${p.county}${p.state ? " · " + (STATE_LABELS[p.state] || p.state) : ""}` : (p.state ? (STATE_LABELS[p.state] || p.state) : null),
       ageRelClass: null,
       frameUpside: null,
@@ -720,12 +720,82 @@ function mapProspectToCard(p) {
   };
 }
 
-function Profile({ prospect, onBack }) {
+// Related players — other prospects sharing this player's high school, AAU club,
+// or graduating class. A discovery surface (and a breadth signal): the DMV is
+// connected, not a list of isolated five-stars.
+function RelatedPlayers({ prospect, onOpen }) {
+  const [rel, setRel] = useState("school");
+  const tabs = [["school", "Same school"]];
+  if (prospect.aau) tabs.push(["aau", prospect.aau]);
+  tabs.push(["class", `Class of ${normGradYear(prospect.gradYear) || "—"}`]);
+
+  const pool = useMemo(() => {
+    const others = PROSPECTS.filter((x) => x.id !== prospect.id);
+    let list;
+    if (rel === "aau") list = others.filter((x) => x.aau && x.aau === prospect.aau);
+    else if (rel === "class") list = others.filter((x) => normGradYear(x.gradYear) && normGradYear(x.gradYear) === normGradYear(prospect.gradYear));
+    else list = others.filter((x) => x.school && x.school === prospect.school);
+    return list
+      .map((x) => ({ x, ppg: primaryStatLine(x)?.stats?.ppg ?? null }))
+      .sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1))
+      .slice(0, 10);
+  }, [rel, prospect]);
+
+  if (!PROSPECTS.length) return null;
+  const emptyLabel = rel === "school" ? "at this school" : rel === "aau" ? "on this club" : "in this class";
+
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+      <SectionLabel>Related Players</SectionLabel>
+      <div style={{ display: "flex", gap: 8, margin: "12px 0", flexWrap: "wrap" }}>
+        {tabs.map(([k, l]) => {
+          const active = rel === k;
+          return (
+            <button key={k} type="button" onClick={() => setRel(k)} style={{
+              ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: active ? 700 : 500,
+              color: active ? T.bg : T.textDim, background: active ? T.accent : "transparent",
+              border: `1px solid ${active ? T.accent : T.border}`, padding: "6px 11px", cursor: "pointer",
+            }}>{l}</button>
+          );
+        })}
+      </div>
+      {pool.length === 0 ? (
+        <div style={{ fontSize: 13, color: T.textMute }}>No other players {emptyLabel} in the database yet.</div>
+      ) : (
+        <div style={{ display: "grid", gap: 8 }}>
+          {pool.map(({ x, ppg }) => (
+            <button key={x.id} type="button" onClick={() => onOpen(x.id)} style={{
+              display: "grid", gridTemplateColumns: "34px 1fr auto", gap: 12, alignItems: "center", textAlign: "left",
+              background: T.surface2, border: `1px solid ${T.borderSoft}`, padding: "8px 12px", cursor: "pointer", color: T.text,
+            }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--prospera-accent-border)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--prospera-border-soft)")}>
+              <Avatar name={x.name} headshot={x.headshot} size={34} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{x.name}</div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.04em", marginTop: 2 }}>
+                  {[x.position || "—", normGradYear(x.gradYear) ? `'${String(normGradYear(x.gradYear)).slice(2)}` : null, rel !== "school" ? x.school : null].filter(Boolean).join(" · ")}
+                </div>
+              </div>
+              <div style={{ ...mono, fontSize: 12, color: ppg != null ? T.accent : T.textMute, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                {ppg != null ? `${perGame(ppg)} ppg` : "—"}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
   const gold = useGold();
+  const ver = useVerified();
   const marked = gold.isGold(p.id);
+  const verified = ver.isVerified(p.id);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
@@ -737,22 +807,40 @@ function Profile({ prospect, onBack }) {
         >
           ← Back
         </button>
-        {/* In-app manual gold-tier mark — the user's "this kid is elite" conviction. */}
-        <button
-          type="button"
-          onClick={() => gold.toggleGold(p.id)}
-          title="Gold tier is your manual apex mark; saved on this device."
-          style={{
-            ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
-            borderRadius: 6, padding: "7px 12px", cursor: "pointer",
-            color: marked ? "#2a2410" : "#d2af52",
-            background: marked ? "linear-gradient(135deg,#f1e3a8 0%,#d2af52 55%,#a9842f 100%)" : "transparent",
-            border: `1px solid ${marked ? "transparent" : "rgba(210,175,82,0.5)"}`,
-            boxShadow: marked ? "inset 0 1px 0 rgba(255,255,255,0.45)" : "none",
-          }}
-        >
-          {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
-        </button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {/* Scout-side verification — internal trust signal on the system of record.
+              The public player/parent "claim" flow needs accounts + a backend (owner-decision). */}
+          <button
+            type="button"
+            onClick={() => ver.toggleVerified(p.id)}
+            title="Scout-verified: a Prospera scout has confirmed this player's info. (Public profile claiming needs accounts — coming later.)"
+            style={{
+              ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
+              borderRadius: 6, padding: "7px 12px", cursor: "pointer",
+              color: verified ? T.bg : T.positive,
+              background: verified ? T.positive : "transparent",
+              border: `1px solid ${verified ? T.positive : "rgba(16,185,129,0.5)"}`,
+            }}
+          >
+            {verified ? "✓ Verified" : "Verify Player"}
+          </button>
+          {/* In-app manual gold-tier mark — the user's "this kid is elite" conviction. */}
+          <button
+            type="button"
+            onClick={() => gold.toggleGold(p.id)}
+            title="Gold tier is your manual apex mark; saved on this device."
+            style={{
+              ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
+              borderRadius: 6, padding: "7px 12px", cursor: "pointer",
+              color: marked ? "#2a2410" : "#d2af52",
+              background: marked ? "linear-gradient(135deg,#f1e3a8 0%,#d2af52 55%,#a9842f 100%)" : "transparent",
+              border: `1px solid ${marked ? "transparent" : "rgba(210,175,82,0.5)"}`,
+              boxShadow: marked ? "inset 0 1px 0 rgba(255,255,255,0.45)" : "none",
+            }}
+          >
+            {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -807,6 +895,8 @@ function Profile({ prospect, onBack }) {
               </div>
             </div>
           )}
+
+          <RelatedPlayers prospect={p} onOpen={onOpen} />
         </div>
       )}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
@@ -2479,7 +2569,7 @@ export default function App() {
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "18px 14px 48px" : "28px 24px 60px" }}>
         {open ? (
-          <Profile prospect={open} onBack={() => setOpenId(null)} />
+          <Profile prospect={open} onBack={() => setOpenId(null)} onOpen={setOpenId} />
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
