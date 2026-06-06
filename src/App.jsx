@@ -153,6 +153,7 @@ function officialSchoolName(key) {
 // Capitol Hoops team where derivable.
 let SCHOOLS = {};
 let SCHOOL_LOCATIONS = {}; // { schoolName: { lat, lng, state, county } }
+let DMV_DIRECTORY = [];    // master DMV school directory (scraped from MaxPreps)
 
 // Populate the module-level stores from the fetched datasets. Called once,
 // before the app renders.
@@ -2442,20 +2443,46 @@ function useIsMobile(bp = 640) {
 // Shape the live PROSPECTS / SCHOOLS / CH_TEAMS stores into the workspace's
 // {name, conf, region/county/st, gp, coach, roster:[...]} contract. Every roster
 // player carries its real prospect `id` so the workspace can open the profile.
+// Dedup key for matching our short school names to MaxPreps' official names:
+// strip punctuation + common qualifiers ("Archbishop Spalding" → "spalding",
+// "Gonzaga College" → "gonzaga", "Bullis School" → "bullis", "Paul VI Catholic"
+// → "paulvi").
+function schoolKey(name) {
+  return String(name || "").toLowerCase()
+    .replace(/\b(archbishop|the|saint|st\.?|school|catholic|college|academy|preparatory|prep|high|hs|secondary|senior|county)\b/g, " ")
+    .replace(/[^a-z0-9]/g, "");
+}
+
 function buildWorkspaceSchools() {
-  return Object.entries(SCHOOLS).map(([name, s]) => {
+  const map = new Map(); // schoolKey → school entry (player-having wins)
+  for (const [name, s] of Object.entries(SCHOOLS)) {
     const loc = SCHOOL_LOCATIONS[name] || {};
     const roster = (s.prospects || []).map((pr) => ({
       name: pr.name, pos: pr.position || null,
       class: pr.gradYear ? String(normGradYear(pr.gradYear)).slice(2) : null,
       tracked: false, id: pr.id, goldTier: !!pr.goldTier, commit: pr.commitment || null,
     }));
-    return {
+    map.set(schoolKey(name), {
       name: officialSchoolName(name), conf: null,
       county: loc.county || null, st: loc.state || s.state || null,
       players: roster.length, coach: s.coach || null, roster,
-    };
-  }).filter((s) => s.roster.length).sort((a, b) => a.name.localeCompare(b.name));
+    });
+  }
+  // Merge in the scraped DMV directory: every program that exists DMV-wide, so
+  // schools we don't roster yet still appear (with "not yet tracked").
+  for (const d of DMV_DIRECTORY) {
+    const k = schoolKey(d.name);
+    if (map.has(k)) {
+      const e = map.get(k); // enrich existing with city if missing
+      if (!e.county && d.city) e.county = d.city;
+      continue;
+    }
+    map.set(k, {
+      name: d.name, conf: null, county: d.city || null, st: d.state || null,
+      players: 0, coach: null, roster: [], directoryOnly: true,
+    });
+  }
+  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 function buildWorkspaceProspects() {
   return PROSPECTS.map((p) => {
@@ -2506,8 +2533,9 @@ export default function App() {
       fetch("/data/capitolHoops.json").then((r) => { if (!r.ok) throw new Error(`capitolHoops ${r.status}`); return r.json(); }),
       fetch("/data/schoolLocations.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
       fetch("/data/gameRecaps.json").then((r) => (r.ok ? r.json() : { recaps: [] })).catch(() => ({ recaps: [] })),
+      fetch("/data/dmvSchools.json").then((r) => (r.ok ? r.json() : { schools: [] })).catch(() => ({ schools: [] })),
     ])
-      .then(([prospects, ch, locations, gameRecaps]) => { initData(prospects, ch, locations); setRecaps(gameRecaps.recaps || []); setReady(true); })
+      .then(([prospects, ch, locations, gameRecaps, dmv]) => { initData(prospects, ch, locations); DMV_DIRECTORY = dmv.schools || []; setRecaps(gameRecaps.recaps || []); setReady(true); })
       .catch((e) => setError(e.message));
   }, []);
 

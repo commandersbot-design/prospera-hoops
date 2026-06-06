@@ -740,8 +740,17 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
             </span>
           </div>
           <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, margin: "7px 0 18px", letterSpacing: "0.03em" }}>
-            {school.conf} · {school.county}, {school.st} · {school.coach || "—"}
+            {[school.conf, [school.county, school.st].filter(Boolean).join(", "), school.coach || "—"].filter(Boolean).join(" · ")}
           </div>
+
+          {school.roster.length === 0 ? (
+            <div style={{ border: `1px dashed ${A.border}`, borderRadius: 10, padding: "18px 16px", textAlign: "center" }}>
+              <div style={{ fontFamily: MONO, fontSize: 12, color: A.textMut, lineHeight: 1.6 }}>
+                In the DMV directory — <span style={{ color: A.text }}>no players tracked yet</span>.<br />
+                Players attach automatically as they're scouted or appear in summer-league rosters.
+              </div>
+            </div>
+          ) : null}
 
           {notable.length > 0 ? (
             <div style={{ marginBottom: 20 }}>
@@ -757,8 +766,12 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
             </div>
           ) : null}
 
-          <ZoneTitle right={`${school.roster.length} shown`}>Full roster · {school.players}</ZoneTitle>
-          <RosterTable players={school.roster} mode="recruiting" onOpen={onOpenProfile} />
+          {school.roster.length > 0 ? (
+            <>
+              <ZoneTitle right={`${school.roster.length} shown`}>Full roster · {school.players}</ZoneTitle>
+              <RosterTable players={school.roster} mode="recruiting" onOpen={onOpenProfile} />
+            </>
+          ) : null}
         </div>
       ) : <Empty>No schools match these filters.</Empty>}
     </WorkspaceShell>
