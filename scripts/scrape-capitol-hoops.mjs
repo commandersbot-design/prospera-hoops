@@ -71,11 +71,26 @@ function parseRows(tableHtml) {
   }).filter((o) => o.Player);
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Resilient fetch — retries on network errors / 429 / 5xx with backoff, so a
+// transient blip never drops a team.
+async function fetchHtml(url, tries = 4) {
+  let lastErr;
+  for (let a = 0; a < tries; a++) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (prospera-preps stats refresh)" } });
+      if (res.ok) return await res.text();
+      if (res.status === 429 || res.status >= 500) { lastErr = new Error(`HTTP ${res.status}`); await sleep(1500 * (a + 1)); continue; }
+      throw new Error(`HTTP ${res.status}`);
+    } catch (e) { lastErr = e; await sleep(1500 * (a + 1)); }
+  }
+  throw lastErr || new Error("fetch failed");
+}
+
 async function scrapeTeam(slug, name) {
   const url = `https://capitolhoopssummerleague.com/team/${slug}/`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${slug}: HTTP ${res.status}`);
-  const html = await res.text();
+  const html = await fetchHtml(url);
   const { roster, stats } = playerTables(html);
   const statsByName = {};
   for (const r of parseRows(stats)) statsByName[r.Player.toLowerCase().replace(/[^a-z0-9]/g, "")] = r;
@@ -97,6 +112,7 @@ async function scrapeTeam(slug, name) {
     };
   });
 
+  if (!players.length) throw new Error("no players parsed (page markup may have changed or errored)");
   const coachM = html.match(/Head Coach:\s*([^<]+)</i);
   const headCoach = coachM ? decode(coachM[1]) : null;
   return { slug, name, headCoach, sourceUrl: url, season: "2026", players };
@@ -108,7 +124,13 @@ async function run() {
     ? TEAMS.filter(([s]) => ["dematha", "hawks-hayfield", "south-county", "st-stephens-st-agnes", "patriot"].includes(s))
     : TEAMS;
 
+  const outPath = path.join(process.cwd(), "public", "data", "capitolHoops.json");
+  // Load existing data so a team that fails to refresh KEEPS its prior stats
+  // (never drop a team/player on a transient failure).
+  const prior = (!validate && fs.existsSync(outPath)) ? (JSON.parse(fs.readFileSync(outPath, "utf8")).teams || {}) : {};
+
   const teams = {};
+  const fallbacks = []; // teams we couldn't refresh
   let i = 0;
   for (const [slug, name] of list) {
     i++;
@@ -117,9 +139,16 @@ async function run() {
       teams[slug] = t;
       console.log(`[${i}/${list.length}] ${name}: ${t.players.length} players${t.headCoach ? " · " + t.headCoach : ""}`);
     } catch (e) {
-      console.log(`[${i}/${list.length}] ${name}: FAILED — ${e.message}`);
+      if (prior[slug]) {
+        teams[slug] = prior[slug]; // keep existing — do NOT drop the team
+        fallbacks.push({ slug, name, reason: e.message, kept: (prior[slug].players || []).length });
+        console.log(`[${i}/${list.length}] ${name}: FAILED (${e.message}) — KEPT prior ${(prior[slug].players || []).length} players`);
+      } else {
+        fallbacks.push({ slug, name, reason: e.message, kept: 0 });
+        console.log(`[${i}/${list.length}] ${name}: FAILED (${e.message}) — no prior data to keep`);
+      }
     }
-    await new Promise((r) => setTimeout(r, 250)); // be polite
+    await new Promise((r) => setTimeout(r, 350 + Math.floor(Math.random() * 250))); // polite + jittered
   }
 
   if (validate) {
@@ -138,10 +167,23 @@ async function run() {
     _scrapedAt: new Date().toISOString(),
     teams,
   };
-  const outPath = path.join(process.cwd(), "public", "data", "capitolHoops.json");
+
+  // Safety: never write a file that has fewer teams than we started with.
+  const priorCount = Object.keys(prior).length;
+  if (priorCount && Object.keys(teams).length < priorCount) {
+    console.error(`\nABORT: would write ${Object.keys(teams).length} teams but prior had ${priorCount}. Not overwriting.`);
+    process.exit(1);
+  }
+
   fs.writeFileSync(outPath, JSON.stringify(out, null, 2) + "\n");
   const totalPlayers = Object.values(teams).reduce((s, t) => s + t.players.length, 0);
-  console.log(`\nWrote ${Object.keys(teams).length} teams, ${totalPlayers} players → src/data/capitolHoops.json`);
+  const refreshed = Object.keys(teams).length - fallbacks.length;
+  console.log(`\nWrote ${Object.keys(teams).length} teams, ${totalPlayers} players → public/data/capitolHoops.json`);
+  console.log(`Refreshed ${refreshed} teams · kept-from-cache ${fallbacks.length}`);
+  if (fallbacks.length) {
+    console.log("\n⚠️  Teams NOT refreshed this run (kept prior data — re-run to retry):");
+    fallbacks.forEach((f) => console.log(`   - ${f.name} (${f.slug}): ${f.reason} [kept ${f.kept}]`));
+  }
 }
 
 run();
