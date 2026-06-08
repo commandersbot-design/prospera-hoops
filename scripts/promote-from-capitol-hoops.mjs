@@ -36,9 +36,12 @@ const slug = (n) => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 // Derive the actual high-school name from the Capitol Hoops team name.
 // "Bengals (Blake)" → "Blake"; "Hawks (Hayfield)" → "Hayfield"; "Bullis" → "Bullis".
+// A bare-state parenthetical is a LOCATION qualifier, not a school alias, so
+// "Potomac (VA)" → "Potomac" (not "VA") and "Riverside (VA)" → "Riverside".
 function deriveSchool(teamName) {
   const paren = String(teamName || "").match(/\(([^)]+)\)/);
-  return paren ? paren[1].trim() : String(teamName || "").trim();
+  if (paren && !/^(VA|MD|DC)$/i.test(paren[1].trim())) return paren[1].trim();
+  return String(teamName || "").replace(/\([^)]*\)/, "").trim();
 }
 
 const prospectsFile = JSON.parse(fs.readFileSync(prospectsPath, "utf8"));
