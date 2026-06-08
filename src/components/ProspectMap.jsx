@@ -169,7 +169,9 @@ export default function ProspectMap({
     markersRef.current = {};
     data.forEach((s) => {
       if (Number.isNaN(s.lat) || Number.isNaN(s.lng)) return;
-      const m = L.marker([s.lat, s.lng], { icon: pinIcon(s.state) });
+      // Rostered schools show solid; directory-only (0 players) pins are dimmed
+      // so the schools we actually track stand out across the DMV footprint.
+      const m = L.marker([s.lat, s.lng], { icon: pinIcon(s.state), opacity: s.prospects > 0 ? 1 : 0.5 });
       m.bindPopup(popupHTML(s), { closeButton: true });
       m.on("popupopen", () => setActiveId(s.id));
       markersRef.current[s.id] = m;

@@ -2169,6 +2169,18 @@ function buildMapSchools() {
     // official display label.
     out.push({ id: name, name: officialSchoolName(name), city, lat: loc.lat, lng: loc.lng, state, prospects: s.prospects.length, top });
   }
+  // Overlay the scraped DMV directory: every geocoded program we don't roster
+  // yet, so the map shows the whole DMV footprint (not just player schools).
+  // directoryOnly markers carry 0 prospects and no internal id (clicking is a
+  // safe no-op until the school is rostered).
+  const mapped = new Set(out.map((m) => schoolKey(m.name)));
+  for (const d of DMV_DIRECTORY) {
+    if (d.lat == null || d.lng == null) continue;
+    const k = schoolKey(d.name);
+    if (mapped.has(k)) continue;
+    mapped.add(k);
+    out.push({ id: `dir:${d.slug || d.name}`, name: d.name, city: [d.city, d.state].filter(Boolean).join(", "), lat: d.lat, lng: d.lng, state: d.state, prospects: 0, top: null, directoryOnly: true });
+  }
   return out;
 }
 

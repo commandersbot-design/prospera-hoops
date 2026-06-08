@@ -10,7 +10,9 @@
       "slug": "va/alexandria/alexandria-city-titans",
       "url": "https://www.maxpreps.com/va/alexandria/alexandria-city-titans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/e/9/ae9de8e3-045c-47b2-aad7-2d487c90b2d3.gif?version=638034175200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.82434,
+      "lng": -77.08559
     },
     {
       "name": "Anacostia",
@@ -19,7 +21,9 @@
       "slug": "dc/washington/anacostia-indians",
       "url": "https://www.maxpreps.com/dc/washington/anacostia-indians/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/4/f/d4fbca08-5f54-4e36-ab34-5d7d796b2bbb.gif?version=636632808600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.86544,
+      "lng": -76.98425
     },
     {
       "name": "Annandale",
@@ -28,7 +32,9 @@
       "slug": "va/annandale/annandale-atoms",
       "url": "https://www.maxpreps.com/va/annandale/annandale-atoms/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/6/2/c6222a6d-cff1-4b29-a6c5-e33e0df0a9ec.gif?version=636584342400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8387,
+      "lng": -77.19518
     },
     {
       "name": "Annapolis",
@@ -37,7 +43,9 @@
       "slug": "md/annapolis/annapolis-panthers",
       "url": "https://www.maxpreps.com/md/annapolis/annapolis-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/4/6/546ac6ba-53cd-4849-80d2-458063a3c331.gif?version=636825274200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.97702,
+      "lng": -76.52521
     },
     {
       "name": "Annapolis Area Christian",
@@ -46,7 +54,9 @@
       "slug": "md/severn/annapolis-area-christian-eagles",
       "url": "https://www.maxpreps.com/md/severn/annapolis-area-christian-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/9/7/097b4ba3-f515-43a5-b353-cddf010e955e.gif?version=634207525800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.10638,
+      "lng": -76.67909
     },
     {
       "name": "Archbishop Carroll",
@@ -55,7 +65,9 @@
       "slug": "dc/washington/archbishop-carroll-lions",
       "url": "https://www.maxpreps.com/dc/washington/archbishop-carroll-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/8/d/38dcb8ed-66d5-41ba-b062-ff5f77eba32e.gif?version=636632809200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.94084,
+      "lng": -77.00675
     },
     {
       "name": "Archbishop Curley",
@@ -64,7 +76,9 @@
       "slug": "md/baltimore/archbishop-curley-friars",
       "url": "https://www.maxpreps.com/md/baltimore/archbishop-curley-friars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/d/4/cd4bd296-7982-431d-a174-0d23060f218f.gif?version=636259530000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.31261,
+      "lng": -76.5634
     },
     {
       "name": "Archbishop Spalding",
@@ -73,7 +87,9 @@
       "slug": "md/severn/archbishop-spalding-cavaliers",
       "url": "https://www.maxpreps.com/md/severn/archbishop-spalding-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/a/6/fa67a40c-5261-46c2-9db1-631b71b38334.gif?version=635417913600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.12475,
+      "lng": -76.64647
     },
     {
       "name": "Arundel",
@@ -82,7 +98,9 @@
       "slug": "md/gambrills/arundel-wildcats",
       "url": "https://www.maxpreps.com/md/gambrills/arundel-wildcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/0/6/f0631ae8-d49b-4d4f-a4c6-0d67a07cea24.gif?version=638931038796125800&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.09928,
+      "lng": -76.62549
     },
     {
       "name": "Atholton",
@@ -91,7 +109,9 @@
       "slug": "md/columbia/atholton-raiders",
       "url": "https://www.maxpreps.com/md/columbia/atholton-raiders/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/5/7/257328df-d088-4a45-85df-5bc496a5d071.gif?version=634997202600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.18969,
+      "lng": -76.88124
     },
     {
       "name": "Ballou",
@@ -100,7 +120,9 @@
       "slug": "dc/washington/ballou-knights",
       "url": "https://www.maxpreps.com/dc/washington/ballou-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/b/6/1b6613c5-471c-4dc1-9ca1-aa687bf4e84f.gif?version=637076161800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.83865,
+      "lng": -77.0017
     },
     {
       "name": "Banneker",
@@ -109,7 +131,9 @@
       "slug": "dc/washington/banneker-bulldogs",
       "url": "https://www.maxpreps.com/dc/washington/banneker-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/a/6/0a6fcf50-f25b-4212-ac11-507d97ebdec2.gif?version=637720477200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.92211,
+      "lng": -77.02326
     },
     {
       "name": "Bard",
@@ -118,7 +142,9 @@
       "slug": "dc/washington/bard-falcons",
       "url": "https://www.maxpreps.com/dc/washington/bard-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/2/6/7260b20b-6ae6-40ce-a59f-d41c65b7d3ab.gif?version=637816243200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.87905,
+      "lng": -76.93743
     },
     {
       "name": "BASIS",
@@ -127,7 +153,9 @@
       "slug": "dc/washington/basis-red-giants",
       "url": "https://www.maxpreps.com/dc/washington/basis-red-giants/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/8/5/b857244f-9918-4c01-a73d-5d1fe3ff4db5.gif?version=637100299800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90166,
+      "lng": -77.03909999999999
     },
     {
       "name": "Battlefield",
@@ -136,7 +164,9 @@
       "slug": "va/haymarket/battlefield-bobcats",
       "url": "https://www.maxpreps.com/va/haymarket/battlefield-bobcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/a/1/8a12a94d-90d6-45a3-8891-6956c56f4ca1.gif?version=638034174600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.84534,
+      "lng": -77.62999
     },
     {
       "name": "Bell",
@@ -145,7 +175,9 @@
       "slug": "dc/washington/bell-griffins",
       "url": "https://www.maxpreps.com/dc/washington/bell-griffins/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/1/1/8118ef14-dc03-428e-ba0c-86a30976aae6.gif?version=635517320400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89657,
+      "lng": -77.00653
     },
     {
       "name": "Bethesda-Chevy Chase",
@@ -154,7 +186,9 @@
       "slug": "md/bethesda/bethesda-chevy-chase-barons",
       "url": "https://www.maxpreps.com/md/bethesda/bethesda-chevy-chase-barons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/8/f/08fe6905-06f4-4b78-8936-290bccb20ad8.gif?version=638931039159371810&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.97876,
+      "lng": -77.23577
     },
     {
       "name": "Bishop Ireton",
@@ -163,7 +197,9 @@
       "slug": "va/alexandria/bishop-ireton-cardinals",
       "url": "https://www.maxpreps.com/va/alexandria/bishop-ireton-cardinals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/a/9/1a967401-ea53-4c42-85ff-694bd98517f1.gif?version=638271836400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.80903,
+      "lng": -77.08088
     },
     {
       "name": "Bishop McNamara",
@@ -172,7 +208,9 @@
       "slug": "md/forestville/bishop-mcnamara-mustangs",
       "url": "https://www.maxpreps.com/md/forestville/bishop-mcnamara-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/2/5/2259a5d8-90dd-4049-a3cf-1f7a4cea455b.gif?version=637685812200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.85242,
+      "lng": -76.88802
     },
     {
       "name": "Bishop O'Connell",
@@ -181,7 +219,9 @@
       "slug": "va/arlington/bishop-oconnell-knights",
       "url": "https://www.maxpreps.com/va/arlington/bishop-oconnell-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/9/7/897e2baa-2f99-453e-bb33-d063aa488c2c.gif?version=636082747200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89439,
+      "lng": -77.16056
     },
     {
       "name": "Bladensburg",
@@ -190,7 +230,9 @@
       "slug": "md/bladensburg/bladensburg-mustangs",
       "url": "https://www.maxpreps.com/md/bladensburg/bladensburg-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/d/b/2dbdab61-26dc-4c3f-a657-6e4f9e57af72.gif?version=638931039484553200&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.94271,
+      "lng": -76.91889
     },
     {
       "name": "Blair",
@@ -199,7 +241,9 @@
       "slug": "md/silver-spring/blair-blazers",
       "url": "https://www.maxpreps.com/md/silver-spring/blair-blazers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/d/1/bd12c402-a38a-4d9f-b3a1-47f5c0f5930e.gif?version=638931039756244720&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.01783,
+      "lng": -77.01097
     },
     {
       "name": "Blake",
@@ -208,7 +252,9 @@
       "slug": "md/silver-spring/blake-bengals",
       "url": "https://www.maxpreps.com/md/silver-spring/blake-bengals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/9/a/b9a1a1bb-3322-4100-9deb-fb822c3d9e63.gif?version=635248646400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.11339,
+      "lng": -77.01929
     },
     {
       "name": "Bowie",
@@ -217,7 +263,9 @@
       "slug": "md/bowie/bowie-bulldogs",
       "url": "https://www.maxpreps.com/md/bowie/bowie-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/4/7/c4708e9f-57d3-4ce3-86a5-7ac90defc5ec.gif?version=637072465800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.00761,
+      "lng": -76.77948
     },
     {
       "name": "Boys Latin",
@@ -226,7 +274,9 @@
       "slug": "md/baltimore/boys-latin-lakers",
       "url": "https://www.maxpreps.com/md/baltimore/boys-latin-lakers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/0/e/80ed222e-d796-42e4-85fc-ea5bffa26108.gif?version=638296663800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.37133,
+      "lng": -76.64021
     },
     {
       "name": "Brentsville District",
@@ -235,7 +285,9 @@
       "slug": "va/nokesville/brentsville-district-tigers",
       "url": "https://www.maxpreps.com/va/nokesville/brentsville-district-tigers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/b/c/0bc105f2-f779-4534-a8db-77bbaa95f64a.gif?version=635731350000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.68976,
+      "lng": -77.56841
     },
     {
       "name": "Briar Woods",
@@ -244,7 +296,9 @@
       "slug": "va/ashburn/briar-woods-falcons",
       "url": "https://www.maxpreps.com/va/ashburn/briar-woods-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/0/3/2030eed2-f555-4811-87a6-ddc7f3437373.gif?version=638034210600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.99251,
+      "lng": -77.53108
     },
     {
       "name": "British School",
@@ -253,7 +307,9 @@
       "slug": "dc/washington/british-school",
       "url": "https://www.maxpreps.com/dc/washington/british-school/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91668,
+      "lng": -77.06807
     },
     {
       "name": "Broad Run",
@@ -262,7 +318,9 @@
       "slug": "va/ashburn/broad-run-spartans",
       "url": "https://www.maxpreps.com/va/ashburn/broad-run-spartans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/3/1/d3148d47-2964-44fc-ac58-a5de49fcc9f6.gif?version=634268644200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.02271,
+      "lng": -77.49069
     },
     {
       "name": "Broadneck",
@@ -271,7 +329,9 @@
       "slug": "md/annapolis/broadneck-bruins",
       "url": "https://www.maxpreps.com/md/annapolis/broadneck-bruins/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/0/0/2008395a-cd8e-4300-a0be-9571919f02cc.gif?version=636256390800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.03995,
+      "lng": -76.45348
     },
     {
       "name": "Brooke Point",
@@ -280,7 +340,9 @@
       "slug": "va/stafford/brooke-point-black-hawks",
       "url": "https://www.maxpreps.com/va/stafford/brooke-point-black-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/5/d/65de34be-92c7-4414-9454-276529adfd47.gif?version=635308531200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.40642,
+      "lng": -77.39667
     },
     {
       "name": "Bruce Charter",
@@ -289,7 +351,9 @@
       "slug": "dc/washington/bruce-charter",
       "url": "https://www.maxpreps.com/dc/washington/bruce-charter/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.902236,
+      "lng": -77.039548
     },
     {
       "name": "Bullis",
@@ -298,7 +362,9 @@
       "slug": "md/potomac/bullis-bulldogs",
       "url": "https://www.maxpreps.com/md/potomac/bullis-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/2/7/227016ec-21ba-4049-a1b3-4577c13654f2.gif?version=638698606954450310&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.02922,
+      "lng": -77.19796
     },
     {
       "name": "Burke",
@@ -307,7 +373,9 @@
       "slug": "dc/washington/burke-bengals",
       "url": "https://www.maxpreps.com/dc/washington/burke-bengals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/6/0/96026d81-b589-49e2-84fe-1277bd3f4b78.gif?version=636632809800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90388,
+      "lng": -77.02744
     },
     {
       "name": "Calvert",
@@ -316,7 +384,9 @@
       "slug": "md/prince-frederick/calvert-cavaliers",
       "url": "https://www.maxpreps.com/md/prince-frederick/calvert-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/f/8/4f841449-7f0f-4965-8311-ad8bcea1f896.gif?version=635041252800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.55991,
+      "lng": -76.59614
     },
     {
       "name": "Calvert Hall",
@@ -325,7 +395,9 @@
       "slug": "md/baltimore/calvert-hall-cardinals",
       "url": "https://www.maxpreps.com/md/baltimore/calvert-hall-cardinals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/b/6/fb6c62ee-4fa5-41b2-95f1-03babfce014b.gif?version=636294955200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.39112,
+      "lng": -76.58138
     },
     {
       "name": "Capital City Public Charter School",
@@ -334,7 +406,9 @@
       "slug": "dc/washington/capital-city-public-charter-school-eagles",
       "url": "https://www.maxpreps.com/dc/washington/capital-city-public-charter-school-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/3/4/434604be-abab-415a-8804-7c0fd40da000.gif?version=636415846800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.96178,
+      "lng": -77.01242
     },
     {
       "name": "Capitol Hill",
@@ -343,7 +417,9 @@
       "slug": "dc/washington/capitol-hill",
       "url": "https://www.maxpreps.com/dc/washington/capitol-hill/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.889,
+      "lng": -77.00025
     },
     {
       "name": "Cardozo",
@@ -352,7 +428,9 @@
       "slug": "dc/washington/cardozo-clerks",
       "url": "https://www.maxpreps.com/dc/washington/cardozo-clerks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/c/8/1c8fed20-3a08-4e2e-9864-e0318e9bf322.gif?version=636632810400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91722,
+      "lng": -77.02822
     },
     {
       "name": "Catoctin",
@@ -361,7 +439,9 @@
       "slug": "md/thurmont/catoctin-cougars",
       "url": "https://www.maxpreps.com/md/thurmont/catoctin-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/0/7/c077d6ea-b0af-486f-8b1e-3d5f540677d4.gif?version=633633021000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.64875,
+      "lng": -77.46509
     },
     {
       "name": "Catonsville",
@@ -370,7 +450,9 @@
       "slug": "md/baltimore/catonsville-comets",
       "url": "https://www.maxpreps.com/md/baltimore/catonsville-comets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/f/f/7ffb71ae-6f97-403d-8d0e-a3ef6e530605.gif?version=638931040730991330&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.25238,
+      "lng": -76.70892
     },
     {
       "name": "Centennial",
@@ -379,7 +461,9 @@
       "slug": "md/ellicott-city/centennial-eagles",
       "url": "https://www.maxpreps.com/md/ellicott-city/centennial-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/d/4/6d4c3dc9-0b57-4498-b11b-c0369c0504c1.gif?version=638931040948842670&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.25356,
+      "lng": -76.87025
     },
     {
       "name": "Central",
@@ -388,7 +472,9 @@
       "slug": "md/capitol-heights/central-falcons",
       "url": "https://www.maxpreps.com/md/capitol-heights/central-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/2/9/2293ae3d-66a9-40b6-b05d-2e5059a2a111.gif?version=635682193200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88233,
+      "lng": -76.89081
     },
     {
       "name": "Central Woodstock",
@@ -397,7 +483,9 @@
       "slug": "va/woodstock/central-woodstock-falcons",
       "url": "https://www.maxpreps.com/va/woodstock/central-woodstock-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/5/3/15359543-d10f-4d1b-a3ed-e40675fe9b8c.gif?version=635034580800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.86613,
+      "lng": -78.52311
     },
     {
       "name": "Centreville",
@@ -406,7 +494,9 @@
       "slug": "va/clifton/centreville-wildcats",
       "url": "https://www.maxpreps.com/va/clifton/centreville-wildcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/1/0/510c91af-03d2-4dba-8473-4fff1f4e1fb9.gif?version=636860922600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.82488,
+      "lng": -77.41055
     },
     {
       "name": "Century",
@@ -415,7 +505,9 @@
       "slug": "md/sykesville/century-knights",
       "url": "https://www.maxpreps.com/md/sykesville/century-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/c/f/3cf113db-023a-444e-a3c2-bf8bd84626d3.gif?version=637691347800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.372262,
+      "lng": -76.976294
     },
     {
       "name": "Chancellor",
@@ -424,7 +516,9 @@
       "slug": "va/spotsylvania/chancellor-chargers",
       "url": "https://www.maxpreps.com/va/spotsylvania/chancellor-chargers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/d/4/dd49f49d-9ab1-4896-9ca1-51a3d0f4da29.gif?version=635925152400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.2896,
+      "lng": -77.56498
     },
     {
       "name": "Chantilly",
@@ -433,7 +527,9 @@
       "slug": "va/chantilly/chantilly-chargers",
       "url": "https://www.maxpreps.com/va/chantilly/chantilly-chargers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/c/5/ec5f7563-bdc1-43b2-b291-f6b5df50fb2d.gif?version=636543821400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88522,
+      "lng": -77.44868
     },
     {
       "name": "Charles J. Colgan",
@@ -442,7 +538,9 @@
       "slug": "va/manassas/charles-j-colgan-sharks",
       "url": "https://www.maxpreps.com/va/manassas/charles-j-colgan-sharks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/8/b/48b9d825-9613-4269-b4e0-00ef50c6337e.gif?version=636211116000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.746598000000006,
+      "lng": -77.473734
     },
     {
       "name": "Chesapeake",
@@ -451,7 +549,9 @@
       "slug": "md/pasadena/chesapeake-cougars",
       "url": "https://www.maxpreps.com/md/pasadena/chesapeake-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/1/e/61e9e5a7-10cf-4576-8596-305b52802e9f.gif?version=634835472600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.10397,
+      "lng": -76.57291
     },
     {
       "name": "Chesapeake",
@@ -460,7 +560,9 @@
       "slug": "md/baltimore/chesapeake-bay-hawks",
       "url": "https://www.maxpreps.com/md/baltimore/chesapeake-bay-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/c/9/0c98be23-fa61-495e-88d8-9531b842ffee.gif?version=636849510600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.28573,
+      "lng": -76.60879
     },
     {
       "name": "Churchill",
@@ -469,7 +571,9 @@
       "slug": "md/potomac/churchill-bulldogs",
       "url": "https://www.maxpreps.com/md/potomac/churchill-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/0/e/20e61d18-b772-4a47-a41e-2cd577e2ab91.gif?version=638955901458263910&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.04336,
+      "lng": -77.17371
     },
     {
       "name": "City College",
@@ -478,7 +582,9 @@
       "slug": "md/baltimore/city-college-knights",
       "url": "https://www.maxpreps.com/md/baltimore/city-college-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/b/a/3bae4ed6-3e5b-4427-a1c2-d084dbd06ff2.gif?version=635767963800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.32666,
+      "lng": -76.59887
     },
     {
       "name": "Clarke County",
@@ -487,7 +593,9 @@
       "slug": "va/berryville/clarke-county-eagles",
       "url": "https://www.maxpreps.com/va/berryville/clarke-county-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/2/e/32e10d74-589a-4c7e-b6cc-11d95e3a6853.gif?version=638035906200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14708,
+      "lng": -77.9777
     },
     {
       "name": "Clarksburg",
@@ -496,7 +604,9 @@
       "slug": "md/clarksburg/clarksburg-coyotes",
       "url": "https://www.maxpreps.com/md/clarksburg/clarksburg-coyotes/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/1/7/117ef15b-0018-4bab-b7ce-87ee12a165bc.gif?version=635797314000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.21956,
+      "lng": -77.26784
     },
     {
       "name": "Colonial Forge",
@@ -505,7 +615,9 @@
       "slug": "va/stafford/colonial-forge-eagles",
       "url": "https://www.maxpreps.com/va/stafford/colonial-forge-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/d/f/6dfef59c-216d-435c-9faa-b90842f69831.gif?version=636160059600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.43319,
+      "lng": -77.4547
     },
     {
       "name": "Concordia Prep",
@@ -514,7 +626,9 @@
       "slug": "md/towson/concordia-prep-saints",
       "url": "https://www.maxpreps.com/md/towson/concordia-prep-saints/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/b/2/7b2ec330-6eec-4d97-be99-cb70e22327d4.gif?version=636729631800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.39622,
+      "lng": -76.61495400000001
     },
     {
       "name": "Coolidge",
@@ -523,7 +637,9 @@
       "slug": "dc/washington/coolidge-colts",
       "url": "https://www.maxpreps.com/dc/washington/coolidge-colts/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/b/d/cbda79f5-5c22-41cf-a212-bab495aaa279.gif?version=636632810400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.96749,
+      "lng": -77.01854
     },
     {
       "name": "Cornerstone",
@@ -532,7 +648,9 @@
       "slug": "dc/washington/cornerstone-lions",
       "url": "https://www.maxpreps.com/dc/washington/cornerstone-lions/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93184,
+      "lng": -76.99762
     },
     {
       "name": "Courtland",
@@ -541,7 +659,9 @@
       "slug": "va/spotsylvania/courtland-cougars",
       "url": "https://www.maxpreps.com/va/spotsylvania/courtland-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/6/9/969db50c-b130-4f03-853f-aadcc47d406c.gif?version=634358578800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.23223,
+      "lng": -77.55174
     },
     {
       "name": "Crofton",
@@ -550,7 +670,9 @@
       "slug": "md/gambrills/crofton",
       "url": "https://www.maxpreps.com/md/gambrills/crofton/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/9/a/79acafb5-8af2-4858-9024-a361709853cd.gif?version=638649314536935530&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.00093,
+      "lng": -76.668
     },
     {
       "name": "Crossland",
@@ -559,7 +681,9 @@
       "slug": "md/temple-hills/crossland-cavaliers",
       "url": "https://www.maxpreps.com/md/temple-hills/crossland-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/c/9/ac92607b-f0c9-4f36-b129-035efd5b06ca.gif?version=636632811000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.79402,
+      "lng": -76.93201
     },
     {
       "name": "Culpeper County",
@@ -568,7 +692,9 @@
       "slug": "va/culpeper/culpeper-county-blue-devils",
       "url": "https://www.maxpreps.com/va/culpeper/culpeper-county-blue-devils/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/e/8/4e839774-e5fd-4788-b8eb-a9c754b6d434.gif?version=638035895400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.47166,
+      "lng": -78.01611
     },
     {
       "name": "Damascus",
@@ -577,7 +703,9 @@
       "slug": "md/damascus/damascus-swarmin-hornets",
       "url": "https://www.maxpreps.com/md/damascus/damascus-swarmin-hornets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/2/6/0266598f-06d6-4d7d-bb62-16db2e143586.gif?version=634783749000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.26947,
+      "lng": -77.19689
     },
     {
       "name": "DC International",
@@ -586,7 +714,9 @@
       "slug": "dc/washington/dc-international-dragons",
       "url": "https://www.maxpreps.com/dc/washington/dc-international-dragons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/8/0/580be0da-9ed2-4fdf-b1af-2908708eb442.gif?version=636473708400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93406,
+      "lng": -77.0237
     },
     {
       "name": "DeMatha",
@@ -595,7 +725,9 @@
       "slug": "md/hyattsville/dematha-stags",
       "url": "https://www.maxpreps.com/md/hyattsville/dematha-stags/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/0/d/f0d82e69-dabf-44e0-a131-32581fac97dc.gif?version=636632875200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.95818,
+      "lng": -76.94215
     },
     {
       "name": "Digital Pioneers Academy",
@@ -604,7 +736,9 @@
       "slug": "dc/washington/digital-pioneers-academy-pythons",
       "url": "https://www.maxpreps.com/dc/washington/digital-pioneers-academy-pythons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/6/0/2608ea14-b1f2-4989-8466-e342869dd587.gif?version=638603655715462560&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8807,
+      "lng": -76.99065
     },
     {
       "name": "Doar",
@@ -613,7 +747,9 @@
       "slug": "dc/washington/doar-wolves",
       "url": "https://www.maxpreps.com/dc/washington/doar-wolves/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89638,
+      "lng": -77.04278
     },
     {
       "name": "Dulaney",
@@ -622,7 +758,9 @@
       "slug": "md/timonium/dulaney-lions",
       "url": "https://www.maxpreps.com/md/timonium/dulaney-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/a/7/4a7b2672-5843-454b-b4e4-beee87769dde.gif?version=638931043056620230&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.45837,
+      "lng": -76.61838
     },
     {
       "name": "Dunbar",
@@ -631,7 +769,9 @@
       "slug": "dc/washington/dunbar-crimson-tide",
       "url": "https://www.maxpreps.com/dc/washington/dunbar-crimson-tide/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/c/b/7cb34de3-6632-44e7-91b2-6855ddefdf89.gif?version=637039660200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90791,
+      "lng": -77.0139
     },
     {
       "name": "Dunbar",
@@ -640,7 +780,9 @@
       "slug": "md/baltimore/dunbar-poets",
       "url": "https://www.maxpreps.com/md/baltimore/dunbar-poets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/7/1/a71013ba-60ee-4c83-8e78-5413e23de9d6.gif?version=636728730600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.29554,
+      "lng": -76.59873
     },
     {
       "name": "Dundalk",
@@ -649,7 +791,9 @@
       "slug": "md/baltimore/dundalk-owls",
       "url": "https://www.maxpreps.com/md/baltimore/dundalk-owls/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/3/2/432418a4-094b-4850-82ee-ff952a90503c.gif?version=638931043272094560&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.26244,
+      "lng": -76.48706
     },
     {
       "name": "DuVal",
@@ -658,7 +802,9 @@
       "slug": "md/lanham/duval-tigers",
       "url": "https://www.maxpreps.com/md/lanham/duval-tigers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/b/c/3bc712cf-8ffb-454d-9e1b-809948f1f53a.gif?version=635161672800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.98944,
+      "lng": -76.83833
     },
     {
       "name": "E.L. Haynes",
@@ -667,7 +813,9 @@
       "slug": "dc/washington/el-haynes",
       "url": "https://www.maxpreps.com/dc/washington/el-haynes/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/8/a/08a9a29d-ff70-4127-98e6-c05775491202.gif?version=635888946000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.94519,
+      "lng": -77.02259
     },
     {
       "name": "Eastern",
@@ -676,7 +824,9 @@
       "slug": "dc/washington/eastern-ramblers",
       "url": "https://www.maxpreps.com/dc/washington/eastern-ramblers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/f/a/9fa1f1e8-d379-4ee2-b875-651d430f61c8.gif?version=636632812800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88425,
+      "lng": -76.99582
     },
     {
       "name": "Eastern Tech",
@@ -685,7 +835,9 @@
       "slug": "md/baltimore/eastern-tech-mavericks",
       "url": "https://www.maxpreps.com/md/baltimore/eastern-tech-mavericks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/5/3/1533207a-4a82-445b-9ab3-a2e84f493e87.gif?version=636674950200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.32533,
+      "lng": -76.47254
     },
     {
       "name": "Eastern View",
@@ -694,7 +846,9 @@
       "slug": "va/culpeper/eastern-view-cyclones",
       "url": "https://www.maxpreps.com/va/culpeper/eastern-view-cyclones/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/d/0/2d07f758-6feb-4b64-8e40-b7c759e45b34.gif?version=638034256200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.4763,
+      "lng": -77.94605
     },
     {
       "name": "Edison",
@@ -703,7 +857,9 @@
       "slug": "va/alexandria/edison-eagles",
       "url": "https://www.maxpreps.com/va/alexandria/edison-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/e/d/dedc68e8-1c80-4d05-b3c9-c7e52b42ee2c.gif?version=636558342600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.78055,
+      "lng": -77.13312
     },
     {
       "name": "Edmondson-Westside",
@@ -712,7 +868,9 @@
       "slug": "md/baltimore/edmondson-westside-red-storm",
       "url": "https://www.maxpreps.com/md/baltimore/edmondson-westside-red-storm/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/0/2/80228fe8-9d7b-4609-a8a1-f62fabc900bb.gif?version=634661071800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.29098,
+      "lng": -76.68771
     },
     {
       "name": "Einstein",
@@ -721,7 +879,9 @@
       "slug": "md/kensington/einstein-titans",
       "url": "https://www.maxpreps.com/md/kensington/einstein-titans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/4/4/144c7a4f-7fe3-4239-80d0-2bf2334a0ad9.gif?version=638931043471516740&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.03975,
+      "lng": -77.06584
     },
     {
       "name": "Eleanor Roosevelt",
@@ -730,7 +890,9 @@
       "slug": "md/greenbelt/eleanor-roosevelt-raiders",
       "url": "https://www.maxpreps.com/md/greenbelt/eleanor-roosevelt-raiders/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/b/f/8bf01804-64ce-4115-9b98-c7eee0d52b54.gif?version=635987417400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.99464,
+      "lng": -76.86955
     },
     {
       "name": "Enterprise",
@@ -739,7 +901,9 @@
       "slug": "dc/washington/enterprise",
       "url": "https://www.maxpreps.com/dc/washington/enterprise/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.95137,
+      "lng": -77.02688
     },
     {
       "name": "Episcopal",
@@ -748,7 +912,9 @@
       "slug": "va/alexandria/episcopal-maroon",
       "url": "https://www.maxpreps.com/va/alexandria/episcopal-maroon/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/d/8/4d811f65-8691-4681-9eed-e1c1801edcf3.gif?version=638554281174315720&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8262,
+      "lng": -77.09839
     },
     {
       "name": "Fairfax",
@@ -757,7 +923,9 @@
       "slug": "va/fairfax/fairfax-lions",
       "url": "https://www.maxpreps.com/va/fairfax/fairfax-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/e/3/5e365464-bb95-49c6-87ab-21f38440ed4b.gif?version=638034176400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.85856,
+      "lng": -77.30503
     },
     {
       "name": "Fairmont Heights",
@@ -766,7 +934,9 @@
       "slug": "md/capitol-heights/fairmont-heights-hornets",
       "url": "https://www.maxpreps.com/md/capitol-heights/fairmont-heights-hornets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/d/7/cd78481b-4c07-4dfa-a6de-dedb043b8def.gif?version=636124569600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.883518,
+      "lng": -76.90740000000001
     },
     {
       "name": "Falls Church",
@@ -775,7 +945,9 @@
       "slug": "va/falls-church/falls-church-jags",
       "url": "https://www.maxpreps.com/va/falls-church/falls-church-jags/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/6/4/8645c3a5-a887-4ef8-8f22-89740b4449e7.gif?version=636618853200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88345,
+      "lng": -77.18943
     },
     {
       "name": "Fauquier",
@@ -784,7 +956,9 @@
       "slug": "va/warrenton/fauquier-falcons",
       "url": "https://www.maxpreps.com/va/warrenton/fauquier-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/1/0/f10907e7-8b53-4e14-9cc1-7b0ebb3d4ad7.gif?version=635690896200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.68269,
+      "lng": -77.78175
     },
     {
       "name": "Field",
@@ -793,7 +967,9 @@
       "slug": "dc/washington/field-falcons",
       "url": "https://www.maxpreps.com/dc/washington/field-falcons/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.887644,
+      "lng": -77.041596
     },
     {
       "name": "Flint Hill",
@@ -802,7 +978,9 @@
       "slug": "va/oakton/flint-hill-huskies",
       "url": "https://www.maxpreps.com/va/oakton/flint-hill-huskies/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/d/b/fdb8e179-2bef-4ec1-a767-bf58e3303df3.gif?version=636632813400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.87498,
+      "lng": -77.30932
     },
     {
       "name": "Flowers",
@@ -811,7 +989,9 @@
       "slug": "md/springdale/flowers-jaguars",
       "url": "https://www.maxpreps.com/md/springdale/flowers-jaguars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/5/3/a53ad15b-5650-45ec-bc17-1cad5dc4f433.gif?version=638931043734029380&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93208,
+      "lng": -76.83608
     },
     {
       "name": "Forest Park",
@@ -820,7 +1000,9 @@
       "slug": "md/baltimore/forest-park-foresters",
       "url": "https://www.maxpreps.com/md/baltimore/forest-park-foresters/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/a/1/9a14aede-cb48-4c6a-ab7a-442cecbca3c8.gif?version=635846600400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.3238,
+      "lng": -76.67725
     },
     {
       "name": "Forest Park",
@@ -829,7 +1011,9 @@
       "slug": "va/woodbridge/forest-park-bruins",
       "url": "https://www.maxpreps.com/va/woodbridge/forest-park-bruins/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/c/f/3cf44744-a4b0-4bc1-a75d-bac78cb30dba.gif?version=637509172200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.61206,
+      "lng": -77.36452
     },
     {
       "name": "Franklin",
@@ -838,7 +1022,9 @@
       "slug": "md/reisterstown/franklin-indians",
       "url": "https://www.maxpreps.com/md/reisterstown/franklin-indians/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/4/b/24b668d8-c474-4b2b-acf3-e729a6389b53.gif?version=638931044019991170&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.44733,
+      "lng": -76.81807
     },
     {
       "name": "Frederick",
@@ -847,7 +1033,9 @@
       "slug": "md/frederick/frederick-cadets",
       "url": "https://www.maxpreps.com/md/frederick/frederick-cadets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/8/1/c813578d-bfb3-4297-a1fd-42875fe8c0e7.gif?version=638931044627764610&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.41578,
+      "lng": -77.41276
     },
     {
       "name": "Frederick Douglass",
@@ -856,7 +1044,9 @@
       "slug": "md/upper-marlboro/frederick-douglass-eagles",
       "url": "https://www.maxpreps.com/md/upper-marlboro/frederick-douglass-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/b/2/ab2b4597-de9a-46fc-a742-61d28f548a69.gif?version=636793560000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.7815,
+      "lng": -76.78164
     },
     {
       "name": "Freedom",
@@ -865,7 +1055,9 @@
       "slug": "va/woodbridge/freedom-eagles",
       "url": "https://www.maxpreps.com/va/woodbridge/freedom-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/d/f/edf96c03-a24f-4b7d-894f-afea7b3bc6f0.gif?version=638520588652555940&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.62112,
+      "lng": -77.28827
     },
     {
       "name": "Freedom",
@@ -874,7 +1066,9 @@
       "slug": "va/south-riding/freedom-eagles",
       "url": "https://www.maxpreps.com/va/south-riding/freedom-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/1/8/718c5c04-6e56-47e7-94e7-8df466f57c56.gif?version=638990633657031230&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91441,
+      "lng": -77.53537
     },
     {
       "name": "Friendly",
@@ -883,7 +1077,9 @@
       "slug": "md/fort-washington/friendly-patriots",
       "url": "https://www.maxpreps.com/md/fort-washington/friendly-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/9/1/c915c7d0-6dfa-4620-820f-dbf3f4b2c655.gif?version=635869776600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.73539,
+      "lng": -76.97609
     },
     {
       "name": "Friendship Collegiate Academy",
@@ -892,7 +1088,9 @@
       "slug": "dc/washington/friendship-collegiate-academy-knights",
       "url": "https://www.maxpreps.com/dc/washington/friendship-collegiate-academy-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/0/c/60cce576-0db5-4b83-8612-b709e3a49b49.gif?version=636632814000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8975,
+      "lng": -76.9463
     },
     {
       "name": "Friendship Tech Prep Academy",
@@ -901,7 +1099,9 @@
       "slug": "dc/washington/friendship-tech-prep-academy-titans",
       "url": "https://www.maxpreps.com/dc/washington/friendship-tech-prep-academy-titans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/6/5/3658fd76-becb-4276-b81c-8a398f13a9fc.gif?version=636632814600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.895116,
+      "lng": -77.041004
     },
     {
       "name": "Gainesville",
@@ -910,7 +1110,9 @@
       "slug": "va/gainesville/gainesville-cardinals",
       "url": "https://www.maxpreps.com/va/gainesville/gainesville-cardinals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/7/2/7722f152-2671-47e9-b3df-75a4af55fc88.gif?version=637743705600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.79274,
+      "lng": -77.6292
     },
     {
       "name": "Gaithersburg",
@@ -919,7 +1121,9 @@
       "slug": "md/gaithersburg/gaithersburg-trojans",
       "url": "https://www.maxpreps.com/md/gaithersburg/gaithersburg-trojans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/e/1/9e1854db-ae22-4f70-9097-234bdc760ced.gif?version=638931045535579990&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14153,
+      "lng": -77.19244
     },
     {
       "name": "Gar-Field",
@@ -928,7 +1132,9 @@
       "slug": "va/woodbridge/gar-field-red-wolves",
       "url": "https://www.maxpreps.com/va/woodbridge/gar-field-red-wolves/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/8/5/e85793d3-1b5c-46f7-b5a9-83b61fd96320.gif?version=637889028000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.64597,
+      "lng": -77.30404
     },
     {
       "name": "George C. Marshall",
@@ -937,7 +1143,9 @@
       "slug": "va/falls-church/george-c-marshall-statesmen",
       "url": "https://www.maxpreps.com/va/falls-church/george-c-marshall-statesmen/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/4/0/640043ef-5967-4e88-9b91-707f7f0ddc81.gif?version=635826574800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90495,
+      "lng": -77.21336
     },
     {
       "name": "Georgetown Day",
@@ -946,7 +1154,9 @@
       "slug": "dc/washington/georgetown-day-mighty-hoppers",
       "url": "https://www.maxpreps.com/dc/washington/georgetown-day-mighty-hoppers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/f/a/efa822e5-720c-4092-8887-bf3121348060.gif?version=636632815200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.95181,
+      "lng": -77.08275
     },
     {
       "name": "Georgetown Prep",
@@ -955,7 +1165,9 @@
       "slug": "md/north-bethesda/georgetown-prep-little-hoyas",
       "url": "https://www.maxpreps.com/md/north-bethesda/georgetown-prep-little-hoyas/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/5/7/b57a75d3-464b-44a5-9c4a-a2fd2f86cd9c.gif?version=636632815800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.044233999999996,
+      "lng": -77.130558
     },
     {
       "name": "Georgetown Visitation Prep",
@@ -964,7 +1176,9 @@
       "slug": "dc/washington/georgetown-visitation-prep-cubs",
       "url": "https://www.maxpreps.com/dc/washington/georgetown-visitation-prep-cubs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/d/6/ad67e6e7-f265-4d82-90ff-b3d04ef39751.gif?version=636632815800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.894204,
+      "lng": -77.034972
     },
     {
       "name": "Gilman",
@@ -973,7 +1187,9 @@
       "slug": "md/baltimore/gilman-greyhounds",
       "url": "https://www.maxpreps.com/md/baltimore/gilman-greyhounds/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/7/3/373d37e4-9397-4b76-ac0b-b90bdcdaacde.gif?version=638361680400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.3278,
+      "lng": -76.62576
     },
     {
       "name": "Girls Global Academy",
@@ -982,7 +1198,9 @@
       "slug": "dc/washington/girls-global-academy-trailblazers",
       "url": "https://www.maxpreps.com/dc/washington/girls-global-academy-trailblazers/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88838,
+      "lng": -77.03055599999999
     },
     {
       "name": "Glen Burnie",
@@ -991,7 +1209,9 @@
       "slug": "md/glen-burnie/glen-burnie-gophers",
       "url": "https://www.maxpreps.com/md/glen-burnie/glen-burnie-gophers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/c/4/dc4d0c85-3e73-40ba-834b-14585c38b4e1.gif?version=636880643400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.15954,
+      "lng": -76.61515
     },
     {
       "name": "Glenelg",
@@ -1000,7 +1220,9 @@
       "slug": "md/glenelg/glenelg-gladiators",
       "url": "https://www.maxpreps.com/md/glenelg/glenelg-gladiators/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/f/f/4ff364d3-d983-43b9-9e56-e696ad46c899.gif?version=635437306800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.25446,
+      "lng": -76.9586
     },
     {
       "name": "Gonzaga",
@@ -1009,7 +1231,9 @@
       "slug": "dc/washington/gonzaga-eagles",
       "url": "https://www.maxpreps.com/dc/washington/gonzaga-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/a/9/8a9e8582-5e9f-489a-a9c3-e63073d03fdf.gif?version=637776595800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90176,
+      "lng": -77.0104
     },
     {
       "name": "Governor Thomas Johnson",
@@ -1018,7 +1242,9 @@
       "slug": "md/frederick/governor-thomas-johnson-patriots",
       "url": "https://www.maxpreps.com/md/frederick/governor-thomas-johnson-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/c/e/9cecccfc-98f0-420e-9040-5f5d0e2c35c5.gif?version=638931045749152340&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.4342,
+      "lng": -77.40708
     },
     {
       "name": "Great Mills",
@@ -1027,7 +1253,9 @@
       "slug": "md/great-mills/great-mills-hornets",
       "url": "https://www.maxpreps.com/md/great-mills/great-mills-hornets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/2/8/9288c438-3c71-46c2-b31d-61bb7bcbc950.gif?version=636485838600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.25392,
+      "lng": -76.46994
     },
     {
       "name": "Gwynn Park",
@@ -1036,7 +1264,9 @@
       "slug": "md/brandywine/gwynn-park-yellowjackets",
       "url": "https://www.maxpreps.com/md/brandywine/gwynn-park-yellowjackets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/0/4/b049870f-cec5-4850-8774-1a7d04f7e022.gif?version=635207004000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.70762,
+      "lng": -76.85719
     },
     {
       "name": "Hammond",
@@ -1045,7 +1275,9 @@
       "slug": "md/columbia/hammond-bears",
       "url": "https://www.maxpreps.com/md/columbia/hammond-bears/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/2/a/a2abd0c5-bc7c-4a11-beb1-e21ef17cb2ba.gif?version=635349570600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.13646,
+      "lng": -76.8662
     },
     {
       "name": "Handley",
@@ -1054,7 +1286,9 @@
       "slug": "va/winchester/handley-judges",
       "url": "https://www.maxpreps.com/va/winchester/handley-judges/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/c/4/8c4dedba-b9a7-4e7e-8f26-620372fae26c.gif?version=638034258000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.17731,
+      "lng": -78.17433
     },
     {
       "name": "Hayfield",
@@ -1063,7 +1297,9 @@
       "slug": "va/alexandria/hayfield-hawks",
       "url": "https://www.maxpreps.com/va/alexandria/hayfield-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/6/9/86998eee-57c4-4476-9620-bac3cc49ffa6.gif?version=637813016400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.75145,
+      "lng": -77.14306
     },
     {
       "name": "Heritage",
@@ -1072,7 +1308,9 @@
       "slug": "va/leesburg/heritage-pride",
       "url": "https://www.maxpreps.com/va/leesburg/heritage-pride/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/6/8/66817584-d506-4443-85c6-ad5fe8e3353a.gif?version=635517320400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.0834,
+      "lng": -77.56995
     },
     {
       "name": "Herndon",
@@ -1081,7 +1319,9 @@
       "slug": "va/herndon/herndon-hornets",
       "url": "https://www.maxpreps.com/va/herndon/herndon-hornets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/2/b/32b1cfb6-0838-4af1-abbf-61d4b45f3701.gif?version=636076412400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.95284,
+      "lng": -77.38526
     },
     {
       "name": "High Point",
@@ -1090,7 +1330,9 @@
       "slug": "md/beltsville/high-point-eagles",
       "url": "https://www.maxpreps.com/md/beltsville/high-point-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/a/1/da19d885-2cf5-48be-9b4f-b862f248a17f.gif?version=634910270400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.04162,
+      "lng": -76.94398
     },
     {
       "name": "Highland",
@@ -1099,7 +1341,9 @@
       "slug": "va/warrenton/highland-hawks",
       "url": "https://www.maxpreps.com/va/warrenton/highland-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/5/3/45336055-a5c1-420f-9aac-4e501cef3270.gif?version=636170559600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.72631,
+      "lng": -77.78786
     },
     {
       "name": "Hospitality",
@@ -1108,7 +1352,9 @@
       "slug": "dc/washington/hospitality",
       "url": "https://www.maxpreps.com/dc/washington/hospitality/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89503,
+      "lng": -77.02341
     },
     {
       "name": "Howard",
@@ -1117,7 +1363,9 @@
       "slug": "md/ellicott-city/howard-lions",
       "url": "https://www.maxpreps.com/md/ellicott-city/howard-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/6/5/7655e9b3-8344-44fd-bf1e-13e8a7e18840.gif?version=635516821200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.27491,
+      "lng": -76.82504
     },
     {
       "name": "Huntingtown",
@@ -1126,7 +1374,9 @@
       "slug": "md/huntingtown/huntingtown-hurricanes",
       "url": "https://www.maxpreps.com/md/huntingtown/huntingtown-hurricanes/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/8/6/086c429b-a922-487b-946e-162ccc3e3915.gif?version=634363019400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.61929,
+      "lng": -76.60887
     },
     {
       "name": "Hylton",
@@ -1135,7 +1385,9 @@
       "slug": "va/woodbridge/hylton-bulldogs",
       "url": "https://www.maxpreps.com/va/woodbridge/hylton-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/d/3/7d3fc3f9-9d27-44d9-a669-c8a0fecef50c.gif?version=633924801000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.64937,
+      "lng": -77.38464
     },
     {
       "name": "Idea",
@@ -1144,7 +1396,9 @@
       "slug": "dc/washington/idea-timberwolves",
       "url": "https://www.maxpreps.com/dc/washington/idea-timberwolves/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/7/2/37254b35-3167-41df-9070-7a19a43723c8.gif?version=636723492000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90462,
+      "lng": -76.93646
     },
     {
       "name": "Ideal Academy",
@@ -1153,7 +1407,9 @@
       "slug": "dc/washington/ideal-academy-warriors",
       "url": "https://www.maxpreps.com/dc/washington/ideal-academy-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/f/4/1f49187e-aee2-431c-b5c1-15267f298cae.gif?version=634274779800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.893516,
+      "lng": -77.033644
     },
     {
       "name": "Independence",
@@ -1162,7 +1418,9 @@
       "slug": "va/ashburn/independence",
       "url": "https://www.maxpreps.com/va/ashburn/independence/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/3/4/b34be030-4864-4cca-9cd6-b0628c085f3d.gif?version=637680622200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.97642,
+      "lng": -77.55352
     },
     {
       "name": "Jackson-Reed",
@@ -1171,7 +1429,9 @@
       "slug": "dc/washington/jackson-reed-tigers",
       "url": "https://www.maxpreps.com/dc/washington/jackson-reed-tigers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/9/d/79d0a201-2553-44f6-beae-3a9e05c33a77.gif?version=638354653200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.94914,
+      "lng": -77.07744
     },
     {
       "name": "James Madison",
@@ -1180,7 +1440,9 @@
       "slug": "va/vienna/james-madison-warhawks",
       "url": "https://www.maxpreps.com/va/vienna/james-madison-warhawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/0/2/1023bf2a-0353-4b13-b1e7-4888c88c7ead.gif?version=638058264000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.896266,
+      "lng": -77.263148
     },
     {
       "name": "James Monroe",
@@ -1189,7 +1451,9 @@
       "slug": "va/fredericksburg/james-monroe-yellow-jackets",
       "url": "https://www.maxpreps.com/va/fredericksburg/james-monroe-yellow-jackets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/e/3/ae338719-1721-46a5-8de2-11e139a67427.gif?version=636755870400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.31181,
+      "lng": -77.47473
     },
     {
       "name": "James Wood",
@@ -1198,7 +1462,9 @@
       "slug": "va/winchester/james-wood-colonels",
       "url": "https://www.maxpreps.com/va/winchester/james-wood-colonels/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/c/f/fcf0c136-279f-42bf-8e5e-f28ceb52b79c.gif?version=635960671800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.18983,
+      "lng": -78.18472
     },
     {
       "name": "John Champe",
@@ -1207,7 +1473,9 @@
       "slug": "va/aldie/john-champe-knights",
       "url": "https://www.maxpreps.com/va/aldie/john-champe-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/6/3/963da9b2-82ab-4016-85e0-6dd1635be30c.gif?version=638034172800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93076,
+      "lng": -77.56733
     },
     {
       "name": "Justice",
@@ -1216,7 +1484,9 @@
       "slug": "va/falls-church/justice-wolves",
       "url": "https://www.maxpreps.com/va/falls-church/justice-wolves/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/6/8/868badbb-beae-469d-a69d-313a19cc7b55.gif?version=639045864542728550&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.85749,
+      "lng": -77.14986
     },
     {
       "name": "Kamit Institute for Magnificent Achievers",
@@ -1225,7 +1495,9 @@
       "slug": "dc/washington/kamit-institute-for-magnificent-achievers-hawks",
       "url": "https://www.maxpreps.com/dc/washington/kamit-institute-for-magnificent-achievers-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/e/e/5ee65c2c-0b39-4f9d-95b7-e45d4b32545b.gif?version=633925317000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.902764,
+      "lng": -77.032012
     },
     {
       "name": "Kennedy",
@@ -1234,7 +1506,9 @@
       "slug": "md/silver-spring/kennedy-cavaliers",
       "url": "https://www.maxpreps.com/md/silver-spring/kennedy-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/d/6/cd696dd9-c50e-49bc-a037-72ddd45c89af.gif?version=638931048514718950&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.06568,
+      "lng": -77.03917
     },
     {
       "name": "Kenwood",
@@ -1243,7 +1517,9 @@
       "slug": "md/baltimore/kenwood-bluebirds",
       "url": "https://www.maxpreps.com/md/baltimore/kenwood-bluebirds/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/e/f/1ef0007a-cf66-4e92-85c4-291e9488460c.gif?version=636262876800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.2991,
+      "lng": -76.57807
     },
     {
       "name": "Kettle Run",
@@ -1252,7 +1528,9 @@
       "slug": "va/nokesville/kettle-run-cougars",
       "url": "https://www.maxpreps.com/va/nokesville/kettle-run-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/8/4/88496cb8-505e-4a70-94b7-3d95b3f8e8d2.gif?version=638034261000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.70552,
+      "lng": -77.5426
     },
     {
       "name": "King George",
@@ -1261,7 +1539,9 @@
       "slug": "va/king-george/king-george-foxes",
       "url": "https://www.maxpreps.com/va/king-george/king-george-foxes/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/c/4/dc447ba3-4a34-4cdc-9d6b-6080f1fb1ee3.gif?version=636454641000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.28522,
+      "lng": -77.20122
     },
     {
       "name": "Kingsbury Day",
@@ -1270,7 +1550,9 @@
       "slug": "dc/washington/kingsbury-day",
       "url": "https://www.maxpreps.com/dc/washington/kingsbury-day/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/f/e/8fef12ee-b513-4568-8a05-7470f30f0805.gif?version=634563340800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.898652,
+      "lng": -77.03033199999999
     },
     {
       "name": "Kingsman Academy",
@@ -1279,7 +1561,9 @@
       "slug": "dc/washington/kingsman-academy-knights",
       "url": "https://www.maxpreps.com/dc/washington/kingsman-academy-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/2/7/a27faa9f-3fe7-46fe-b4f1-528e955f7357.gif?version=636632821800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89561,
+      "lng": -76.98632
     },
     {
       "name": "KIPP College Prep",
@@ -1288,7 +1572,9 @@
       "slug": "dc/washington/kipp-college-prep-panthers",
       "url": "https://www.maxpreps.com/dc/washington/kipp-college-prep-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/e/d/ded1b589-3789-412d-8170-c41bba8542c6.gif?version=638040479400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.901564,
+      "lng": -77.042588
     },
     {
       "name": "KIPP DC Legacy College Prep",
@@ -1297,7 +1583,9 @@
       "slug": "dc/washington/kipp-dc-legacy-college-prep-bulldogs",
       "url": "https://www.maxpreps.com/dc/washington/kipp-dc-legacy-college-prep-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/b/c/0bc8057c-5269-49ac-ac6b-dfd826ea1869.gif?version=638578425982551890&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.899612,
+      "lng": -77.03257199999999
     },
     {
       "name": "La Plata",
@@ -1306,7 +1594,9 @@
       "slug": "md/la-plata/la-plata-warriors",
       "url": "https://www.maxpreps.com/md/la-plata/la-plata-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/5/4/b54207f2-a2e8-46f6-9697-1839a43ae07b.gif?version=637112269200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.52925,
+      "lng": -76.97246
     },
     {
       "name": "Lackey",
@@ -1315,7 +1605,9 @@
       "slug": "md/indian-head/lackey-chargers",
       "url": "https://www.maxpreps.com/md/indian-head/lackey-chargers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/8/e/98eb7f68-0e40-427c-8789-5e4b3124ceb9.gif?version=634877877600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.60019,
+      "lng": -77.16759
     },
     {
       "name": "Lake Braddock",
@@ -1324,7 +1616,9 @@
       "slug": "va/burke/lake-braddock-bruins",
       "url": "https://www.maxpreps.com/va/burke/lake-braddock-bruins/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/8/6/e86896c4-af8d-47d1-bd8c-74aa4b2d7d7c.gif?version=639064888197219080&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8023,
+      "lng": -77.27181
     },
     {
       "name": "Landon",
@@ -1333,7 +1627,9 @@
       "slug": "md/bethesda/landon-bears",
       "url": "https://www.maxpreps.com/md/bethesda/landon-bears/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/d/5/0d5f380a-cf64-4f99-a8da-c3828e9231fa.gif?version=638506866600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9865,
+      "lng": -77.12137
     },
     {
       "name": "Langley",
@@ -1342,7 +1638,9 @@
       "slug": "va/mclean/langley-saxons",
       "url": "https://www.maxpreps.com/va/mclean/langley-saxons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/9/6/59685596-d0cb-44e3-b9c2-12ccf5d3cdee.gif?version=636244767600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9465,
+      "lng": -77.15887
     },
     {
       "name": "Lansdowne",
@@ -1351,7 +1649,9 @@
       "slug": "md/baltimore/lansdowne-vikings",
       "url": "https://www.maxpreps.com/md/baltimore/lansdowne-vikings/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/b/3/7b31ee96-4e6d-498a-a92d-3385bb8a5297.gif?version=638931048745207030&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.23705,
+      "lng": -76.66022
     },
     {
       "name": "Largo",
@@ -1360,7 +1660,9 @@
       "slug": "md/upper-marlboro/largo-lions",
       "url": "https://www.maxpreps.com/md/upper-marlboro/largo-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/6/9/569a7aea-2470-4889-a182-6f90b2714e41.gif?version=636560179800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.84664,
+      "lng": -76.76439
     },
     {
       "name": "Laurel",
@@ -1369,7 +1671,9 @@
       "slug": "md/laurel/laurel-spartans",
       "url": "https://www.maxpreps.com/md/laurel/laurel-spartans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/2/2/e22b709a-0d1d-403d-aa88-9dce8fc28b12.gif?version=636983521800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.10245,
+      "lng": -76.84161
     },
     {
       "name": "Leonardtown",
@@ -1378,7 +1682,9 @@
       "slug": "md/leonardtown/leonardtown-ospreys",
       "url": "https://www.maxpreps.com/md/leonardtown/leonardtown-ospreys/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/4/7/647e8129-8736-4a7b-83a9-d40ea323891c.gif?version=638931049065019090&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.2954,
+      "lng": -76.63941
     },
     {
       "name": "Lewis",
@@ -1387,7 +1693,9 @@
       "slug": "va/springfield/lewis-lancers",
       "url": "https://www.maxpreps.com/va/springfield/lewis-lancers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/9/8/c98d385b-9913-48af-82c3-3cb54412d657.gif?version=636582477000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.77978,
+      "lng": -77.16954
     },
     {
       "name": "Liberty",
@@ -1396,7 +1704,9 @@
       "slug": "md/sykesville/liberty-lions",
       "url": "https://www.maxpreps.com/md/sykesville/liberty-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/8/b/48b8b1bf-7ffe-49be-a26c-fef0d9827e50.gif?version=638931049343021130&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.35950999999999,
+      "lng": -76.97339799999999
     },
     {
       "name": "Lightridge",
@@ -1405,7 +1715,9 @@
       "slug": "va/aldie/lightridge-lightning",
       "url": "https://www.maxpreps.com/va/aldie/lightridge-lightning/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/a/a/5aa17222-00ec-47b6-b757-a8723bd60c8d.gif?version=638794580088807500&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.92117,
+      "lng": -77.58666
     },
     {
       "name": "Linganore",
@@ -1414,7 +1726,9 @@
       "slug": "md/frederick/linganore-lancers",
       "url": "https://www.maxpreps.com/md/frederick/linganore-lancers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/4/f/44fc6150-a8f2-4aed-ac8a-dab2b89ef073.gif?version=638367569400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.40844,
+      "lng": -77.29197
     },
     {
       "name": "Loch Raven",
@@ -1423,7 +1737,9 @@
       "slug": "md/towson/loch-raven-raiders",
       "url": "https://www.maxpreps.com/md/towson/loch-raven-raiders/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/5/3/f53a186b-8d89-451c-81c9-17639e1ac302.gif?version=637042200600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.46193,
+      "lng": -76.58013
     },
     {
       "name": "Long Reach",
@@ -1432,7 +1748,9 @@
       "slug": "md/columbia/long-reach-lightning",
       "url": "https://www.maxpreps.com/md/columbia/long-reach-lightning/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/5/1/f5110601-173b-4d3c-973e-6bfe86ad8bb5.gif?version=636143638200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.20799,
+      "lng": -76.81405
     },
     {
       "name": "Loudoun County",
@@ -1441,7 +1759,9 @@
       "slug": "va/leesburg/loudoun-county-captains",
       "url": "https://www.maxpreps.com/va/leesburg/loudoun-county-captains/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/1/0/a1002a24-d6a8-4b5d-a6ff-497d19308ac8.gif?version=637471735800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.08955,
+      "lng": -77.55571
     },
     {
       "name": "Loyola Blakefield",
@@ -1450,7 +1770,9 @@
       "slug": "md/towson/loyola-blakefield-dons",
       "url": "https://www.maxpreps.com/md/towson/loyola-blakefield-dons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/3/3/0330ed1e-dff0-4f9f-ac20-f2cb5d5e3f52.gif?version=635967457200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.399131999999994,
+      "lng": -76.61005800000001
     },
     {
       "name": "MacArthur",
@@ -1459,7 +1781,9 @@
       "slug": "dc/washington/macarthur-n-a",
       "url": "https://www.maxpreps.com/dc/washington/macarthur-n-a/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/2/7/12700e99-d684-4a10-93ac-b160fca511e6.gif?version=638295905400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93941,
+      "lng": -77.01362
     },
     {
       "name": "Magruder",
@@ -1468,7 +1792,9 @@
       "slug": "md/rockville/magruder-colonels",
       "url": "https://www.maxpreps.com/md/rockville/magruder-colonels/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/6/3/763c4a1a-b793-47ee-9bfd-a95cba59c893.gif?version=635137263600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.13218,
+      "lng": -77.11787
     },
     {
       "name": "Maret",
@@ -1477,7 +1803,9 @@
       "slug": "dc/washington/maret-frogs",
       "url": "https://www.maxpreps.com/dc/washington/maret-frogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/e/e/eee48fed-bb0c-44ce-b5e7-fe3c03bddba3.gif?version=636632822400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.92808,
+      "lng": -77.0605
     },
     {
       "name": "Marriotts Ridge",
@@ -1486,7 +1814,9 @@
       "slug": "md/marriottsville/marriotts-ridge-mustangs",
       "url": "https://www.maxpreps.com/md/marriottsville/marriotts-ridge-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/2/e/62e0f64d-e5fa-40a7-afeb-b49c364e5118.gif?version=638931049940622930&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.346872,
+      "lng": -76.895668
     },
     {
       "name": "Maryland School for the Deaf",
@@ -1495,7 +1825,9 @@
       "slug": "md/frederick/maryland-school-for-the-deaf-orioles",
       "url": "https://www.maxpreps.com/md/frederick/maryland-school-for-the-deaf-orioles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/d/e/dde2bf5e-144a-4299-bb9a-f97fd467f88c.gif?version=638917106977664750&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.40841,
+      "lng": -77.41001
     },
     {
       "name": "Massaponax",
@@ -1504,7 +1836,9 @@
       "slug": "va/spotsylvania/massaponax-panthers",
       "url": "https://www.maxpreps.com/va/spotsylvania/massaponax-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/4/f/54f4470d-cdea-45b4-a1bf-3d01090fed37.gif?version=635990314800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.19346,
+      "lng": -77.50887
     },
     {
       "name": "Maya Angelou Public Charter",
@@ -1513,7 +1847,9 @@
       "slug": "dc/washington/maya-angelou-public-charter",
       "url": "https://www.maxpreps.com/dc/washington/maya-angelou-public-charter/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/3/d/43d35f37-f5ac-4d69-a1f7-4458f3627be4.gif?version=636690646800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91506,
+      "lng": -77.02375
     },
     {
       "name": "Maya Angelou Shaw",
@@ -1522,7 +1858,9 @@
       "slug": "dc/washington/maya-angelou-shaw",
       "url": "https://www.maxpreps.com/dc/washington/maya-angelou-shaw/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/5/7/0574ad5a-d7eb-4089-97aa-f04b8035533b.gif?version=636632891400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9154,
+      "lng": -77.0236
     },
     {
       "name": "McDonogh",
@@ -1531,7 +1869,9 @@
       "slug": "md/owings-mills/mcdonogh-eagles",
       "url": "https://www.maxpreps.com/md/owings-mills/mcdonogh-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/8/2/0822cca6-89fe-4d8b-ab81-0b40ec4f7bc4.gif?version=637060397400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.3856,
+      "lng": -76.78967
     },
     {
       "name": "McDonough",
@@ -1540,7 +1880,9 @@
       "slug": "md/pomfret/mcdonough-rams",
       "url": "https://www.maxpreps.com/md/pomfret/mcdonough-rams/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/9/2/19213db8-f13c-478d-96e9-1b9749e4bb3c.gif?version=636173872200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.575905999999996,
+      "lng": -77.035772
     },
     {
       "name": "McKinley Tech",
@@ -1549,7 +1891,9 @@
       "slug": "dc/washington/mckinley-tech-trainers",
       "url": "https://www.maxpreps.com/dc/washington/mckinley-tech-trainers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/e/1/ee1b97e3-ca17-4196-99b3-297904425ce5.gif?version=638694267385410460&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.891324,
+      "lng": -77.03644399999999
     },
     {
       "name": "McLean",
@@ -1558,7 +1902,9 @@
       "slug": "va/mclean/mclean-highlanders",
       "url": "https://www.maxpreps.com/va/mclean/mclean-highlanders/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/3/9/f39a202a-2d7f-4fbe-bf3a-0ed789d86f72.gif?version=636409135200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93669,
+      "lng": -77.18584
     },
     {
       "name": "Meade",
@@ -1567,7 +1913,9 @@
       "slug": "md/fort-meade/meade-mustangs",
       "url": "https://www.maxpreps.com/md/fort-meade/meade-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/c/e/1ce39664-bc69-470a-aa42-c9ed0d08c988.gif?version=636474549000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.10227,
+      "lng": -76.74626
     },
     {
       "name": "Mergenthaler Vo-Tech",
@@ -1576,7 +1924,9 @@
       "slug": "md/baltimore/mergenthaler-vo-tech-mustangs",
       "url": "https://www.maxpreps.com/md/baltimore/mergenthaler-vo-tech-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/3/4/b3420ac9-c595-482b-907e-299db528eb7d.gif?version=635216871600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.296896000000004,
+      "lng": -76.604232
     },
     {
       "name": "Meridian",
@@ -1585,7 +1935,9 @@
       "slug": "va/falls-church/meridian-mustangs",
       "url": "https://www.maxpreps.com/va/falls-church/meridian-mustangs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/8/1/681cab7a-9102-43b4-899a-aaea6ceb0441.gif?version=636576739800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89798,
+      "lng": -77.19199
     },
     {
       "name": "Middletown",
@@ -1594,7 +1946,9 @@
       "slug": "md/middletown/middletown-knights",
       "url": "https://www.maxpreps.com/md/middletown/middletown-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/a/9/fa9b62d7-899e-4a9e-b12c-98846a87db08.gif?version=635194501800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.44649,
+      "lng": -77.53415
     },
     {
       "name": "Milford Mill Academy",
@@ -1603,7 +1957,9 @@
       "slug": "md/baltimore/milford-mill-academy-milford-mill-millers",
       "url": "https://www.maxpreps.com/md/baltimore/milford-mill-academy-milford-mill-millers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/e/8/9e8cc4fc-3f5a-483c-b09e-df3cda61a1e5.gif?version=635512134600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.35566,
+      "lng": -76.75002
     },
     {
       "name": "Millbrook",
@@ -1612,7 +1968,9 @@
       "slug": "va/winchester/millbrook-pioneers",
       "url": "https://www.maxpreps.com/va/winchester/millbrook-pioneers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/e/3/0e3953e0-6dde-4518-94d1-55f7781caa87.gif?version=638034259800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.178228000000004,
+      "lng": -78.16196
     },
     {
       "name": "Model Secondary School for the Deaf",
@@ -1621,7 +1979,9 @@
       "slug": "dc/washington/model-secondary-school-for-the-deaf-eagles",
       "url": "https://www.maxpreps.com/dc/washington/model-secondary-school-for-the-deaf-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/7/7/a775e9ae-7e8f-4631-a6eb-90a905032dfa.gif?version=636632875800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91021,
+      "lng": -76.99027
     },
     {
       "name": "Moore Academy",
@@ -1630,7 +1990,9 @@
       "slug": "dc/washington/moore-academy-eagles",
       "url": "https://www.maxpreps.com/dc/washington/moore-academy-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/6/7/e67febdb-9eb3-4adf-9ce2-45b3362c486f.gif?version=638925747870416420&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93211,
+      "lng": -76.99222
     },
     {
       "name": "Mount St. Joseph",
@@ -1639,7 +2001,9 @@
       "slug": "md/baltimore/mount-st-joseph-gaels",
       "url": "https://www.maxpreps.com/md/baltimore/mount-st-joseph-gaels/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/c/8/dc88cd49-01c2-4cae-bfba-5bf49b19de4b.gif?version=637169231400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.27975,
+      "lng": -76.68742
     },
     {
       "name": "Mount Vernon",
@@ -1648,7 +2012,9 @@
       "slug": "va/alexandria/mount-vernon-majors",
       "url": "https://www.maxpreps.com/va/alexandria/mount-vernon-majors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/b/8/bb880a21-1afe-4499-afc8-bdd2a8a08d6a.gif?version=634855912200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.83195,
+      "lng": -77.06333
     },
     {
       "name": "Mountain View",
@@ -1657,7 +2023,9 @@
       "slug": "va/stafford/mountain-view-wildcats",
       "url": "https://www.maxpreps.com/va/stafford/mountain-view-wildcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/7/9/e790e9fc-74f8-47de-b04c-4db9076d6d30.gif?version=638034209400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.458,
+      "lng": -77.4962
     },
     {
       "name": "Mt. Hebron",
@@ -1666,7 +2034,9 @@
       "slug": "md/ellicott-city/mt-hebron-vikings",
       "url": "https://www.maxpreps.com/md/ellicott-city/mt-hebron-vikings/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/c/e/ece3df75-0b99-42fd-8d26-31757db6bd16.gif?version=636102040800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.2992,
+      "lng": -76.83961
     },
     {
       "name": "Mt. Zion Prep Academy",
@@ -1675,7 +2045,9 @@
       "slug": "md/lanham/mt-zion-prep-academy-warriors",
       "url": "https://www.maxpreps.com/md/lanham/mt-zion-prep-academy-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/7/7/e77831cd-8216-4b30-bd1d-5e563998a6ba.gif?version=637961565000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.967887999999995,
+      "lng": -76.841502
     },
     {
       "name": "National Cathedral",
@@ -1684,7 +2056,9 @@
       "slug": "dc/washington/national-cathedral",
       "url": "https://www.maxpreps.com/dc/washington/national-cathedral/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/1/7/b171da2c-669d-41ac-81a1-48a29b0bae13.gif?version=636632822400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93065,
+      "lng": -77.0706
     },
     {
       "name": "National Collegiate Prep",
@@ -1693,7 +2067,9 @@
       "slug": "dc/washington/national-collegiate-prep-panthers",
       "url": "https://www.maxpreps.com/dc/washington/national-collegiate-prep-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/6/c/16c6e9a5-1405-4f93-b823-a6bf4cb06664.gif?version=636094428000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8967,
+      "lng": -77.036316
     },
     {
       "name": "New Town",
@@ -1702,7 +2078,9 @@
       "slug": "md/owings-mills/new-town-titans",
       "url": "https://www.maxpreps.com/md/owings-mills/new-town-titans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/b/a/aba3f03b-f50d-4359-8633-828b2add47ec.gif?version=638931050699974180&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.40178,
+      "lng": -76.81061
     },
     {
       "name": "North County",
@@ -1711,7 +2089,9 @@
       "slug": "md/glen-burnie/north-county-knights",
       "url": "https://www.maxpreps.com/md/glen-burnie/north-county-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/3/6/336753e6-a1a9-4dac-85cb-8219d656cec3.gif?version=638931051107474240&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.1747,
+      "lng": -76.62846
     },
     {
       "name": "North Point",
@@ -1720,7 +2100,9 @@
       "slug": "md/waldorf/north-point-eagles",
       "url": "https://www.maxpreps.com/md/waldorf/north-point-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/0/2/9029f122-4cc0-4ff4-a0e1-878b7e0a8190.gif?version=638931051383414260&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.64021,
+      "lng": -76.97584
     },
     {
       "name": "North Stafford",
@@ -1729,7 +2111,9 @@
       "slug": "va/stafford/north-stafford-wolverines",
       "url": "https://www.maxpreps.com/va/stafford/north-stafford-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/4/0/64024632-150c-42e9-a22a-eebb215549ef.gif?version=638283019800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.35798,
+      "lng": -77.52099
     },
     {
       "name": "Northeast",
@@ -1738,7 +2122,9 @@
       "slug": "md/pasadena/northeast-eagles",
       "url": "https://www.maxpreps.com/md/pasadena/northeast-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/9/f/09fc47f5-7533-4f49-95e1-547f17ded0a0.gif?version=635142436800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14362,
+      "lng": -76.52893
     },
     {
       "name": "Northern",
@@ -1747,7 +2133,9 @@
       "slug": "md/owings/northern-patriots",
       "url": "https://www.maxpreps.com/md/owings/northern-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/b/a/8ba1f168-f5ea-45f8-936f-04828581c7f9.gif?version=637112094600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.68486,
+      "lng": -76.65374
     },
     {
       "name": "Northwest",
@@ -1756,7 +2144,9 @@
       "slug": "md/germantown/northwest-jaguars",
       "url": "https://www.maxpreps.com/md/germantown/northwest-jaguars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/0/0/c00546b9-c811-42de-ae88-535d396d6858.gif?version=638931051622822580&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.15108,
+      "lng": -77.27966
     },
     {
       "name": "Northwestern",
@@ -1765,7 +2155,9 @@
       "slug": "md/hyattsville/northwestern-wildcats",
       "url": "https://www.maxpreps.com/md/hyattsville/northwestern-wildcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/0/b/c0b0d67a-8bfb-4631-b434-10ef41d65ae8.gif?version=637530535200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.97514,
+      "lng": -76.95502
     },
     {
       "name": "Oakdale",
@@ -1774,7 +2166,9 @@
       "slug": "md/ijamsville/oakdale",
       "url": "https://www.maxpreps.com/md/ijamsville/oakdale/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/6/4/f64f8d88-2bd9-40b9-8fdb-b170d11dcabf.gif?version=635163947400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.355948,
+      "lng": -77.328312
     },
     {
       "name": "Oakland Mills",
@@ -1783,7 +2177,9 @@
       "slug": "md/columbia/oakland-mills-scorpions",
       "url": "https://www.maxpreps.com/md/columbia/oakland-mills-scorpions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/3/4/934b4dd5-66c5-4c43-96cc-66e2cfe4e871.gif?version=634130731800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.21163,
+      "lng": -76.84396
     },
     {
       "name": "Oakton",
@@ -1792,7 +2188,9 @@
       "slug": "va/vienna/oakton-cougars",
       "url": "https://www.maxpreps.com/va/vienna/oakton-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/8/7/f871c847-be1c-4e15-a703-3de710403223.gif?version=636794350800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88019,
+      "lng": -77.28213
     },
     {
       "name": "Old Mill",
@@ -1801,7 +2199,9 @@
       "slug": "md/millersville/old-mill-patriots",
       "url": "https://www.maxpreps.com/md/millersville/old-mill-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/7/b/d7bf8f4b-33f6-40fd-8218-8c8f70f3c8d1.gif?version=635520814800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.063918,
+      "lng": -76.643428
     },
     {
       "name": "Osbourn Park",
@@ -1810,7 +2210,9 @@
       "slug": "va/manassas/osbourn-park-yellowjackets",
       "url": "https://www.maxpreps.com/va/manassas/osbourn-park-yellowjackets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/8/f/68fd3510-4557-4ef6-a6fa-c60ef82c904c.gif?version=636585411000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.76332,
+      "lng": -77.44935
     },
     {
       "name": "Our Lady of Good Counsel",
@@ -1819,7 +2221,9 @@
       "slug": "md/olney/our-lady-of-good-counsel-falcons",
       "url": "https://www.maxpreps.com/md/olney/our-lady-of-good-counsel-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/7/7/3779df04-0ed3-4c81-98ec-0e475b32f74a.gif?version=638949981457205700&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14084,
+      "lng": -77.04521
     },
     {
       "name": "Our Lady of Mount Carmel",
@@ -1828,7 +2232,9 @@
       "slug": "md/baltimore/our-lady-of-mount-carmel-cougars",
       "url": "https://www.maxpreps.com/md/baltimore/our-lady-of-mount-carmel-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/7/f/d7fb5f41-e97c-4496-b86e-1c08c628e031.gif?version=638709278293688860&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.32081,
+      "lng": -76.44953
     },
     {
       "name": "Overlea",
@@ -1837,7 +2243,9 @@
       "slug": "md/baltimore/overlea-falcons",
       "url": "https://www.maxpreps.com/md/baltimore/overlea-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/f/c/afc2ac18-9ed7-4855-8daa-3c3c31ef4c93.gif?version=637160566800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.36064,
+      "lng": -76.53368
     },
     {
       "name": "Owings Mills",
@@ -1846,7 +2254,9 @@
       "slug": "md/owings-mills/owings-mills-golden-eagles",
       "url": "https://www.maxpreps.com/md/owings-mills/owings-mills-golden-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/6/c/46ca5d11-94da-4512-8cb7-d8a403109257.gif?version=635018649600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.40737,
+      "lng": -76.77991
     },
     {
       "name": "Oxon Hill",
@@ -1855,7 +2265,9 @@
       "slug": "md/oxon-hill/oxon-hill-clippers",
       "url": "https://www.maxpreps.com/md/oxon-hill/oxon-hill-clippers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/2/c/b2c6f814-aa83-4f88-a116-b257a75ede39.gif?version=638931053092031170&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.78482,
+      "lng": -76.9694
     },
     {
       "name": "Paint Branch",
@@ -1864,7 +2276,9 @@
       "slug": "md/burtonsville/paint-branch-panthers",
       "url": "https://www.maxpreps.com/md/burtonsville/paint-branch-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/3/a/b3ae9b4a-b8d1-4f05-abc9-e546a2979f22.gif?version=636442002000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.0873,
+      "lng": -76.94743
     },
     {
       "name": "Pallotti",
@@ -1873,7 +2287,9 @@
       "slug": "md/laurel/pallotti-panthers",
       "url": "https://www.maxpreps.com/md/laurel/pallotti-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/4/e/e4e4fcb8-e23a-45c9-a15e-1e70de7db338.gif?version=637171833600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.10768,
+      "lng": -76.85691
     },
     {
       "name": "Parkdale",
@@ -1882,7 +2298,9 @@
       "slug": "md/riverdale/parkdale-panthers",
       "url": "https://www.maxpreps.com/md/riverdale/parkdale-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/9/c/59c24b9a-42ad-471f-9e95-af9c3c8cc137.gif?version=639149549522071000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.96988,
+      "lng": -76.9045
     },
     {
       "name": "Parkside",
@@ -1891,7 +2309,9 @@
       "slug": "dc/washington/parkside-eagles",
       "url": "https://www.maxpreps.com/dc/washington/parkside-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/0/2/d021d082-9f7a-4f2c-a716-a40e84a0d20c.gif?version=636632823600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.98741,
+      "lng": -77.04689
     },
     {
       "name": "Parkville",
@@ -1900,7 +2320,9 @@
       "slug": "md/baltimore/parkville-knights",
       "url": "https://www.maxpreps.com/md/baltimore/parkville-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/9/d/69d892dc-d080-4c97-9886-34d53f615793.gif?version=638931053497259800&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.38685,
+      "lng": -76.55086
     },
     {
       "name": "Patapsco",
@@ -1909,7 +2331,9 @@
       "slug": "md/baltimore/patapsco-patriots",
       "url": "https://www.maxpreps.com/md/baltimore/patapsco-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/b/6/bb6d6408-03a9-4d91-92b0-393520c62454.gif?version=634431328800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.24198,
+      "lng": -76.62999
     },
     {
       "name": "Patriot",
@@ -1918,7 +2342,9 @@
       "slug": "va/nokesville/patriot-pioneers",
       "url": "https://www.maxpreps.com/va/nokesville/patriot-pioneers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/4/4/b44a0b92-f3ae-450d-a42e-a641074e86b0.gif?version=634898497200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.7262,
+      "lng": -77.58062
     },
     {
       "name": "Patuxent",
@@ -1927,7 +2353,9 @@
       "slug": "md/lusby/patuxent-panthers",
       "url": "https://www.maxpreps.com/md/lusby/patuxent-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/0/f/20f7a5bd-bc5b-405e-836a-8b08e9ec00fe.gif?version=634217673600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.35479,
+      "lng": -76.44001
     },
     {
       "name": "Paul Public Charter International",
@@ -1936,7 +2364,9 @@
       "slug": "dc/washington/paul-public-charter-international-pirates",
       "url": "https://www.maxpreps.com/dc/washington/paul-public-charter-international-pirates/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/b/9/8b974340-88f5-41a1-abd8-051d3bb20ad8.gif?version=637685811600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.898652,
+      "lng": -77.041084
     },
     {
       "name": "Paul VI",
@@ -1945,7 +2375,9 @@
       "slug": "va/chantilly/st-paul-vi-panthers",
       "url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/c/3/1c3ccc31-4ddf-40e7-8700-070f311148b4.gif?version=634538609400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9152,
+      "lng": -77.4454
     },
     {
       "name": "Perry Hall",
@@ -1954,7 +2386,9 @@
       "slug": "md/baltimore/perry-hall-gators",
       "url": "https://www.maxpreps.com/md/baltimore/perry-hall-gators/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/9/1/f91cb7ff-7d4f-4618-a077-ff369f2ade43.gif?version=635822211000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.40731,
+      "lng": -76.47966
     },
     {
       "name": "Perry Street Prep",
@@ -1963,7 +2397,9 @@
       "slug": "dc/washington/perry-street-prep-lion-paw",
       "url": "https://www.maxpreps.com/dc/washington/perry-street-prep-lion-paw/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/8/f/b8fe24f5-b7fe-412c-8f28-50a89778111c.gif?version=634794049200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93691,
+      "lng": -76.97861
     },
     {
       "name": "Phelps Architecture, Construction & Engineering",
@@ -1972,7 +2408,9 @@
       "slug": "dc/washington/phelps-architecture-construction-and-engineering-panthers",
       "url": "https://www.maxpreps.com/dc/washington/phelps-architecture-construction-and-engineering-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/0/7/d073a04c-4a12-439c-9352-b73a3ca8d7a0.gif?version=636632876400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.894892,
+      "lng": -77.04141999999999
     },
     {
       "name": "Pikesville",
@@ -1981,7 +2419,9 @@
       "slug": "md/baltimore/pikesville-panthers",
       "url": "https://www.maxpreps.com/md/baltimore/pikesville-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/8/c/98c90a30-5349-477d-aebf-b2de5b2e8e95.gif?version=637171026600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.38523,
+      "lng": -76.70805
     },
     {
       "name": "Poly",
@@ -1990,7 +2430,9 @@
       "slug": "md/baltimore/poly-engineers",
       "url": "https://www.maxpreps.com/md/baltimore/poly-engineers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/c/c/3cc0820d-80af-49bc-b721-d5d8220b75d2.gif?version=635233414200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.34661,
+      "lng": -76.64175
     },
     {
       "name": "Poolesville",
@@ -1999,7 +2441,9 @@
       "slug": "md/poolesville/poolesville-falcons",
       "url": "https://www.maxpreps.com/md/poolesville/poolesville-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/4/2/c42ee608-0897-426f-a198-f8ceafbe9c85.gif?version=635473092000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14516,
+      "lng": -77.41039
     },
     {
       "name": "Potomac",
@@ -2008,7 +2452,9 @@
       "slug": "md/oxon-hill/potomac-wolverines",
       "url": "https://www.maxpreps.com/md/oxon-hill/potomac-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/5/7/557e1c7e-6837-4c67-955c-575865e40ba2.gif?version=638931057048211910&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8212,
+      "lng": -76.97725
     },
     {
       "name": "Potomac Falls",
@@ -2017,7 +2463,9 @@
       "slug": "va/sterling/potomac-falls-panthers",
       "url": "https://www.maxpreps.com/va/sterling/potomac-falls-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/b/5/7b5a40cd-72bb-4d1f-9089-2b124b5425d5.gif?version=637813014600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.03567,
+      "lng": -77.40185
     },
     {
       "name": "Potomac School",
@@ -2026,7 +2474,9 @@
       "slug": "va/mclean/potomac-school-panthers",
       "url": "https://www.maxpreps.com/va/mclean/potomac-school-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/1/a/a1aab01c-ad50-4e4e-b2d3-af756f7db15e.gif?version=636632824200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93564,
+      "lng": -77.15415
     },
     {
       "name": "Potomac Senior",
@@ -2035,7 +2485,9 @@
       "slug": "va/dumfries/potomac-senior-panthers",
       "url": "https://www.maxpreps.com/va/dumfries/potomac-senior-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/3/1/e310a62d-2551-4ffb-9522-53400f5cd838.gif?version=637286786400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.573282,
+      "lng": -77.324066
     },
     {
       "name": "Quince Orchard",
@@ -2044,7 +2496,9 @@
       "slug": "md/gaithersburg/quince-orchard-cougars",
       "url": "https://www.maxpreps.com/md/gaithersburg/quince-orchard-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/6/5/9653f6a9-34e6-41bf-8f8a-97eb383bafbb.gif?version=636963557400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.1163,
+      "lng": -77.25514
     },
     {
       "name": "Reservoir",
@@ -2053,7 +2507,9 @@
       "slug": "md/fulton/reservoir-gators",
       "url": "https://www.maxpreps.com/md/fulton/reservoir-gators/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/e/a/4ea56c85-8b8a-43fd-9773-326b30d4109b.gif?version=635282341800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.15288,
+      "lng": -76.91233
     },
     {
       "name": "Richard Montgomery",
@@ -2062,7 +2518,9 @@
       "slug": "md/rockville/richard-montgomery-rockets",
       "url": "https://www.maxpreps.com/md/rockville/richard-montgomery-rockets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/4/c/24c75148-0fea-4760-a95c-f8ccc3ba1995.gif?version=635312565600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.08318,
+      "lng": -77.1517
     },
     {
       "name": "Richard Wright Public Charter School",
@@ -2071,7 +2529,9 @@
       "slug": "dc/washington/richard-wright-public-charter-school-spartans",
       "url": "https://www.maxpreps.com/dc/washington/richard-wright-public-charter-school-spartans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/2/2/f22bcbb0-0039-459f-9ea7-36405e836b25.gif?version=637042955400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88414,
+      "lng": -77.01881
     },
     {
       "name": "River Hill",
@@ -2080,7 +2540,9 @@
       "slug": "md/clarksville/river-hill-hawks",
       "url": "https://www.maxpreps.com/md/clarksville/river-hill-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/8/d/58d18fe1-bf5d-48be-80d9-2e3f60e0b711.gif?version=635316081000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.21111,
+      "lng": -76.93636
     },
     {
       "name": "Riverbend",
@@ -2089,7 +2551,9 @@
       "slug": "va/fredericksburg/riverbend-bears",
       "url": "https://www.maxpreps.com/va/fredericksburg/riverbend-bears/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/3/8/1381b2f2-70b2-4601-8757-7cbb26a8f39b.gif?version=637999615200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.29695,
+      "lng": -77.5717
     },
     {
       "name": "Riverdale Baptist",
@@ -2098,7 +2562,9 @@
       "slug": "md/upper-marlboro/riverdale-baptist-rbs",
       "url": "https://www.maxpreps.com/md/upper-marlboro/riverdale-baptist-rbs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/9/7/397dffad-3fe4-48d7-aa4b-c9396e519d2b.gif?version=637697160600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.87294,
+      "lng": -76.78847
     },
     {
       "name": "Riverside",
@@ -2107,7 +2573,9 @@
       "slug": "va/leesburg/riverside-ram",
       "url": "https://www.maxpreps.com/va/leesburg/riverside-ram/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/2/7/a27a93fd-2b0f-414f-894b-e020db6c7436.gif?version=636256982400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.09228,
+      "lng": -77.48987
     },
     {
       "name": "Robinson",
@@ -2116,7 +2584,9 @@
       "slug": "va/fairfax/robinson-rams",
       "url": "https://www.maxpreps.com/va/fairfax/robinson-rams/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/c/d/fcd41b3e-4803-438a-844b-e5a3cdcc5832.gif?version=637813016400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.81654,
+      "lng": -77.30481
     },
     {
       "name": "Rockville",
@@ -2125,7 +2595,9 @@
       "slug": "md/rockville/rockville-rams",
       "url": "https://www.maxpreps.com/md/rockville/rockville-rams/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/b/a/6ba8c613-c4ab-4942-b29c-9b5759673441.gif?version=639102029752064860&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.08427,
+      "lng": -77.14593
     },
     {
       "name": "Ron Brown",
@@ -2134,7 +2606,9 @@
       "slug": "dc/washington/ron-brown-monarchs",
       "url": "https://www.maxpreps.com/dc/washington/ron-brown-monarchs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/3/1/a31c45ac-b69c-4844-be76-ffbdf219497f.gif?version=636700921800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9065,
+      "lng": -76.93271
     },
     {
       "name": "Roosevelt",
@@ -2143,7 +2617,9 @@
       "slug": "dc/washington/roosevelt-roughriders",
       "url": "https://www.maxpreps.com/dc/washington/roosevelt-roughriders/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/2/f/f2f63326-b034-4d34-b97c-bbd944e01328.gif?version=636632824800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.86314,
+      "lng": -77.01701
     },
     {
       "name": "School Without Walls",
@@ -2152,7 +2628,9 @@
       "slug": "dc/washington/school-without-walls-penguins",
       "url": "https://www.maxpreps.com/dc/washington/school-without-walls-penguins/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/5/8/d58f6caa-63e0-48f4-9b4d-6752130c3ad1.gif?version=636632825400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90775,
+      "lng": -77.0522
     },
     {
       "name": "SEED DC",
@@ -2161,7 +2639,9 @@
       "slug": "dc/washington/seed-dc",
       "url": "https://www.maxpreps.com/dc/washington/seed-dc/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/3/b/f3b78be7-e388-4841-91f0-b609141d0382.gif?version=637124465400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90226,
+      "lng": -77.02754
     },
     {
       "name": "Seneca Valley",
@@ -2170,7 +2650,9 @@
       "slug": "md/germantown/seneca-valley-screaming-eagles",
       "url": "https://www.maxpreps.com/md/germantown/seneca-valley-screaming-eagles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/a/9/6a952f1a-838c-4dbc-9818-6946aabf649c.gif?version=636566161200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.17379,
+      "lng": -77.26359
     },
     {
       "name": "Severn Run",
@@ -2179,7 +2661,9 @@
       "slug": "md/severn/severn-run-wolves",
       "url": "https://www.maxpreps.com/md/severn/severn-run-wolves/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/c/c/ccce60b4-f492-4841-93e6-c6d4015cf32c.gif?version=638931059943709200&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.12607,
+      "lng": -76.71314
     },
     {
       "name": "Severn School",
@@ -2188,7 +2672,9 @@
       "slug": "md/severna-park/severn-school-admirals",
       "url": "https://www.maxpreps.com/md/severna-park/severn-school-admirals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/1/e/c1e9b69f-cef5-4375-b775-92b68494755f.gif?version=635604070200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.0687,
+      "lng": -76.54841
     },
     {
       "name": "Severna Park",
@@ -2197,7 +2683,9 @@
       "slug": "md/severna-park/severna-park-falcons",
       "url": "https://www.maxpreps.com/md/severna-park/severna-park-falcons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/a/a/2aa62766-ed0c-4f2e-a6e2-10f3b3c5b2a9.gif?version=637479699600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.08262,
+      "lng": -76.57197
     },
     {
       "name": "Sherando",
@@ -2206,7 +2694,9 @@
       "slug": "va/stephens-city/sherando-warriors",
       "url": "https://www.maxpreps.com/va/stephens-city/sherando-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/9/8/a987cff4-725e-4d11-bd38-eb80f09b0e4c.gif?version=637662588600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.07545,
+      "lng": -78.19247
     },
     {
       "name": "Sheridan School",
@@ -2215,7 +2705,9 @@
       "slug": "dc/washington/sheridan-school-owls",
       "url": "https://www.maxpreps.com/dc/washington/sheridan-school-owls/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.94668,
+      "lng": -77.07049
     },
     {
       "name": "Sherwood",
@@ -2224,7 +2716,9 @@
       "slug": "md/sandy-spring/sherwood-warriors",
       "url": "https://www.maxpreps.com/md/sandy-spring/sherwood-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/8/4/0843eb32-dfe4-4b05-967b-6d865ee06022.gif?version=635822308200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.14681,
+      "lng": -77.01871
     },
     {
       "name": "Sidwell Friends",
@@ -2233,7 +2727,9 @@
       "slug": "dc/washington/sidwell-friends-quakers",
       "url": "https://www.maxpreps.com/dc/washington/sidwell-friends-quakers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/0/3/f03caf68-8c6c-4a2e-b0d6-85e949c78a27.gif?version=639069526438974050&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93913,
+      "lng": -77.0745
     },
     {
       "name": "South Carroll",
@@ -2242,7 +2738,9 @@
       "slug": "md/sykesville/south-carroll-cavaliers",
       "url": "https://www.maxpreps.com/md/sykesville/south-carroll-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/5/0/950a0ce9-944f-43ac-a19b-c17c8bcb3635.gif?version=634974583200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.35348,
+      "lng": -77.02111
     },
     {
       "name": "South County",
@@ -2251,7 +2749,9 @@
       "slug": "va/lorton/south-county-the-stallion",
       "url": "https://www.maxpreps.com/va/lorton/south-county-the-stallion/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/b/9/ab99166d-27ce-4e5c-bdd7-ee245b1d9489.gif?version=635136578400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.7189,
+      "lng": -77.24014
     },
     {
       "name": "South Lakes",
@@ -2260,7 +2760,9 @@
       "slug": "va/reston/south-lakes-seahawks",
       "url": "https://www.maxpreps.com/va/reston/south-lakes-seahawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/b/c/cbcd9543-4c5a-4e99-a6ef-cd4e71cdb113.gif?version=637501856400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.93225,
+      "lng": -77.33945
     },
     {
       "name": "South River",
@@ -2269,7 +2771,9 @@
       "slug": "md/edgewater/south-river-seahawks",
       "url": "https://www.maxpreps.com/md/edgewater/south-river-seahawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/7/9/3796f08e-ffc2-4b7b-8ff8-55a33d5e6f7e.gif?version=634221252000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90317,
+      "lng": -76.56052
     },
     {
       "name": "Southern",
@@ -2278,7 +2782,9 @@
       "slug": "md/harwood/southern-bulldogs",
       "url": "https://www.maxpreps.com/md/harwood/southern-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/e/e/9ee6244e-4d81-42a8-958b-b1ac03c71b7b.gif?version=634248936600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.86809,
+      "lng": -76.6216
     },
     {
       "name": "Sparrows Point",
@@ -2287,7 +2793,9 @@
       "slug": "md/baltimore/sparrows-point-pointers",
       "url": "https://www.maxpreps.com/md/baltimore/sparrows-point-pointers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/e/3/5/e35182c1-3c7d-4133-9b6a-69d7c0959b21.gif?version=635899288800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.21928,
+      "lng": -76.47607
     },
     {
       "name": "Spingarn",
@@ -2296,7 +2804,9 @@
       "slug": "dc/washington/spingarn-green-waves",
       "url": "https://www.maxpreps.com/dc/washington/spingarn-green-waves/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.92231,
+      "lng": -77.01952
     },
     {
       "name": "Springbrook",
@@ -2305,7 +2815,9 @@
       "slug": "md/silver-spring/springbrook-blue-devils",
       "url": "https://www.maxpreps.com/md/silver-spring/springbrook-blue-devils/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/5/d/45d68eeb-d904-43ac-a6a0-59bd5a69d5c2.gif?version=638931060620170700&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.05825,
+      "lng": -77.00687
     },
     {
       "name": "St. Albans",
@@ -2314,7 +2826,9 @@
       "slug": "dc/washington/st-albans-bulldogs",
       "url": "https://www.maxpreps.com/dc/washington/st-albans-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/e/a/ceaf8d62-b7a2-4516-aee2-c8223507f5d2.gif?version=636632877000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.92835,
+      "lng": -77.07127
     },
     {
       "name": "St. Andrew's Episcopal",
@@ -2323,7 +2837,9 @@
       "slug": "md/potomac/st-andrews-episcopal-lions",
       "url": "https://www.maxpreps.com/md/potomac/st-andrews-episcopal-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/d/1/ad146642-eba0-4b95-b45f-aebb68d22f2a.gif?version=636632892600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.01245,
+      "lng": -77.19771
     },
     {
       "name": "St. Anselm's Abbey",
@@ -2332,7 +2848,9 @@
       "slug": "dc/washington/st-anselms-abbey-panthers",
       "url": "https://www.maxpreps.com/dc/washington/st-anselms-abbey-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/2/6/a2627a69-2fec-481d-88f0-731b65bf6fe0.gif?version=636632826600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89958,
+      "lng": -77.033052
     },
     {
       "name": "St. Charles",
@@ -2341,7 +2859,9 @@
       "slug": "md/waldorf/st-charles",
       "url": "https://www.maxpreps.com/md/waldorf/st-charles/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/0/e/4/0e4bbe2a-3ed5-4a24-9630-9d079a33e07d.gif?version=635503393200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.60085,
+      "lng": -76.90706
     },
     {
       "name": "St. Frances Academy",
@@ -2350,7 +2870,9 @@
       "slug": "md/baltimore/st-frances-academy-panthers",
       "url": "https://www.maxpreps.com/md/baltimore/st-frances-academy-panthers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/1/7/c1783fb0-c965-42a0-abe3-41fbe7641303.gif?version=637678140000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.30185,
+      "lng": -76.60828
     },
     {
       "name": "St. John's",
@@ -2359,7 +2881,9 @@
       "slug": "dc/washington/st-johns-cadets",
       "url": "https://www.maxpreps.com/dc/washington/st-johns-cadets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/6/d/56d98abd-343e-4f12-b510-666a90501fac.gif?version=636632877000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90041,
+      "lng": -77.03611
     },
     {
       "name": "St. John's Catholic Prep",
@@ -2368,7 +2892,9 @@
       "slug": "md/buckeystown/st-johns-catholic-prep-vikings",
       "url": "https://www.maxpreps.com/md/buckeystown/st-johns-catholic-prep-vikings/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/4/f/b4f4ec34-4afd-4d38-af9e-cfab78996fe9.gif?version=636373471800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.34034,
+      "lng": -77.42533
     },
     {
       "name": "St. Mary's",
@@ -2377,7 +2903,9 @@
       "slug": "md/annapolis/st-marys-saints",
       "url": "https://www.maxpreps.com/md/annapolis/st-marys-saints/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/1/c/21c8a967-d550-4234-b274-ce88a92a92c6.gif?version=636712186800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.97596,
+      "lng": -76.50748
     },
     {
       "name": "St. Mary's Ryken",
@@ -2386,7 +2914,9 @@
       "slug": "md/leonardtown/st-marys-ryken-knights",
       "url": "https://www.maxpreps.com/md/leonardtown/st-marys-ryken-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/e/d/fed168db-de2b-4f6b-9188-36aafec21768.gif?version=636632892600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.288216,
+      "lng": -76.630334
     },
     {
       "name": "Stafford",
@@ -2395,7 +2925,9 @@
       "slug": "va/falmouth/stafford-indians",
       "url": "https://www.maxpreps.com/va/falmouth/stafford-indians/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/5/c/b5ce55ef-6ff3-462c-9583-c1326bfa4728.gif?version=637165020600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.3232,
+      "lng": -77.4696
     },
     {
       "name": "Stone Bridge",
@@ -2404,7 +2936,9 @@
       "slug": "va/ashburn/stone-bridge-bulldogs",
       "url": "https://www.maxpreps.com/va/ashburn/stone-bridge-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/0/5/3052a842-2148-49f7-9c6b-1bae2ea57680.gif?version=636553177800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.04911,
+      "lng": -77.50951
     },
     {
       "name": "Strasburg",
@@ -2413,7 +2947,9 @@
       "slug": "va/strasburg/strasburg-rams",
       "url": "https://www.maxpreps.com/va/strasburg/strasburg-rams/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/4/9/4499ab6a-5f39-40af-92f4-af7fa3cf4eba.gif?version=637068128400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.98384,
+      "lng": -78.36305
     },
     {
       "name": "Suitland",
@@ -2422,7 +2958,9 @@
       "slug": "md/forestville/suitland-rams",
       "url": "https://www.maxpreps.com/md/forestville/suitland-rams/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/8/0/2800b7e2-dabd-4acb-8f24-d6f1551ad3d1.gif?version=638931060871394320&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.83852,
+      "lng": -76.90213
     },
     {
       "name": "Surrattsville",
@@ -2431,7 +2969,9 @@
       "slug": "md/clinton/surrattsville-hornets",
       "url": "https://www.maxpreps.com/md/clinton/surrattsville-hornets/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/a/2/1a2ad222-7874-4952-8249-ebaaa752229d.gif?version=637037231400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.76206,
+      "lng": -76.90136
     },
     {
       "name": "The Lab School of Washington",
@@ -2440,7 +2980,9 @@
       "slug": "dc/washington/the-lab-school-of-washington-dragons",
       "url": "https://www.maxpreps.com/dc/washington/the-lab-school-of-washington-dragons/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/f/5/1f50111a-aece-4e81-b4f3-50edcf227c71.gif?version=638925748421596410&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.91546,
+      "lng": -77.09252
     },
     {
       "name": "Thomas Stone",
@@ -2449,7 +2991,9 @@
       "slug": "md/waldorf/thomas-stone-cougars",
       "url": "https://www.maxpreps.com/md/waldorf/thomas-stone-cougars/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/c/f/9cf9ba3e-3f98-4c06-a4fe-1deacb850945.gif?version=638931064502477550&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.52989,
+      "lng": -77.03842
     },
     {
       "name": "Thurgood Marshall Academy",
@@ -2458,7 +3002,9 @@
       "slug": "dc/washington/thurgood-marshall-academy-warriors",
       "url": "https://www.maxpreps.com/dc/washington/thurgood-marshall-academy-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/7/2/472ff1f8-288b-46b2-8b48-0423ae044e5b.gif?version=636632826600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.86232,
+      "lng": -76.99397
     },
     {
       "name": "Towson",
@@ -2467,7 +3013,9 @@
       "slug": "md/towson/towson-generals",
       "url": "https://www.maxpreps.com/md/towson/towson-generals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/3/d/23dd09eb-e949-42a0-b42b-fb02b4584882.gif?version=635188083600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.39646,
+      "lng": -76.61481
     },
     {
       "name": "Tuscarora",
@@ -2476,7 +3024,9 @@
       "slug": "md/frederick/tuscarora-titans",
       "url": "https://www.maxpreps.com/md/frederick/tuscarora-titans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/9/2/492f60e3-d4fe-4afc-bd47-db5625d3cbb9.gif?version=636049522800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.25677,
+      "lng": -77.47026
     },
     {
       "name": "Tuscarora",
@@ -2485,7 +3035,9 @@
       "slug": "va/leesburg/tuscarora-huskies",
       "url": "https://www.maxpreps.com/va/leesburg/tuscarora-huskies/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/0/1/b01ea76f-b520-418b-8667-f5e4e36d0d7f.gif?version=636091297200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.13271,
+      "lng": -77.55616
     },
     {
       "name": "Urbana",
@@ -2494,7 +3046,9 @@
       "slug": "md/ijamsville/urbana-hawks",
       "url": "https://www.maxpreps.com/md/ijamsville/urbana-hawks/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/9/3/593e5cbf-2e05-4fac-823d-a03bcd7df453.gif?version=638931061293316370&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.34544,
+      "lng": -77.33732
     },
     {
       "name": "Wakefield",
@@ -2503,7 +3057,9 @@
       "slug": "va/arlington/wakefield-warriors",
       "url": "https://www.maxpreps.com/va/arlington/wakefield-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/9/3/89379f4f-1791-4c00-a157-a829eab47ddd.gif?version=636477218400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.84799,
+      "lng": -77.11009
     },
     {
       "name": "Walkersville",
@@ -2512,7 +3068,9 @@
       "slug": "md/walkersville/walkersville-lions",
       "url": "https://www.maxpreps.com/md/walkersville/walkersville-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/f/e/7fedb1b9-3af5-4b30-b696-f556bf8e4699.gif?version=635455023000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.47869,
+      "lng": -77.36499
     },
     {
       "name": "Walter Johnson",
@@ -2521,7 +3079,9 @@
       "slug": "md/bethesda/walter-johnson-wildcats",
       "url": "https://www.maxpreps.com/md/bethesda/walter-johnson-wildcats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/0/9/4093fc83-4ce1-4385-9ac2-683e660a751e.gif?version=635636646000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.02426,
+      "lng": -77.13113
     },
     {
       "name": "Washington Career",
@@ -2530,7 +3090,9 @@
       "slug": "dc/washington/washington-career",
       "url": "https://www.maxpreps.com/dc/washington/washington-career/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90102,
+      "lng": -77.039868
     },
     {
       "name": "Washington Charter",
@@ -2539,7 +3101,9 @@
       "slug": "dc/washington/washington-charter",
       "url": "https://www.maxpreps.com/dc/washington/washington-charter/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.89796,
+      "lng": -77.01495
     },
     {
       "name": "Washington International",
@@ -2548,7 +3112,9 @@
       "slug": "dc/washington/washington-international-red-devils",
       "url": "https://www.maxpreps.com/dc/washington/washington-international-red-devils/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/a/a/6aa16773-26a0-4678-939b-f7c21d5e20f2.gif?version=637672815000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.9128,
+      "lng": -77.0424
     },
     {
       "name": "Washington Latin Public Charter School",
@@ -2557,7 +3123,9 @@
       "slug": "dc/washington/washington-latin-public-charter-school-lions",
       "url": "https://www.maxpreps.com/dc/washington/washington-latin-public-charter-school-lions/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/0/0/900886d9-f3f1-43db-b850-ad0ed5247ad0.gif?version=636632829600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.95399,
+      "lng": -77.01402
     },
     {
       "name": "Washington Leadership Academy",
@@ -2566,7 +3134,9 @@
       "slug": "dc/washington/washington-leadership-academy-leadership-knights",
       "url": "https://www.maxpreps.com/dc/washington/washington-leadership-academy-leadership-knights/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.898635999999996,
+      "lng": -77.03492399999999
     },
     {
       "name": "Washington Math/Science Tech",
@@ -2575,7 +3145,9 @@
       "slug": "dc/washington/washington-math-science-tech",
       "url": "https://www.maxpreps.com/dc/washington/washington-math-science-tech/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/0/f/50fc26da-2eaf-43af-8f65-2ad9bcd91c8e.gif?version=636123864600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.897228,
+      "lng": -77.041964
     },
     {
       "name": "Washington Metro",
@@ -2584,7 +3156,9 @@
       "slug": "dc/washington/washington-metro",
       "url": "https://www.maxpreps.com/dc/washington/washington-metro/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88703,
+      "lng": -77.02812
     },
     {
       "name": "Washington-Liberty",
@@ -2593,7 +3167,9 @@
       "slug": "va/arlington/washington-liberty-generals",
       "url": "https://www.maxpreps.com/va/arlington/washington-liberty-generals/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/5/7/157c3f22-b295-49d1-8425-806f49ac8161.gif?version=638780651353514040&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88738,
+      "lng": -77.10972
     },
     {
       "name": "Watkins Mill",
@@ -2602,7 +3178,9 @@
       "slug": "md/gaithersburg/watkins-mill-wolverines",
       "url": "https://www.maxpreps.com/md/gaithersburg/watkins-mill-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/9/2/69218614-d0fe-4aea-b6aa-efeb5a90a03e.gif?version=636573903000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.15069,
+      "lng": -77.22739
     },
     {
       "name": "West Potomac",
@@ -2611,7 +3189,9 @@
       "slug": "va/alexandria/west-potomac-wolverines",
       "url": "https://www.maxpreps.com/va/alexandria/west-potomac-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/3/2/9326838a-e50a-42a3-a939-e5d8e9da5044.gif?version=637889032800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.77443,
+      "lng": -77.0733
     },
     {
       "name": "West Springfield",
@@ -2620,7 +3200,9 @@
       "slug": "va/springfield/west-springfield-spartans",
       "url": "https://www.maxpreps.com/va/springfield/west-springfield-spartans/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/d/2/e/d2eae27a-b7b0-4532-abaa-85684d970484.gif?version=635469100200000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.77584,
+      "lng": -77.22537
     },
     {
       "name": "Western Tech & Environmental Science",
@@ -2629,7 +3211,9 @@
       "slug": "md/baltimore/western-tech-and-environmental-science-wolverines",
       "url": "https://www.maxpreps.com/md/baltimore/western-tech-and-environmental-science-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/5/d/65d03d1d-e55c-4369-ac31-61f015f58e15.gif?version=635905284000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.297024,
+      "lng": -76.603848
     },
     {
       "name": "Westfield",
@@ -2638,7 +3222,9 @@
       "slug": "va/chantilly/westfield-bulldogs",
       "url": "https://www.maxpreps.com/va/chantilly/westfield-bulldogs/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/6/e/a/6ea75389-6bbc-449b-a930-d9daf8b75770.gif?version=637813015800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.88599,
+      "lng": -77.46586
     },
     {
       "name": "Westlake",
@@ -2647,7 +3233,9 @@
       "slug": "md/waldorf/westlake-wolverines",
       "url": "https://www.maxpreps.com/md/waldorf/westlake-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/5/3/25332a20-375e-4221-8d09-56be1036890f.gif?version=636827150400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.62198,
+      "lng": -76.96589
     },
     {
       "name": "Wheaton",
@@ -2656,7 +3244,9 @@
       "slug": "md/silver-spring/wheaton-knights",
       "url": "https://www.maxpreps.com/md/silver-spring/wheaton-knights/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/2/9/1/2910e70f-038d-4b61-a38b-700bb3ddd6ee.gif?version=638931061726063610&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.05984,
+      "lng": -77.06718
     },
     {
       "name": "Whitman",
@@ -2665,7 +3255,9 @@
       "slug": "md/bethesda/whitman-vikings",
       "url": "https://www.maxpreps.com/md/bethesda/whitman-vikings/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/e/b/3ebb7520-720a-4e7c-9a0e-2bcac165c6d6.gif?version=635146647000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.98198,
+      "lng": -77.12738
     },
     {
       "name": "Whittle",
@@ -2674,7 +3266,9 @@
       "slug": "dc/washington/whittle",
       "url": "https://www.maxpreps.com/dc/washington/whittle/",
       "mascotUrl": null,
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.887244,
+      "lng": -77.04145199999999
     },
     {
       "name": "Wilde Lake",
@@ -2683,7 +3277,9 @@
       "slug": "md/columbia/wilde-lake-wildecats",
       "url": "https://www.maxpreps.com/md/columbia/wilde-lake-wildecats/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/7/5/2/752e5316-54cf-46d4-a127-ca87163501e8.gif?version=636098847600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.21939,
+      "lng": -76.87131
     },
     {
       "name": "Wise",
@@ -2692,7 +3288,9 @@
       "slug": "md/upper-marlboro/wise-pumas",
       "url": "https://www.maxpreps.com/md/upper-marlboro/wise-pumas/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/5/e/5/5e522b0c-5251-4239-a704-d5cc7ff83ff6.gif?version=635149547400000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.814457999999995,
+      "lng": -76.75734200000001
     },
     {
       "name": "Woodbridge",
@@ -2701,7 +3299,9 @@
       "slug": "va/woodbridge/woodbridge-vikings",
       "url": "https://www.maxpreps.com/va/woodbridge/woodbridge-vikings/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/b/9/cb9110c4-eb40-491c-afea-21fef7320349.gif?version=635969388000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.63645,
+      "lng": -77.26763
     },
     {
       "name": "Woodgrove",
@@ -2710,7 +3310,9 @@
       "slug": "va/purcellville/woodgrove-wolverines",
       "url": "https://www.maxpreps.com/va/purcellville/woodgrove-wolverines/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/8/c/e/8ce2c8a4-1c77-48f2-a6aa-535d90cfa2cb.gif?version=638034208800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.15564,
+      "lng": -77.72737
     },
     {
       "name": "Woodlawn",
@@ -2719,7 +3321,9 @@
       "slug": "md/baltimore/woodlawn-warriors",
       "url": "https://www.maxpreps.com/md/baltimore/woodlawn-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/6/a/16a5f8bc-936b-4c40-81cb-6317a15d7697.gif?version=636728640000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.30544,
+      "lng": -76.75392
     },
     {
       "name": "Woodson",
@@ -2728,7 +3332,9 @@
       "slug": "dc/washington/woodson-warriors",
       "url": "https://www.maxpreps.com/dc/washington/woodson-warriors/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/c/3/6/c36798dd-e869-49db-90c6-4baacde657b8.gif?version=636632877600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.8975,
+      "lng": -76.9463
     },
     {
       "name": "Woodson",
@@ -2737,7 +3343,9 @@
       "slug": "va/fairfax/woodson-cavaliers",
       "url": "https://www.maxpreps.com/va/fairfax/woodson-cavaliers/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/a/a/a/aaad0f9f-77d1-4ea2-b03b-8cf8d37b449f.gif?version=634583131800000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.83995,
+      "lng": -77.27652
     },
     {
       "name": "Wootton",
@@ -2746,7 +3354,9 @@
       "slug": "md/rockville/wootton-patriots",
       "url": "https://www.maxpreps.com/md/rockville/wootton-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/9/0/4901ce56-0c19-4d69-9d96-64c4c53c99a0.gif?version=637807704000000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 39.06982,
+      "lng": -77.14238
     },
     {
       "name": "Yorktown",
@@ -2755,7 +3365,10 @@
       "slug": "va/arlington/yorktown-patriots",
       "url": "https://www.maxpreps.com/va/arlington/yorktown-patriots/",
       "mascotUrl": "https://image.maxpreps.io/school-mascot/9/3/f/93f6bec2-6e58-40db-a51b-0f0ed6159c04.gif?version=636098847600000000&width=1024&height=1024",
-      "source": "maxpreps"
+      "source": "maxpreps",
+      "lat": 38.90251,
+      "lng": -77.14012
     }
-  ]
+  ],
+  "_geocodedAt": "2026-06-08T12:47:13.418Z"
 }
