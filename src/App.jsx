@@ -2189,13 +2189,8 @@ function posLabel(p) {
   return `${p.position || ""}${yr}`.trim().replace(/^·\s*/, "");
 }
 
-function DmvMap({ onOpenProfile }) {
-  const [openSchool, setOpenSchool] = useState(null);
+function DmvMap({ onOpenSchool }) {
   const mapSchools = useMemo(() => buildMapSchools(), []);
-
-  if (openSchool && SCHOOLS[openSchool]) {
-    return <SchoolDetail school={SCHOOLS[openSchool]} onBack={() => setOpenSchool(null)} onOpenProfile={onOpenProfile} />;
-  }
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
@@ -2214,7 +2209,7 @@ function DmvMap({ onOpenProfile }) {
           </div>
         }
       >
-        <ProspectMap schools={mapSchools} onSelectSchool={(s) => setOpenSchool(s.id)} />
+        <ProspectMap schools={mapSchools} onSelectSchool={(s) => onOpenSchool(s.name)} />
       </Suspense>
 
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
@@ -2555,6 +2550,7 @@ export default function App() {
   // until rankings are authored, so we land users on real content.
   const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
+  const [focusSchool, setFocusSchool] = useState(null); // school to preselect in the Schools workspace (e.g. from a map pin)
   const isMobile = useIsMobile(640);
 
   // Standalone preview of the editorial player card: open #card in the URL.
@@ -2569,7 +2565,7 @@ export default function App() {
   if (!ready) return <LoadingScreen error={error} />;
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
-  const goView = (v) => { setOpenId(null); setView(v); };
+  const goView = (v) => { setOpenId(null); setFocusSchool(null); setView(v); };
   const workspaceSchools = ready ? buildWorkspaceSchools() : [];
   const workspaceTeams = ready ? buildWorkspaceTeams() : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
@@ -2629,9 +2625,9 @@ export default function App() {
         ) : view === "recaps" ? (
           <RecapsFeed recaps={recaps} />
         ) : view === "schools" ? (
-          <SchoolsSection schools={workspaceSchools} onOpenProfile={setOpenId} />
+          <SchoolsSection schools={workspaceSchools} onOpenProfile={setOpenId} focusSchool={focusSchool} />
         ) : view === "map" ? (
-          <DmvMap onOpenProfile={setOpenId} />
+          <DmvMap onOpenSchool={(name) => { setOpenId(null); setFocusSchool(name); setView("schools"); }} />
         ) : view === "classes" ? (
           <Classes onOpen={setOpenId} />
         ) : view === "commitments" ? (

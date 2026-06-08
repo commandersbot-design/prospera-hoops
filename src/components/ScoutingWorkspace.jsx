@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { isGold as isGoldMarked, useGold } from "../lib/goldTier";
 
 /**
@@ -656,7 +656,7 @@ function Empty({ children }) {
 const STATES = ["DC", "MD", "VA"];
 const SORTS = [["az", "A–Z"], ["prospects", "# prospects"], ["tracked", "# tracked"]];
 
-export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
+export function SchoolsSection({ schools: schoolsData, onOpenProfile, focusSchool }) {
   useGold();
   const SCHOOL_DATA = schoolsData && schoolsData.length ? schoolsData : SEED_SCHOOLS;
   const state = useFacet(STATES);
@@ -665,6 +665,8 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile }) {
   const [sort, setSort] = useState("az");
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState("DeMatha Catholic");
+  // Deep-link: when a map pin (or other surface) requests a school, select it.
+  useEffect(() => { if (focusSchool) setSelected(focusSchool); }, [focusSchool]);
 
   const schools = useMemo(() => {
     const k = q.trim().toLowerCase();

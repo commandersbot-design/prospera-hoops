@@ -87,7 +87,7 @@ function popupHTML(s) {
       ${s.city ? `<div class="${styles.cardLine}"><span>${esc(s.city)}</span></div>` : ""}
       <div class="${styles.cardLine}">Players in database <b>${s.prospects}</b></div>
       ${top}
-      <a class="${styles.cardCta}" href="#" data-roster="${esc(s.id)}">View roster →</a>
+      <a class="${styles.cardCta}" href="#" data-roster="${esc(s.id)}">${s.prospects > 0 ? "View roster" : "Open school"} →</a>
     </div>
   </div>`;
 }
