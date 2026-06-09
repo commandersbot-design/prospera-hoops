@@ -154,6 +154,13 @@ function officialSchoolName(key) {
 let SCHOOLS = {};
 let SCHOOL_LOCATIONS = {}; // { schoolName: { lat, lng, state, county } }
 let DMV_DIRECTORY = [];    // master DMV school directory (scraped from MaxPreps)
+let GAME_LOGS = {};        // { nameKey: { name, slug, games:[...] } } — per-game box scores
+
+// Per-game game log for a prospect (matched by name), newest game first.
+function gameLogFor(name) {
+  const g = GAME_LOGS[nameKey(name)];
+  return g && Array.isArray(g.games) ? g.games : [];
+}
 
 // Populate the module-level stores from the fetched datasets. Called once,
 // before the app renders.
@@ -803,6 +810,7 @@ function RelatedPlayers({ prospect, onOpen }) {
 
 function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
+  const [claimOpen, setClaimOpen] = useState(false);
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
   const gold = useGold();
@@ -853,12 +861,33 @@ function Profile({ prospect, onBack, onOpen }) {
           >
             {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
           </button>
+          {/* Public profile claiming — SCAFFOLD ONLY. Real claim/verify needs
+              accounts + a backend (owner-decision); this surfaces the IA and an
+              honest "coming soon" path without faking a claim flow. */}
+          <button
+            type="button"
+            onClick={() => setClaimOpen((v) => !v)}
+            title="Player or parent? Claim & verify this profile."
+            style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, borderRadius: 6, padding: "7px 12px", cursor: "pointer", color: T.textDim, background: "transparent", border: `1px solid ${T.border}` }}
+          >
+            Claim profile
+          </button>
         </div>
       </div>
 
-      {/* Tabs */}
+      {claimOpen && (
+        <div style={{ background: "var(--prospera-accent-bg-faint)", border: `1px dashed ${T.border}`, padding: 16, display: "grid", gap: 6 }}>
+          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>Claim this profile</div>
+          <div style={{ fontSize: 13, color: T.textDim, lineHeight: 1.6, maxWidth: 640 }}>
+            Are you {p.name}, a parent, or their coach? Player profile claiming &amp; verification is launching soon — it'll let you confirm your info and add film. In the meantime, our scouts maintain this profile; to request a correction, reach out via the contact link in the footer.
+          </div>
+          <div style={{ ...mono, fontSize: 9, letterSpacing: "0.08em", color: T.textMute, textTransform: "uppercase" }}>Coming soon · accounts &amp; verification in progress</div>
+        </div>
+      )}
+
+      {/* Tabs — Game Log appears only when we have per-game box scores. */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
-        {PROFILE_TABS.map((t) => {
+        {["Overview", ...(gameLogFor(p.name).length ? ["Game Log"] : []), "Film"].map((t) => {
           const active = tab === t;
           return (
             <button
@@ -912,7 +941,68 @@ function Profile({ prospect, onBack, onOpen }) {
           <RelatedPlayers prospect={p} onOpen={onOpen} />
         </div>
       )}
+      {tab === "Game Log" && <GameLogTab name={p.name} />}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
+    </div>
+  );
+}
+
+// Per-game game log — the longitudinal box-score view. Real per-game lines
+// scraped from the player's Capitol Hoops page (scripts/scrape-player-gamelogs).
+function GameLogTab({ name }) {
+  const games = gameLogFor(name);
+  if (!games.length) return <div style={{ ...mono, fontSize: 12, color: T.textMute, padding: 20 }}>No game log available yet.</div>;
+  const COLS = [
+    ["pts", "PTS"], ["reb", "REB"], ["ast", "AST"], ["stl", "STL"], ["blk", "BLK"], ["to", "TO"],
+  ];
+  const fmtShot = (m, a) => (a ? `${m ?? 0}-${a ?? 0}` : "—");
+  const avg = (k) => (games.reduce((s, g) => s + (g[k] || 0), 0) / games.length).toFixed(1);
+  const th = { ...mono, fontSize: 10, letterSpacing: "0.1em", color: T.textMute, textTransform: "uppercase", padding: "8px 10px", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap" };
+  const td = { ...mono, fontSize: 12, color: T.text, padding: "8px 10px", textAlign: "right", fontVariantNumeric: "tabular-nums" };
+  return (
+    <div style={{ display: "grid", gap: 10 }}>
+      <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
+        Capitol Hoops Summer League · {games.length} game{games.length === 1 ? "" : "s"} · per-game box scores
+      </div>
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
+          <thead>
+            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+              <th style={{ ...th, textAlign: "left" }}>Date</th>
+              <th style={{ ...th, textAlign: "left" }}>Opponent</th>
+              <th style={{ ...th, textAlign: "left" }}>Result</th>
+              {COLS.map(([k, l]) => <th key={k} style={{ ...th, color: k === "pts" ? T.accent : T.textMute }}>{l}</th>)}
+              <th style={th}>FG</th><th style={th}>3P</th><th style={th}>FT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {games.map((g, i) => {
+              const win = /^w/i.test(g.result || "");
+              return (
+                <tr key={i} style={{ borderBottom: `1px solid ${T.borderSoft}`, background: i % 2 ? "var(--prospera-surface-2)" : "transparent" }}>
+                  <td style={{ ...td, textAlign: "left", color: T.textDim, whiteSpace: "nowrap" }}>{g.date}</td>
+                  <td style={{ ...td, textAlign: "left", color: T.text, whiteSpace: "nowrap" }}>{g.opp || "—"}</td>
+                  <td style={{ ...td, textAlign: "left", color: win ? T.positive : T.textDim, whiteSpace: "nowrap" }}>{g.result || "—"}</td>
+                  {COLS.map(([k]) => <td key={k} style={{ ...td, color: k === "pts" ? T.accent : T.text, fontWeight: k === "pts" ? 700 : 400 }}>{g[k] ?? 0}</td>)}
+                  <td style={td}>{fmtShot(g.fgm, g.fga)}</td>
+                  <td style={td}>{fmtShot(g.tpm, g.tpa)}</td>
+                  <td style={td}>{fmtShot(g.ftm, g.fta)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+          {games.length > 1 && (
+            <tfoot>
+              <tr style={{ borderTop: `2px solid ${T.border}` }}>
+                <td style={{ ...td, textAlign: "left", color: T.textMute, textTransform: "uppercase", letterSpacing: "0.08em", fontSize: 10 }}>Avg</td>
+                <td style={td} /><td style={td} />
+                {COLS.map(([k]) => <td key={k} style={{ ...td, color: k === "pts" ? T.accent : T.textDim, fontWeight: 700 }}>{avg(k)}</td>)}
+                <td style={td} /><td style={td} /><td style={td} />
+              </tr>
+            </tfoot>
+          )}
+        </table>
+      </div>
     </div>
   );
 }
@@ -2356,8 +2446,9 @@ export default function App() {
       fetch("/data/schoolLocations.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
       fetch("/data/gameRecaps.json").then((r) => (r.ok ? r.json() : { recaps: [] })).catch(() => ({ recaps: [] })),
       fetch("/data/dmvSchools.json").then((r) => (r.ok ? r.json() : { schools: [] })).catch(() => ({ schools: [] })),
+      fetch("/data/gameLogs.json").then((r) => (r.ok ? r.json() : { players: {} })).catch(() => ({ players: {} })),
     ])
-      .then(([prospects, ch, locations, gameRecaps, dmv]) => { initData(prospects, ch, locations); DMV_DIRECTORY = dmv.schools || []; setRecaps(gameRecaps.recaps || []); setReady(true); })
+      .then(([prospects, ch, locations, gameRecaps, dmv, logs]) => { initData(prospects, ch, locations); DMV_DIRECTORY = dmv.schools || []; GAME_LOGS = logs.players || {}; setRecaps(gameRecaps.recaps || []); setReady(true); })
       .catch((e) => setError(e.message));
   }, []);
 
