@@ -2,7 +2,7 @@
   "_README": "Capitol Hoops Summer League team + player + stat data. Auto-scraped from capitolhoopssummerleague.com via scripts/scrape-capitol-hoops.mjs. 2026 season. Keyed by team slug; each player merges roster bio + season stats.",
   "_source": "https://capitolhoopssummerleague.com",
   "_note": "Player social handles are from the public source pages — review privacy posture before surfacing in public UI. Stats are small-sample (summer league). Re-run the scraper to refresh.",
-  "_scrapedAt": "2026-06-08T13:32:19.488Z",
+  "_scrapedAt": "2026-06-09T12:51:04.829Z",
   "teams": {
     "annapolis-area-christian": {
       "slug": "annapolis-area-christian",
@@ -1378,15 +1378,15 @@
             "instagram": "officialauss_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 36.2,
-            "ftPct": 94.1,
-            "threePct": 18.2,
-            "rpg": 5.3,
-            "apg": 2.5,
-            "spg": 0.5,
+            "gp": 6,
+            "fgPct": 37.5,
+            "ftPct": 91.3,
+            "threePct": 25,
+            "rpg": 5.5,
+            "apg": 2.8,
+            "spg": 0.8,
             "bpg": 0,
-            "ppg": 13.5
+            "ppg": 16
           }
         },
         {
@@ -1422,15 +1422,15 @@
             "instagram": "themichaeleyasu"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 44,
-            "ftPct": 80,
-            "threePct": 16.7,
-            "rpg": 4.3,
-            "apg": 1,
-            "spg": 1,
-            "bpg": 0.3,
-            "ppg": 9
+            "gp": 5,
+            "fgPct": 44.8,
+            "ftPct": 77.8,
+            "threePct": 28.6,
+            "rpg": 4.2,
+            "apg": 0.6,
+            "spg": 0.6,
+            "bpg": 0.2,
+            "ppg": 7
           }
         },
         {
@@ -1444,15 +1444,15 @@
             "instagram": "b_mcqueen8"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 38.9,
+            "gp": 6,
+            "fgPct": 32.1,
             "ftPct": 50,
-            "threePct": 45.5,
-            "rpg": 2.5,
-            "apg": 0.3,
-            "spg": 0.5,
+            "threePct": 27.8,
+            "rpg": 2.3,
+            "apg": 0.5,
+            "spg": 0.3,
             "bpg": 0,
-            "ppg": 5.3
+            "ppg": 4.2
           }
         },
         {
@@ -1488,15 +1488,15 @@
             "instagram": "samuel_eyasu22"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 44.4,
+            "gp": 4,
+            "fgPct": 40,
             "ftPct": 28.6,
             "threePct": 0,
-            "rpg": 2,
+            "rpg": 2.3,
             "apg": 0,
-            "spg": 1,
+            "spg": 0.8,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 2.5
           }
         },
         {
@@ -1510,15 +1510,15 @@
             "instagram": "1of1lxnnie.__"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 63.6,
+            "gp": 6,
+            "fgPct": 55,
             "ftPct": 0,
-            "threePct": 0,
-            "rpg": 2.3,
-            "apg": 0.8,
+            "threePct": 50,
+            "rpg": 4.8,
+            "apg": 1,
             "spg": 0.3,
-            "bpg": 0.8,
-            "ppg": 3.5
+            "bpg": 0.7,
+            "ppg": 3.8
           }
         },
         {
@@ -1598,15 +1598,15 @@
             "instagram": "grant.puff"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 90.9,
             "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 7,
-            "apg": 0.5,
+            "rpg": 4.7,
+            "apg": 0.3,
             "spg": 0,
-            "bpg": 1,
-            "ppg": 11
+            "bpg": 0.7,
+            "ppg": 7.3
           }
         },
         {
@@ -1739,15 +1739,15 @@
             "instagram": "maxd.2030"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
-            "ftPct": 83.3,
+            "gp": 6,
+            "fgPct": 29.4,
+            "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 2.8,
-            "apg": 1,
-            "spg": 0,
-            "bpg": 0.8,
-            "ppg": 3.3
+            "rpg": 2.7,
+            "apg": 1.3,
+            "spg": 0.5,
+            "bpg": 0.7,
+            "ppg": 3
           }
         },
         {
@@ -1805,15 +1805,15 @@
             "instagram": "bmcloud23"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 47.6,
-            "ftPct": 66.7,
-            "threePct": 33.3,
+            "gp": 7,
+            "fgPct": 51.9,
+            "ftPct": 60,
+            "threePct": 43.8,
             "rpg": 3,
-            "apg": 2.2,
-            "spg": 1.8,
-            "bpg": 0.2,
-            "ppg": 5.2
+            "apg": 2.1,
+            "spg": 1.6,
+            "bpg": 0.1,
+            "ppg": 5.4
           }
         },
         {
@@ -1849,15 +1849,15 @@
             "instagram": "lucasgregory.11"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 46.7,
+            "gp": 7,
+            "fgPct": 41.7,
             "ftPct": 33.3,
-            "threePct": 14.3,
-            "rpg": 1.8,
-            "apg": 0.4,
-            "spg": 0.6,
+            "threePct": 11.1,
+            "rpg": 1.9,
+            "apg": 0.7,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 3.2
+            "ppg": 3.1
           }
         },
         {
@@ -1871,15 +1871,15 @@
             "instagram": "slim_stem2009"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 22.2,
-            "ftPct": 33.3,
-            "threePct": 16.7,
+            "gp": 7,
+            "fgPct": 25,
+            "ftPct": 40,
+            "threePct": 14.3,
             "rpg": 1,
-            "apg": 0.2,
-            "spg": 0,
-            "bpg": 1,
-            "ppg": 1.2
+            "apg": 0.3,
+            "spg": 0.1,
+            "bpg": 1.1,
+            "ppg": 1.3
           }
         },
         {
@@ -1893,15 +1893,15 @@
             "instagram": "44.harr1s"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 25,
+            "gp": 7,
+            "fgPct": 26.1,
             "ftPct": 0,
-            "threePct": 26.7,
-            "rpg": 2,
-            "apg": 0.2,
+            "threePct": 25,
+            "rpg": 1.4,
+            "apg": 0.3,
             "spg": 0.4,
-            "bpg": 0,
-            "ppg": 2.8
+            "bpg": 0.3,
+            "ppg": 2.3
           }
         },
         {
@@ -1915,14 +1915,14 @@
             "instagram": "slickwitdashifts"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0,
-            "apg": 0,
-            "spg": 0.3,
-            "bpg": 0,
+            "rpg": 0.3,
+            "apg": 0.3,
+            "spg": 0.5,
+            "bpg": 0.3,
             "ppg": 0
           }
         },
@@ -1937,15 +1937,15 @@
             "instagram": "liamsabo11"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 42.6,
-            "ftPct": 100,
-            "threePct": 31,
-            "rpg": 10.6,
+            "gp": 7,
+            "fgPct": 41.4,
+            "ftPct": 92.3,
+            "threePct": 29.7,
+            "rpg": 9.6,
             "apg": 1.4,
-            "spg": 1.4,
-            "bpg": 1,
-            "ppg": 14.4
+            "spg": 1.3,
+            "bpg": 0.9,
+            "ppg": 13.7
           }
         },
         {
@@ -1959,7 +1959,7 @@
             "instagram": "michaelpetersongolf"
           },
           "stats": {
-            "gp": 0,
+            "gp": 1,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
@@ -2003,15 +2003,15 @@
             "instagram": "cooper.jorgensen"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 16.7,
+            "gp": 7,
+            "fgPct": 42.9,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 3,
-            "apg": 0,
+            "rpg": 3.9,
+            "apg": 0.3,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0.4
+            "ppg": 1.7
           }
         },
         {
@@ -2025,15 +2025,15 @@
             "instagram": "frankiebassette_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 0,
-            "ftPct": 0,
-            "threePct": 0,
-            "rpg": 0.3,
+            "gp": 6,
+            "fgPct": 18.2,
+            "ftPct": 85.7,
+            "threePct": 9.1,
+            "rpg": 0.7,
             "apg": 0.3,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 0
+            "ppg": 2.5
           }
         },
         {
@@ -2047,13 +2047,13 @@
             "instagram": "cole_schabow_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 23.8,
+            "gp": 6,
+            "fgPct": 23.7,
             "ftPct": 50,
-            "threePct": 9.1,
-            "rpg": 2.8,
+            "threePct": 10.5,
+            "rpg": 2.7,
             "apg": 1,
-            "spg": 0,
+            "spg": 0.3,
             "bpg": 0,
             "ppg": 4.3
           }
@@ -2100,15 +2100,15 @@
             "instagram": "2smooth2xx"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 26.7,
+            "gp": 3,
+            "fgPct": 20,
             "ftPct": 75,
-            "threePct": 25,
-            "rpg": 3.5,
+            "threePct": 18.2,
+            "rpg": 4.7,
             "apg": 2,
-            "spg": 0,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 7.5
+            "ppg": 6
           }
         },
         {
@@ -2144,15 +2144,15 @@
             "instagram": "khinxtup1"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 30.6,
+            "gp": 5,
+            "fgPct": 34.1,
             "ftPct": 50,
-            "threePct": 33.3,
-            "rpg": 4.8,
-            "apg": 1.5,
-            "spg": 0.3,
+            "threePct": 25,
+            "rpg": 4.2,
+            "apg": 1.6,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 7.3
+            "ppg": 7
           }
         },
         {
@@ -2166,15 +2166,15 @@
             "instagram": "tguidry0610"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 32.7,
-            "ftPct": 50,
-            "threePct": 24.1,
-            "rpg": 5.3,
-            "apg": 1.5,
-            "spg": 0.8,
+            "gp": 5,
+            "fgPct": 35.6,
+            "ftPct": 60,
+            "threePct": 31.6,
+            "rpg": 4.4,
+            "apg": 2,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 12.5
+            "ppg": 14.4
           }
         },
         {
@@ -2188,15 +2188,15 @@
             "instagram": "chase.down_kai"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 22.2,
+            "gp": 5,
+            "fgPct": 17.4,
             "ftPct": 0,
-            "threePct": 50,
-            "rpg": 1.5,
-            "apg": 0.8,
-            "spg": 0.5,
+            "threePct": 28.6,
+            "rpg": 1.4,
+            "apg": 0.6,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 2.3
+            "ppg": 1.8
           }
         },
         {
@@ -2210,15 +2210,15 @@
             "instagram": "mattmcandr.3"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 37.5,
+            "gp": 3,
+            "fgPct": 40,
             "ftPct": 100,
-            "threePct": 42.9,
-            "rpg": 1.5,
-            "apg": 0.5,
-            "spg": 0.5,
+            "threePct": 37.5,
+            "rpg": 1.3,
+            "apg": 0.3,
+            "spg": 0.3,
             "bpg": 0,
-            "ppg": 5.5
+            "ppg": 4.3
           }
         },
         {
@@ -2232,15 +2232,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 40,
-            "ftPct": 0,
+            "gp": 2,
+            "fgPct": 30,
+            "ftPct": 50,
             "threePct": 100,
-            "rpg": 7,
+            "rpg": 4.5,
             "apg": 0,
-            "spg": 1,
+            "spg": 0.5,
             "bpg": 0,
-            "ppg": 5
+            "ppg": 4
           }
         },
         {
@@ -2254,14 +2254,14 @@
             "instagram": "yk.elias1"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 14.3,
+            "gp": 4,
+            "fgPct": 15.8,
             "ftPct": 100,
-            "threePct": 14.3,
-            "rpg": 4.7,
-            "apg": 1,
+            "threePct": 10,
+            "rpg": 5,
+            "apg": 1.5,
             "spg": 0,
-            "bpg": 0.3,
+            "bpg": 0.5,
             "ppg": 2.3
           }
         },
@@ -2276,15 +2276,15 @@
             "instagram": "1ylerbrown"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 14.3,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 0.5,
+            "rpg": 1.2,
+            "apg": 0.4,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0.8
+            "ppg": 0.6
           }
         },
         {
@@ -2298,15 +2298,15 @@
             "instagram": "noah.valenti"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 62.5,
-            "ftPct": 50,
+            "gp": 4,
+            "fgPct": 70,
+            "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 4,
-            "apg": 0.7,
-            "spg": 0.7,
+            "rpg": 4.3,
+            "apg": 0.5,
+            "spg": 0.5,
             "bpg": 0.3,
-            "ppg": 3.7
+            "ppg": 4
           }
         },
         {
@@ -2320,15 +2320,15 @@
             "instagram": "tommy.52.fish"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 38.7,
-            "ftPct": 52.9,
+            "gp": 5,
+            "fgPct": 42.9,
+            "ftPct": 58.3,
             "threePct": 0,
-            "rpg": 7.3,
-            "apg": 0,
-            "spg": 1,
-            "bpg": 1.5,
-            "ppg": 8.3
+            "rpg": 8,
+            "apg": 0.2,
+            "spg": 0.8,
+            "bpg": 1.4,
+            "ppg": 10
           }
         }
       ]
@@ -3280,15 +3280,15 @@
             "instagram": "_rylangraves"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 25,
-            "ftPct": 42.9,
-            "threePct": 11.1,
-            "rpg": 2.2,
-            "apg": 1,
-            "spg": 3.8,
+            "gp": 7,
+            "fgPct": 26.2,
+            "ftPct": 51.9,
+            "threePct": 7.7,
+            "rpg": 2.3,
+            "apg": 0.9,
+            "spg": 3.4,
             "bpg": 0.3,
-            "ppg": 4.3
+            "ppg": 5.3
           }
         },
         {
@@ -3324,11 +3324,11 @@
             "instagram": "dmv.kumail"
           },
           "stats": {
-            "gp": 5,
+            "gp": 6,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0.8,
+            "rpg": 0.7,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
@@ -3390,15 +3390,15 @@
             "instagram": "naveenlivezey"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 53.8,
-            "ftPct": 25,
-            "threePct": 66.7,
-            "rpg": 3,
-            "apg": 4.5,
-            "spg": 3,
+            "gp": 3,
+            "fgPct": 60,
+            "ftPct": 40,
+            "threePct": 60,
+            "rpg": 3.3,
+            "apg": 3.3,
+            "spg": 2.3,
             "bpg": 0,
-            "ppg": 8.5
+            "ppg": 9.7
           }
         },
         {
@@ -3412,15 +3412,15 @@
             "instagram": "b3nmontg"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 20,
             "ftPct": 0,
             "threePct": 50,
-            "rpg": 0.8,
-            "apg": 0.3,
-            "spg": 0.5,
-            "bpg": 0.5,
-            "ppg": 1.3
+            "rpg": 0.6,
+            "apg": 0.4,
+            "spg": 0.4,
+            "bpg": 0.4,
+            "ppg": 1
           }
         },
         {
@@ -3434,15 +3434,15 @@
             "instagram": "Azelxliu"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 33.3,
+            "gp": 7,
+            "fgPct": 25,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 0.2,
+            "rpg": 0.1,
             "apg": 0.3,
-            "spg": 0.2,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 0.5
+            "ppg": 0.4
           }
         },
         {
@@ -3500,7 +3500,7 @@
             "instagram": "wil_fortune"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 18.2,
             "ftPct": 100,
             "threePct": 20,
@@ -3508,7 +3508,7 @@
             "apg": 0,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 1.2
+            "ppg": 1
           }
         },
         {
@@ -3522,15 +3522,15 @@
             "instagram": "arman.moinfar"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 41.7,
+            "gp": 5,
+            "fgPct": 47.1,
             "ftPct": 50,
             "threePct": 50,
-            "rpg": 4.5,
+            "rpg": 3.8,
             "apg": 0,
-            "spg": 0.5,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 3.8
           }
         },
         {
@@ -3544,15 +3544,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 41.2,
+            "gp": 7,
+            "fgPct": 44.4,
             "ftPct": 28.6,
             "threePct": 0,
-            "rpg": 4.3,
-            "apg": 0.2,
-            "spg": 0.2,
+            "rpg": 4.6,
+            "apg": 0.1,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 2.7
+            "ppg": 2.6
           }
         },
         {
@@ -3610,15 +3610,15 @@
             "instagram": "Eric.tk7"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 36.8,
-            "ftPct": 0,
+            "gp": 7,
+            "fgPct": 34.8,
+            "ftPct": 37.5,
             "threePct": 0,
-            "rpg": 2.2,
-            "apg": 0.7,
-            "spg": 1,
-            "bpg": 0.5,
-            "ppg": 2.3
+            "rpg": 2.7,
+            "apg": 0.6,
+            "spg": 0.9,
+            "bpg": 0.4,
+            "ppg": 2.7
           }
         },
         {
@@ -3632,15 +3632,15 @@
             "instagram": "Micael3281129"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 28.6,
+            "gp": 7,
+            "fgPct": 33.3,
             "ftPct": 85.7,
-            "threePct": 30,
-            "rpg": 1.8,
-            "apg": 2,
-            "spg": 0.2,
+            "threePct": 30.8,
+            "rpg": 1.6,
+            "apg": 1.7,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 4.2
+            "ppg": 4.6
           }
         }
       ]
@@ -4231,15 +4231,15 @@
             "instagram": "lortrent5_"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 50,
+            "gp": 7,
+            "fgPct": 46.6,
             "ftPct": 45.8,
-            "threePct": 29.4,
-            "rpg": 2,
-            "apg": 1.7,
-            "spg": 1.8,
-            "bpg": 0,
-            "ppg": 11.3
+            "threePct": 25,
+            "rpg": 2.3,
+            "apg": 2,
+            "spg": 1.7,
+            "bpg": 0.1,
+            "ppg": 10
           }
         },
         {
@@ -4275,15 +4275,15 @@
             "instagram": "seth2shiftyy"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 58.8,
-            "ftPct": 61.1,
-            "threePct": 56,
-            "rpg": 2.7,
-            "apg": 3.7,
-            "spg": 2.3,
-            "bpg": 0.2,
-            "ppg": 14.2
+            "gp": 7,
+            "fgPct": 57.6,
+            "ftPct": 68.2,
+            "threePct": 53.6,
+            "rpg": 2.9,
+            "apg": 3.6,
+            "spg": 2.7,
+            "bpg": 0.1,
+            "ppg": 14
           }
         },
         {
@@ -4297,15 +4297,15 @@
             "instagram": "__elijahglass"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 47.6,
-            "ftPct": 68.8,
-            "threePct": 33.3,
-            "rpg": 3.2,
-            "apg": 1.5,
-            "spg": 0.5,
-            "bpg": 0,
-            "ppg": 5.5
+            "gp": 7,
+            "fgPct": 48.4,
+            "ftPct": 64.7,
+            "threePct": 25,
+            "rpg": 3.3,
+            "apg": 1.4,
+            "spg": 0.4,
+            "bpg": 0.1,
+            "ppg": 6.1
           }
         },
         {
@@ -4319,15 +4319,15 @@
             "instagram": "1huncho.e"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 50,
-            "ftPct": 80.8,
-            "threePct": 38.7,
-            "rpg": 6.5,
-            "apg": 2.2,
-            "spg": 0.5,
+            "gp": 7,
+            "fgPct": 47.8,
+            "ftPct": 77.4,
+            "threePct": 38.2,
+            "rpg": 6.1,
+            "apg": 1.9,
+            "spg": 0.6,
             "bpg": 0.3,
-            "ppg": 18.2
+            "ppg": 17.6
           }
         },
         {
@@ -4341,15 +4341,15 @@
             "instagram": "n0bounce_zeke24"
           },
           "stats": {
-            "gp": 5,
+            "gp": 6,
             "fgPct": 33.3,
             "ftPct": 15.4,
             "threePct": 0,
-            "rpg": 4,
-            "apg": 0.4,
-            "spg": 0.6,
-            "bpg": 0.4,
-            "ppg": 2
+            "rpg": 3.5,
+            "apg": 0.3,
+            "spg": 0.5,
+            "bpg": 0.3,
+            "ppg": 1.7
           }
         },
         {
@@ -4363,15 +4363,15 @@
             "instagram": "hundonef"
           },
           "stats": {
-            "gp": 0,
-            "fgPct": 0,
-            "ftPct": 0,
-            "threePct": 0,
-            "rpg": 0,
-            "apg": 0,
-            "spg": 0,
-            "bpg": 0,
-            "ppg": 0
+            "gp": 1,
+            "fgPct": 53.3,
+            "ftPct": 100,
+            "threePct": 40,
+            "rpg": 10,
+            "apg": 1,
+            "spg": 1,
+            "bpg": 1,
+            "ppg": 19
           }
         },
         {
@@ -4407,15 +4407,15 @@
             "instagram": "sean_hjones"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 31.3,
+            "gp": 7,
+            "fgPct": 36.4,
             "ftPct": 0,
-            "threePct": 22.2,
-            "rpg": 1.8,
-            "apg": 0.7,
-            "spg": 0.3,
-            "bpg": 0.3,
-            "ppg": 2
+            "threePct": 30.8,
+            "rpg": 2,
+            "apg": 0.6,
+            "spg": 0.4,
+            "bpg": 0.4,
+            "ppg": 2.9
           }
         },
         {
@@ -4472,6 +4472,28 @@
           }
         },
         {
+          "number": 1,
+          "name": "Taj Jagne",
+          "position": "6'0",
+          "height": null,
+          "classYear": null,
+          "social": {
+            "twitter": null,
+            "instagram": null
+          },
+          "stats": {
+            "gp": 1,
+            "fgPct": 25,
+            "ftPct": 0,
+            "threePct": 14.3,
+            "rpg": 3,
+            "apg": 1,
+            "spg": 0,
+            "bpg": 0,
+            "ppg": 7
+          }
+        },
+        {
           "number": 2,
           "name": "Nick Perry",
           "position": "G",
@@ -4482,15 +4504,15 @@
             "instagram": "nickperry._"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 30.2,
-            "ftPct": 63,
-            "threePct": 18.2,
-            "rpg": 2.8,
-            "apg": 0.8,
-            "spg": 1.5,
+            "gp": 7,
+            "fgPct": 33.3,
+            "ftPct": 63.6,
+            "threePct": 16,
+            "rpg": 2.9,
+            "apg": 1,
+            "spg": 1.4,
             "bpg": 0,
-            "ppg": 10.8
+            "ppg": 11.9
           }
         },
         {
@@ -4504,15 +4526,15 @@
             "instagram": "_"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 33.3,
-            "ftPct": 83.3,
-            "threePct": 35,
-            "rpg": 3,
-            "apg": 2.2,
-            "spg": 0.5,
-            "bpg": 0.2,
-            "ppg": 8.3
+            "gp": 7,
+            "fgPct": 34.8,
+            "ftPct": 85,
+            "threePct": 34.8,
+            "rpg": 2.9,
+            "apg": 1.9,
+            "spg": 0.4,
+            "bpg": 0.1,
+            "ppg": 8.1
           }
         },
         {
@@ -4526,15 +4548,15 @@
             "instagram": "jadenbattle4"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 10,
+            "gp": 4,
+            "fgPct": 9.1,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1.7,
-            "apg": 0,
+            "rpg": 1.5,
+            "apg": 0.3,
             "spg": 0,
             "bpg": 0.3,
-            "ppg": 0.7
+            "ppg": 0.5
           }
         },
         {
@@ -4548,15 +4570,15 @@
             "instagram": "blakewashington5_"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 35.4,
-            "ftPct": 58.3,
-            "threePct": 33.3,
-            "rpg": 5.2,
+            "gp": 7,
+            "fgPct": 35.8,
+            "ftPct": 47.4,
+            "threePct": 38.5,
+            "rpg": 5,
             "apg": 0.3,
-            "spg": 0.8,
-            "bpg": 0.2,
-            "ppg": 7.5
+            "spg": 1,
+            "bpg": 0.1,
+            "ppg": 7.4
           }
         },
         {
@@ -4614,15 +4636,15 @@
             "instagram": "_jay7k_"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 100,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 3.7,
+            "rpg": 3.1,
             "apg": 0.3,
             "spg": 0.3,
-            "bpg": 0.5,
-            "ppg": 1
+            "bpg": 0.4,
+            "ppg": 1.1
           }
         },
         {
@@ -4636,15 +4658,15 @@
             "instagram": "_fww.dre"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 66.7,
-            "ftPct": 55.6,
+            "gp": 7,
+            "fgPct": 72,
+            "ftPct": 54.5,
             "threePct": 0,
-            "rpg": 4.5,
-            "apg": 0.2,
-            "spg": 0.2,
-            "bpg": 0.8,
-            "ppg": 4.8
+            "rpg": 4.7,
+            "apg": 0.1,
+            "spg": 0.1,
+            "bpg": 0.7,
+            "ppg": 6
           }
         },
         {
@@ -4680,15 +4702,15 @@
             "instagram": "theekingjoe.23"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 31.8,
+            "gp": 6,
+            "fgPct": 33.3,
             "ftPct": 50,
-            "threePct": 26.7,
-            "rpg": 1.6,
+            "threePct": 27.8,
+            "rpg": 1.5,
             "apg": 0,
-            "spg": 0.6,
+            "spg": 0.7,
             "bpg": 0,
-            "ppg": 3.8
+            "ppg": 4
           }
         },
         {
@@ -4746,13 +4768,13 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 35.5,
+            "gp": 7,
+            "fgPct": 37.1,
             "ftPct": 25,
             "threePct": 20,
-            "rpg": 3.3,
-            "apg": 0,
-            "spg": 0.8,
+            "rpg": 3.7,
+            "apg": 0.1,
+            "spg": 0.7,
             "bpg": 0.3,
             "ppg": 4.3
           }
@@ -4777,15 +4799,15 @@
             "instagram": "luh_dent"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 22.2,
+            "gp": 5,
+            "fgPct": 20,
             "ftPct": 57.1,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 2,
-            "spg": 0.8,
-            "bpg": 0.3,
-            "ppg": 3
+            "rpg": 1.4,
+            "apg": 1.8,
+            "spg": 0.6,
+            "bpg": 0.2,
+            "ppg": 2.4
           }
         },
         {
@@ -4821,14 +4843,14 @@
             "instagram": "c1yde25"
           },
           "stats": {
-            "gp": 5,
+            "gp": 6,
             "fgPct": 0,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 2,
-            "apg": 0.6,
+            "rpg": 1.7,
+            "apg": 0.5,
             "spg": 0.2,
-            "bpg": 0.4,
+            "bpg": 0.3,
             "ppg": 0.2
           }
         },
@@ -4865,15 +4887,15 @@
             "instagram": "dreamchaser.hq11"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 25,
-            "ftPct": 100,
-            "threePct": 12.5,
-            "rpg": 2.7,
-            "apg": 0.3,
+            "gp": 4,
+            "fgPct": 29.2,
+            "ftPct": 87.5,
+            "threePct": 20,
+            "rpg": 2.8,
+            "apg": 1.3,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 5
+            "ppg": 5.8
           }
         },
         {
@@ -4887,15 +4909,15 @@
             "instagram": "bryson_rll"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 32.4,
-            "ftPct": 60,
+            "gp": 8,
+            "fgPct": 34.1,
+            "ftPct": 69.2,
             "threePct": 0,
             "rpg": 3.6,
-            "apg": 1.6,
-            "spg": 1,
-            "bpg": 0.1,
-            "ppg": 5.1
+            "apg": 1.4,
+            "spg": 0.9,
+            "bpg": 0.3,
+            "ppg": 5.8
           }
         },
         {
@@ -4931,15 +4953,15 @@
             "instagram": "Jon_inchrist"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 40,
+            "gp": 7,
+            "fgPct": 45.8,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 2,
-            "apg": 0.8,
-            "spg": 0.5,
+            "rpg": 2.3,
+            "apg": 0.7,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 3.2
+            "ppg": 3.6
           }
         },
         {
@@ -4975,15 +4997,15 @@
             "instagram": "gianii13"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 25,
+            "gp": 8,
+            "fgPct": 23.9,
             "ftPct": 42.9,
             "threePct": 0,
-            "rpg": 4.6,
-            "apg": 0.7,
+            "rpg": 4.3,
+            "apg": 0.6,
             "spg": 0.1,
             "bpg": 0.1,
-            "ppg": 4
+            "ppg": 3.5
           }
         },
         {
@@ -6243,15 +6265,15 @@
             "instagram": "kayden.30leggett"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 31,
-            "ftPct": 77.8,
-            "threePct": 15,
-            "rpg": 4.8,
-            "apg": 0.8,
-            "spg": 1.5,
+            "gp": 5,
+            "fgPct": 38.5,
+            "ftPct": 82.6,
+            "threePct": 17.4,
+            "rpg": 4.2,
+            "apg": 1.4,
+            "spg": 1.2,
             "bpg": 0,
-            "ppg": 10.8
+            "ppg": 12.6
           }
         },
         {
@@ -6331,15 +6353,15 @@
             "instagram": "Underrated.mkai"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 57.5,
+            "gp": 5,
+            "fgPct": 60,
             "ftPct": 71.4,
-            "threePct": 16.7,
-            "rpg": 5.8,
-            "apg": 2.5,
-            "spg": 1,
-            "bpg": 0.3,
-            "ppg": 16.8
+            "threePct": 12.5,
+            "rpg": 5.2,
+            "apg": 3.2,
+            "spg": 1.6,
+            "bpg": 0.2,
+            "ppg": 16.2
           }
         },
         {
@@ -6419,15 +6441,15 @@
             "instagram": "tyler.thomas8"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 43.8,
+            "gp": 5,
+            "fgPct": 50,
             "ftPct": 50,
-            "threePct": 20,
-            "rpg": 2.5,
-            "apg": 0.5,
-            "spg": 0.3,
+            "threePct": 28.6,
+            "rpg": 2.6,
+            "apg": 0.6,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 4
+            "ppg": 4.8
           }
         },
         {
@@ -6463,15 +6485,15 @@
             "instagram": "Shawndupont_28"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 30,
-            "ftPct": 85.2,
-            "threePct": 31.3,
-            "rpg": 6.4,
-            "apg": 0.4,
-            "spg": 1,
-            "bpg": 0.6,
-            "ppg": 11.6
+            "gp": 6,
+            "fgPct": 30.9,
+            "ftPct": 81.8,
+            "threePct": 30.4,
+            "rpg": 6.7,
+            "apg": 0.8,
+            "spg": 1.3,
+            "bpg": 0.5,
+            "ppg": 12.7
           }
         },
         {
@@ -6485,15 +6507,15 @@
             "instagram": "Brandonboyd282"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 66.7,
-            "ftPct": 25,
+            "gp": 6,
+            "fgPct": 62.5,
+            "ftPct": 42.9,
             "threePct": 75,
-            "rpg": 1,
-            "apg": 0.6,
-            "spg": 0.6,
-            "bpg": 0.2,
-            "ppg": 4
+            "rpg": 1.3,
+            "apg": 0.8,
+            "spg": 0.8,
+            "bpg": 0.3,
+            "ppg": 4.3
           }
         },
         {
@@ -6507,15 +6529,15 @@
             "instagram": "idkgeoffrey"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 46.2,
+            "gp": 5,
+            "fgPct": 47.4,
             "ftPct": 40,
-            "threePct": 0,
-            "rpg": 2.5,
-            "apg": 1,
-            "spg": 0.5,
+            "threePct": 100,
+            "rpg": 3.2,
+            "apg": 1.4,
+            "spg": 1.4,
             "bpg": 0,
-            "ppg": 3.5
+            "ppg": 4.4
           }
         },
         {
@@ -6529,15 +6551,15 @@
             "instagram": "michael_g.7"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 100,
+            "gp": 4,
+            "fgPct": 25,
             "ftPct": 50,
-            "threePct": 0,
-            "rpg": 0.7,
-            "apg": 0.3,
-            "spg": 0.3,
+            "threePct": 33.3,
+            "rpg": 1.5,
+            "apg": 0.8,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 1
+            "ppg": 1.5
           }
         }
       ]
@@ -6560,15 +6582,15 @@
             "instagram": "Yun0_lucas"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 50,
-            "ftPct": 0,
+            "gp": 4,
+            "fgPct": 53.8,
+            "ftPct": 100,
             "threePct": 0,
-            "rpg": 1.3,
+            "rpg": 1,
             "apg": 0.3,
             "spg": 1,
             "bpg": 0,
-            "ppg": 2.7
+            "ppg": 4
           }
         },
         {
@@ -6582,15 +6604,15 @@
             "instagram": "_teo.jones"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 48.1,
+            "gp": 6,
+            "fgPct": 51.6,
             "ftPct": 80,
-            "threePct": 42.9,
-            "rpg": 2.6,
-            "apg": 1.4,
+            "threePct": 39.1,
+            "rpg": 2.8,
+            "apg": 1.2,
             "spg": 0,
             "bpg": 0.2,
-            "ppg": 12.6
+            "ppg": 12.8
           }
         },
         {
@@ -6604,13 +6626,13 @@
             "instagram": "sincere_theathelete_"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 28.6,
+            "gp": 6,
+            "fgPct": 29.4,
             "ftPct": 0,
-            "threePct": 22.2,
-            "rpg": 1.6,
-            "apg": 0.8,
-            "spg": 0.4,
+            "threePct": 20,
+            "rpg": 2.2,
+            "apg": 0.7,
+            "spg": 0.3,
             "bpg": 0,
             "ppg": 2
           }
@@ -6626,14 +6648,14 @@
             "instagram": "axtonscott3"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 0,
-            "apg": 0.5,
+            "apg": 0.3,
             "spg": 0,
-            "bpg": 0.5,
+            "bpg": 0.3,
             "ppg": 0
           }
         },
@@ -6648,15 +6670,15 @@
             "instagram": "jbob.williams"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 56.3,
-            "ftPct": 50,
-            "threePct": 50,
-            "rpg": 2.8,
-            "apg": 0.8,
-            "spg": 0,
+            "gp": 5,
+            "fgPct": 50,
+            "ftPct": 75,
+            "threePct": 44.4,
+            "rpg": 3.6,
+            "apg": 1,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 5.8
+            "ppg": 5.4
           }
         },
         {
@@ -6670,15 +6692,15 @@
             "instagram": "khyritomlinson"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 31.3,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 9,
-            "apg": 1,
-            "spg": 1,
+            "rpg": 6.3,
+            "apg": 0.7,
+            "spg": 0.7,
             "bpg": 0,
-            "ppg": 5.5
+            "ppg": 3.7
           }
         },
         {
@@ -6780,15 +6802,15 @@
             "instagram": "aye.camm"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
+            "gp": 5,
+            "fgPct": 40.9,
             "ftPct": 55.6,
-            "threePct": 0,
-            "rpg": 3.3,
-            "apg": 2.3,
-            "spg": 1,
+            "threePct": 16.7,
+            "rpg": 3,
+            "apg": 2,
+            "spg": 0.8,
             "bpg": 0,
-            "ppg": 4.3
+            "ppg": 4.8
           }
         },
         {
@@ -6802,15 +6824,15 @@
             "instagram": "jack.lynch51"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 50,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 3.3,
-            "apg": 1,
+            "rpg": 3.5,
+            "apg": 0.8,
             "spg": 1,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 3.5
           }
         },
         {
@@ -6824,15 +6846,15 @@
             "instagram": "nxrcius"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 28.6,
-            "ftPct": 50,
+            "gp": 6,
+            "fgPct": 35.3,
+            "ftPct": 75,
             "threePct": 50,
-            "rpg": 1.2,
-            "apg": 0.8,
-            "spg": 0.8,
+            "rpg": 1.3,
+            "apg": 0.7,
+            "spg": 0.7,
             "bpg": 0.2,
-            "ppg": 2.2
+            "ppg": 2.8
           }
         },
         {
@@ -6868,15 +6890,15 @@
             "instagram": "cullen_braxton5"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 57.1,
-            "ftPct": 58.3,
-            "threePct": 66.7,
-            "rpg": 1.4,
-            "apg": 0.8,
-            "spg": 0.4,
-            "bpg": 1.8,
-            "ppg": 5
+            "gp": 6,
+            "fgPct": 52.9,
+            "ftPct": 57.1,
+            "threePct": 40,
+            "rpg": 1.7,
+            "apg": 0.7,
+            "spg": 0.3,
+            "bpg": 1.7,
+            "ppg": 4.7
           }
         },
         {
@@ -6890,15 +6912,15 @@
             "instagram": "phinnbonsalle"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 38.2,
-            "ftPct": 76.5,
-            "threePct": 27.3,
-            "rpg": 6.4,
-            "apg": 1.4,
-            "spg": 0.4,
-            "bpg": 0.4,
-            "ppg": 12.2
+            "gp": 6,
+            "fgPct": 39.1,
+            "ftPct": 78.9,
+            "threePct": 28,
+            "rpg": 5.8,
+            "apg": 1.3,
+            "spg": 1.8,
+            "bpg": 1.8,
+            "ppg": 12
           }
         },
         {
@@ -6956,7 +6978,7 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
@@ -6978,15 +7000,15 @@
             "instagram": "peterr.sherm"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 77.8,
-            "ftPct": 69.2,
+            "gp": 5,
+            "fgPct": 75,
+            "ftPct": 70.6,
             "threePct": 0,
-            "rpg": 5.3,
-            "apg": 1.3,
-            "spg": 0.3,
+            "rpg": 4.6,
+            "apg": 1.2,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 9.3
+            "ppg": 8.4
           }
         }
       ]
@@ -7009,15 +7031,15 @@
             "instagram": "carv.tyg"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 27.6,
+            "gp": 8,
+            "fgPct": 29.4,
             "ftPct": 50,
-            "threePct": 28.6,
-            "rpg": 0.7,
-            "apg": 0.7,
+            "threePct": 29,
+            "rpg": 0.9,
+            "apg": 0.6,
             "spg": 0.1,
             "bpg": 0.1,
-            "ppg": 3.6
+            "ppg": 3.8
           }
         },
         {
@@ -7031,15 +7053,15 @@
             "instagram": "im_bizzy_hooping"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 37.2,
-            "ftPct": 50,
-            "threePct": 30.8,
-            "rpg": 6.2,
-            "apg": 1,
-            "spg": 1.8,
+            "gp": 7,
+            "fgPct": 36.7,
+            "ftPct": 45,
+            "threePct": 32.1,
+            "rpg": 5.6,
+            "apg": 1.1,
+            "spg": 2,
             "bpg": 0,
-            "ppg": 8.2
+            "ppg": 7.7
           }
         },
         {
@@ -7053,15 +7075,15 @@
             "instagram": "th3.carterbodiford"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 51.5,
+            "gp": 8,
+            "fgPct": 52.6,
             "ftPct": 100,
-            "threePct": 50,
-            "rpg": 1.4,
-            "apg": 2.3,
-            "spg": 1,
+            "threePct": 45,
+            "rpg": 1.5,
+            "apg": 2.1,
+            "spg": 1.1,
             "bpg": 0,
-            "ppg": 6.3
+            "ppg": 6.4
           }
         },
         {
@@ -7075,15 +7097,15 @@
             "instagram": "yanihoward_"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 33.3,
+            "gp": 7,
+            "fgPct": 31.6,
             "ftPct": 50,
-            "threePct": 20.8,
-            "rpg": 2,
-            "apg": 1.3,
-            "spg": 0.2,
+            "threePct": 18.5,
+            "rpg": 1.9,
+            "apg": 1.1,
+            "spg": 0.3,
             "bpg": 0,
-            "ppg": 4.8
+            "ppg": 4.4
           }
         },
         {
@@ -7163,15 +7185,15 @@
             "instagram": "sam_thompsonn"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 33.3,
-            "ftPct": 62.5,
-            "threePct": 33.3,
-            "rpg": 2.3,
-            "apg": 1.3,
+            "gp": 8,
+            "fgPct": 34.4,
+            "ftPct": 55.6,
+            "threePct": 36.8,
+            "rpg": 2,
+            "apg": 1.1,
             "spg": 0.9,
             "bpg": 0,
-            "ppg": 3.7
+            "ppg": 4.3
           }
         },
         {
@@ -7207,15 +7229,15 @@
             "instagram": "fyi.immason"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 45.5,
-            "ftPct": 33.3,
+            "gp": 8,
+            "fgPct": 41.7,
+            "ftPct": 36.4,
             "threePct": 0,
             "rpg": 2.6,
-            "apg": 0.7,
+            "apg": 0.8,
             "spg": 0.4,
-            "bpg": 0,
-            "ppg": 1.9
+            "bpg": 0.1,
+            "ppg": 1.8
           }
         },
         {
@@ -7229,15 +7251,15 @@
             "instagram": "yoooo.tj"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 44.2,
-            "ftPct": 58.8,
-            "threePct": 16.7,
-            "rpg": 4,
-            "apg": 0.8,
-            "spg": 1.2,
+            "gp": 7,
+            "fgPct": 50,
+            "ftPct": 61.1,
+            "threePct": 14.3,
+            "rpg": 3.6,
+            "apg": 0.7,
+            "spg": 1.1,
             "bpg": 0.3,
-            "ppg": 8.3
+            "ppg": 9.3
           }
         },
         {
@@ -7273,15 +7295,15 @@
             "instagram": "jbancroft_2027"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 37.9,
-            "ftPct": 50,
-            "threePct": 18.2,
-            "rpg": 4.3,
-            "apg": 1.2,
-            "spg": 1.5,
-            "bpg": 0.5,
-            "ppg": 5.3
+            "gp": 7,
+            "fgPct": 47.1,
+            "ftPct": 44.4,
+            "threePct": 25,
+            "rpg": 4.4,
+            "apg": 1,
+            "spg": 1.3,
+            "bpg": 0.6,
+            "ppg": 6.1
           }
         },
         {
@@ -7295,15 +7317,15 @@
             "instagram": "lo.dp23"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 25.9,
+            "gp": 8,
+            "fgPct": 27.6,
             "ftPct": 75,
-            "threePct": 19,
+            "threePct": 18.2,
             "rpg": 2.1,
             "apg": 0.3,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 2.9
           }
         }
       ]
@@ -7590,7 +7612,7 @@
         },
         {
           "number": 5,
-          "name": "Aaden Wathie",
+          "name": "Aaden Waithe",
           "position": "G",
           "height": "6'2",
           "classYear": 2028,
@@ -7599,15 +7621,15 @@
             "instagram": "_aadenwaithe"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 53.3,
-            "ftPct": 33.3,
-            "threePct": 40,
-            "rpg": 4,
-            "apg": 1,
-            "spg": 5,
-            "bpg": 0,
-            "ppg": 20
+            "gp": 6,
+            "fgPct": 52.1,
+            "ftPct": 46.2,
+            "threePct": 50,
+            "rpg": 6.3,
+            "apg": 1.5,
+            "spg": 1,
+            "bpg": 0.7,
+            "ppg": 15.3
           }
         },
         {
@@ -8845,15 +8867,15 @@
             "instagram": "gabethegreat27"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 47.9,
-            "ftPct": 77.1,
-            "threePct": 35.3,
-            "rpg": 8.8,
-            "apg": 2.8,
-            "spg": 4.2,
-            "bpg": 0.8,
-            "ppg": 33.8
+            "gp": 6,
+            "fgPct": 45.1,
+            "ftPct": 76.9,
+            "threePct": 32.8,
+            "rpg": 8.5,
+            "apg": 2.3,
+            "spg": 3.7,
+            "bpg": 0.7,
+            "ppg": 30
           }
         },
         {
@@ -8889,15 +8911,15 @@
             "instagram": "overtime.pj12"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 27.3,
             "ftPct": 0,
             "threePct": 25,
-            "rpg": 2.5,
+            "rpg": 1.7,
             "apg": 0,
             "spg": 0,
-            "bpg": 0.5,
-            "ppg": 3.5
+            "bpg": 0.3,
+            "ppg": 2.3
           }
         },
         {
@@ -8911,15 +8933,15 @@
             "instagram": "c_dub_s"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 6.3,
+            "gp": 6,
+            "fgPct": 5.6,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 2.6,
-            "apg": 2,
-            "spg": 0.8,
+            "rpg": 2.3,
+            "apg": 1.8,
+            "spg": 0.7,
             "bpg": 0,
-            "ppg": 0.4
+            "ppg": 0.3
           }
         },
         {
@@ -8933,15 +8955,37 @@
             "instagram": "Kadengough10"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 31,
-            "ftPct": 55.6,
-            "threePct": 16.7,
-            "rpg": 5.6,
-            "apg": 1.8,
+            "gp": 6,
+            "fgPct": 30.3,
+            "ftPct": 53.8,
+            "threePct": 25,
+            "rpg": 4.8,
+            "apg": 1.5,
             "spg": 1,
-            "bpg": 0.4,
+            "bpg": 0.3,
             "ppg": 4.8
+          }
+        },
+        {
+          "number": 5,
+          "name": "Mark Allen-Shorter",
+          "position": null,
+          "height": null,
+          "classYear": null,
+          "social": {
+            "twitter": null,
+            "instagram": null
+          },
+          "stats": {
+            "gp": 1,
+            "fgPct": 37.5,
+            "ftPct": 0,
+            "threePct": 0,
+            "rpg": 1,
+            "apg": 2,
+            "spg": 1,
+            "bpg": 0,
+            "ppg": 6
           }
         },
         {
@@ -8999,15 +9043,15 @@
             "instagram": "immikailkamara"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 41.7,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 2.5,
-            "apg": 0.5,
-            "spg": 0.5,
+            "rpg": 2,
+            "apg": 0.4,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 2.5
+            "ppg": 2
           }
         },
         {
@@ -9021,15 +9065,15 @@
             "instagram": "a8doul00"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 38.9,
+            "gp": 6,
+            "fgPct": 42.1,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 2.6,
+            "rpg": 2.5,
             "apg": 0,
             "spg": 0.2,
-            "bpg": 0.6,
-            "ppg": 3
+            "bpg": 0.5,
+            "ppg": 2.8
           }
         },
         {
@@ -9043,15 +9087,15 @@
             "instagram": "_mj.2028"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 15.4,
-            "ftPct": 0,
-            "threePct": 0,
-            "rpg": 1,
-            "apg": 3,
+            "gp": 2,
+            "fgPct": 28.6,
+            "ftPct": 50,
+            "threePct": 33.3,
+            "rpg": 1.5,
+            "apg": 1.5,
             "spg": 0,
-            "bpg": 0,
-            "ppg": 4
+            "bpg": 0.5,
+            "ppg": 8.5
           }
         },
         {
@@ -9065,15 +9109,15 @@
             "instagram": "nate.mehiret"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
-            "ftPct": 50,
-            "threePct": 50,
-            "rpg": 5,
-            "apg": 0.5,
-            "spg": 1,
-            "bpg": 0.8,
-            "ppg": 5.8
+            "gp": 5,
+            "fgPct": 56,
+            "ftPct": 66.7,
+            "threePct": 40,
+            "rpg": 4.8,
+            "apg": 0.4,
+            "spg": 0.8,
+            "bpg": 0.6,
+            "ppg": 6.4
           }
         },
         {
@@ -9118,15 +9162,15 @@
             "instagram": "who.isjulez"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 35.1,
-            "ftPct": 70.6,
-            "threePct": 19.2,
-            "rpg": 5,
-            "apg": 1.8,
-            "spg": 1.8,
-            "bpg": 1.5,
-            "ppg": 11.5
+            "gp": 7,
+            "fgPct": 37.2,
+            "ftPct": 68.2,
+            "threePct": 21.9,
+            "rpg": 4.9,
+            "apg": 2.1,
+            "spg": 1.6,
+            "bpg": 1.3,
+            "ppg": 12.3
           }
         },
         {
@@ -9140,15 +9184,15 @@
             "instagram": "2famousdani"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 34.4,
-            "ftPct": 82.4,
-            "threePct": 19.1,
-            "rpg": 4.8,
-            "apg": 3,
-            "spg": 3.7,
-            "bpg": 0.8,
-            "ppg": 14.5
+            "gp": 7,
+            "fgPct": 37.2,
+            "ftPct": 81,
+            "threePct": 27.6,
+            "rpg": 5.1,
+            "apg": 2.9,
+            "spg": 3.3,
+            "bpg": 0.7,
+            "ppg": 16.7
           }
         },
         {
@@ -9162,15 +9206,15 @@
             "instagram": "23.carsonh"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 43.3,
-            "ftPct": 77.8,
-            "threePct": 20,
-            "rpg": 6.5,
-            "apg": 0.8,
-            "spg": 3.5,
+            "gp": 5,
+            "fgPct": 45.9,
+            "ftPct": 64.7,
+            "threePct": 27.3,
+            "rpg": 6.6,
+            "apg": 1.2,
+            "spg": 3.4,
             "bpg": 0,
-            "ppg": 8.3
+            "ppg": 9.2
           }
         },
         {
@@ -9206,15 +9250,15 @@
             "instagram": null
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 21.4,
+            "gp": 7,
+            "fgPct": 24.2,
             "ftPct": 20,
-            "threePct": 7.7,
-            "rpg": 3.2,
-            "apg": 0.7,
-            "spg": 1.5,
+            "threePct": 6.7,
+            "rpg": 2.7,
+            "apg": 0.6,
+            "spg": 1.3,
             "bpg": 0,
-            "ppg": 2.3
+            "ppg": 2.6
           }
         },
         {
@@ -9228,12 +9272,12 @@
             "instagram": "kaleb_v5"
           },
           "stats": {
-            "gp": 5,
+            "gp": 6,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 0,
-            "apg": 0,
+            "apg": 0.2,
             "spg": 0.2,
             "bpg": 0,
             "ppg": 0
@@ -9250,15 +9294,15 @@
             "instagram": "and1_.5"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 22.2,
+            "gp": 6,
+            "fgPct": 25,
             "ftPct": 25,
-            "threePct": 16.7,
-            "rpg": 0.6,
+            "threePct": 12.5,
+            "rpg": 0.7,
             "apg": 0,
             "spg": 0,
-            "bpg": 0,
-            "ppg": 1.4
+            "bpg": 0.2,
+            "ppg": 1.5
           }
         },
         {
@@ -9294,15 +9338,15 @@
             "instagram": "CDS.230"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 51.5,
-            "ftPct": 36.4,
+            "gp": 7,
+            "fgPct": 51.4,
+            "ftPct": 42.9,
             "threePct": 25,
-            "rpg": 5.2,
+            "rpg": 5,
             "apg": 1.3,
-            "spg": 0.2,
-            "bpg": 0.8,
-            "ppg": 6.5
+            "spg": 0.1,
+            "bpg": 0.7,
+            "ppg": 6.4
           }
         },
         {
@@ -9316,15 +9360,15 @@
             "instagram": "noah.belbruno"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 39.5,
+            "gp": 7,
+            "fgPct": 43.4,
             "ftPct": 75,
-            "threePct": 21.1,
-            "rpg": 2.3,
-            "apg": 1.5,
-            "spg": 0.8,
+            "threePct": 22.7,
+            "rpg": 2.4,
+            "apg": 1.4,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 7.2
+            "ppg": 8
           }
         },
         {
@@ -9338,15 +9382,15 @@
             "instagram": "getupwit_leek11"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
+            "gp": 5,
+            "fgPct": 33.3,
             "ftPct": 50,
-            "threePct": 50,
-            "rpg": 1.3,
-            "apg": 0.5,
-            "spg": 0.5,
+            "threePct": 33.3,
+            "rpg": 1,
+            "apg": 0.6,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 1.5
+            "ppg": 1.2
           }
         }
       ]
@@ -10003,15 +10047,15 @@
             "instagram": "occannon3"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 25,
-            "ftPct": 0,
+            "ftPct": 66.7,
             "threePct": 25,
-            "rpg": 2.8,
+            "rpg": 3,
             "apg": 2,
             "spg": 1,
             "bpg": 0,
-            "ppg": 2.8
+            "ppg": 3.2
           }
         },
         {
@@ -10047,15 +10091,15 @@
             "instagram": "nick_wilson24"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 38.9,
+            "gp": 5,
+            "fgPct": 33.3,
             "ftPct": 50,
-            "threePct": 45.5,
-            "rpg": 1.5,
+            "threePct": 33.3,
+            "rpg": 1.8,
             "apg": 0.8,
             "spg": 1,
-            "bpg": 0,
-            "ppg": 5.3
+            "bpg": 0.2,
+            "ppg": 4.6
           }
         },
         {
@@ -10091,15 +10135,15 @@
             "instagram": "branthall02"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 42.6,
+            "gp": 6,
+            "fgPct": 41.2,
             "ftPct": 85.7,
             "threePct": 25,
-            "rpg": 3.8,
-            "apg": 4.4,
-            "spg": 1.6,
+            "rpg": 4,
+            "apg": 4.3,
+            "spg": 1.3,
             "bpg": 0,
-            "ppg": 13
+            "ppg": 11.7
           }
         },
         {
@@ -10113,15 +10157,15 @@
             "instagram": "_jonjonn"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 40.9,
-            "ftPct": 0,
-            "threePct": 33.3,
-            "rpg": 1.5,
-            "apg": 0.5,
+            "gp": 5,
+            "fgPct": 44,
+            "ftPct": 50,
+            "threePct": 35.7,
+            "rpg": 1.6,
+            "apg": 0.4,
             "spg": 0.8,
             "bpg": 0,
-            "ppg": 5.5
+            "ppg": 5.6
           }
         },
         {
@@ -10135,15 +10179,15 @@
             "instagram": "slimguarddd"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 25,
+            "gp": 6,
+            "fgPct": 20,
             "ftPct": 0,
-            "threePct": 20,
-            "rpg": 0.8,
+            "threePct": 14.3,
+            "rpg": 0.7,
             "apg": 0.8,
             "spg": 0.2,
             "bpg": 0,
-            "ppg": 1
+            "ppg": 0.8
           }
         },
         {
@@ -10157,15 +10201,15 @@
             "instagram": "qb1.darrien"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 25,
+            "gp": 4,
+            "fgPct": 20,
             "ftPct": 57.1,
-            "threePct": 20,
-            "rpg": 2,
-            "apg": 0.7,
+            "threePct": 14.3,
+            "rpg": 1.8,
+            "apg": 0.5,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 2.3
           }
         },
         {
@@ -10179,15 +10223,15 @@
             "instagram": "yeaadats15"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 57.7,
-            "ftPct": 50,
+            "gp": 5,
+            "fgPct": 60.7,
+            "ftPct": 46.7,
             "threePct": 25,
-            "rpg": 10.5,
+            "rpg": 9.4,
             "apg": 1,
-            "spg": 1.5,
-            "bpg": 2,
-            "ppg": 18.8
+            "spg": 1.4,
+            "bpg": 1.8,
+            "ppg": 17.8
           }
         },
         {
@@ -10201,15 +10245,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 50,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 3,
+            "rpg": 1.5,
             "apg": 0,
-            "spg": 0,
+            "spg": 0.5,
             "bpg": 0,
-            "ppg": 2
+            "ppg": 1
           }
         },
         {
@@ -10223,13 +10267,13 @@
             "instagram": "kunmideigh_"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 53.8,
+            "gp": 4,
+            "fgPct": 52.6,
             "ftPct": 55.6,
-            "threePct": 66.7,
-            "rpg": 4.3,
-            "apg": 0.7,
-            "spg": 1.7,
+            "threePct": 42.9,
+            "rpg": 3.5,
+            "apg": 2.3,
+            "spg": 1.8,
             "bpg": 0,
             "ppg": 7
           }
@@ -10267,15 +10311,15 @@
             "instagram": "bjsimm23"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 40,
+            "gp": 6,
+            "fgPct": 44.1,
             "ftPct": 75,
-            "threePct": 38.7,
-            "rpg": 5,
-            "apg": 2,
+            "threePct": 41.5,
+            "rpg": 5.5,
+            "apg": 1.8,
             "spg": 1.2,
             "bpg": 0,
-            "ppg": 13.6
+            "ppg": 14.8
           }
         },
         {
@@ -10355,15 +10399,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
+            "gp": 5,
+            "fgPct": 14.3,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 0.3,
-            "spg": 0.8,
+            "rpg": 2,
+            "apg": 0.2,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 0.8
+            "ppg": 1
           }
         },
         {
@@ -10377,15 +10421,15 @@
             "instagram": "plus10en"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 50,
-            "ftPct": 16.7,
+            "gp": 6,
+            "fgPct": 47.8,
+            "ftPct": 14.3,
             "threePct": 0,
-            "rpg": 5.6,
-            "apg": 0.6,
-            "spg": 1,
+            "rpg": 5.2,
+            "apg": 0.7,
+            "spg": 0.8,
             "bpg": 0,
-            "ppg": 4.2
+            "ppg": 3.8
           }
         },
         {
@@ -10430,15 +10474,15 @@
             "instagram": "staytruelj"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 16.7,
+            "gp": 5,
+            "fgPct": 14.3,
             "ftPct": 0,
-            "threePct": 20,
-            "rpg": 0.3,
+            "threePct": 16.7,
+            "rpg": 0.2,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0.8
+            "ppg": 0.6
           }
         },
         {
@@ -10452,15 +10496,15 @@
             "instagram": "scoop_bballin"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 33.8,
+            "gp": 7,
+            "fgPct": 32.6,
             "ftPct": 76,
-            "threePct": 29,
-            "rpg": 2,
-            "apg": 2.8,
-            "spg": 1.2,
+            "threePct": 26.3,
+            "rpg": 2.3,
+            "apg": 2.6,
+            "spg": 1.3,
             "bpg": 0,
-            "ppg": 13.3
+            "ppg": 13
           }
         },
         {
@@ -10474,13 +10518,13 @@
             "instagram": "itsdef_ez"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 0,
             "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 0.5,
-            "apg": 0.2,
-            "spg": 0.2,
+            "rpg": 0.4,
+            "apg": 0.1,
+            "spg": 0.1,
             "bpg": 0,
             "ppg": 0.3
           }
@@ -10496,15 +10540,15 @@
             "instagram": "ajgillette__"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 38.1,
-            "ftPct": 71.4,
-            "threePct": 30.4,
-            "rpg": 2.3,
-            "apg": 1.7,
+            "gp": 8,
+            "fgPct": 32.1,
+            "ftPct": 75,
+            "threePct": 26.7,
+            "rpg": 2.5,
+            "apg": 1.6,
             "spg": 1,
             "bpg": 0,
-            "ppg": 7
+            "ppg": 6.8
           }
         },
         {
@@ -10518,15 +10562,15 @@
             "instagram": "reqkvnm"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 15.4,
+            "gp": 6,
+            "fgPct": 28.6,
             "ftPct": 100,
-            "threePct": 14.3,
-            "rpg": 0.6,
-            "apg": 0.8,
-            "spg": 0.6,
+            "threePct": 30.8,
+            "rpg": 1.2,
+            "apg": 0.7,
+            "spg": 0.5,
             "bpg": 0,
-            "ppg": 1.4
+            "ppg": 3
           }
         },
         {
@@ -10540,15 +10584,15 @@
             "instagram": "kai_upnxt"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 30.8,
-            "ftPct": 77.8,
+            "gp": 8,
+            "fgPct": 33.3,
+            "ftPct": 72.7,
             "threePct": 20,
             "rpg": 2.4,
-            "apg": 0.9,
-            "spg": 0.3,
+            "apg": 1,
+            "spg": 0.4,
             "bpg": 0.1,
-            "ppg": 3.6
+            "ppg": 3.5
           }
         },
         {
@@ -10562,15 +10606,15 @@
             "instagram": "yeadatsnas"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 31.7,
-            "ftPct": 33.3,
-            "threePct": 38.5,
-            "rpg": 3.9,
-            "apg": 1,
-            "spg": 0.9,
+            "gp": 8,
+            "fgPct": 32.3,
+            "ftPct": 25,
+            "threePct": 39,
+            "rpg": 3.8,
+            "apg": 0.9,
+            "spg": 0.8,
             "bpg": 0.3,
-            "ppg": 7.7
+            "ppg": 7.1
           }
         },
         {
@@ -10584,15 +10628,15 @@
             "instagram": "obimensahh"
           },
           "stats": {
-            "gp": 7,
-            "fgPct": 42.7,
+            "gp": 8,
+            "fgPct": 38.8,
             "ftPct": 72.2,
-            "threePct": 41.5,
+            "threePct": 38.6,
             "rpg": 5.4,
-            "apg": 3.1,
+            "apg": 2.8,
             "spg": 1.4,
             "bpg": 0.1,
-            "ppg": 15.1
+            "ppg": 13.3
           }
         },
         {
@@ -10606,13 +10650,13 @@
             "instagram": "_sf.ant22"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0.5,
-            "apg": 0,
-            "spg": 0.5,
+            "rpg": 0.3,
+            "apg": 0.3,
+            "spg": 0.3,
             "bpg": 0,
             "ppg": 0
           }
@@ -10650,13 +10694,13 @@
             "instagram": "torry.newsom"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 3,
-            "apg": 0.3,
-            "spg": 0.3,
+            "apg": 0.2,
+            "spg": 0.2,
             "bpg": 0,
             "ppg": 0
           }
@@ -10672,13 +10716,13 @@
             "instagram": "iso_bryce3"
           },
           "stats": {
-            "gp": 7,
+            "gp": 8,
             "fgPct": 50,
             "ftPct": 33.3,
             "threePct": 0,
             "rpg": 2.9,
-            "apg": 0.1,
-            "spg": 0.6,
+            "apg": 0.3,
+            "spg": 0.5,
             "bpg": 0.3,
             "ppg": 2.1
           }
@@ -10716,13 +10760,13 @@
             "instagram": "elhajh5"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 47.4,
-            "ftPct": 0,
-            "threePct": 33.3,
-            "rpg": 3.2,
-            "apg": 1,
-            "spg": 0.2,
+            "gp": 6,
+            "fgPct": 45.5,
+            "ftPct": 40,
+            "threePct": 25,
+            "rpg": 3,
+            "apg": 1.2,
+            "spg": 0.3,
             "bpg": 0.2,
             "ppg": 4
           }
@@ -10976,15 +11020,15 @@
             "instagram": "Colton.sloper"
           },
           "stats": {
-            "gp": 5,
+            "gp": 6,
             "fgPct": 20,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 0.6,
-            "apg": 0.2,
-            "spg": 0.2,
+            "rpg": 0.7,
+            "apg": 0.3,
+            "spg": 0.3,
             "bpg": 0,
-            "ppg": 1.2
+            "ppg": 1
           }
         },
         {
@@ -10998,15 +11042,15 @@
             "instagram": "christiancole2_"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 60.7,
-            "ftPct": 62.5,
-            "threePct": 58.6,
+            "gp": 6,
+            "fgPct": 58.5,
+            "ftPct": 78.6,
+            "threePct": 50,
             "rpg": 3,
-            "apg": 2.4,
-            "spg": 1.4,
+            "apg": 2.2,
+            "spg": 1.7,
             "bpg": 0.2,
-            "ppg": 18
+            "ppg": 17.3
           }
         },
         {
@@ -11020,13 +11064,13 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0.7,
-            "apg": 0,
-            "spg": 0.3,
+            "rpg": 0.8,
+            "apg": 0.3,
+            "spg": 0.5,
             "bpg": 0,
             "ppg": 0
           }
@@ -11042,15 +11086,15 @@
             "instagram": "noahbrown2029"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 62.5,
-            "ftPct": 50,
+            "gp": 6,
+            "fgPct": 68.4,
+            "ftPct": 33.3,
             "threePct": 100,
-            "rpg": 3.8,
-            "apg": 0.4,
-            "spg": 0.4,
-            "bpg": 0.8,
-            "ppg": 5
+            "rpg": 3.3,
+            "apg": 0.3,
+            "spg": 0.3,
+            "bpg": 0.7,
+            "ppg": 5.2
           }
         },
         {
@@ -11064,15 +11108,15 @@
             "instagram": "anthonyrivers_11"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
-            "ftPct": 50,
+            "gp": 5,
+            "fgPct": 28.6,
+            "ftPct": 75,
             "threePct": 33.3,
-            "rpg": 2.3,
+            "rpg": 1.8,
             "apg": 0.8,
-            "spg": 0.3,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 1.5
+            "ppg": 1.6
           }
         },
         {
@@ -11086,15 +11130,15 @@
             "instagram": "piercegaskins"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 37.1,
-            "ftPct": 60,
+            "gp": 6,
+            "fgPct": 41,
+            "ftPct": 61.5,
             "threePct": 0,
-            "rpg": 4.4,
-            "apg": 1.8,
-            "spg": 0.4,
-            "bpg": 1,
-            "ppg": 7.6
+            "rpg": 3.7,
+            "apg": 1.5,
+            "spg": 0.3,
+            "bpg": 0.8,
+            "ppg": 8
           }
         },
         {
@@ -11130,15 +11174,15 @@
             "instagram": "Jeremi-ahP09"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 40,
-            "ftPct": 45.5,
-            "threePct": 35.3,
-            "rpg": 7.6,
-            "apg": 1.8,
-            "spg": 1.2,
-            "bpg": 0.8,
-            "ppg": 10.2
+            "gp": 6,
+            "fgPct": 36.5,
+            "ftPct": 50,
+            "threePct": 31.6,
+            "rpg": 7.3,
+            "apg": 1.7,
+            "spg": 1,
+            "bpg": 0.7,
+            "ppg": 10
           }
         },
         {
@@ -11152,15 +11196,15 @@
             "instagram": "perfectdude9002"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 61.5,
-            "ftPct": 70,
-            "threePct": 22.2,
-            "rpg": 3.8,
-            "apg": 0.6,
-            "spg": 1.4,
+            "gp": 6,
+            "fgPct": 65.6,
+            "ftPct": 76.9,
+            "threePct": 30,
+            "rpg": 3.3,
+            "apg": 0.7,
+            "spg": 1.2,
             "bpg": 0.2,
-            "ppg": 8.2
+            "ppg": 9.2
           }
         },
         {
@@ -11174,15 +11218,15 @@
             "instagram": "sacaibrown"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 25,
+            "gp": 6,
+            "fgPct": 50,
             "ftPct": 75,
             "threePct": 0,
-            "rpg": 2,
-            "apg": 0.4,
+            "rpg": 1.7,
+            "apg": 0.3,
             "spg": 0.2,
             "bpg": 0,
-            "ppg": 1
+            "ppg": 0.8
           }
         },
         {
@@ -11218,15 +11262,15 @@
             "instagram": "kevinmugari2029"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 33.3,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 0.5,
-            "apg": 0.3,
-            "spg": 0.8,
+            "rpg": 0.4,
+            "apg": 0.2,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 1.8
+            "ppg": 1.4
           }
         },
         {
@@ -11240,15 +11284,15 @@
             "instagram": "hamid.0sman"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 33.3,
-            "ftPct": 57.1,
+            "gp": 6,
+            "fgPct": 30,
+            "ftPct": 55.6,
             "threePct": 28.6,
-            "rpg": 1.6,
-            "apg": 1.2,
+            "rpg": 1.5,
+            "apg": 1,
             "spg": 0.2,
             "bpg": 0,
-            "ppg": 2.4
+            "ppg": 2.2
           }
         },
         {
@@ -11293,15 +11337,15 @@
             "instagram": "kaveht.2"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 25,
             "ftPct": 16.7,
-            "threePct": 50,
-            "rpg": 2.8,
-            "apg": 0.8,
-            "spg": 0,
+            "threePct": 42.9,
+            "rpg": 3,
+            "apg": 0.6,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 2.5
+            "ppg": 2.4
           }
         },
         {
@@ -11315,15 +11359,15 @@
             "instagram": "chase.winokur"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 45.5,
-            "ftPct": 62.5,
-            "threePct": 40.7,
+            "gp": 6,
+            "fgPct": 41.9,
+            "ftPct": 60.5,
+            "threePct": 41.4,
             "rpg": 4.2,
-            "apg": 2.4,
-            "spg": 2.4,
+            "apg": 2,
+            "spg": 2.2,
             "bpg": 0.2,
-            "ppg": 18.2
+            "ppg": 16.2
           }
         },
         {
@@ -11337,15 +11381,15 @@
             "instagram": "brody.winokur"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 31.6,
-            "ftPct": 40,
-            "threePct": 25,
-            "rpg": 2.5,
-            "apg": 3.3,
-            "spg": 2,
+            "gp": 5,
+            "fgPct": 40,
+            "ftPct": 56.3,
+            "threePct": 16.7,
+            "rpg": 2.2,
+            "apg": 2.6,
+            "spg": 1.8,
             "bpg": 0,
-            "ppg": 4.3
+            "ppg": 6
           }
         },
         {
@@ -11359,15 +11403,15 @@
             "instagram": "tedjeong2028"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 41.4,
-            "ftPct": 60,
-            "threePct": 31.3,
-            "rpg": 4.8,
-            "apg": 1.8,
-            "spg": 0.4,
+            "gp": 6,
+            "fgPct": 41.3,
+            "ftPct": 62.5,
+            "threePct": 27.8,
+            "rpg": 4.3,
+            "apg": 1.7,
+            "spg": 0.5,
             "bpg": 0.2,
-            "ppg": 12.4
+            "ppg": 11.2
           }
         },
         {
@@ -11447,15 +11491,15 @@
             "instagram": "Bizzychris_"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 29.4,
+            "gp": 7,
+            "fgPct": 31.6,
             "ftPct": 50,
             "threePct": 11.1,
-            "rpg": 3.3,
-            "apg": 1.2,
-            "spg": 0.7,
+            "rpg": 3,
+            "apg": 1.1,
+            "spg": 0.6,
             "bpg": 0.3,
-            "ppg": 2
+            "ppg": 2.1
           }
         },
         {
@@ -11525,6 +11569,28 @@
           }
         },
         {
+          "number": 22,
+          "name": "Puran Wadhwa",
+          "position": null,
+          "height": null,
+          "classYear": null,
+          "social": {
+            "twitter": null,
+            "instagram": null
+          },
+          "stats": {
+            "gp": 1,
+            "fgPct": 38.5,
+            "ftPct": 75,
+            "threePct": 20,
+            "rpg": 6,
+            "apg": 1,
+            "spg": 1,
+            "bpg": 0,
+            "ppg": 14
+          }
+        },
+        {
           "number": 23,
           "name": "Kevin Roth",
           "position": "G",
@@ -11535,15 +11601,15 @@
             "instagram": "kevin_roth23"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 37.7,
+            "gp": 7,
+            "fgPct": 38.3,
             "ftPct": 60,
-            "threePct": 38.6,
-            "rpg": 2,
-            "apg": 1.5,
-            "spg": 0.8,
+            "threePct": 40,
+            "rpg": 2.4,
+            "apg": 1.7,
+            "spg": 0.7,
             "bpg": 0,
-            "ppg": 12.5
+            "ppg": 12.6
           }
         },
         {
@@ -11601,15 +11667,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 75,
-            "ftPct": 40,
+            "gp": 6,
+            "fgPct": 69.6,
+            "ftPct": 42.9,
             "threePct": 0,
-            "rpg": 6.4,
-            "apg": 0.4,
-            "spg": 0.4,
-            "bpg": 1,
-            "ppg": 6.4
+            "rpg": 5.7,
+            "apg": 0.3,
+            "spg": 0.5,
+            "bpg": 0.8,
+            "ppg": 5.8
           }
         },
         {
@@ -11623,15 +11689,15 @@
             "instagram": "samdyer900"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 33.3,
+            "gp": 4,
+            "fgPct": 44.4,
             "ftPct": 75,
-            "threePct": 40,
-            "rpg": 0.7,
+            "threePct": 50,
+            "rpg": 0.5,
             "apg": 0,
             "spg": 0.3,
             "bpg": 0.3,
-            "ppg": 3
+            "ppg": 3.8
           }
         }
       ]
@@ -13186,15 +13252,15 @@
             "instagram": "zaywoods_"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 33.3,
-            "ftPct": 0,
-            "threePct": 50,
-            "rpg": 1.5,
-            "apg": 1.5,
-            "spg": 0,
-            "bpg": 0.5,
-            "ppg": 1.5
+            "gp": 3,
+            "fgPct": 28.6,
+            "ftPct": 50,
+            "threePct": 25,
+            "rpg": 3.7,
+            "apg": 1,
+            "spg": 0.7,
+            "bpg": 0.3,
+            "ppg": 2
           }
         },
         {
@@ -13208,15 +13274,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
-            "ftPct": 16.7,
-            "threePct": 11.1,
-            "rpg": 4,
-            "apg": 1.3,
-            "spg": 2,
+            "gp": 5,
+            "fgPct": 44.4,
+            "ftPct": 37.5,
+            "threePct": 7.1,
+            "rpg": 3.8,
+            "apg": 1.4,
+            "spg": 1.8,
             "bpg": 0,
-            "ppg": 5.5
+            "ppg": 5.6
           }
         },
         {
@@ -13230,15 +13296,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 48.2,
-            "ftPct": 42.1,
-            "threePct": 30,
-            "rpg": 2.5,
-            "apg": 1.5,
-            "spg": 2,
-            "bpg": 0.3,
-            "ppg": 19.3
+            "gp": 5,
+            "fgPct": 47.1,
+            "ftPct": 36,
+            "threePct": 25,
+            "rpg": 2.8,
+            "apg": 1.2,
+            "spg": 2.2,
+            "bpg": 0.2,
+            "ppg": 17.6
           }
         },
         {
@@ -13252,15 +13318,15 @@
             "instagram": "Israeltshipamba_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 57.7,
-            "ftPct": 55.6,
-            "threePct": 37.5,
-            "rpg": 5.3,
-            "apg": 0.5,
-            "spg": 0.5,
-            "bpg": 0.3,
-            "ppg": 9.5
+            "gp": 5,
+            "fgPct": 55.9,
+            "ftPct": 54.5,
+            "threePct": 33.3,
+            "rpg": 4.4,
+            "apg": 0.4,
+            "spg": 0.4,
+            "bpg": 0.2,
+            "ppg": 9.4
           }
         },
         {
@@ -13296,15 +13362,15 @@
             "instagram": "ethansmith.00"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 37.5,
-            "ftPct": 66.7,
+            "gp": 4,
+            "fgPct": 44.4,
+            "ftPct": 80,
             "threePct": 33.3,
-            "rpg": 3.7,
-            "apg": 2.3,
+            "rpg": 3,
+            "apg": 1.8,
             "spg": 1,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 5.8
           }
         },
         {
@@ -13318,14 +13384,14 @@
             "instagram": "davisbowen11"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 1,
-            "apg": 0.5,
+            "apg": 0.3,
             "spg": 0,
-            "bpg": 0,
+            "bpg": 0.3,
             "ppg": 0
           }
         },
@@ -13362,15 +13428,15 @@
             "instagram": "j3dubb_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 34,
-            "ftPct": 81.8,
-            "threePct": 35,
-            "rpg": 3,
-            "apg": 2.3,
-            "spg": 2.3,
+            "gp": 5,
+            "fgPct": 35.7,
+            "ftPct": 77.1,
+            "threePct": 37.5,
+            "rpg": 3.8,
+            "apg": 2,
+            "spg": 2.2,
             "bpg": 0,
-            "ppg": 14.3
+            "ppg": 15.2
           }
         },
         {
@@ -13384,15 +13450,15 @@
             "instagram": "Charlieduffy14"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 50,
             "ftPct": 0,
             "threePct": 33.3,
-            "rpg": 1.5,
+            "rpg": 1.4,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
-            "ppg": 1.8
+            "ppg": 1.4
           }
         }
       ]
@@ -13415,15 +13481,15 @@
             "instagram": "odshortt"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 36.4,
-            "ftPct": 65,
-            "threePct": 20,
-            "rpg": 4.8,
-            "apg": 2.4,
+            "gp": 6,
+            "fgPct": 35.2,
+            "ftPct": 65.2,
+            "threePct": 17.2,
+            "rpg": 4.3,
+            "apg": 2.5,
             "spg": 2,
             "bpg": 0,
-            "ppg": 11.6
+            "ppg": 11.7
           }
         },
         {
@@ -13437,15 +13503,15 @@
             "instagram": "sean.way13"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 27.1,
+            "gp": 7,
+            "fgPct": 26.4,
             "ftPct": 60,
-            "threePct": 14.3,
-            "rpg": 3.7,
-            "apg": 2.2,
-            "spg": 1.2,
+            "threePct": 16.7,
+            "rpg": 3.1,
+            "apg": 1.9,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 5.3
+            "ppg": 5
           }
         },
         {
@@ -13459,15 +13525,15 @@
             "instagram": "pete_pahigiannis24"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 33.3,
+            "gp": 7,
+            "fgPct": 28.6,
             "ftPct": 0,
             "threePct": 25,
-            "rpg": 0.7,
+            "rpg": 0.6,
             "apg": 0.3,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0.8
+            "ppg": 0.7
           }
         },
         {
@@ -13481,15 +13547,15 @@
             "instagram": "_5kzayy"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 47.1,
+            "gp": 7,
+            "fgPct": 47.3,
             "ftPct": 85,
-            "threePct": 0,
-            "rpg": 7.7,
-            "apg": 1.8,
-            "spg": 2.3,
-            "bpg": 0.5,
-            "ppg": 13.5
+            "threePct": 14.3,
+            "rpg": 7.6,
+            "apg": 1.9,
+            "spg": 2,
+            "bpg": 0.4,
+            "ppg": 12.6
           }
         },
         {
@@ -13503,15 +13569,15 @@
             "instagram": "jalenx03"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 36.7,
+            "gp": 7,
+            "fgPct": 39.4,
             "ftPct": 0,
-            "threePct": 33.3,
-            "rpg": 1.5,
-            "apg": 1.2,
-            "spg": 1.2,
+            "threePct": 38.9,
+            "rpg": 1.3,
+            "apg": 1.1,
+            "spg": 1.1,
             "bpg": 0,
-            "ppg": 4.5
+            "ppg": 4.7
           }
         },
         {
@@ -13525,15 +13591,15 @@
             "instagram": "vonandonian"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 33.3,
+            "gp": 6,
+            "fgPct": 25,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1.4,
-            "apg": 0.4,
+            "rpg": 1.3,
+            "apg": 0.3,
             "spg": 0.2,
-            "bpg": 0.4,
-            "ppg": 0.4
+            "bpg": 0.3,
+            "ppg": 0.3
           }
         },
         {
@@ -13547,15 +13613,15 @@
             "instagram": "anjo.yette"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 44.1,
-            "ftPct": 73.3,
-            "threePct": 34.2,
-            "rpg": 6.2,
+            "gp": 7,
+            "fgPct": 45.9,
+            "ftPct": 68.6,
+            "threePct": 34.8,
+            "rpg": 6.7,
             "apg": 1,
-            "spg": 1.2,
-            "bpg": 1,
-            "ppg": 19.5
+            "spg": 1,
+            "bpg": 0.9,
+            "ppg": 20
           }
         },
         {
@@ -13569,15 +13635,15 @@
             "instagram": "newerazack"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 55.9,
+            "gp": 7,
+            "fgPct": 54.8,
             "ftPct": 100,
-            "threePct": 52.4,
-            "rpg": 6,
-            "apg": 0.3,
-            "spg": 0.5,
-            "bpg": 0.2,
-            "ppg": 6.2
+            "threePct": 50,
+            "rpg": 6.1,
+            "apg": 0.4,
+            "spg": 0.4,
+            "bpg": 0.1,
+            "ppg": 6.9
           }
         }
       ]
@@ -13873,15 +13939,15 @@
             "instagram": "_tysuggs"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 50,
-            "ftPct": 50,
-            "threePct": 50,
-            "rpg": 4.2,
-            "apg": 1,
-            "spg": 1.4,
-            "bpg": 0.4,
-            "ppg": 6.6
+            "gp": 7,
+            "fgPct": 52.8,
+            "ftPct": 75,
+            "threePct": 52.6,
+            "rpg": 4.3,
+            "apg": 1.1,
+            "spg": 1,
+            "bpg": 0.3,
+            "ppg": 7.3
           }
         },
         {
@@ -13895,15 +13961,15 @@
             "instagram": "_isaiah.potter"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 38.5,
-            "ftPct": 0,
+            "gp": 7,
+            "fgPct": 36.8,
+            "ftPct": 50,
             "threePct": 0,
             "rpg": 3,
             "apg": 1,
-            "spg": 0.6,
+            "spg": 0.9,
             "bpg": 0,
-            "ppg": 2
+            "ppg": 2.3
           }
         },
         {
@@ -13939,15 +14005,15 @@
             "instagram": "woodyard_20"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
+            "gp": 5,
+            "fgPct": 25,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0.8,
-            "apg": 0.3,
-            "spg": 0.8,
+            "rpg": 0.6,
+            "apg": 0.2,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 0.5
+            "ppg": 0.4
           }
         },
         {
@@ -13983,15 +14049,15 @@
             "instagram": "maricknorton20"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 33.3,
-            "ftPct": 100,
-            "threePct": 20,
-            "rpg": 2,
-            "apg": 0.3,
-            "spg": 0.3,
+            "gp": 5,
+            "fgPct": 30,
+            "ftPct": 66.7,
+            "threePct": 22.2,
+            "rpg": 1.4,
+            "apg": 0.2,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 2.3
+            "ppg": 2
           }
         },
         {
@@ -14005,14 +14071,14 @@
             "instagram": "1of1Korey"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 26.3,
-            "ftPct": 100,
-            "threePct": 30,
-            "rpg": 2,
-            "apg": 0,
+            "gp": 6,
+            "fgPct": 21.4,
+            "ftPct": 85.7,
+            "threePct": 21.4,
+            "rpg": 2.3,
+            "apg": 0.3,
             "spg": 0.3,
-            "bpg": 0,
+            "bpg": 0.2,
             "ppg": 3.5
           }
         },
@@ -14049,15 +14115,15 @@
             "instagram": null
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 20,
+            "gp": 4,
+            "fgPct": 16.7,
             "ftPct": 0,
             "threePct": 33.3,
             "rpg": 1,
-            "apg": 1,
-            "spg": 0.5,
-            "bpg": 1,
-            "ppg": 2.5
+            "apg": 0.8,
+            "spg": 0.3,
+            "bpg": 0.5,
+            "ppg": 1.3
           }
         },
         {
@@ -14071,15 +14137,15 @@
             "instagram": "sbutler15"
           },
           "stats": {
-            "gp": 5,
+            "gp": 7,
             "fgPct": 28.6,
             "ftPct": 0,
             "threePct": 20,
-            "rpg": 1.8,
-            "apg": 0.8,
-            "spg": 0.2,
+            "rpg": 1.3,
+            "apg": 0.6,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 0.8
+            "ppg": 0.6
           }
         },
         {
@@ -14093,15 +14159,15 @@
             "instagram": "cam2209"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 41.7,
+            "gp": 4,
+            "fgPct": 38.5,
             "ftPct": 100,
-            "threePct": 36.4,
-            "rpg": 1,
-            "apg": 1,
+            "threePct": 33.3,
+            "rpg": 0.8,
+            "apg": 0.8,
             "spg": 0,
-            "bpg": 1,
-            "ppg": 5.3
+            "bpg": 0.8,
+            "ppg": 4
           }
         },
         {
@@ -14194,24 +14260,24 @@
         },
         {
           "number": 33,
-          "name": "Hank Oxendine",
-          "position": "G",
+          "name": "Hank Oxedine",
+          "position": "Guard",
           "height": "6'3",
           "classYear": 2027,
           "social": {
             "twitter": "HankOxendine",
-            "instagram": "oxendinehank"
+            "instagram": "oxedinehank"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 38.2,
-            "ftPct": 72.7,
-            "threePct": 27.3,
-            "rpg": 8,
-            "apg": 4,
-            "spg": 1,
-            "bpg": 0.3,
-            "ppg": 24
+            "gp": 7,
+            "fgPct": 40.7,
+            "ftPct": 68.6,
+            "threePct": 28.6,
+            "rpg": 7.4,
+            "apg": 3.6,
+            "spg": 2,
+            "bpg": 0.1,
+            "ppg": 20.1
           }
         }
       ]
@@ -14256,15 +14322,15 @@
             "instagram": "gray.skeeter"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 25,
-            "ftPct": 0,
-            "threePct": 18.2,
-            "rpg": 3.5,
-            "apg": 4.5,
-            "spg": 3,
+            "gp": 3,
+            "fgPct": 33.3,
+            "ftPct": 100,
+            "threePct": 28.6,
+            "rpg": 3.7,
+            "apg": 4.3,
+            "spg": 2.7,
             "bpg": 0,
-            "ppg": 6
+            "ppg": 8.3
           }
         },
         {
@@ -14344,15 +14410,15 @@
             "instagram": "dj2officiall_"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 43.5,
-            "ftPct": 87,
-            "threePct": 30,
-            "rpg": 6,
-            "apg": 1.6,
-            "spg": 1.2,
-            "bpg": 0.4,
-            "ppg": 20
+            "gp": 6,
+            "fgPct": 43.6,
+            "ftPct": 87.5,
+            "threePct": 24,
+            "rpg": 5.8,
+            "apg": 1.8,
+            "spg": 1.5,
+            "bpg": 0.3,
+            "ppg": 19.3
           }
         },
         {
@@ -14366,15 +14432,15 @@
             "instagram": "tref.bauer"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 100,
             "ftPct": 0,
             "threePct": 100,
-            "rpg": 0.3,
+            "rpg": 0.5,
             "apg": 0.3,
             "spg": 0,
             "bpg": 0.3,
-            "ppg": 1
+            "ppg": 0.8
           }
         },
         {
@@ -14432,15 +14498,15 @@
             "instagram": "staydown.tjay_"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 44.4,
-            "ftPct": 40,
-            "threePct": 10,
-            "rpg": 6.2,
-            "apg": 0.2,
-            "spg": 0.4,
-            "bpg": 1.2,
-            "ppg": 13.4
+            "gp": 6,
+            "fgPct": 44.2,
+            "ftPct": 54.1,
+            "threePct": 11.8,
+            "rpg": 6.5,
+            "apg": 0.3,
+            "spg": 0.7,
+            "bpg": 1,
+            "ppg": 15
           }
         },
         {
@@ -14454,15 +14520,15 @@
             "instagram": "14k._caleb"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 50,
+            "gp": 6,
+            "fgPct": 53.3,
             "ftPct": 0,
-            "threePct": 50,
-            "rpg": 1.8,
+            "threePct": 55.6,
+            "rpg": 1.7,
             "apg": 0.8,
-            "spg": 0.8,
+            "spg": 0.7,
             "bpg": 0,
-            "ppg": 3.6
+            "ppg": 3.5
           }
         },
         {
@@ -14498,11 +14564,11 @@
             "instagram": "jdabbs_16"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1,
+            "rpg": 0.5,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
@@ -14718,7 +14784,7 @@
         },
         {
           "number": 5,
-          "name": "Ja'zeyere Thompson",
+          "name": "Ja'zyere Thompson",
           "position": "G",
           "height": "6'4",
           "classYear": 2027,
@@ -14727,15 +14793,15 @@
             "instagram": "jdub5_"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 33.3,
-            "ftPct": 75,
-            "threePct": 0,
-            "rpg": 6,
-            "apg": 6,
-            "spg": 1,
-            "bpg": 2,
-            "ppg": 18
+            "gp": 6,
+            "fgPct": 41.9,
+            "ftPct": 63.6,
+            "threePct": 22.7,
+            "rpg": 4.3,
+            "apg": 2.3,
+            "spg": 1.3,
+            "bpg": 1,
+            "ppg": 14.7
           }
         },
         {
@@ -15044,15 +15110,15 @@
             "instagram": "m4rk._.01"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 25.8,
+            "gp": 7,
+            "fgPct": 32.4,
             "ftPct": 50,
-            "threePct": 16.7,
-            "rpg": 1.5,
-            "apg": 3.3,
-            "spg": 1,
-            "bpg": 0,
-            "ppg": 4
+            "threePct": 23.1,
+            "rpg": 1.6,
+            "apg": 3.1,
+            "spg": 1.1,
+            "bpg": 0.1,
+            "ppg": 4.4
           }
         },
         {
@@ -15066,15 +15132,15 @@
             "instagram": "willtheowner"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 36.2,
-            "ftPct": 33.3,
-            "threePct": 31.8,
-            "rpg": 5,
-            "apg": 2.2,
-            "spg": 1.3,
-            "bpg": 0.8,
-            "ppg": 8.3
+            "gp": 7,
+            "fgPct": 37.1,
+            "ftPct": 60,
+            "threePct": 29.2,
+            "rpg": 4.4,
+            "apg": 1.9,
+            "spg": 1.1,
+            "bpg": 0.7,
+            "ppg": 8
           }
         },
         {
@@ -15088,15 +15154,15 @@
             "instagram": "C.hicks8"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 50,
+            "gp": 4,
+            "fgPct": 41.2,
             "ftPct": 0,
-            "threePct": 50,
-            "rpg": 1,
-            "apg": 1,
+            "threePct": 40,
+            "rpg": 0.8,
+            "apg": 0.8,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 6
+            "ppg": 4.5
           }
         },
         {
@@ -15110,15 +15176,15 @@
             "instagram": "prslybtng"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 52,
+            "gp": 6,
+            "fgPct": 48.3,
             "ftPct": 50,
-            "threePct": 25,
-            "rpg": 3.2,
+            "threePct": 14.3,
+            "rpg": 2.7,
             "apg": 1.2,
-            "spg": 1.4,
-            "bpg": 0.6,
-            "ppg": 5.6
+            "spg": 1.3,
+            "bpg": 0.5,
+            "ppg": 5
           }
         },
         {
@@ -15132,15 +15198,15 @@
             "instagram": "Zay.canes"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 52.3,
-            "ftPct": 66,
-            "threePct": 38.5,
-            "rpg": 7.5,
-            "apg": 3.2,
-            "spg": 1.5,
-            "bpg": 0.5,
-            "ppg": 17.3
+            "gp": 7,
+            "fgPct": 52,
+            "ftPct": 67.9,
+            "threePct": 43.8,
+            "rpg": 7.6,
+            "apg": 2.7,
+            "spg": 1.3,
+            "bpg": 0.4,
+            "ppg": 17.6
           }
         },
         {
@@ -15154,15 +15220,15 @@
             "instagram": "kha1ii11"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 26.9,
+            "gp": 5,
+            "fgPct": 28.1,
             "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 4,
-            "apg": 1.8,
+            "rpg": 3.6,
+            "apg": 1.4,
             "spg": 2,
-            "bpg": 0.5,
-            "ppg": 4.5
+            "bpg": 0.6,
+            "ppg": 4.4
           }
         },
         {
@@ -15176,15 +15242,15 @@
             "instagram": "kend_dmv"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 0,
+            "gp": 7,
+            "fgPct": 14.3,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1.8,
-            "apg": 1.3,
-            "spg": 1.5,
+            "rpg": 1.7,
+            "apg": 1.1,
+            "spg": 1.4,
             "bpg": 0.3,
-            "ppg": 0
+            "ppg": 0.3
           }
         },
         {
@@ -15220,15 +15286,15 @@
             "instagram": "Patrickwilson4223"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 29.4,
+            "gp": 7,
+            "fgPct": 27.8,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 2.7,
+            "rpg": 2.3,
             "apg": 0.3,
             "spg": 0,
-            "bpg": 0.7,
-            "ppg": 2
+            "bpg": 0.6,
+            "ppg": 1.7
           }
         },
         {
@@ -15242,15 +15308,15 @@
             "instagram": "jonathanresta"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 25.6,
+            "gp": 7,
+            "fgPct": 26.7,
             "ftPct": 75,
-            "threePct": 26.3,
-            "rpg": 3.2,
-            "apg": 0.7,
-            "spg": 0.7,
-            "bpg": 0.2,
-            "ppg": 5
+            "threePct": 28.6,
+            "rpg": 2.9,
+            "apg": 0.6,
+            "spg": 0.6,
+            "bpg": 0.1,
+            "ppg": 4.7
           }
         },
         {
@@ -15264,7 +15330,7 @@
             "instagram": "josiah.d_3k"
           },
           "stats": {
-            "gp": 2,
+            "gp": 3,
             "fgPct": 0,
             "ftPct": 50,
             "threePct": 0,
@@ -15272,7 +15338,7 @@
             "apg": 0,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0.5
+            "ppg": 0.3
           }
         },
         {
@@ -15286,15 +15352,15 @@
             "instagram": "yusuf2smooth"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 45.8,
-            "ftPct": 100,
+            "ftPct": 50,
             "threePct": 50,
-            "rpg": 1.7,
-            "apg": 0.2,
-            "spg": 0.2,
-            "bpg": 0.5,
-            "ppg": 5.3
+            "rpg": 1.4,
+            "apg": 0.3,
+            "spg": 0.1,
+            "bpg": 0.4,
+            "ppg": 4.7
           }
         },
         {
@@ -15330,15 +15396,15 @@
             "instagram": "_grahamrussell3"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 50,
-            "ftPct": 0,
+            "ftPct": 100,
             "threePct": 0,
-            "rpg": 1.5,
+            "rpg": 1.2,
             "apg": 0,
             "spg": 0,
-            "bpg": 0.3,
-            "ppg": 0.5
+            "bpg": 0.2,
+            "ppg": 0.8
           }
         }
       ]
@@ -15361,13 +15427,13 @@
             "instagram": "ceejaydorsey3"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 33.3,
+            "gp": 2,
+            "fgPct": 50,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1,
-            "apg": 1,
-            "spg": 0,
+            "rpg": 0.5,
+            "apg": 0.5,
+            "spg": 0.5,
             "bpg": 0,
             "ppg": 2
           }
@@ -15383,15 +15449,15 @@
             "instagram": "12k.az"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 81.8,
+            "gp": 5,
+            "fgPct": 83.3,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 4,
+            "rpg": 3.2,
             "apg": 0.8,
-            "spg": 0.3,
+            "spg": 0.2,
             "bpg": 0,
-            "ppg": 4.5
+            "ppg": 4
           }
         },
         {
@@ -15405,15 +15471,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 38.5,
+            "gp": 4,
+            "fgPct": 36.8,
             "ftPct": 0,
-            "threePct": 20,
-            "rpg": 1,
-            "apg": 1.3,
-            "spg": 1.3,
+            "threePct": 33.3,
+            "rpg": 1.3,
+            "apg": 2.3,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 3.7
+            "ppg": 4
           }
         },
         {
@@ -15427,15 +15493,15 @@
             "instagram": "Thenashavery"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 68.8,
-            "ftPct": 61.5,
-            "threePct": 38.5,
-            "rpg": 7.8,
-            "apg": 2,
+            "gp": 5,
+            "fgPct": 63.6,
+            "ftPct": 69.6,
+            "threePct": 33.3,
+            "rpg": 8.6,
+            "apg": 1.8,
             "spg": 1,
-            "bpg": 2,
-            "ppg": 14.3
+            "bpg": 1.8,
+            "ppg": 15.4
           }
         },
         {
@@ -15449,15 +15515,15 @@
             "instagram": "theantbuchman"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 33.3,
+            "gp": 4,
+            "fgPct": 35.3,
             "ftPct": 0,
-            "threePct": 29.4,
-            "rpg": 0.7,
-            "apg": 1,
-            "spg": 0.3,
+            "threePct": 30.4,
+            "rpg": 1,
+            "apg": 1.3,
+            "spg": 0.5,
             "bpg": 0.3,
-            "ppg": 7
+            "ppg": 7.8
           }
         },
         {
@@ -15493,15 +15559,15 @@
             "instagram": "elijahmaples5_"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 50,
             "ftPct": 0,
-            "threePct": 33.3,
-            "rpg": 1.5,
-            "apg": 2.5,
-            "spg": 1,
+            "threePct": 40,
+            "rpg": 1.8,
+            "apg": 2.8,
+            "spg": 1.2,
             "bpg": 0,
-            "ppg": 2.8
+            "ppg": 3.6
           }
         },
         {
@@ -15515,12 +15581,12 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0,
-            "apg": 0,
+            "rpg": 0.5,
+            "apg": 0.5,
             "spg": 0,
             "bpg": 0,
             "ppg": 0
@@ -15581,13 +15647,13 @@
             "instagram": null
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 33.3,
+            "gp": 2,
+            "fgPct": 50,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 1,
-            "apg": 1,
-            "spg": 0,
+            "rpg": 0.5,
+            "apg": 0.5,
+            "spg": 0.5,
             "bpg": 0,
             "ppg": 2
           }
@@ -15603,15 +15669,15 @@
             "instagram": "206xander"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
+            "gp": 5,
+            "fgPct": 25,
             "ftPct": 33.3,
-            "threePct": 50,
-            "rpg": 1.3,
+            "threePct": 33.3,
+            "rpg": 1.2,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
-            "ppg": 1.8
+            "ppg": 1.4
           }
         },
         {
@@ -15625,15 +15691,15 @@
             "instagram": "swaggyyd_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 40,
+            "gp": 5,
+            "fgPct": 46.7,
             "ftPct": 50,
-            "threePct": 75,
-            "rpg": 1,
-            "apg": 1.3,
-            "spg": 0.3,
+            "threePct": 66.7,
+            "rpg": 1.4,
+            "apg": 1,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 3.8
           }
         },
         {
@@ -15647,15 +15713,15 @@
             "instagram": "Ufw_Lb"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 28.6,
+            "gp": 4,
+            "fgPct": 29.2,
             "ftPct": 0,
-            "threePct": 22.2,
-            "rpg": 2.7,
-            "apg": 1.7,
+            "threePct": 20,
+            "rpg": 2.5,
+            "apg": 1.8,
             "spg": 1.3,
             "bpg": 0,
-            "ppg": 4.7
+            "ppg": 4
           }
         },
         {
@@ -15669,15 +15735,15 @@
             "instagram": "payday_kj"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 53.3,
+            "gp": 5,
+            "fgPct": 45,
             "ftPct": 100,
-            "threePct": 50,
-            "rpg": 1.3,
-            "apg": 1.3,
-            "spg": 0.3,
-            "bpg": 0.3,
-            "ppg": 6
+            "threePct": 42.9,
+            "rpg": 2,
+            "apg": 1.2,
+            "spg": 0.4,
+            "bpg": 0.4,
+            "ppg": 5.4
           }
         },
         {
@@ -15691,15 +15757,15 @@
             "instagram": "eliieeez"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 57.1,
-            "ftPct": 83.3,
+            "ftPct": 62.5,
             "threePct": 0,
-            "rpg": 8,
-            "apg": 0.3,
+            "rpg": 9,
+            "apg": 0.5,
             "spg": 0.3,
-            "bpg": 2,
-            "ppg": 9.7
+            "bpg": 2.3,
+            "ppg": 9.3
           }
         },
         {
@@ -15757,15 +15823,15 @@
             "instagram": "bray.spence2"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 75,
+            "gp": 3,
+            "fgPct": 57.1,
             "ftPct": 50,
-            "threePct": 100,
+            "threePct": 50,
             "rpg": 2,
-            "apg": 0.5,
-            "spg": 0.5,
+            "apg": 0.3,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 4
+            "ppg": 3.7
           }
         }
       ]
@@ -16057,63 +16123,63 @@
           "height": "5'10",
           "classYear": 2027,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "isojo5"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 46.4,
-            "ftPct": 66.7,
-            "threePct": 45.5,
-            "rpg": 3.7,
-            "apg": 4,
-            "spg": 0.3,
+            "gp": 6,
+            "fgPct": 42.9,
+            "ftPct": 60,
+            "threePct": 38.5,
+            "rpg": 3.5,
+            "apg": 3.2,
+            "spg": 1.2,
             "bpg": 0,
-            "ppg": 11
+            "ppg": 10.2
           }
         },
         {
           "number": 4,
           "name": "Ari Hopson",
-          "position": "PG",
+          "position": "G",
           "height": "5'10",
           "classYear": 2029,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "arihopson_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 46.2,
-            "ftPct": 75,
-            "threePct": 33.3,
-            "rpg": 0.8,
-            "apg": 1.8,
-            "spg": 1.3,
-            "bpg": 0.3,
-            "ppg": 8.3
+            "gp": 6,
+            "fgPct": 47.4,
+            "ftPct": 60,
+            "threePct": 38.5,
+            "rpg": 1.3,
+            "apg": 1.5,
+            "spg": 1,
+            "bpg": 0.2,
+            "ppg": 8.7
           }
         },
         {
           "number": 6,
           "name": "Ayden Riley",
           "position": "PG",
-          "height": "6",
+          "height": "6'0",
           "classYear": 2029,
           "social": {
             "twitter": "-",
             "instagram": "aydentotuff_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 18.5,
-            "ftPct": 75,
-            "threePct": 26.7,
-            "rpg": 1.8,
-            "apg": 1,
-            "spg": 1,
-            "bpg": 0.3,
-            "ppg": 4.3
+            "gp": 6,
+            "fgPct": 35.7,
+            "ftPct": 83.3,
+            "threePct": 22.2,
+            "rpg": 2.3,
+            "apg": 1.5,
+            "spg": 0.8,
+            "bpg": 0.2,
+            "ppg": 4.8
           }
         },
         {
@@ -16123,19 +16189,19 @@
           "height": "5'10",
           "classYear": 2029,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "eiden1x"
           },
           "stats": {
-            "gp": 2,
+            "gp": 5,
             "fgPct": 25,
-            "ftPct": 50,
-            "threePct": 0,
-            "rpg": 0.5,
-            "apg": 0.5,
-            "spg": 0,
+            "ftPct": 33.3,
+            "threePct": 14.3,
+            "rpg": 0.6,
+            "apg": 0.2,
+            "spg": 0.2,
             "bpg": 0,
-            "ppg": 1.5
+            "ppg": 1.6
           }
         },
         {
@@ -16149,7 +16215,7 @@
             "instagram": "michael_bourke_3"
           },
           "stats": {
-            "gp": 0,
+            "gp": 1,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
@@ -16171,15 +16237,15 @@
             "instagram": "noah_cerny"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 42.9,
+            "gp": 6,
+            "fgPct": 35.9,
             "ftPct": 0,
-            "threePct": 20,
-            "rpg": 3.5,
-            "apg": 2,
-            "spg": 0,
-            "bpg": 1.5,
-            "ppg": 7
+            "threePct": 24.1,
+            "rpg": 3.8,
+            "apg": 1.2,
+            "spg": 0.2,
+            "bpg": 0.5,
+            "ppg": 5.8
           }
         },
         {
@@ -16193,7 +16259,7 @@
             "instagram": "masonbieberich"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
@@ -16215,15 +16281,15 @@
             "instagram": "kamjo_09"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 40,
+            "gp": 3,
+            "fgPct": 28.6,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 5,
+            "rpg": 2.5,
             "apg": 0,
-            "spg": 0,
-            "bpg": 0,
-            "ppg": 4
+            "spg": 0.5,
+            "bpg": 0.5,
+            "ppg": 2
           }
         },
         {
@@ -16233,19 +16299,19 @@
           "height": "6'4",
           "classYear": 2028,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "bigmase_33"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 55.6,
-            "ftPct": 33.3,
-            "threePct": 40,
-            "rpg": 6.3,
+            "gp": 6,
+            "fgPct": 53.8,
+            "ftPct": 37.5,
+            "threePct": 28.6,
+            "rpg": 7,
             "apg": 0.7,
-            "spg": 0.7,
-            "bpg": 0.7,
-            "ppg": 7.7
+            "spg": 0.3,
+            "bpg": 0.3,
+            "ppg": 5.5
           }
         },
         {
@@ -16255,19 +16321,19 @@
           "height": "6'6",
           "classYear": 2027,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "nobouncechizz"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 71.4,
-            "ftPct": 61.5,
-            "threePct": 100,
-            "rpg": 8,
-            "apg": 0.5,
-            "spg": 0,
-            "bpg": 0.5,
-            "ppg": 14.5
+            "gp": 6,
+            "fgPct": 62.8,
+            "ftPct": 61.9,
+            "threePct": 50,
+            "rpg": 9.5,
+            "apg": 1.2,
+            "spg": 0.8,
+            "bpg": 0.2,
+            "ppg": 13.5
           }
         },
         {
@@ -16303,37 +16369,37 @@
             "instagram": "jibril_robinson_"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 40,
             "ftPct": 0,
             "threePct": 100,
-            "rpg": 3.7,
-            "apg": 0.7,
+            "rpg": 2.8,
+            "apg": 0.5,
             "spg": 0.3,
             "bpg": 0.3,
-            "ppg": 1.7
+            "ppg": 1.3
           }
         },
         {
           "number": 31,
           "name": "Ezra Rich",
           "position": "PG",
-          "height": "6",
+          "height": "6'",
           "classYear": 2028,
           "social": {
-            "twitter": "-",
+            "twitter": "ezrichh",
             "instagram": "yktv_ez"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 25,
-            "ftPct": 87.5,
-            "threePct": 10,
-            "rpg": 4.7,
-            "apg": 2.3,
-            "spg": 0,
-            "bpg": 0.3,
-            "ppg": 8
+            "gp": 6,
+            "fgPct": 37,
+            "ftPct": 66.7,
+            "threePct": 32.1,
+            "rpg": 3.3,
+            "apg": 2.2,
+            "spg": 0.8,
+            "bpg": 0.2,
+            "ppg": 11.8
           }
         }
       ]
@@ -16651,15 +16717,15 @@
             "instagram": "DMV_Zero"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 47.1,
-            "ftPct": 66.7,
-            "threePct": 50,
-            "rpg": 6.3,
-            "apg": 2.3,
-            "spg": 1.3,
+            "gp": 6,
+            "fgPct": 46.1,
+            "ftPct": 60,
+            "threePct": 40,
+            "rpg": 5.7,
+            "apg": 2.2,
+            "spg": 1,
             "bpg": 0,
-            "ppg": 15.3
+            "ppg": 14.2
           }
         },
         {
@@ -16673,13 +16739,13 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 14.3,
-            "ftPct": 100,
+            "gp": 3,
+            "fgPct": 12.5,
+            "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 1,
-            "apg": 0.5,
-            "spg": 0.5,
+            "rpg": 0.7,
+            "apg": 0.3,
+            "spg": 0.3,
             "bpg": 0,
             "ppg": 2
           }
@@ -16695,15 +16761,15 @@
             "instagram": "1ilkyree"
           },
           "stats": {
-            "gp": 4,
+            "gp": 6,
             "fgPct": 41.4,
-            "ftPct": 0,
+            "ftPct": 40,
             "threePct": 0,
-            "rpg": 5.3,
-            "apg": 1.8,
-            "spg": 0.8,
+            "rpg": 3.5,
+            "apg": 1.2,
+            "spg": 0.5,
             "bpg": 0,
-            "ppg": 6
+            "ppg": 4.3
           }
         },
         {
@@ -16717,13 +16783,13 @@
             "instagram": "1man.ej"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 13.3,
-            "ftPct": 58.3,
-            "threePct": 27.8,
-            "rpg": 3.8,
-            "apg": 1.8,
-            "spg": 0.3,
+            "gp": 6,
+            "fgPct": 16.7,
+            "ftPct": 54.5,
+            "threePct": 32.1,
+            "rpg": 3.3,
+            "apg": 1.5,
+            "spg": 0.8,
             "bpg": 0.5,
             "ppg": 13.5
           }
@@ -16739,15 +16805,15 @@
             "instagram": "nate_kellner5"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 77.8,
+            "gp": 5,
+            "fgPct": 80,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 2.8,
-            "apg": 0.3,
-            "spg": 0.3,
+            "rpg": 2.6,
+            "apg": 0.2,
+            "spg": 0.2,
             "bpg": 0,
-            "ppg": 3.8
+            "ppg": 3.4
           }
         },
         {
@@ -16761,15 +16827,15 @@
             "instagram": "m3rco._2x"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 50,
+            "gp": 3,
+            "fgPct": 28.6,
             "ftPct": 0,
-            "threePct": 66.7,
-            "rpg": 0.5,
-            "apg": 1,
+            "threePct": 33.3,
+            "rpg": 0.3,
+            "apg": 0.7,
             "spg": 0,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 2
           }
         },
         {
@@ -16827,15 +16893,15 @@
             "instagram": "dmv_cole"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
+            "gp": 5,
+            "fgPct": 40,
             "ftPct": 0,
-            "threePct": 100,
+            "threePct": 40,
             "rpg": 0,
-            "apg": 0,
+            "apg": 0.2,
             "spg": 0,
             "bpg": 0,
-            "ppg": 1.8
+            "ppg": 2
           }
         },
         {
@@ -16849,15 +16915,15 @@
             "instagram": "lincoln_turner21"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 37.5,
+            "gp": 6,
+            "fgPct": 40,
             "ftPct": 0,
-            "threePct": 40,
+            "threePct": 37,
             "rpg": 1.3,
             "apg": 0.8,
-            "spg": 0,
-            "bpg": 0.3,
-            "ppg": 4.5
+            "spg": 0.3,
+            "bpg": 0.2,
+            "ppg": 5.7
           }
         },
         {
@@ -16871,15 +16937,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 100,
+            "gp": 5,
+            "fgPct": 75,
             "ftPct": 0,
-            "threePct": 100,
-            "rpg": 0.8,
-            "apg": 0.3,
+            "threePct": 50,
+            "rpg": 0.6,
+            "apg": 0.2,
             "spg": 0,
             "bpg": 0,
-            "ppg": 1.8
+            "ppg": 1.4
           }
         },
         {
@@ -16893,15 +16959,15 @@
             "instagram": "upn3xtsai"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 61.1,
-            "ftPct": 50,
-            "threePct": 33.3,
-            "rpg": 2.5,
+            "gp": 6,
+            "fgPct": 59.1,
+            "ftPct": 83.3,
+            "threePct": 25,
+            "rpg": 1.8,
             "apg": 0.5,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 6
+            "ppg": 5.3
           }
         },
         {
@@ -16915,15 +16981,15 @@
             "instagram": "dorian_green43"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 81.8,
+            "gp": 6,
+            "fgPct": 80,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 2.3,
-            "apg": 0.3,
-            "spg": 0,
-            "bpg": 1,
-            "ppg": 4.8
+            "rpg": 2,
+            "apg": 0.2,
+            "spg": 0.2,
+            "bpg": 0.8,
+            "ppg": 4.3
           }
         },
         {
@@ -16937,12 +17003,12 @@
             "instagram": "jasola03"
           },
           "stats": {
-            "gp": 1,
+            "gp": 2,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0,
-            "apg": 2,
+            "rpg": 0.5,
+            "apg": 1,
             "spg": 0,
             "bpg": 0,
             "ppg": 0
@@ -17003,24 +17069,24 @@
       "players": [
         {
           "number": 0,
-          "name": "My Kel Smith",
+          "name": "My'Kel Smith",
           "position": "PG",
           "height": "5'10",
           "classYear": 2027,
           "social": {
             "twitter": "-",
-            "instagram": "kelsmithh_"
+            "instagram": "Kelsmithh_"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 53.8,
-            "ftPct": 66.7,
-            "threePct": 14.3,
-            "rpg": 2.7,
-            "apg": 4.7,
-            "spg": 2,
+            "gp": 7,
+            "fgPct": 54.8,
+            "ftPct": 75,
+            "threePct": 10,
+            "rpg": 3.6,
+            "apg": 2.7,
+            "spg": 1.9,
             "bpg": 0,
-            "ppg": 16.3
+            "ppg": 13.7
           }
         },
         {
@@ -17197,28 +17263,6 @@
             "spg": 2.6,
             "bpg": 1.3,
             "ppg": 6.3
-          }
-        },
-        {
-          "number": 12,
-          "name": "Jaivyn Moody",
-          "position": "G",
-          "height": "6'3",
-          "classYear": 2029,
-          "social": {
-            "twitter": "-",
-            "instagram": "jmdasplashprince"
-          },
-          "stats": {
-            "gp": 1,
-            "fgPct": 0,
-            "ftPct": 0,
-            "threePct": 0,
-            "rpg": 0,
-            "apg": 0,
-            "spg": 0,
-            "bpg": 0,
-            "ppg": 0
           }
         },
         {
@@ -17479,19 +17523,19 @@
           "height": "6'3",
           "classYear": 2028,
           "social": {
-            "twitter": "-",
+            "twitter": null,
             "instagram": "thejameswalker3"
           },
           "stats": {
-            "gp": 1,
-            "fgPct": 52.9,
+            "gp": 4,
+            "fgPct": 44.7,
             "ftPct": 0,
-            "threePct": 55.6,
-            "rpg": 0,
-            "apg": 0,
-            "spg": 3,
+            "threePct": 36.7,
+            "rpg": 1,
+            "apg": 1,
+            "spg": 2.3,
             "bpg": 0,
-            "ppg": 23
+            "ppg": 13.3
           }
         },
         {
@@ -17545,19 +17589,19 @@
           "height": "6'4",
           "classYear": 2027,
           "social": {
-            "twitter": "-",
+            "twitter": "lane_mahan1",
             "instagram": "lane.mahan"
           },
           "stats": {
-            "gp": 3,
-            "fgPct": 55,
-            "ftPct": 92.9,
-            "threePct": 45,
-            "rpg": 5.7,
-            "apg": 0.3,
-            "spg": 2.7,
-            "bpg": 0,
-            "ppg": 22
+            "gp": 4,
+            "fgPct": 52.1,
+            "ftPct": 87.5,
+            "threePct": 46.2,
+            "rpg": 5,
+            "apg": 1.5,
+            "spg": 3.3,
+            "bpg": 0.5,
+            "ppg": 19
           }
         },
         {
@@ -17778,15 +17822,15 @@
             "instagram": "paddyhinds_2"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 37,
-            "ftPct": 100,
-            "threePct": 34.4,
-            "rpg": 5.3,
-            "apg": 2.5,
-            "spg": 2.3,
-            "bpg": 0.8,
-            "ppg": 13.8
+            "gp": 5,
+            "fgPct": 36.1,
+            "ftPct": 88.9,
+            "threePct": 33.3,
+            "rpg": 4.8,
+            "apg": 2,
+            "spg": 2,
+            "bpg": 0.6,
+            "ppg": 13
           }
         },
         {
@@ -17800,15 +17844,15 @@
             "instagram": "maseredder._"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 44.4,
-            "ftPct": 62.5,
-            "threePct": 42.3,
-            "rpg": 6.8,
-            "apg": 2.8,
-            "spg": 2.8,
-            "bpg": 0.5,
-            "ppg": 15.3
+            "gp": 5,
+            "fgPct": 44.3,
+            "ftPct": 68.4,
+            "threePct": 37.1,
+            "rpg": 6,
+            "apg": 2.4,
+            "spg": 3,
+            "bpg": 0.4,
+            "ppg": 16
           }
         },
         {
@@ -17822,15 +17866,15 @@
             "instagram": "Calebcharles_4"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 37,
-            "ftPct": 100,
-            "threePct": 41.4,
-            "rpg": 4.5,
+            "gp": 5,
+            "fgPct": 40.7,
+            "ftPct": 83.3,
+            "threePct": 44.4,
+            "rpg": 4,
             "apg": 1.8,
-            "spg": 0.3,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 12
+            "ppg": 13
           }
         },
         {
@@ -17844,13 +17888,13 @@
             "instagram": "appia.6"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 30.8,
+            "gp": 5,
+            "fgPct": 29.4,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 2.8,
-            "apg": 2.8,
-            "spg": 0.3,
+            "rpg": 2.6,
+            "apg": 2.2,
+            "spg": 0.2,
             "bpg": 0,
             "ppg": 2
           }
@@ -17888,15 +17932,15 @@
             "instagram": "dreamwithaj"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 42.2,
-            "ftPct": 66.7,
-            "threePct": 60,
-            "rpg": 3.8,
-            "apg": 4.8,
-            "spg": 1.8,
-            "bpg": 0.3,
-            "ppg": 12
+            "gp": 5,
+            "fgPct": 42.6,
+            "ftPct": 57.1,
+            "threePct": 57.1,
+            "rpg": 3.2,
+            "apg": 4,
+            "spg": 1.4,
+            "bpg": 0.2,
+            "ppg": 11.6
           }
         },
         {
@@ -17910,15 +17954,15 @@
             "instagram": "certifiedd.nab"
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 0,
+            "gp": 3,
+            "fgPct": 33.3,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 0.5,
-            "apg": 0.5,
+            "rpg": 0.7,
+            "apg": 0.3,
             "spg": 0,
-            "bpg": 0,
-            "ppg": 0.5
+            "bpg": 0.3,
+            "ppg": 1
           }
         },
         {
@@ -17932,15 +17976,15 @@
             "instagram": "edgarhavin_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 69.2,
-            "ftPct": 0,
-            "threePct": 57.1,
-            "rpg": 2,
-            "apg": 1.3,
-            "spg": 0.5,
+            "gp": 5,
+            "fgPct": 75,
+            "ftPct": 100,
+            "threePct": 66.7,
+            "rpg": 1.8,
+            "apg": 1.2,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 5.5
+            "ppg": 6.4
           }
         },
         {
@@ -17954,15 +17998,15 @@
             "instagram": "jeyrenceballoss"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
+            "gp": 5,
+            "fgPct": 70,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 2.5,
+            "rpg": 2,
             "apg": 0,
-            "spg": 0.3,
-            "bpg": 0.5,
-            "ppg": 1.5
+            "spg": 0.2,
+            "bpg": 0.4,
+            "ppg": 2.8
           }
         },
         {
@@ -18029,15 +18073,15 @@
             "instagram": "eric.0dina"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 47.6,
-            "ftPct": 37.5,
+            "gp": 7,
+            "fgPct": 41.7,
+            "ftPct": 33.3,
             "threePct": 0,
-            "rpg": 3.8,
-            "apg": 0.2,
-            "spg": 0.5,
-            "bpg": 0.5,
-            "ppg": 4.5
+            "rpg": 3.4,
+            "apg": 0.1,
+            "spg": 0.4,
+            "bpg": 0.4,
+            "ppg": 4
           }
         },
         {
@@ -18051,15 +18095,15 @@
             "instagram": "aaron_.benjamin"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 22,
-            "ftPct": 85.7,
-            "threePct": 17.4,
-            "rpg": 3.3,
-            "apg": 0.8,
+            "gp": 7,
+            "fgPct": 21.8,
+            "ftPct": 81.3,
+            "threePct": 16,
+            "rpg": 3.1,
+            "apg": 0.7,
             "spg": 0.3,
             "bpg": 0,
-            "ppg": 6.3
+            "ppg": 5.9
           }
         },
         {
@@ -18073,15 +18117,15 @@
             "instagram": "connor.kuk"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 42.6,
-            "ftPct": 86.7,
-            "threePct": 12.5,
-            "rpg": 3.2,
-            "apg": 0.8,
-            "spg": 1.5,
-            "bpg": 0.2,
-            "ppg": 12
+            "gp": 7,
+            "fgPct": 42.9,
+            "ftPct": 78.9,
+            "threePct": 22.2,
+            "rpg": 3.1,
+            "apg": 0.7,
+            "spg": 1.6,
+            "bpg": 0.1,
+            "ppg": 11.9
           }
         },
         {
@@ -18095,15 +18139,15 @@
             "instagram": "gkg30ballz_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 25,
-            "ftPct": 66.7,
+            "gp": 5,
+            "fgPct": 29.2,
+            "ftPct": 60,
             "threePct": 0,
-            "rpg": 1.3,
+            "rpg": 1.4,
             "apg": 0.8,
-            "spg": 0.5,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 3.4
           }
         },
         {
@@ -18117,12 +18161,12 @@
             "instagram": "henry14_h"
           },
           "stats": {
-            "gp": 0,
+            "gp": 1,
             "fgPct": 0,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 0,
-            "apg": 0,
+            "apg": 1,
             "spg": 0,
             "bpg": 0,
             "ppg": 0
@@ -18139,15 +18183,15 @@
             "instagram": "aqil_rahman5"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 13.3,
+            "gp": 7,
+            "fgPct": 17.6,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 1,
-            "spg": 0.8,
-            "bpg": 0.2,
-            "ppg": 1
+            "rpg": 1.3,
+            "apg": 0.9,
+            "spg": 0.9,
+            "bpg": 0.1,
+            "ppg": 1.3
           }
         },
         {
@@ -18161,15 +18205,15 @@
             "instagram": "landohavvinn"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 53.5,
-            "ftPct": 70.6,
-            "threePct": 11.1,
-            "rpg": 5,
-            "apg": 0.7,
-            "spg": 1,
+            "gp": 7,
+            "fgPct": 50,
+            "ftPct": 72.2,
+            "threePct": 9.1,
+            "rpg": 4.7,
+            "apg": 0.6,
+            "spg": 0.9,
             "bpg": 0.3,
-            "ppg": 10
+            "ppg": 9.3
           }
         },
         {
@@ -18183,15 +18227,15 @@
             "instagram": "007.zayy"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 38.1,
+            "gp": 7,
+            "fgPct": 45.8,
             "ftPct": 25,
-            "threePct": 18.2,
-            "rpg": 3.2,
-            "apg": 1.7,
-            "spg": 0.3,
+            "threePct": 25,
+            "rpg": 2.9,
+            "apg": 1.6,
+            "spg": 0.4,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 3.9
           }
         },
         {
@@ -18205,15 +18249,15 @@
             "instagram": "cm13re"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 11.1,
             "ftPct": 100,
             "threePct": 0,
-            "rpg": 2.2,
-            "apg": 0.2,
-            "spg": 0.2,
-            "bpg": 0,
-            "ppg": 0.7
+            "rpg": 1.9,
+            "apg": 0.1,
+            "spg": 0.1,
+            "bpg": 0.3,
+            "ppg": 0.6
           }
         },
         {
@@ -18227,15 +18271,15 @@
             "instagram": null
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 12.5,
+            "gp": 7,
+            "fgPct": 22.2,
             "ftPct": 0,
             "threePct": 16.7,
             "rpg": 0.7,
-            "apg": 0.2,
-            "spg": 0.2,
+            "apg": 0.1,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 0.5
+            "ppg": 0.7
           }
         },
         {
@@ -18271,12 +18315,12 @@
             "instagram": "3mo.rod"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 54.5,
-            "ftPct": 100,
-            "threePct": 42.9,
-            "rpg": 1.8,
-            "apg": 0.4,
+            "gp": 6,
+            "fgPct": 35.3,
+            "ftPct": 80,
+            "threePct": 27.3,
+            "rpg": 2.2,
+            "apg": 0.7,
             "spg": 0.2,
             "bpg": 0.2,
             "ppg": 2
@@ -18293,15 +18337,15 @@
             "instagram": "jrmbo_"
           },
           "stats": {
-            "gp": 6,
+            "gp": 7,
             "fgPct": 50,
             "ftPct": 125,
             "threePct": 33.3,
-            "rpg": 0.5,
+            "rpg": 0.4,
             "apg": 0,
-            "spg": 0.2,
+            "spg": 0.1,
             "bpg": 0,
-            "ppg": 2.8
+            "ppg": 2.4
           }
         },
         {
@@ -18315,15 +18359,15 @@
             "instagram": "-"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 66.7,
             "ftPct": 50,
             "threePct": 0,
-            "rpg": 0.5,
+            "rpg": 1,
             "apg": 0,
             "spg": 0,
-            "bpg": 0.5,
-            "ppg": 2
+            "bpg": 0.4,
+            "ppg": 1.6
           }
         },
         {
@@ -18390,15 +18434,15 @@
             "instagram": "sam.greenberg00"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 41.7,
+            "gp": 5,
+            "fgPct": 46.2,
             "ftPct": 0,
             "threePct": 40,
-            "rpg": 2,
-            "apg": 0.8,
-            "spg": 0.5,
+            "rpg": 1.6,
+            "apg": 0.6,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 3
+            "ppg": 2.8
           }
         },
         {
@@ -18412,15 +18456,15 @@
             "instagram": "maxxwilliamss_"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 45.9,
-            "ftPct": 66.7,
-            "threePct": 38.7,
-            "rpg": 7.3,
-            "apg": 4.5,
-            "spg": 1.8,
+            "gp": 5,
+            "fgPct": 42.3,
+            "ftPct": 60,
+            "threePct": 37.5,
+            "rpg": 8,
+            "apg": 4,
+            "spg": 1.6,
             "bpg": 0,
-            "ppg": 18
+            "ppg": 17.4
           }
         },
         {
@@ -18434,15 +18478,15 @@
             "instagram": "gradymiller.3"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 44.4,
+            "gp": 5,
+            "fgPct": 48.6,
             "ftPct": 66.7,
-            "threePct": 40.9,
+            "threePct": 45.2,
             "rpg": 3.8,
-            "apg": 1.3,
-            "spg": 1.3,
+            "apg": 1.6,
+            "spg": 1.2,
             "bpg": 0,
-            "ppg": 8.8
+            "ppg": 10.4
           }
         },
         {
@@ -18478,15 +18522,15 @@
             "instagram": "_jackwills_13"
           },
           "stats": {
-            "gp": 4,
+            "gp": 5,
             "fgPct": 42.9,
             "ftPct": 50,
             "threePct": 26.7,
-            "rpg": 1.8,
-            "apg": 2,
+            "rpg": 1.4,
+            "apg": 1.6,
             "spg": 0.8,
             "bpg": 0,
-            "ppg": 5.8
+            "ppg": 4.6
           }
         },
         {
@@ -18500,15 +18544,15 @@
             "instagram": "maxxwalton28"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 40.9,
+            "gp": 5,
+            "fgPct": 34.6,
             "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 2,
-            "apg": 1,
-            "spg": 1,
-            "bpg": 1,
-            "ppg": 6.5
+            "rpg": 1.6,
+            "apg": 0.8,
+            "spg": 0.8,
+            "bpg": 0.8,
+            "ppg": 5.2
           }
         },
         {
@@ -18522,15 +18566,15 @@
             "instagram": "rowobrien29"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 40,
+            "gp": 5,
+            "fgPct": 41.2,
             "ftPct": 50,
-            "threePct": 39.1,
-            "rpg": 1.3,
-            "apg": 1.8,
-            "spg": 1,
+            "threePct": 39.4,
+            "rpg": 2.2,
+            "apg": 1.6,
+            "spg": 1.2,
             "bpg": 0,
-            "ppg": 9.5
+            "ppg": 11.2
           }
         },
         {
@@ -18566,15 +18610,15 @@
             "instagram": "leonebataillon"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 50,
+            "gp": 5,
+            "fgPct": 37.5,
             "ftPct": 0,
-            "threePct": 0,
-            "rpg": 2,
-            "apg": 0.3,
-            "spg": 0.5,
-            "bpg": 0.3,
-            "ppg": 2.5
+            "threePct": 12.5,
+            "rpg": 2.6,
+            "apg": 0.8,
+            "spg": 0.4,
+            "bpg": 0.2,
+            "ppg": 2.6
           }
         },
         {
@@ -18610,15 +18654,15 @@
             "instagram": "crisradics6"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 55.6,
-            "ftPct": 75,
+            "gp": 5,
+            "fgPct": 53.8,
+            "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 0,
-            "spg": 0.3,
+            "rpg": 1.8,
+            "apg": 0.6,
+            "spg": 0.2,
             "bpg": 0,
-            "ppg": 3.3
+            "ppg": 3.6
           }
         },
         {
@@ -18632,15 +18676,15 @@
             "instagram": "jamessampson670"
           },
           "stats": {
-            "gp": 0,
-            "fgPct": 0,
+            "gp": 1,
+            "fgPct": 100,
             "ftPct": 0,
             "threePct": 0,
-            "rpg": 0,
+            "rpg": 1,
             "apg": 0,
             "spg": 0,
             "bpg": 0,
-            "ppg": 0
+            "ppg": 2
           }
         },
         {
@@ -19112,12 +19156,12 @@
             "instagram": "Thomas_txe"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 40,
+            "gp": 5,
+            "fgPct": 38.5,
             "ftPct": 0,
             "threePct": 0,
             "rpg": 2.8,
-            "apg": 2,
+            "apg": 1.6,
             "spg": 1,
             "bpg": 0,
             "ppg": 2
@@ -19156,15 +19200,15 @@
             "instagram": "nathann._02"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 0,
+            "gp": 5,
+            "fgPct": 12.5,
             "ftPct": 0,
-            "threePct": 0,
-            "rpg": 0.3,
-            "apg": 0.3,
-            "spg": 0.3,
+            "threePct": 20,
+            "rpg": 0.2,
+            "apg": 0.4,
+            "spg": 0.6,
             "bpg": 0,
-            "ppg": 0
+            "ppg": 0.6
           }
         },
         {
@@ -19200,15 +19244,15 @@
             "instagram": "dadogjeremiah"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 53,
-            "ftPct": 66,
-            "threePct": 35.6,
-            "rpg": 8,
-            "apg": 2.3,
-            "spg": 1.2,
-            "bpg": 1.3,
-            "ppg": 28.2
+            "gp": 7,
+            "fgPct": 49.3,
+            "ftPct": 67.2,
+            "threePct": 32.7,
+            "rpg": 8.9,
+            "apg": 2.1,
+            "spg": 1.1,
+            "bpg": 1.1,
+            "ppg": 28.3
           }
         },
         {
@@ -19266,15 +19310,15 @@
             "instagram": "douggie370"
           },
           "stats": {
-            "gp": 3,
+            "gp": 4,
             "fgPct": 41.7,
             "ftPct": 33.3,
             "threePct": 0,
-            "rpg": 2.7,
+            "rpg": 2.8,
             "apg": 0.3,
             "spg": 0.3,
             "bpg": 0.3,
-            "ppg": 3.7
+            "ppg": 2.8
           }
         },
         {
@@ -19310,15 +19354,15 @@
             "instagram": "_jackradford"
           },
           "stats": {
-            "gp": 5,
-            "fgPct": 61.8,
-            "ftPct": 50,
+            "gp": 6,
+            "fgPct": 57.1,
+            "ftPct": 42.9,
             "threePct": 0,
-            "rpg": 6,
-            "apg": 0.8,
-            "spg": 1.4,
-            "bpg": 1.2,
-            "ppg": 9
+            "rpg": 6.2,
+            "apg": 0.7,
+            "spg": 1.7,
+            "bpg": 1,
+            "ppg": 8.5
           }
         },
         {
@@ -19332,15 +19376,15 @@
             "instagram": "b_baller_cb"
           },
           "stats": {
-            "gp": 6,
-            "fgPct": 36.7,
-            "ftPct": 75,
-            "threePct": 24.4,
-            "rpg": 6,
-            "apg": 2.8,
-            "spg": 2.5,
-            "bpg": 0,
-            "ppg": 14.8
+            "gp": 7,
+            "fgPct": 38.4,
+            "ftPct": 73.3,
+            "threePct": 30.6,
+            "rpg": 6.4,
+            "apg": 2.9,
+            "spg": 2.3,
+            "bpg": 0.1,
+            "ppg": 16.1
           }
         },
         {
@@ -19442,15 +19486,15 @@
             "instagram": "armand.davidson3"
           },
           "stats": {
-            "gp": 4,
-            "fgPct": 33.3,
+            "gp": 5,
+            "fgPct": 25,
             "ftPct": 0,
-            "threePct": 50,
-            "rpg": 1.3,
-            "apg": 0.8,
-            "spg": 0.3,
+            "threePct": 33.3,
+            "rpg": 1,
+            "apg": 0.6,
+            "spg": 0.2,
             "bpg": 0,
-            "ppg": 1.5
+            "ppg": 1.2
           }
         },
         {
@@ -19464,15 +19508,15 @@
             "instagram": null
           },
           "stats": {
-            "gp": 2,
-            "fgPct": 66.7,
-            "ftPct": 100,
+            "gp": 3,
+            "fgPct": 50,
+            "ftPct": 66.7,
             "threePct": 0,
-            "rpg": 1.5,
-            "apg": 0.5,
-            "spg": 0.5,
-            "bpg": 0.5,
-            "ppg": 4.5
+            "rpg": 3.7,
+            "apg": 0.3,
+            "spg": 0.3,
+            "bpg": 0.7,
+            "ppg": 3.3
           }
         }
       ]
