@@ -162,6 +162,12 @@ function gameLogFor(name) {
   return g && Array.isArray(g.games) ? g.games : [];
 }
 
+// Season minutes for a prospect: { min, mpg, g, gs } or null.
+function minutesFor(name) {
+  const g = GAME_LOGS[nameKey(name)];
+  return g && g.season ? g.season : null;
+}
+
 // Populate the module-level stores from the fetched datasets. Called once,
 // before the app renders.
 function initData(prospectsData, capitolHoops, schoolLocations) {
@@ -959,8 +965,19 @@ function GameLogTab({ name }) {
   const avg = (k) => (games.reduce((s, g) => s + (g[k] || 0), 0) / games.length).toFixed(1);
   const th = { ...mono, fontSize: 10, letterSpacing: "0.1em", color: T.textMute, textTransform: "uppercase", padding: "8px 10px", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap" };
   const td = { ...mono, fontSize: 12, color: T.text, padding: "8px 10px", textAlign: "right", fontVariantNumeric: "tabular-nums" };
+  const mins = minutesFor(name);
   return (
     <div style={{ display: "grid", gap: 10 }}>
+      {mins ? (
+        <div style={{ display: "flex", gap: 18, flexWrap: "wrap", background: T.surface, border: `1px solid ${T.border}`, padding: "12px 16px" }}>
+          {[["MPG", perGame(mins.mpg)], ["Total Min", fmtCount(mins.min)], ["GP", fmtCount(mins.g)], ["GS", mins.gs != null ? fmtCount(mins.gs) : "—"]].map(([l, v]) => (
+            <div key={l}>
+              <div style={{ fontSize: 22, color: l === "MPG" ? T.accent : T.text, fontWeight: 800, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{v}</div>
+              <div style={{ ...mono, fontSize: 9, letterSpacing: "0.14em", color: T.textMute, textTransform: "uppercase", marginTop: 5 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
         Capitol Hoops Summer League · {games.length} game{games.length === 1 ? "" : "s"} · per-game box scores
       </div>
@@ -2424,6 +2441,7 @@ function buildWorkspaceTeams() {
         name: pl.name, pos: pl.position || null,
         class: pl.classYear ? String(pl.classYear).slice(2) : null,
         gp: pl.stats?.gp ?? 0, pts: pl.stats?.ppg ?? null, reb: pl.stats?.rpg ?? null, ast: pl.stats?.apg ?? null,
+        mpg: minutesFor(pl.name)?.mpg ?? null,
         tracked: false, id: pr?.id || null, goldTier: !!pr?.goldTier, commit: pr?.commitment || null,
       };
     });

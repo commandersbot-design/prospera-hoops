@@ -284,6 +284,7 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
       <thead><tr>
         <TH>Player</TH>
         <TH right active={sortKey === "gp"} dir={dir} onClick={() => onSort("gp")}>GP</TH>
+        <TH right active={sortKey === "mpg"} dir={dir} onClick={() => onSort("mpg")}>MPG</TH>
         <TH right active={sortKey === "pts"} dir={dir} onClick={() => onSort("pts")}>PTS</TH>
         <TH right active={sortKey === "reb"} dir={dir} onClick={() => onSort("reb")}>REB</TH>
         <TH right active={sortKey === "ast"} dir={dir} onClick={() => onSort("ast")}>AST</TH>
@@ -295,6 +296,7 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
             <tr key={`${p.name}-${i}`} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
               <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               {numCell(p.gp, low, true)}
+              {numCell(p.mpg, low)}
               {numCell(p.pts, low)}
               {numCell(p.reb, low)}
               {numCell(p.ast, low)}

@@ -36,8 +36,18 @@ const FIELD = {
 
 async function get(url) {
   for (let i = 0; i < 3; i++) {
-    try { const r = await fetch(url); if (r.ok) return await r.text(); return null; }
-    catch { await sleep(2500); }
+    // Abort a stalled connection so one dead socket can't hang the whole run.
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (r.ok) return await r.text();
+      return null;
+    } catch {
+      clearTimeout(timer);
+      await sleep(2000);
+    }
   }
   return null;
 }
@@ -62,6 +72,40 @@ function parseGameLog(html) {
     if (g.date) out.push(g);
   }
   return out;
+}
+
+// Season-statistics table: ONE row per season the player has played. Carries
+// totals (PTS/FGM/FGA/3PM/FTM/FTA/TOV…), minutes (Min), games (G/GS) and the
+// site's per-game + %s — everything the multi-season Development Arc needs.
+// Returns ALL seasons (ascending) so returning players get a real arc.
+function parseSeasons(html) {
+  const i = html.indexOf('class="sp-player-statistics');
+  if (i < 0) return [];
+  const t = html.slice(html.lastIndexOf("<table", i), html.indexOf("</table>", i) + 8);
+  const rows = [...t.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)]
+    .map((m) => [...m[1].matchAll(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g)].map((c) => decode(c[1].replace(/<[^>]+>/g, " "))));
+  if (rows.length < 2) return [];
+  const head = rows[0];
+  const ix = (l) => head.indexOf(l);
+  const C = { season: ix("Season"), team: ix("Team"), pts: ix("PTS"), fgm: ix("FGM"), fga: ix("FGA"), tpm: ix("3PM"), tpa: ix("3PA"), ftm: ix("FTM"), fta: ix("FTA"), oreb: ix("OFF"), dreb: ix("DEF"), reb: ix("REB"), ast: ix("AST"), stl: ix("STL"), blk: ix("BLK"), tov: ix("TO"), pf: ix("PF"), min: ix("Min"), g: ix("G"), gs: ix("GS"), fgPct: ix("FG%"), ftPct: ix("FT%"), threePct: ix("3P%"), rpg: ix("RPG"), apg: ix("APG"), spg: ix("SPG"), bpg: ix("BPG"), ppg: ix("PPG") };
+  if (C.season < 0 || C.min < 0 || C.g < 0) return [];
+  const out = [];
+  for (const r of rows.slice(1)) {
+    const sRaw = r[C.season] || "";
+    const ym = sRaw.match(/\d{4}/);
+    if (!ym) continue; // skip career/total rows
+    const v = (k) => (C[k] >= 0 ? num(r[C[k]]) : null);
+    const g = v("g");
+    out.push({
+      season: ym[0], team: C.team >= 0 ? r[C.team] : null,
+      pts: v("pts"), fgm: v("fgm"), fga: v("fga"), tpm: v("tpm"), tpa: v("tpa"), ftm: v("ftm"), fta: v("fta"),
+      oreb: v("oreb"), dreb: v("dreb"), reb: v("reb"), ast: v("ast"), stl: v("stl"), blk: v("blk"), tov: v("tov"), pf: v("pf"),
+      min: v("min"), g, gs: v("gs"), fgPct: v("fgPct"), ftPct: v("ftPct"), threePct: v("threePct"),
+      rpg: v("rpg"), apg: v("apg"), spg: v("spg"), bpg: v("bpg"), ppg: v("ppg"),
+      mpg: g ? +((v("min") || 0) / g).toFixed(1) : 0,
+    });
+  }
+  return out.sort((a, b) => a.season.localeCompare(b.season));
 }
 
 async function run() {
@@ -94,7 +138,9 @@ async function run() {
 
   // Candidate player-page URLs for a player: the roster link (if any), then
   // constructed slugs ("first-last", "first-last-2/-3" for disambiguated pages).
-  const slugify = (n) => String(n || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  // Strip apostrophes/periods FIRST (the site removes them: "J'lon Lyons" →
+  // "jlon-lyons", not "j-lon-lyons"), then hyphenate the rest.
+  const slugify = (n) => String(n || "").toLowerCase().replace(/['’.]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   function candidatesFor(nm) {
     const c = [];
     if (urls.has(nm)) c.push(urls.get(nm));
@@ -116,7 +162,9 @@ async function run() {
       if (!html) continue;
       const name = decode((html.match(/<title>([^<]+?)(?:\s*[–-]\s*Capitol Hoops)?<\/title>/) || [])[1] || "");
       const games = parseGameLog(html);
-      const rec = { name, slug: url.replace(/.*\/player\//, "").replace(/\/$/, ""), games };
+      const seasons = parseSeasons(html); // ALL seasons (ascending) for the Development Arc
+      const season = seasons.find((s) => s.season === "2026") || seasons[seasons.length - 1] || null; // current, for MPG features
+      const rec = { name, slug: url.replace(/.*\/player\//, "").replace(/\/$/, ""), games, season, seasons };
       // Accept immediately if this page has games AND its title matches the player.
       if (games.length && nameKey(name) === nm) { best = rec; break; }
       if (!best || (games.length && !best.games.length)) best = rec; // remember best-so-far
