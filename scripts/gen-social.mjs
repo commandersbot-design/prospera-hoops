@@ -175,7 +175,7 @@ async function carousel() {
     ${RAMP_CLUSTER(40, 820, 2.4, 0.5)} ${RAMP_CLUSTER(840, 800, 2.4, 0.5)}
     <text x="540" y="360" font-family='${SA}' font-weight="800" font-size="130" fill="${T.text}" text-anchor="middle">SCOUT</text>
     <text x="540" y="490" font-family='${SA}' font-weight="800" font-size="130" fill="${T.orange}" text-anchor="middle">ANYBODY</text>
-    <text x="540" y="575" font-family='${SA}' font-weight="700" font-size="36" letter-spacing="3" fill="${T.sage}" text-anchor="middle">FREE · YOUR RECRUITING HOME BASE</text>
+    <text x="540" y="575" font-family='${SA}' font-weight="700" font-size="38" letter-spacing="3" fill="${T.sage}" text-anchor="middle">FREE · CLAIM YOUR PROFILE</text>
     <text x="540" y="828" font-family='${SA}' font-weight="700" font-size="44" letter-spacing="1" fill="${T.text}" text-anchor="middle">prospera-preps.vercel.app</text>
     ${handle}`);
   console.log("✓ launch carousel (3 slides)");
