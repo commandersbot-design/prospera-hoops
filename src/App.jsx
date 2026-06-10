@@ -822,6 +822,80 @@ function RelatedPlayers({ prospect, onOpen }) {
   );
 }
 
+// --- Claim a profile --------------------------------------------------------
+// Where claims are routed. Set CLAIM_ENDPOINT to a form backend (Formspree,
+// Tally, Getform, etc.) to collect submissions in a dashboard; otherwise it
+// falls back to a prefilled email to CLAIM_EMAIL (zero setup). Claims are
+// reviewed by the owner, who then verifies the player (the ✓ Verify control) —
+// there's no auto-edit, which is the right posture for confirming minors.
+const CLAIM_ENDPOINT = ""; // e.g. "https://formspree.io/f/xxxxxxx"  ← paste yours
+const CLAIM_EMAIL = "claims@prosperahoops.com"; // ← change to your inbox
+
+function ClaimForm({ prospect, onClose }) {
+  const [f, setF] = useState({ role: "Player", name: "", email: "", phone: "", proof: "", message: "" });
+  const [state, setState] = useState("idle"); // idle | sending | sent | error
+  const set = (k) => (e) => setF((p) => ({ ...p, [k]: e.target.value }));
+  const inputStyle = { ...mono, fontSize: 13, color: T.text, background: T.surface2, border: `1px solid ${T.border}`, borderRadius: 6, padding: "9px 11px", width: "100%", outline: "none" };
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!f.name.trim() || !f.email.trim()) return;
+    const payload = { player: prospect.name, playerId: prospect.id, school: prospect.school || null, ...f, submittedFrom: "prospera-hoops/profile" };
+    if (CLAIM_ENDPOINT) {
+      setState("sending");
+      try {
+        const r = await fetch(CLAIM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) });
+        setState(r.ok ? "sent" : "error");
+      } catch { setState("error"); }
+    } else {
+      // zero-backend fallback: open a prefilled email to the owner.
+      const subject = `Profile claim: ${prospect.name}`;
+      const body = `Player: ${prospect.name}${prospect.school ? ` (${prospect.school})` : ""}\nClaimant: ${f.name} — ${f.role}\nEmail: ${f.email}\nPhone: ${f.phone}\nProof (IG / link): ${f.proof}\n\n${f.message}`;
+      window.location.href = `mailto:${CLAIM_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setState("sent");
+    }
+  }
+
+  if (state === "sent") {
+    return (
+      <div style={{ background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.positive}`, padding: 16, display: "grid", gap: 6 }}>
+        <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", color: T.positive, textTransform: "uppercase", fontWeight: 700 }}>Claim submitted ✓</div>
+        <div style={{ fontSize: 13, color: T.textDim, lineHeight: 1.6, maxWidth: 640 }}>
+          Thanks — we'll verify it's really {prospect.name} and unlock editing (add film, fix info). You'll hear back at {f.email || "your email"}.
+        </div>
+        <button type="button" onClick={onClose} style={{ ...mono, fontSize: 11, color: T.signal, background: "transparent", border: "none", justifySelf: "start", padding: "4px 0", cursor: "pointer" }}>Close</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} style={{ background: "var(--prospera-accent-bg-faint)", border: `1px dashed ${T.border}`, padding: 16, display: "grid", gap: 10 }}>
+      <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>Claim this profile</div>
+      <div style={{ fontSize: 13, color: T.textDim, lineHeight: 1.55, maxWidth: 640 }}>
+        Are you {prospect.name}, a parent, or their coach? Submit a claim — once we verify it's you, you can add film, fix your info, and own your recruiting page. <b style={{ color: T.textDim }}>We don't build it for you; you do.</b>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 8 }}>
+        <select value={f.role} onChange={set("role")} style={inputStyle}>
+          <option>Player</option><option>Parent / guardian</option><option>Coach</option>
+        </select>
+        <input style={inputStyle} placeholder="Your name *" value={f.name} onChange={set("name")} required />
+        <input style={inputStyle} type="email" placeholder="Email *" value={f.email} onChange={set("email")} required />
+        <input style={inputStyle} placeholder="Phone (optional)" value={f.phone} onChange={set("phone")} />
+      </div>
+      <input style={inputStyle} placeholder="Proof it's you — your IG handle or a link" value={f.proof} onChange={set("proof")} />
+      <textarea style={{ ...inputStyle, minHeight: 64, resize: "vertical" }} placeholder="Anything to add (optional)" value={f.message} onChange={set("message")} />
+      {state === "error" && <div style={{ ...mono, fontSize: 11, color: T.danger }}>Couldn't send — try again, or email {CLAIM_EMAIL}.</div>}
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <button type="submit" disabled={state === "sending"} style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, color: T.bg, background: T.accent, border: "none", borderRadius: 6, padding: "9px 16px", cursor: "pointer" }}>
+          {state === "sending" ? "Sending…" : "Submit claim"}
+        </button>
+        <button type="button" onClick={onClose} style={{ ...mono, fontSize: 11, color: T.textDim, background: "transparent", border: "none", cursor: "pointer" }}>Cancel</button>
+      </div>
+      <div style={{ ...mono, fontSize: 9, letterSpacing: "0.06em", color: T.textMute }}>Reviewed by Prospera Hoops — we verify before any profile is edited.</div>
+    </form>
+  );
+}
+
 function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
   const [claimOpen, setClaimOpen] = useState(false);
@@ -890,15 +964,7 @@ function Profile({ prospect, onBack, onOpen }) {
         </div>
       </div>
 
-      {claimOpen && (
-        <div style={{ background: "var(--prospera-accent-bg-faint)", border: `1px dashed ${T.border}`, padding: 16, display: "grid", gap: 6 }}>
-          <div style={{ ...mono, fontSize: 10, letterSpacing: "0.14em", color: T.accent, textTransform: "uppercase", fontWeight: 700 }}>Claim this profile</div>
-          <div style={{ fontSize: 13, color: T.textDim, lineHeight: 1.6, maxWidth: 640 }}>
-            Are you {p.name}, a parent, or their coach? Player profile claiming &amp; verification is launching soon — it'll let you confirm your info and add film. In the meantime, our scouts maintain this profile; to request a correction, reach out via the contact link in the footer.
-          </div>
-          <div style={{ ...mono, fontSize: 9, letterSpacing: "0.08em", color: T.textMute, textTransform: "uppercase" }}>Coming soon · accounts &amp; verification in progress</div>
-        </div>
-      )}
+      {claimOpen && <ClaimForm prospect={p} onClose={() => setClaimOpen(false)} />}
 
       {/* Tabs — Game Log appears only when we have per-game box scores. */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
