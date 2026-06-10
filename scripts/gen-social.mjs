@@ -52,13 +52,15 @@ async function xHeader() {
   console.log("✓ x-header-1500x500.png");
 }
 
-// --- Profile pics (square, from the circle avatar) --------------------------
+// --- Profile pics (square) — from the clean SYMBOL, not the avatar ----------
+// The kit's avatar-circle has a garbled wordmark; and text is illegible at
+// profile-pic sizes anyway. The symbol (ball + bars) is the right mark.
+// Rendered from the SVG source for crispness at small sizes.
 async function profilePics() {
-  const src = path.join(brand, "png", "prosperahoops-avatar-circle-512.png");
+  const src = path.join(brand, "svg", "prosperahoops-symbol.svg");
   const sizes = [["twitter-profile-400", 400], ["instagram-profile-320", 320], ["tiktok-profile-200", 200]];
   for (const [name, px] of sizes) {
-    await sharp(src).resize(px, px, { fit: "contain", background: { r: 11, g: 14, b: 19, alpha: 1 } })
-      .png().toFile(path.join(outDir, `${name}.png`));
+    await sharp(src, { density: 384 }).resize(px, px).png().toFile(path.join(outDir, `${name}.png`));
     console.log(`✓ ${name}.png`);
   }
 }
