@@ -126,6 +126,30 @@ async function igTemplates() {
     ${handle}`);
 }
 
+// --- Clean circular avatar (rebuild — the kit's avatar wordmark was garbled) -
+// Symbol (ball + bars) up top + correctly-spaced PROSPERA HOOPS below, in the
+// embedded Saira font. Overwrites the broken kit avatar (png 512/192 + svg).
+async function cleanAvatar() {
+  const cluster = `<g transform="translate(150,96) scale(1.55)">
+    <rect x="0" y="60" width="26" height="60" rx="4" fill="#9A3E12"/><rect x="34" y="36" width="26" height="84" rx="4" fill="#C24A14"/>
+    <rect x="68" y="12" width="26" height="108" rx="4" fill="#E0531B"/><rect x="102" y="34" width="26" height="86" rx="4" fill="#FF6A1A"/>
+    <circle cx="115" cy="-2" r="26" fill="#FF6A1A"/><line x1="-6" y1="121" x2="140" y2="121" stroke="rgba(255,255,255,0.20)" stroke-width="3"/></g>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+    <defs>${FONT_STYLE}</defs>
+    <circle cx="256" cy="256" r="247" fill="#0B0E13" stroke="#FF6A1A" stroke-width="10"/>
+    ${cluster}
+    <text x="256" y="408" font-family='${SA}' font-weight="800" font-size="78" letter-spacing="2" fill="#f6f6f4" text-anchor="middle">PROSPERA</text>
+    <text x="256" y="452" font-family='${SA}' font-weight="800" font-size="40" letter-spacing="14" fill="#FF6A1A" text-anchor="middle">HOOPS</text>
+  </svg>`;
+  fs.writeFileSync(path.join(brand, "svg", "prosperahoops-avatar-circle.svg"), svg);
+  await sharp(Buffer.from(svg)).resize(512, 512).png().toFile(path.join(brand, "png", "prosperahoops-avatar-circle-512.png"));
+  await sharp(Buffer.from(svg)).resize(192, 192).png().toFile(path.join(brand, "png", "prosperahoops-avatar-circle-192.png"));
+  // also offer it as a social-ready avatar
+  await sharp(Buffer.from(svg)).resize(512, 512).png().toFile(path.join(outDir, "avatar-with-text-512.png"));
+  console.log("✓ clean avatar (512/192 + svg) — fixed PROSPERA HOOPS text");
+}
+
+await cleanAvatar();
 await xHeader();
 await profilePics();
 await igTemplates();
