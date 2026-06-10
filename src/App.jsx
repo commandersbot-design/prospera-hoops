@@ -9,6 +9,14 @@ import { SchoolsSection, SummerLeagueSection, RecapsFeed, ProspectsBoard } from 
 import { useGold, useVerified } from "./lib/goldTier";
 import { buildArc } from "./lib/developmentArc";
 import { DevelopmentSection } from "./components/DevelopmentArc";
+import { useAuth } from "./lib/auth.jsx";
+import { isConfigured as supabaseConfigured } from "./lib/supabaseClient.js";
+import { getOverride, myClaimForPlayer } from "./lib/profiles.js";
+import AccountButton from "./components/AccountButton";
+import ClaimPanel from "./components/ClaimPanel";
+import ProfileEditor from "./components/ProfileEditor";
+import ClaimedOverlay from "./components/ClaimedOverlay";
+import AdminClaims from "./components/AdminClaims";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -899,13 +907,31 @@ function ClaimForm({ prospect, onClose }) {
 function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
   const [claimOpen, setClaimOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [override, setOverride] = useState(null);
+  const [myClaim, setMyClaim] = useState(null);
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
   const arc = useMemo(() => buildArc(seasonsFor(p.name), p), [p]);
   const gold = useGold();
   const ver = useVerified();
+  const auth = useAuth();
   const marked = gold.isGold(p.id);
   const verified = ver.isVerified(p.id);
+  const canEdit = myClaim?.status === "approved";
+
+  // Load the public overlay (any player) + this user's claim (so we know whether
+  // to show "Edit my profile"). Only runs when Supabase is configured.
+  const reloadOverlay = React.useCallback(() => {
+    if (!supabaseConfigured) return;
+    getOverride(p.id).then(setOverride).catch(() => setOverride(null));
+  }, [p.id]);
+  useEffect(() => {
+    setOverride(null); setMyClaim(null); setEditOpen(false); setClaimOpen(false);
+    if (!supabaseConfigured) return;
+    reloadOverlay();
+    if (auth.user) myClaimForPlayer(p.id).then(setMyClaim).catch(() => setMyClaim(null));
+  }, [p.id, auth.user, reloadOverlay]);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
@@ -950,21 +976,42 @@ function Profile({ prospect, onBack, onOpen }) {
           >
             {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
           </button>
-          {/* Public profile claiming — SCAFFOLD ONLY. Real claim/verify needs
-              accounts + a backend (owner-decision); this surfaces the IA and an
-              honest "coming soon" path without faking a claim flow. */}
-          <button
-            type="button"
-            onClick={() => setClaimOpen((v) => !v)}
-            title="Player or parent? Claim & verify this profile."
-            style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, borderRadius: 6, padding: "7px 12px", cursor: "pointer", color: T.textDim, background: "transparent", border: `1px solid ${T.border}` }}
-          >
-            Claim profile
-          </button>
+          {/* Player-facing controls. With Supabase configured this is a real
+              claim → owner-approve → self-edit flow; without it, the button
+              opens the email-based claim request form (honest fallback). */}
+          {canEdit ? (
+            <button
+              type="button"
+              onClick={() => setEditOpen((v) => !v)}
+              title="You own this profile — edit your bio, film, and info."
+              style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, borderRadius: 6, padding: "7px 12px", cursor: "pointer", color: T.bg, background: T.accent, border: `1px solid ${T.accent}` }}
+            >
+              Edit my profile
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setClaimOpen((v) => !v)}
+              title="Player or parent? Claim & verify this profile."
+              style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, borderRadius: 6, padding: "7px 12px", cursor: "pointer", color: T.textDim, background: "transparent", border: `1px solid ${T.border}` }}
+            >
+              Claim profile
+            </button>
+          )}
         </div>
       </div>
 
-      {claimOpen && <ClaimForm prospect={p} onClose={() => setClaimOpen(false)} />}
+      {editOpen && canEdit && (
+        <ProfileEditor prospect={p} onClose={() => setEditOpen(false)} onSaved={reloadOverlay} />
+      )}
+      {claimOpen && (
+        supabaseConfigured
+          ? <ClaimPanel prospect={p} onClose={() => setClaimOpen(false)} onClaimed={() => myClaimForPlayer(p.id).then(setMyClaim).catch(() => {})} />
+          : <ClaimForm prospect={p} onClose={() => setClaimOpen(false)} />
+      )}
+
+      {/* Player-maintained overlay (public, contact-masked server-side). */}
+      {override && <ClaimedOverlay override={override} />}
 
       {/* Tabs — Game Log appears only when we have per-game box scores. */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
@@ -2578,8 +2625,9 @@ export default function App() {
           ~3 rows and eating vertical space). */}
       <header style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? "12px 14px" : "16px 28px", display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, flexWrap: "wrap" }}>
         <img src="/brand/svg/prosperahoops-lockup-dark.svg" alt="Prospera Hoops" style={{ height: isMobile ? 30 : 38, width: "auto", display: "block", order: 1 }} />
-        <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3 }}>
+        <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3, display: "flex", alignItems: "center", gap: 10 }}>
           <SearchBox onOpen={setOpenId} />
+          <AccountButton onOpenAdmin={() => goView("admin")} />
         </div>
         <nav style={{
           display: "flex", gap: isMobile ? 6 : 4, order: isMobile ? 3 : 2,
@@ -2628,6 +2676,8 @@ export default function App() {
           <Classes onOpen={setOpenId} />
         ) : view === "commitments" ? (
           <CommitmentsTracker onOpen={setOpenId} />
+        ) : view === "admin" ? (
+          <AdminClaims onOpenProfile={setOpenId} />
         ) : (
           <BoardComingSoon />
         )}
