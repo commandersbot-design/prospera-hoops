@@ -103,7 +103,8 @@ async function scrapeTeam(slug, name) {
       position: r.Position || null,
       height: r.Height || null,
       classYear: r.Class ? parseInt(r.Class, 10) : null,
-      social: { twitter: r.Twitter || null, instagram: r.Instagram || null },
+      // Player social handles are intentionally NOT captured — these are minors;
+      // their personal socials don't belong in a publicly-served data file.
       stats: {
         gp: st.G != null ? num(st.G) : 0,
         fgPct: num(st["FG%"]), ftPct: num(st["FT%"]), threePct: num(st["3P%"]),
@@ -163,7 +164,7 @@ async function run() {
   const out = {
     _README: "Capitol Hoops Summer League team + player + stat data. Auto-scraped from capitolhoopssummerleague.com via scripts/scrape-capitol-hoops.mjs. 2026 season. Keyed by team slug; each player merges roster bio + season stats.",
     _source: "https://capitolhoopssummerleague.com",
-    _note: "Player social handles are from the public source pages — review privacy posture before surfacing in public UI. Stats are small-sample (summer league). Re-run the scraper to refresh.",
+    _note: "Auto-scraped Capitol Hoops Summer League stats. Player social handles are intentionally NOT stored (minors' privacy). Stats are small-sample (summer league). Re-run the scraper to refresh.",
     _scrapedAt: new Date().toISOString(),
     teams,
   };
