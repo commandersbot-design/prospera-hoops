@@ -7,6 +7,8 @@ import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
 import { SchoolsSection, SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
 import { useGold, useVerified } from "./lib/goldTier";
+import { buildArc } from "./lib/developmentArc";
+import { DevelopmentSection } from "./components/DevelopmentArc";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -166,6 +168,12 @@ function gameLogFor(name) {
 function minutesFor(name) {
   const g = GAME_LOGS[nameKey(name)];
   return g && g.season ? g.season : null;
+}
+
+// All scraped per-season rows for a prospect (ascending), for the Development Arc.
+function seasonsFor(name) {
+  const g = GAME_LOGS[nameKey(name)];
+  return g && Array.isArray(g.seasons) ? g.seasons : [];
 }
 
 // Populate the module-level stores from the fetched datasets. Called once,
@@ -819,6 +827,7 @@ function Profile({ prospect, onBack, onOpen }) {
   const [claimOpen, setClaimOpen] = useState(false);
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
+  const arc = useMemo(() => buildArc(seasonsFor(p.name), p), [p]);
   const gold = useGold();
   const ver = useVerified();
   const marked = gold.isGold(p.id);
@@ -893,7 +902,7 @@ function Profile({ prospect, onBack, onOpen }) {
 
       {/* Tabs — Game Log appears only when we have per-game box scores. */}
       <div style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}>
-        {["Overview", ...(gameLogFor(p.name).length ? ["Game Log"] : []), "Film"].map((t) => {
+        {["Overview", ...(arc.seasons.length ? ["Development"] : []), ...(gameLogFor(p.name).length ? ["Game Log"] : []), "Film"].map((t) => {
           const active = tab === t;
           return (
             <button
@@ -947,6 +956,7 @@ function Profile({ prospect, onBack, onOpen }) {
           <RelatedPlayers prospect={p} onOpen={onOpen} />
         </div>
       )}
+      {tab === "Development" && <DevelopmentSection arc={arc} prospect={p} />}
       {tab === "Game Log" && <GameLogTab name={p.name} />}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
     </div>
