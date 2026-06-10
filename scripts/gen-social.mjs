@@ -149,8 +149,41 @@ async function cleanAvatar() {
   console.log("✓ clean avatar (512/192 + svg) — fixed PROSPERA HOOPS text");
 }
 
+// --- Launch carousel (3× 1080×1080) — "what is Prospera Hoops" --------------
+async function carousel() {
+  // Slide 1 — hook
+  await renderTemplate("ig-carousel-1-hook-1080", `
+    ${RAMP_CLUSTER(40, 800, 2.0, 0.45)} ${RAMP_CLUSTER(840, 770, 2.4, 0.4)}
+    <text x="540" y="430" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${T.text}" text-anchor="middle">PROSPERA</text>
+    <text x="540" y="570" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${T.orange}" text-anchor="middle">HOOPS</text>
+    <text x="540" y="652" font-family='${SA}' font-weight="700" font-size="36" letter-spacing="3" fill="${T.sage}" text-anchor="middle">DMV HIGH SCHOOL HOOPS · SCOUTED</text>
+    ${handle}`);
+  // Slide 2 — what you get
+  await renderTemplate("ig-carousel-2-what-1080", `
+    ${RAMP_CLUSTER(840, 800, 2.2, 0.35)}
+    <text x="540" y="130" font-family='${SA}' font-weight="700" font-size="26" letter-spacing="8" fill="${T.info}" text-anchor="middle">WHAT YOU GET</text>
+    ${[["EVERY DMV HOOPER", "The whole DMV — not just the 5-stars.", 320],
+       ["STATS + FILM", "Box scores, game logs &amp; highlights.", 540],
+       ["HONEST EVALS", "Graded evenly, tracked over time.", 760]]
+      .map(([h, s, y]) => `
+      <rect x="120" y="${y - 46}" width="10" height="66" rx="5" fill="${T.orange}"/>
+      <text x="162" y="${y}" font-family='${SA}' font-weight="800" font-size="62" fill="${T.text}">${h}</text>
+      <text x="162" y="${y + 44}" font-family='${SA}' font-weight="600" font-size="30" fill="${T.mut}">${s}</text>`).join("")}
+    ${handle}`);
+  // Slide 3 — CTA
+  await renderTemplate("ig-carousel-3-cta-1080", `
+    ${RAMP_CLUSTER(40, 820, 2.4, 0.5)} ${RAMP_CLUSTER(840, 800, 2.4, 0.5)}
+    <text x="540" y="360" font-family='${SA}' font-weight="800" font-size="130" fill="${T.text}" text-anchor="middle">SCOUT</text>
+    <text x="540" y="490" font-family='${SA}' font-weight="800" font-size="130" fill="${T.orange}" text-anchor="middle">ANYBODY</text>
+    <text x="540" y="575" font-family='${SA}' font-weight="700" font-size="38" letter-spacing="4" fill="${T.sage}" text-anchor="middle">FREE · THE WHOLE DMV</text>
+    <text x="540" y="828" font-family='${SA}' font-weight="700" font-size="44" letter-spacing="1" fill="${T.text}" text-anchor="middle">prospera-preps.vercel.app</text>
+    ${handle}`);
+  console.log("✓ launch carousel (3 slides)");
+}
+
 await cleanAvatar();
 await xHeader();
 await profilePics();
 await igTemplates();
+await carousel();
 console.log("\nDone → public/brand/social/");
