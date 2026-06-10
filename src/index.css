@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   /* Softer charcoal canvas (was near-black) — easier on the eyes. */
   background:
-    radial-gradient(circle at 8% 6%, rgba(249, 115, 22, 0.08), transparent 20%),
+    radial-gradient(circle at 8% 6%, rgba(255, 106, 26, 0.08), transparent 20%),
     radial-gradient(circle at 84% 12%, rgba(56, 189, 248, 0.05), transparent 24%),
     linear-gradient(180deg, #11161f 0%, #161d29 40%, #131922 100%);
   background-attachment: fixed;

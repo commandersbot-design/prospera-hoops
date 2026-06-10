@@ -39,7 +39,7 @@ const C = {
   text2: "#8b94a3",
   text3: "#5a6372",
   faint: "#444f5e",
-  accent: "#f0703a",
+  accent: "#FF6A1A",
   cyan: "#54c6e0",
   green: "#9bc459",
   amber: "#c97a3a",

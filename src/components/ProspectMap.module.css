@@ -1,5 +1,5 @@
 /* ProspectMap.module.css — light "recruiting atlas" map module.
- * Ported from the dropped Next.js package and adapted for the Prospera Preps
+ * Ported from the dropped Next.js package and adapted for the Prospera Hoops
  * Vite app: embeds inside <main> with a fixed height (not full-page), and
  * colors by STATE (DC / MD / VA) rather than recruiting tier. The deliberately
  * light theme contrasts the dark scout terminal — maps read clearer on white. */

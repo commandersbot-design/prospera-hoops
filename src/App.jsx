@@ -2349,9 +2349,7 @@ const NAV = [
 function LoadingScreen({ error }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14 }}>
-      <div style={{ ...mono, fontSize: 12, letterSpacing: "0.3em", color: T.accent, textTransform: "uppercase", fontWeight: 800 }}>
-        Prospera Preps
-      </div>
+      <img src="/brand/svg/prosperahoops-lockup-dark.svg" alt="Prospera Hoops" style={{ height: 44, width: "auto" }} />
       {error ? (
         <div style={{ ...mono, fontSize: 11, color: T.danger, letterSpacing: "0.06em", maxWidth: 360, textAlign: "center", lineHeight: 1.6 }}>
           Couldn't load the database.<br />{error}
@@ -2513,9 +2511,7 @@ export default function App() {
           becomes a single horizontally-scrollable row (instead of wrapping to
           ~3 rows and eating vertical space). */}
       <header style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? "12px 14px" : "16px 28px", display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, flexWrap: "wrap" }}>
-        <div style={{ ...serif, fontSize: isMobile ? 22 : 26, letterSpacing: "-0.01em", color: T.accent, fontWeight: 600, order: 1 }}>
-          Prospera Preps
-        </div>
+        <img src="/brand/svg/prosperahoops-lockup-dark.svg" alt="Prospera Hoops" style={{ height: isMobile ? 30 : 38, width: "auto", display: "block", order: 1 }} />
         <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3 }}>
           <SearchBox onOpen={setOpenId} />
         </div>

@@ -31,7 +31,7 @@ const A = {
   textHi: "#f6f6f4",
   textMut: "#9a9ca2",
   textFaint: "#6e7178",
-  accent: "#e87a3c",   // orange — the workhorse
+  accent: "#FF6A1A",   // orange — the workhorse
   accent2: "#6fae9b",  // sage — secondary
   info: "#54c6e0",     // eyebrows only
   goldGradient: "linear-gradient(135deg, #f1e3a8 0%, #d2af52 55%, #a9842f 100%)",
@@ -102,7 +102,7 @@ const ElitePip = ({ n }) => (
 function Chip({ active, tone = "neutral", icon, children, onClick }) {
   let style = { border: `1px solid ${A.border}`, background: "transparent", color: A.textMut };
   if (active && tone === "neutral") style = { border: `1px solid ${A.chipNeutralBorder}`, background: A.chipNeutralBg, color: A.textHi };
-  if (active && tone === "tracked") style = { border: `1px solid ${A.accent}`, background: "rgba(232,122,60,0.14)", color: A.accent };
+  if (active && tone === "tracked") style = { border: `1px solid ${A.accent}`, background: "rgba(255, 106, 26,0.14)", color: A.accent };
   if (active && tone === "gold") style = { border: "1px solid transparent", background: A.goldGradient, color: A.goldOn, boxShadow: A.goldSheen };
   return (
     <button type="button" onClick={onClick} style={{
@@ -420,7 +420,7 @@ function Watchlist({ teams, onOpen }) {
   }, [teams]);
   if (!tracked.length) return null; // no watchlist yet — hide the module
   return (
-    <div style={{ background: "rgba(232,122,60,0.06)", border: `1px solid rgba(232,122,60,0.28)`, borderRadius: 10, padding: "14px 16px", marginBottom: 18 }}>
+    <div style={{ background: "rgba(255, 106, 26,0.06)", border: `1px solid rgba(255, 106, 26,0.28)`, borderRadius: 10, padding: "14px 16px", marginBottom: 18 }}>
       <ZoneTitle right="across all teams">My guys this summer</ZoneTitle>
       <div style={{ display: "grid", gap: 9 }}>
         {tracked.map((p, i) => {
@@ -506,7 +506,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
             <button key={t.name} type="button" className="a1ws-row" onClick={() => setSelected(t.name)} style={{
               display: "grid", gridTemplateColumns: "1fr auto", gap: 8, alignItems: "center", textAlign: "left",
               padding: "8px 10px", borderRadius: 8, cursor: "pointer",
-              background: on ? "rgba(232,122,60,0.12)" : "transparent",
+              background: on ? "rgba(255, 106, 26,0.12)" : "transparent",
               border: `1px solid ${on ? A.accent : "transparent"}`,
             }}>
               <div style={{ minWidth: 0 }}>
@@ -704,7 +704,7 @@ export function SchoolsSection({ schools: schoolsData, onOpenProfile, focusSchoo
             <button key={s.name} type="button" className="a1ws-row" onClick={() => setSelected(s.name)} style={{
               display: "grid", gridTemplateColumns: "1fr auto", gap: 8, alignItems: "center", textAlign: "left",
               padding: "8px 10px", borderRadius: 8, cursor: "pointer",
-              background: on ? "rgba(232,122,60,0.12)" : "transparent",
+              background: on ? "rgba(255, 106, 26,0.12)" : "transparent",
               border: `1px solid ${on ? A.accent : "transparent"}`,
             }}>
               <div style={{ minWidth: 0 }}>
@@ -1079,7 +1079,7 @@ export function ProspectsBoard({ prospects = [], onOpen }) {
         <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", margin: "10px 0" }}>
           <div style={{ display: "flex", gap: 4 }}>
             {PROS_SORTS.map(([v, l]) => (
-              <button key={v} type="button" onClick={() => setSort(v)} style={{ fontFamily: MONO, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, padding: "6px 11px", borderRadius: 6, cursor: "pointer", border: `1px solid ${sort === v ? A.accent : A.border}`, background: sort === v ? "rgba(232,122,60,0.14)" : "transparent", color: sort === v ? A.accent : A.textMut }}>{l}</button>
+              <button key={v} type="button" onClick={() => setSort(v)} style={{ fontFamily: MONO, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700, padding: "6px 11px", borderRadius: 6, cursor: "pointer", border: `1px solid ${sort === v ? A.accent : A.border}`, background: sort === v ? "rgba(255, 106, 26,0.14)" : "transparent", color: sort === v ? A.accent : A.textMut }}>{l}</button>
             ))}
           </div>
           <Label style={{ color: A.textFaint }}>{filtered.length} prospects · {rankedAll.length} ranked</Label>

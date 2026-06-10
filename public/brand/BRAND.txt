@@ -1,0 +1,30 @@
+PROSPERA HOOPS - Brand assets
+================================
+
+COLORS
+  Signal Orange  #FF6A1A   primary accent / the basketball
+  Graphite       #0B0E13   backgrounds, seams
+  Ink            #11151C   text on light
+  Bar ramp       #9A3E12 > #C24A14 > #E0531B > #FF6A1A
+  White          #FFFFFF
+
+FONT
+  Saira Condensed ExtraBold (800) - free on Google Fonts.
+  SVGs embed the font, so they render correctly anywhere.
+
+WHAT GOES WHERE
+  symbol-512            app icon / Vercel / general mark
+  symbol-32 / -16       favicon
+  avatar-circle-512     IG / TikTok / YouTube profile pic
+  mark-square-512       square app tiles
+  wordmark-dark-1600w   social posts on dark
+  wordmark-light-1600w  on light backgrounds
+  lockup-dark-1600w     site header (dark)
+  lockup-light-1600w    site header (light)
+  symbol-bare           secondary mark - use only alongside the full name
+  svg/*                 scalable source for every asset
+
+RULES
+  The symbol carries the basketball, so the header lockup uses plain
+  PROSPERA / HOOPS. The standalone wordmark uses the ball as the O.
+  Keep clear space around the logo equal to the basketball's height.

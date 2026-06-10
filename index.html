@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/png/prosperahoops-symbol-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prospera Preps · DMV Recruiting</title>
-    <meta name="description" content="Scouting profiles for the DMV's top high school basketball and football prospects — rankings, traits, film, and recruiting status." />
-    <meta name="theme-color" content="#050a12" />
+    <title>Prospera Hoops · The DMV's scouting system of record</title>
+    <meta name="description" content="Prospera Hoops — a complete, trustworthy read on any DMV high school basketball player or team. The whole DMV, tracked over time, with an honest eval." />
+    <meta name="theme-color" content="#0B0E13" />
+    <meta property="og:title" content="Prospera Hoops" />
+    <meta property="og:description" content="The DMV's scouting system of record — every player, every team, tracked over time." />
+    <meta property="og:image" content="/brand/png/prosperahoops-lockup-dark-1600w.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
     <style>
-      html, body { margin: 0; padding: 0; background: #050a12; }
+      html, body { margin: 0; padding: 0; background: #0B0E13; }
       body {
         font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         color: #cbd5e1;
@@ -21,7 +27,7 @@
       }
       #loading .brand {
         font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
-        font-size: 11px; letter-spacing: 0.32em; color: #f97316;
+        font-size: 11px; letter-spacing: 0.32em; color: #FF6A1A;
         text-transform: uppercase; font-weight: 700;
       }
       #loading .sub {
@@ -29,7 +35,7 @@
         font-size: 9px; letter-spacing: 0.24em; color: #475569; text-transform: uppercase;
       }
       #loading .pulse {
-        width: 36px; height: 1px; background: #f97316; opacity: 0.5;
+        width: 36px; height: 1px; background: #FF6A1A; opacity: 0.5;
         animation: prospera-pulse 1.2s ease-in-out infinite;
       }
       @keyframes prospera-pulse {
@@ -40,9 +46,9 @@
   </head>
   <body>
     <div id="loading">
-      <div class="brand">Prospera Preps</div>
+      <img src="/brand/svg/prosperahoops-symbol.svg" alt="Prospera Hoops" width="72" height="72" />
       <div class="pulse"></div>
-      <div class="sub">Loading DMV recruiting board…</div>
+      <div class="sub">Loading the DMV scouting board…</div>
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

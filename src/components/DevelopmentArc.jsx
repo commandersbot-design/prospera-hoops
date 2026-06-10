@@ -14,7 +14,7 @@ import React, { useState } from "react";
 const A = {
   bg: "#1d1e22", surface: "#26282d", inset: "#1d1e22", border: "#383a40",
   text: "#ececec", textHi: "#f6f6f4", mut: "#9a9ca2", faint: "#6e7178",
-  accent: "#e87a3c", sage: "#6fae9b", info: "#54c6e0", gold: "#d2af52", amber: "#c9a14a",
+  accent: "#FF6A1A", sage: "#6fae9b", info: "#54c6e0", gold: "#d2af52", amber: "#c9a14a",
 };
 const DISPLAY = "'Saira Condensed', sans-serif";
 const BODY = "'Hanken Grotesk', sans-serif";
@@ -99,7 +99,7 @@ function RoleBand({ seasons }) {
         const latest = i === seasons.length - 1;
         return (
           <div key={s.season} style={{
-            border: `1px solid ${latest ? A.accent : A.border}`, background: latest ? "rgba(232,122,60,0.10)" : A.inset,
+            border: `1px solid ${latest ? A.accent : A.border}`, background: latest ? "rgba(255, 106, 26,0.10)" : A.inset,
             borderRadius: 8, padding: "9px 10px", opacity: s.smallSample ? 0.55 : 1,
           }}>
             <Label color={latest ? A.accent : A.faint} style={{ fontSize: 9 }}>{s.season}{s.smallSample ? " · small" : ""}</Label>
@@ -203,7 +203,7 @@ export function BySeasonTable({ arc }) {
             {arc.seasons.map((s, ri) => {
               const latest = ri === arc.seasons.length - 1;
               return (
-                <tr key={s.season} style={{ borderTop: `1px solid ${A.border}`, background: latest ? "rgba(232,122,60,0.08)" : "transparent", opacity: s.smallSample ? 0.6 : 1 }}>
+                <tr key={s.season} style={{ borderTop: `1px solid ${A.border}`, background: latest ? "rgba(255, 106, 26,0.08)" : "transparent", opacity: s.smallSample ? 0.6 : 1 }}>
                   {cols.map(([l, k], i) => (
                     <td key={k} style={{ ...td, textAlign: i === 0 ? "left" : "right",
                       color: i === 0 ? (latest ? A.accent : A.textHi) : (k === "gp" ? A.faint : k === "ts" ? A.accent : k === "role" ? A.mut : A.text),

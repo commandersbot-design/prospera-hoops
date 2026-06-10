@@ -27,17 +27,17 @@
   --prospera-text-mute:  #93A1B5;
 
   /* === PRIMARY ACCENT — Bloomberg-orange ================================== */
-  --prospera-cyan:           #F97316;
-  --prospera-accent-bright:  #FB923C;
-  --prospera-accent-bg-faint:    rgba(249, 115, 22, 0.03);
-  --prospera-accent-bg-soft:     rgba(249, 115, 22, 0.04);
-  --prospera-accent-bg-mid:      rgba(249, 115, 22, 0.06);
-  --prospera-accent-bg:          rgba(249, 115, 22, 0.08);
-  --prospera-accent-bg-10:       rgba(249, 115, 22, 0.1);
-  --prospera-accent-bg-strong:   rgba(249, 115, 22, 0.12);
-  --prospera-accent-border-faint:rgba(249, 115, 22, 0.3);
-  --prospera-accent-border:      rgba(249, 115, 22, 0.4);
-  --prospera-accent-border-strong: rgba(249, 115, 22, 0.5);
+  --prospera-cyan:           #FF6A1A;
+  --prospera-accent-bright:  #FF8A4D;
+  --prospera-accent-bg-faint:    rgba(255, 106, 26, 0.03);
+  --prospera-accent-bg-soft:     rgba(255, 106, 26, 0.04);
+  --prospera-accent-bg-mid:      rgba(255, 106, 26, 0.06);
+  --prospera-accent-bg:          rgba(255, 106, 26, 0.08);
+  --prospera-accent-bg-10:       rgba(255, 106, 26, 0.1);
+  --prospera-accent-bg-strong:   rgba(255, 106, 26, 0.12);
+  --prospera-accent-border-faint:rgba(255, 106, 26, 0.3);
+  --prospera-accent-border:      rgba(255, 106, 26, 0.4);
+  --prospera-accent-border-strong: rgba(255, 106, 26, 0.5);
 
   /* === SECONDARY ACCENT — cyan for "click hint" cues ===================== */
   --prospera-signal:      #22D3EE;
@@ -52,7 +52,7 @@
 
   /* === SIGNATURE ELEMENTS ================================================ */
   --prospera-grid:        rgba(59, 130, 246, 0.08);
-  --prospera-dot-grid:    rgba(249, 115, 22, 0.06);
+  --prospera-dot-grid:    rgba(255, 106, 26, 0.06);
 
   /* === STAR / RATING TIERS (recruiting-standard) ========================= */
   --prospera-pct-elite:  #16A34A;

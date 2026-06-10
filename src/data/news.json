@@ -2,7 +2,7 @@
   "_README": "Hand-authored news items for the Live Wire ticker. The ticker ALSO auto-includes commitments and top summer-league performances (factual, derived from data) — these hand-authored items layer on top, newest-first by date. Add items with: node scripts/add-news.mjs \"<headline>\" [--prospect <id>] [--url <url>]. Each item: { headline, prospectId (optional → links to profile), url (optional → external link), date }.",
   "items": [
     {
-      "headline": "Welcome to Prospera Preps — DMV summer-league stats now live across 60 teams",
+      "headline": "Welcome to Prospera Hoops — DMV summer-league stats now live across 60 teams",
       "prospectId": null,
       "url": null,
       "date": "2026-05-24"
