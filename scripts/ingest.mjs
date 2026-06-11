@@ -142,13 +142,18 @@ function seasonAgg(lines) {
   }, { pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0, min: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0 });
   const gp = lines.length;
   const tsDen = 2 * (s.fga + 0.44 * s.fta);
-  return {
+  // Mirror the scraped stats schema (gp, per-game, shooting %) + add TS%.
+  // mpg only when minutes were actually recorded, so the column shows "—" not 0
+  // for box scores kept without a minutes column.
+  const out = {
     gp,
     ppg: r1(s.pts / gp), rpg: r1(s.reb / gp), apg: r1(s.ast / gp), spg: r1(s.stl / gp),
-    bpg: r1(s.blk / gp), topg: r1(s.to / gp), mpg: r1(s.min / gp),
+    bpg: r1(s.blk / gp), topg: r1(s.to / gp),
     fgPct: pct(s.fgm, s.fga), threePct: pct(s.tpm, s.tpa), ftPct: pct(s.ftm, s.fta),
     tsPct: tsDen > 0 ? r1((s.pts / tsDen) * 100) : null,
   };
+  if (s.min > 0) out.mpg = r1(s.min / gp);
+  return out;
 }
 
 // --- merge into existing JSON ----------------------------------------------
@@ -187,24 +192,25 @@ const seenGameIds = new Set();
 for (const e of Object.values(logs.players)) for (const g of (e.games || [])) if (g.gameId) seenGameIds.add(g.gameId);
 for (const id of Object.keys(gameById)) (seenGameIds.has(id) ? tally.gamesUpd++ : tally.gamesNew++);
 
-// game logs: merge intake lines into each player (dedup by gameId), recompute season
+// game logs: the workbook is the system of record for the players it covers, so
+// it REPLACES their game log (no union — avoids duplicating games that were
+// previously scraped without a game_id). Players not in the intake are untouched.
 for (const [key, lines] of Object.entries(linesByKey)) {
   const p = playerByKey[key];
-  const intakeIds = new Set(lines.map((l) => l.gameId));
   const prev = logs.players[key];
-  const kept = (prev?.games || []).filter((g) => !intakeIds.has(g.gameId));
-  const games = [...kept, ...lines];
   logs.players[key] = {
     name: p.name, slug: slugify(p.name) + (p.classYear ? `-${p.classYear}` : ""),
-    games, season: seasonAgg(games),
+    games: lines, season: seasonAgg(lines),
     seasons: prev?.seasons || [],
   };
 }
 
 // --- write -----------------------------------------------------------------
 if (!DRY) {
-  fs.writeFileSync(path.join(OUT, "capitolHoops.json"), JSON.stringify(ch, null, 2));
-  fs.writeFileSync(path.join(OUT, "gameLogs.json"), JSON.stringify(logs, null, 2));
+  // Preserve each file's on-disk formatting to keep diffs reviewable:
+  // capitolHoops.json is 2-space pretty; gameLogs.json is minified.
+  fs.writeFileSync(path.join(OUT, "capitolHoops.json"), JSON.stringify(ch, null, 2) + "\n");
+  fs.writeFileSync(path.join(OUT, "gameLogs.json"), JSON.stringify(logs));
 }
 
 // --- report ----------------------------------------------------------------
