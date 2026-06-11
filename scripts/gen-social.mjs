@@ -52,15 +52,59 @@ async function xHeader() {
   console.log("✓ x-header-1500x500.png");
 }
 
-// --- Profile pics (square) — from the clean SYMBOL, not the avatar ----------
-// The kit's avatar-circle has a garbled wordmark; and text is illegible at
-// profile-pic sizes anyway. The symbol (ball + bars) is the right mark.
-// Rendered from the SVG source for crispness at small sizes.
+// --- Profile pics (square, circle-crop safe) --------------------------------
+// Instagram / TikTok / X all crop a profile pic to a CIRCLE (the inscribed
+// circle of the square). The old version rendered the symbol — which has its
+// own thin ring — edge-to-edge, so that ring sat on the crop boundary and got
+// clipped. Fixes:
+//   • full-bleed graphite background → any circle/square crop shows solid brand
+//     colour, never transparent corners;
+//   • the ball+bars mark is pulled into a safe zone (~50% of width), well inside
+//     the crop circle, with a comfortable margin;
+//   • one inset orange ring at r=42.5% reads as an intentional badge and can
+//     never be clipped.
+// The mark geometry is the symbol's inner cluster (no competing outer ring).
+const MARK_INNER = `
+  <rect x="20" y="66" width="14" height="18" rx="2" fill="#9A3E12"/>
+  <rect x="37" y="54" width="14" height="30" rx="2" fill="#C24A14"/>
+  <rect x="54" y="42" width="14" height="42" rx="2" fill="#E0531B"/>
+  <rect x="71" y="52" width="14" height="32" rx="2" fill="#FF6A1A"/>
+  <line x1="16" y1="84.5" x2="96" y2="84.5" stroke="rgba(255,255,255,0.28)" stroke-width="1.8"/>
+  <circle cx="78" cy="39" r="13" fill="#FF6A1A"/>
+  <line x1="78" y1="26" x2="78" y2="52" stroke="#0B0E13" stroke-width="1.8"/>
+  <line x1="65" y1="39" x2="91" y2="39" stroke="#0B0E13" stroke-width="1.8"/>
+  <path d="M78,26 C66.95,33.8 66.95,44.2 78,52" fill="none" stroke="#0B0E13" stroke-width="1.8"/>
+  <path d="M78,26 C89.05,33.8 89.05,44.2 78,52" fill="none" stroke="#0B0E13" stroke-width="1.8"/>`;
+
+// Build the profile-pic SVG at any size S (design is anchored to 400 and scaled).
+function profileMarkSVG(S) {
+  const k = S / 400;            // design scale
+  const c = S / 2;              // centre
+  const ring = S * 0.425;       // safely inside the circle crop (r = S/2)
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" viewBox="0 0 ${S} ${S}">
+    <defs>
+      <radialGradient id="pg" cx="0.5" cy="0.42" r="0.62">
+        <stop offset="0" stop-color="#FF6A1A" stop-opacity="0.14"/><stop offset="1" stop-color="#FF6A1A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="${S}" height="${S}" fill="#0B0E13"/>
+    <rect width="${S}" height="${S}" fill="url(#pg)"/>
+    <circle cx="${c}" cy="${c}" r="${ring}" fill="none" stroke="#FF6A1A" stroke-width="${S * 0.018}"/>
+    <g transform="translate(${46 * k},${48 * k}) scale(${2.75 * k})">${MARK_INNER}</g>
+  </svg>`;
+}
+
 async function profilePics() {
-  const src = path.join(brand, "svg", "prosperahoops-symbol.svg");
+  // High-res master — the recommended upload (every platform downscales cleanly).
+  const masterSvg = Buffer.from(profileMarkSVG(1000));
+  await sharp(masterSvg).png().toFile(path.join(outDir, "profile-pic-1000.png"));
+  await sharp(masterSvg).png().toFile(path.join(brand, "png", "prosperahoops-profile-1000.png"));
+  console.log("✓ profile-pic-1000.png (master — fits any circle crop)");
+
+  // Platform-named sizes (kept for the download page), each rendered crisp.
   const sizes = [["twitter-profile-400", 400], ["instagram-profile-320", 320], ["tiktok-profile-200", 200]];
   for (const [name, px] of sizes) {
-    await sharp(src, { density: 384 }).resize(px, px).png().toFile(path.join(outDir, `${name}.png`));
+    await sharp(Buffer.from(profileMarkSVG(px))).png().toFile(path.join(outDir, `${name}.png`));
     console.log(`✓ ${name}.png`);
   }
 }
