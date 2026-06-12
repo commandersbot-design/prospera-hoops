@@ -504,8 +504,13 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   const [goldOnly, setGoldOnly] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  // Deep-link / map-pin focus: open the Teams pane on a specific team.
-  useEffect(() => { if (focusTeam) { setTab("teams"); setSelected(focusTeam); } }, [focusTeam]);
+  // Deep-link / map-pin focus: open the Teams pane on a specific team (by name or slug).
+  useEffect(() => {
+    if (!focusTeam) return;
+    setTab("teams");
+    const m = TEAM_DATA.find((t) => t.slug === focusTeam || t.name === focusTeam);
+    setSelected(m ? (m.slug || m.name) : focusTeam);
+  }, [focusTeam, TEAM_DATA]);
 
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
@@ -518,7 +523,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     return true;
   }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, lvl, region, klass, trackedOnly, goldOnly]);
 
-  const team = teams.find((t) => t.name === selected) || teams[0] || null;
+  const team = teams.find((t) => (t.slug || t.name) === selected) || teams.find((t) => t.name === selected) || teams[0] || null;
 
   const rail = (
     <div>
@@ -532,10 +537,10 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
       <Label style={{ color: A.textFaint, marginBottom: 8 }}>{teams.length} teams</Label>
       <div style={{ display: "grid", gap: 2 }}>
         {teams.map((t) => {
-          const on = team && t.name === team.name;
+          const on = team && (t.slug || t.name) === (team.slug || team.name);
           const nT = countTracked(t.roster), nE = countElite(t.roster);
           return (
-            <button key={t.name} type="button" className="a1ws-row" onClick={() => setSelected(t.name)} style={{
+            <button key={t.slug || t.name} type="button" className="a1ws-row" onClick={() => setSelected(t.slug || t.name)} style={{
               display: "grid", gridTemplateColumns: "1fr auto", gap: 8, alignItems: "center", textAlign: "left",
               padding: "8px 10px", borderRadius: 8, cursor: "pointer",
               background: on ? "rgba(255, 106, 26,0.12)" : "transparent",

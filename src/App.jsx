@@ -5,7 +5,7 @@ import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
 import ProspectFilm from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
-import { SchoolsSection, SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
+import { SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
 import { useGold, useVerified } from "./lib/goldTier";
 import { buildArc } from "./lib/developmentArc";
 import { DevelopmentSection } from "./components/DevelopmentArc";
@@ -2537,7 +2537,6 @@ const NAV = [
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Teams" },
   { key: "recaps", label: "Recaps" },
-  { key: "schools", label: "Schools" },
   { key: "map", label: "Map" },
   { key: "classes", label: "Classes" },
   { key: "commitments", label: "Commitments" },
@@ -2663,6 +2662,18 @@ function buildWorkspaceTeams() {
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// A DMV school rendered as an HS-level "team" so the schools directory lives in
+// the unified Teams workspace under the HS toggle (rosters now; game stats appear
+// once an HS season is ingested for that program).
+function schoolToTeam(s) {
+  return {
+    name: s.name, slug: `hs-${schoolKey(s.name)}`, level: "HS", circuit: "High School", season: "2026",
+    region: s.st || null, coach: s.coach || null, gp: 0, topGames: [],
+    roster: (s.roster || []).map((r) => ({ ...r, gp: 0, pts: null, reb: null, ast: null, mpg: null, archetype: null, archetypeEarly: false })),
+    directoryOnly: s.directoryOnly || false,
+  };
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
@@ -2685,8 +2696,7 @@ export default function App() {
   // until rankings are authored, so we land users on real content.
   const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
-  const [focusSchool, setFocusSchool] = useState(null); // school to preselect in the Schools workspace (e.g. from a map pin)
-  const [focusTeam, setFocusTeam] = useState(null); // summer team to preselect (e.g. from a #/team/<slug> deep-link)
+  const [focusTeam, setFocusTeam] = useState(null); // team/school to preselect in the Teams workspace (e.g. from a map pin or #/team deep-link)
   const isMobile = useIsMobile(640);
 
   // Shareable deep links — #/player/<namekey> opens a profile directly (so a coach
@@ -2726,9 +2736,11 @@ export default function App() {
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
   const clearDeepLink = () => { if (/^#\/(player|team)\//.test(window.location.hash)) window.history.replaceState(null, "", window.location.pathname + window.location.search); };
-  const goView = (v) => { setOpenId(null); setFocusSchool(null); setFocusTeam(null); setView(v); clearDeepLink(); };
-  const workspaceSchools = ready ? buildWorkspaceSchools() : [];
-  const workspaceTeams = ready ? buildWorkspaceTeams() : [];
+  const goView = (v) => { setOpenId(null); setFocusTeam(null); setView(v); clearDeepLink(); };
+  // Unified Teams workspace: Capitol Hoops summer teams + AAU programs (from
+  // CH_TEAMS) + every DMV school as an HS-level team. The Level facet (HS/Summer/
+  // AAU) splits them — so there's no separate Schools tab.
+  const workspaceTeams = ready ? [...buildWorkspaceTeams(), ...buildWorkspaceSchools().map(schoolToTeam)] : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
 
   return (
@@ -2784,10 +2796,8 @@ export default function App() {
           <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} focusTeam={focusTeam} />
         ) : view === "recaps" ? (
           <RecapsFeed recaps={recaps} />
-        ) : view === "schools" ? (
-          <SchoolsSection schools={workspaceSchools} onOpenProfile={setOpenId} focusSchool={focusSchool} />
         ) : view === "map" ? (
-          <DmvMap onOpenSchool={(name) => { setOpenId(null); setFocusSchool(name); setView("schools"); }} />
+          <DmvMap onOpenSchool={(name) => { setOpenId(null); setFocusTeam(name); setView("summer"); }} />
         ) : view === "classes" ? (
           <Classes onOpen={setOpenId} />
         ) : view === "commitments" ? (
