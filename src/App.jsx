@@ -914,6 +914,24 @@ function ClaimForm({ prospect, onClose }) {
   );
 }
 
+// Copy a shareable deep-link to this profile (the recruiting-utility unlock:
+// a coach/player can text a live page).
+function ShareButton({ name }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#/player/${nameKey(name)}`;
+    try { await navigator.clipboard.writeText(url); }
+    catch { const ta = document.createElement("textarea"); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch {} ta.remove(); }
+    setCopied(true); setTimeout(() => setCopied(false), 1800);
+  };
+  return (
+    <button type="button" onClick={copy} title="Copy a shareable link to this profile"
+      style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, borderRadius: 6, padding: "7px 12px", cursor: "pointer", color: copied ? T.bg : T.signal, background: copied ? T.positive : "transparent", border: `1px solid ${copied ? T.positive : "rgba(56,189,248,0.5)"}` }}>
+      {copied ? "Link copied ✓" : "↗ Share"}
+    </button>
+  );
+}
+
 function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
   const [claimOpen, setClaimOpen] = useState(false);
@@ -955,6 +973,7 @@ function Profile({ prospect, onBack, onOpen }) {
           ← Back
         </button>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <ShareButton name={p.name} />
           {/* Scout-side verification — internal trust signal on the system of record.
               The public player/parent "claim" flow needs accounts + a backend (owner-decision). */}
           <button
@@ -2632,6 +2651,27 @@ export default function App() {
   const [focusSchool, setFocusSchool] = useState(null); // school to preselect in the Schools workspace (e.g. from a map pin)
   const isMobile = useIsMobile(640);
 
+  // Shareable deep links — #/player/<namekey> opens a profile directly (so a coach
+  // can be texted a live page), and the open profile is reflected back into the
+  // URL so it's copyable. Hash routing works on the static SPA with no router.
+  useEffect(() => {
+    if (!ready) return;
+    const openFromHash = () => {
+      const m = (window.location.hash || "").match(/^#\/player\/([a-z0-9]+)/i);
+      if (m) { const pr = PROSPECT_BY_NAMEKEY[m[1].toLowerCase()]; if (pr) setOpenId(pr.id); }
+    };
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, [ready]);
+  useEffect(() => {
+    if (!ready || !openId) return;
+    const pr = PROSPECTS.find((x) => x.id === openId);
+    if (!pr) return;
+    const want = `#/player/${nameKey(pr.name)}`;
+    if (window.location.hash !== want) window.history.replaceState(null, "", want);
+  }, [openId, ready]);
+
   // Standalone preview of the editorial player card: open #card in the URL.
   if (typeof window !== "undefined" && window.location.hash === "#card") {
     return (
@@ -2644,7 +2684,8 @@ export default function App() {
   if (!ready) return <LoadingScreen error={error} />;
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
-  const goView = (v) => { setOpenId(null); setFocusSchool(null); setView(v); };
+  const clearPlayerHash = () => { if (/^#\/player\//.test(window.location.hash)) window.history.replaceState(null, "", window.location.pathname + window.location.search); };
+  const goView = (v) => { setOpenId(null); setFocusSchool(null); setView(v); clearPlayerHash(); };
   const workspaceSchools = ready ? buildWorkspaceSchools() : [];
   const workspaceTeams = ready ? buildWorkspaceTeams() : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
@@ -2695,7 +2736,7 @@ export default function App() {
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "18px 14px 48px" : "28px 24px 60px" }}>
         {open ? (
-          <Profile prospect={open} onBack={() => setOpenId(null)} onOpen={setOpenId} />
+          <Profile prospect={open} onBack={() => { setOpenId(null); clearPlayerHash(); }} onOpen={setOpenId} />
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
