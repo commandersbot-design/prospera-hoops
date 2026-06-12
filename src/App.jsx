@@ -17,6 +17,7 @@ import ClaimPanel from "./components/ClaimPanel";
 import ProfileEditor from "./components/ProfileEditor";
 import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
+import { buildArchetypeCohort, archetypeForPlayer } from "./lib/archetype";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -182,6 +183,14 @@ function minutesFor(name) {
 function seasonsFor(name) {
   const g = GAME_LOGS[nameKey(name)];
   return g && Array.isArray(g.seasons) ? g.seasons : [];
+}
+
+// Archetype engine — lazily build the percentile cohort from the live data the
+// first time a player page asks for a tag (see docs/metrics-blueprint.md).
+let ARCHETYPE_COHORT = null;
+function archetypeFor(name, position) {
+  if (!ARCHETYPE_COHORT) ARCHETYPE_COHORT = buildArchetypeCohort(GAME_LOGS, CH_TEAMS);
+  return archetypeForPlayer(name, ARCHETYPE_COHORT, position);
 }
 
 // Populate the module-level stores from the fetched datasets. Called once,
@@ -913,6 +922,7 @@ function Profile({ prospect, onBack, onOpen }) {
   const p = prospect;
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
   const arc = useMemo(() => buildArc(seasonsFor(p.name), p), [p]);
+  const archetype = useMemo(() => archetypeFor(p.name, p.position), [p]);
   const gold = useGold();
   const ver = useVerified();
   const auth = useAuth();
@@ -1000,6 +1010,25 @@ function Profile({ prospect, onBack, onOpen }) {
           )}
         </div>
       </div>
+
+      {/* Archetype tag — descriptive, cohort-calibrated role label (honest:
+          never a ranking). Shows the stats that earned it + a small-sample flag. */}
+      {archetype && archetype.label && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span
+            title="Descriptive role from this player's statistical profile vs. the DMV cohort — not a ranking."
+            style={{ ...serif, fontSize: 14, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 700, color: T.accent, background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.accent}`, borderRadius: 999, padding: "5px 14px" }}
+          >
+            {archetype.label}
+          </span>
+          {archetype.why && <span style={{ ...mono, fontSize: 12, color: T.textMute }}>{archetype.why}</span>}
+          {archetype.earlyRead && (
+            <span style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: T.warn, border: `1px solid ${T.warn}`, borderRadius: 4, padding: "2px 7px" }}>
+              early read · {archetype.gp} GP
+            </span>
+          )}
+        </div>
+      )}
 
       {editOpen && canEdit && (
         <ProfileEditor prospect={p} onClose={() => setEditOpen(false)} onSaved={reloadOverlay} />
