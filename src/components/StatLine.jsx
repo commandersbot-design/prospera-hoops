@@ -4,6 +4,9 @@
 // recorded (so a no-minutes book doesn't fake a rate). See metrics-blueprint.md.
 import React from "react";
 import { T, ui, display } from "../lib/theme.js";
+import { playerHighlights } from "../lib/highlights.js";
+
+const shortOpp = (o) => String(o || "").replace(/\s*\([^)]*\)\s*/g, "").trim().slice(0, 18) || "—";
 
 const r1 = (n) => (isFinite(n) ? Math.round(n * 10) / 10 : 0);
 const pct = (m, a) => (a > 0 ? `${r1((m / a) * 100)}%` : "—");
@@ -54,9 +57,24 @@ const Group = ({ title, children, note }) => (
   </div>
 );
 
+const HighCell = ({ label, h }) => (
+  <div style={{ display: "grid", gap: 3, minWidth: 56 }}>
+    <span style={{ ...ui, fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: T.textMute }}>{label} high</span>
+    <span style={{ ...display, fontSize: 22, fontWeight: 700, color: T.accent, fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{h.v}</span>
+    {h.opp && <span style={{ ...ui, fontSize: 9, color: T.textMute }}>vs {shortOpp(h.opp)}</span>}
+  </div>
+);
+
 export default function StatLine({ games }) {
   const d = seasonStatLine(games);
   if (!d) return null;
+  const h = playerHighlights(games);
+  const notable = h ? [
+    h.g30 > 0 && `${h.g30}× 30-pt game${h.g30 > 1 ? "s" : ""}`,
+    h.g30 === 0 && h.g20 > 0 && `${h.g20}× 20-pt game${h.g20 > 1 ? "s" : ""}`,
+    h.td > 0 && `${h.td} triple-double${h.td > 1 ? "s" : ""}`,
+    h.dd > 0 && `${h.dd} double-double${h.dd > 1 ? "s" : ""}`,
+  ].filter(Boolean) : [];
   return (
     <section style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18, display: "grid", gap: 18 }}>
       <div style={{ ...ui, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 700, color: T.accent }}>
@@ -86,6 +104,15 @@ export default function StatLine({ games }) {
         <Cell label="TOV%" value={d.role.tovPct} />
         <Cell label="PTS MIX" value={`${d.role.mix2}/${d.role.mix3}/${d.role.mixFt}`} />
       </Group>
+      {h && (
+        <Group title="Season highs" note={notable.length ? notable.join(" · ") : null}>
+          {h.highs.pts && <HighCell label="PTS" h={h.highs.pts} />}
+          {h.highs.reb && <HighCell label="REB" h={h.highs.reb} />}
+          {h.highs.ast && <HighCell label="AST" h={h.highs.ast} />}
+          {h.highs.tpm && h.highs.tpm.v > 0 && <HighCell label="3PM" h={h.highs.tpm} />}
+        </Group>
+      )}
+
       <div style={{ ...ui, fontSize: 10, color: T.textMute, letterSpacing: "0.02em" }}>
         PTS MIX = share of points from 2s / 3s / free throws. eFG% and TS% weight 3-pointers and free throws.
       </div>

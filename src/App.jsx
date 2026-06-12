@@ -19,6 +19,7 @@ import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
 import { buildArchetypeCohort, archetypeForPlayer } from "./lib/archetype";
 import StatLine from "./components/StatLine";
+import { topPerformances } from "./lib/highlights";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -2621,9 +2622,12 @@ function buildWorkspaceTeams() {
         tracked: false, id: pr?.id || null, goldTier: !!pr?.goldTier, commit: pr?.commitment || null,
       };
     });
+    const entries = [];
+    for (const pl of t.players || []) for (const g of gameLogFor(pl.name)) entries.push({ player: pl.name, pts: g.pts, reb: g.reb, ast: g.ast, opp: g.opp, date: g.date });
     return {
       name: t.name, slug, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
+      topGames: topPerformances(entries, 4),
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 }

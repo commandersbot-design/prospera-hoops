@@ -575,6 +575,18 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
               ))}
             </div>
           )}
+          {team.topGames && team.topGames.length > 0 && (
+            <div style={{ margin: "0 0 16px" }}>
+              <Label style={{ color: A.textMut, marginBottom: 7 }}>Top performances</Label>
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {team.topGames.map((g, i) => (
+                  <span key={i} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.03em" }}>
+                    <span style={{ color: A.textHi }}>{g.player}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{g.pts}</span> <span style={{ color: A.textFaint }}>vs {String(g.opp || "").replace(/\s*\([^)]*\)/g, "").slice(0, 16)}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
           <CoverageList recaps={recaps} teamName={team.name} />
         </div>
