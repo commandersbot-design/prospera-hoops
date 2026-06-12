@@ -2596,7 +2596,7 @@ function buildWorkspaceSchools() {
       tracked: false, id: pr.id, goldTier: !!pr.goldTier, commit: pr.commitment || null,
     }));
     map.set(schoolKey(name), {
-      name: officialSchoolName(name), conf: null,
+      name: officialSchoolName(name), slug: schoolKey(name), conf: null,
       county: loc.county || null, st: loc.state || s.state || null,
       players: roster.length, coach: s.coach || null, roster,
     });
@@ -2611,7 +2611,7 @@ function buildWorkspaceSchools() {
       continue;
     }
     map.set(k, {
-      name: d.name, conf: null, county: d.city || null, st: d.state || null,
+      name: d.name, slug: k, conf: null, county: d.city || null, st: d.state || null,
       players: 0, coach: null, roster: [], directoryOnly: true,
     });
   }
@@ -2662,12 +2662,25 @@ function buildWorkspaceTeams() {
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// Guarantee unique slugs across the merged Teams list (some near-duplicate school
+// names collapse to the same key) so React keys + deep-links stay unique.
+function uniqueSlugs(list) {
+  const seen = new Set();
+  return list.map((t) => {
+    const base = t.slug || t.name;
+    let s = base, i = 1;
+    while (seen.has(s)) s = `${base}-${++i}`;
+    seen.add(s);
+    return s === base ? t : { ...t, slug: s };
+  });
+}
+
 // A DMV school rendered as an HS-level "team" so the schools directory lives in
 // the unified Teams workspace under the HS toggle (rosters now; game stats appear
 // once an HS season is ingested for that program).
 function schoolToTeam(s) {
   return {
-    name: s.name, slug: `hs-${schoolKey(s.name)}`, level: "HS", circuit: "High School", season: "2026",
+    name: s.name, slug: `hs-${s.slug || schoolKey(s.name)}`, level: "HS", circuit: "High School", season: "2026",
     region: s.st || null, coach: s.coach || null, gp: 0, topGames: [],
     roster: (s.roster || []).map((r) => ({ ...r, gp: 0, pts: null, reb: null, ast: null, mpg: null, archetype: null, archetypeEarly: false })),
     directoryOnly: s.directoryOnly || false,
@@ -2709,7 +2722,14 @@ export default function App() {
       let m = h.match(/^#\/player\/([a-z0-9]+)/i);
       if (m) { const pr = PROSPECT_BY_NAMEKEY[m[1].toLowerCase()]; if (pr) setOpenId(pr.id); return; }
       m = h.match(/^#\/team\/([a-z0-9-]+)/i);
-      if (m) { const t = CH_TEAMS[m[1].toLowerCase()]; if (t) { setOpenId(null); setView("summer"); setFocusTeam(t.name); } }
+      if (m) {
+        // Capitol Hoops / AAU teams live in CH_TEAMS (focus by name); HS-school
+        // slugs ("hs-<key>") aren't, so pass the slug — the Teams workspace
+        // resolves it against the merged list (which includes the schools).
+        const slug = m[1].toLowerCase();
+        const t = CH_TEAMS[slug];
+        setOpenId(null); setView("summer"); setFocusTeam(t ? t.name : slug);
+      }
     };
     openFromHash();
     window.addEventListener("hashchange", openFromHash);
@@ -2740,7 +2760,7 @@ export default function App() {
   // Unified Teams workspace: Capitol Hoops summer teams + AAU programs (from
   // CH_TEAMS) + every DMV school as an HS-level team. The Level facet (HS/Summer/
   // AAU) splits them — so there's no separate Schools tab.
-  const workspaceTeams = ready ? [...buildWorkspaceTeams(), ...buildWorkspaceSchools().map(schoolToTeam)] : [];
+  const workspaceTeams = ready ? uniqueSlugs([...buildWorkspaceTeams(), ...buildWorkspaceSchools().map(schoolToTeam)]) : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
 
   return (
