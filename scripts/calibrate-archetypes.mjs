@@ -73,14 +73,14 @@ function classify(r) {
   if (pp >= .85 && pa >= .78 && pl >= .80) return ["Primary Shot Creator", why(`${r.ppg.toFixed(1)} ppg`, "high usage", `${r.apg.toFixed(1)} apg`)];
   if (pa >= .82 && pao >= .55)             return ["Lead Playmaker", why(`${r.apg.toFixed(1)} apg`, `${r.ato.toFixed(1)} AST:TO`)];
   if (pp >= .80 && pl >= .75)              return ["Primary Scorer", why(`${r.ppg.toFixed(1)} ppg`, "high-volume scoring")];
-  if (pt >= .75 && p3 != null && p3 >= .70 && pp >= .50) return ["Movement Shooter", why(`${(r.tp3*100).toFixed(0)}% on volume 3s`)];
+  if (pt >= .70 && p3 != null && p3 >= .65 && pl >= .55) return ["Sharpshooter", why(`${(r.tp3*100).toFixed(0)}% 3P on volume`, "featured shooting load")];
   if (perim && pt >= .60 && p3 != null && p3 >= .45 && ps >= .60) return ["3&D Wing", why("3-point volume", `${r.stocks.toFixed(1)} stocks`)];
   if (big && pt >= .55)                    return ["Stretch Big", why("big who spaces", `${r.tpar.toFixed(2)} 3PA rate`)];
   if (big && pb >= .85)                    return ["Defensive Anchor", why(`${r.bpg.toFixed(1)} bpg`)];
   if (big && pr >= .70 && po >= .50 && pt < .45) return ["Rebounding Big", why(`${r.rpg.toFixed(1)} rpg`, "offensive glass")];
   if (pr >= .85)                           return ["Glass Cleaner", why(`${r.rpg.toFixed(1)} rpg`)];
   if (pf >= .80 && pt < .45 && pp >= .50)  return ["Slasher / Foul-Drawer", why(`${r.ftr.toFixed(2)} FT rate`, "gets to the line")];
-  if (pt >= .80 && p3 != null && p3 >= .55 && pl < .55) return ["Spot-Up Specialist", why("low-usage shooter", `${(r.tp3*100).toFixed(0)}% 3P`)];
+  if (pt >= .80 && p3 != null && p3 >= .50 && pl < .55) return ["Floor Spacer", why("low-usage spacer", `${(r.tp3*100).toFixed(0)}% 3P`)];
   if (perim && pp >= .55 && ps >= .62)     return ["Two-Way Wing", why("scores", `${r.stocks.toFixed(1)} stocks`)];
   if (pl <= .40 && (pao >= .50 || pts_ >= .55)) return ["Low-Usage Glue", why("efficient role", "low turnovers")];
   if (pp <= .25 && pl <= .30)              return [null, why("limited role / small sample — no tag")];

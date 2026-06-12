@@ -86,18 +86,20 @@ within the cohort** (data-driven, not arbitrary), and the label is descriptive �
 Taxonomy (v1):
 | Archetype | Rough signature |
 |---|---|
-| Primary Shot Creator | top-tercile usage + high scoring + ≥ moderate AST |
-| Lead Playmaker / Connector | high AST + high AST:TO, lower usage |
-| Microwave Scorer | high scoring rate + high usage, low playmaking |
-| Movement Shooter | very high 3PA-rate + high 3P% |
-| 3&D Wing | high 3PA-rate + solid 3P% + above-cohort stocks + low TO |
-| Two-Way Wing | balanced scoring + above-cohort stocks |
-| Slasher / Foul-Drawer | high FT-rate, lower 3PA-rate |
-| Stretch Big | big + meaningful 3PA-rate |
-| Rim-Running / Rebounding Big | big + high OREB/REB + FT-rate + low 3PA |
-| Glass-Cleaning Forward | high total-REB rate |
-| Defensive Anchor | big + top-cohort blocks/stocks |
-| Low-Usage Glue | low usage + efficient + low TO |
+| Primary Shot Creator | elite scorer + creator (high usage, scores and passes) |
+| Lead Playmaker | high assists / pass-first floor general |
+| Primary Scorer | high-volume scorer, scoring-first |
+| Sharpshooter | high-volume, accurate 3-pt threat (featured shooting load) |
+| Floor Spacer | low-usage complementary shooter / spacer |
+| 3&D Wing | perimeter shooting + defensive activity |
+| Two-Way Wing | scores + above-cohort stocks |
+| Slasher / Foul-Drawer | gets to the line, low 3PA |
+| Stretch Big | big who spaces the floor |
+| Rebounding Big | interior rebounder, offensive glass |
+| Glass Cleaner | elite rebounding rate |
+| Defensive Anchor | rim protection (blocks/stocks) |
+| Low-Usage Glue | efficient, low-usage role player |
+| Rotation Contributor | balanced role (fallback) |
 
 Shown with a one-line "why" (the two or three stats that earned it) for transparency.
 
@@ -110,14 +112,14 @@ Reproduce/re-tune any time with `node scripts/calibrate-archetypes.mjs`.
 2. **Primary Shot Creator** — `P(pts) ≥ .85 AND P(ast) ≥ .78 AND P(usage) ≥ .80`
 3. **Lead Playmaker** — `P(ast) ≥ .82 AND P(ast:to) ≥ .55`
 4. **Primary Scorer** — `P(pts) ≥ .80 AND P(usage) ≥ .75`
-5. **Movement Shooter** — `P(3PA-rate) ≥ .75 AND P(3P%) ≥ .70 AND P(pts) ≥ .50`
+5. **Sharpshooter** — `P(3PA-rate) ≥ .70 AND P(3P%) ≥ .65 AND P(usage) ≥ .55`
 6. **3&D Wing** — `perimeter AND P(3PA-rate) ≥ .60 AND P(3P%) ≥ .45 AND P(stocks) ≥ .60`
 7. **Stretch Big** — `big AND P(3PA-rate) ≥ .55`
 8. **Defensive Anchor** — `big AND P(bpg) ≥ .85`
 9. **Rebounding Big** — `big AND P(rpg) ≥ .70 AND P(oreb-share) ≥ .50 AND P(3PA-rate) < .45`
 10. **Glass Cleaner** — `P(rpg) ≥ .85`
 11. **Slasher / Foul-Drawer** — `P(ft-rate) ≥ .80 AND P(3PA-rate) < .45 AND P(pts) ≥ .50`
-12. **Spot-Up Specialist** — `P(3PA-rate) ≥ .80 AND P(3P%) ≥ .55 AND P(usage) < .55`
+12. **Floor Spacer** — `P(3PA-rate) ≥ .80 AND P(3P%) ≥ .50 AND P(usage) < .55`
 13. **Two-Way Wing** — `perimeter AND P(pts) ≥ .55 AND P(stocks) ≥ .62`
 14. **Low-Usage Glue** — `P(usage) ≤ .40 AND (P(ast:to) ≥ .50 OR P(ts%) ≥ .55)`
 15. **(no tag)** — `P(pts) ≤ .25 AND P(usage) ≤ .30` (limited role — never a negative label)
@@ -127,13 +129,20 @@ Notes: `usage` = per-game `(FGA + 0.44·FTA + TOV)` proxy (labeled estimate). `P
 computed for players with ≥5 total 3PA (else shooter rules don't qualify). Position buckets:
 Guard / Wing / Big (mapped from the roster `pos`).
 
+**Shooter honesty:** box scores can't see *how* a three was created (catch-and-shoot vs. off
+movement/screens). So **Sharpshooter vs. Floor Spacer is split by shooting VOLUME/role (usage) —
+which is measurable — never by shot mechanics.** Sharpshooter = a featured, high-usage shooting
+threat; Floor Spacer = a low-usage complementary spacer. A true "movement shooter" distinction
+would require an observed source (scout/coach tag or assisted-% from play-by-play) and is on the
+roadmap as a **tagged, observed-not-derived** attribute (same posture as Verified measurables).
+
 **Small-sample flag:** when `GP < 5`, show the tag with an "early read · N GP" qualifier so a
 hot 3-game start (e.g. a 20-ppg line) reads as provisional, not established.
 
 Cohort distribution at lock (697 players): Rotation Contributor 19% · Low-Usage Glue 18% ·
-Lead Playmaker 13% · no-tag 9% · Primary Scorer 8% · Primary Shot Creator 5% · Movement Shooter
-5% · Defensive Anchor 4% · Stretch Big 4% · Two-Way Wing 4% · Spot-Up 3% · Glass Cleaner 3% ·
-Rebounding Big 2% · Slasher 2% · 3&D Wing 0.4%.
+Lead Playmaker 13% · no-tag 9% · Primary Scorer 8% · Primary Shot Creator 5% · Floor Spacer 4% ·
+Defensive Anchor 4% · Stretch Big 4% · Two-Way Wing 4% · Sharpshooter 3% · Glass Cleaner 3% ·
+Rebounding Big 2% · Slasher 2% · 3&D Wing 1%.
 
 ### Trajectory arrow (GP-gated, efficiency-first)
 Compares season N vs N-1 on **TS% (efficiency), role (usage/minutes), and per-36 production**,
@@ -174,6 +183,9 @@ each season GP-gated. Public framing (kid-facing, still honest):
 ---
 
 ## 8. What box scores can't prove (stated plainly on the product)
-Defense beyond stocks, shot location/rim pressure, assisted%, on/off & lineup impact, pace.
+Defense beyond stocks, shot location/rim pressure, assisted%, on/off & lineup impact, pace,
+and **shot-creation context** (catch-and-shoot vs. off-screen/off-the-dribble) — which is why
+shooter archetypes are split by volume/role, not mechanics, and a true shot-type tag waits on a
+scout/coach-tagged (observed-not-derived) input.
 We don't fake these. The optional `dfl`/`chg`/`started` inputs add a little defensive/role color
 for teams that track them; deeper defensive data waits for a richer capture method.
