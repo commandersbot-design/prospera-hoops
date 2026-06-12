@@ -101,6 +101,40 @@ Taxonomy (v1):
 
 Shown with a one-line "why" (the two or three stats that earned it) for transparency.
 
+#### LOCKED classifier (v1 — calibrated 2026-06-12 on the 697-player cohort)
+Thresholds are **percentile ranks within the live cohort** (self-calibrating). Rules are
+checked in order; first match wins. `P(x)` = player's cohort percentile in metric x.
+Reproduce/re-tune any time with `node scripts/calibrate-archetypes.mjs`.
+
+1. **Lead Playmaker (pass-first)** — `P(ast) ≥ .90 AND P(ast) > P(pts)`
+2. **Primary Shot Creator** — `P(pts) ≥ .85 AND P(ast) ≥ .78 AND P(usage) ≥ .80`
+3. **Lead Playmaker** — `P(ast) ≥ .82 AND P(ast:to) ≥ .55`
+4. **Primary Scorer** — `P(pts) ≥ .80 AND P(usage) ≥ .75`
+5. **Movement Shooter** — `P(3PA-rate) ≥ .75 AND P(3P%) ≥ .70 AND P(pts) ≥ .50`
+6. **3&D Wing** — `perimeter AND P(3PA-rate) ≥ .60 AND P(3P%) ≥ .45 AND P(stocks) ≥ .60`
+7. **Stretch Big** — `big AND P(3PA-rate) ≥ .55`
+8. **Defensive Anchor** — `big AND P(bpg) ≥ .85`
+9. **Rebounding Big** — `big AND P(rpg) ≥ .70 AND P(oreb-share) ≥ .50 AND P(3PA-rate) < .45`
+10. **Glass Cleaner** — `P(rpg) ≥ .85`
+11. **Slasher / Foul-Drawer** — `P(ft-rate) ≥ .80 AND P(3PA-rate) < .45 AND P(pts) ≥ .50`
+12. **Spot-Up Specialist** — `P(3PA-rate) ≥ .80 AND P(3P%) ≥ .55 AND P(usage) < .55`
+13. **Two-Way Wing** — `perimeter AND P(pts) ≥ .55 AND P(stocks) ≥ .62`
+14. **Low-Usage Glue** — `P(usage) ≤ .40 AND (P(ast:to) ≥ .50 OR P(ts%) ≥ .55)`
+15. **(no tag)** — `P(pts) ≤ .25 AND P(usage) ≤ .30` (limited role — never a negative label)
+16. **Rotation Contributor** — fallback
+
+Notes: `usage` = per-game `(FGA + 0.44·FTA + TOV)` proxy (labeled estimate). `P(3P%)` is only
+computed for players with ≥5 total 3PA (else shooter rules don't qualify). Position buckets:
+Guard / Wing / Big (mapped from the roster `pos`).
+
+**Small-sample flag:** when `GP < 5`, show the tag with an "early read · N GP" qualifier so a
+hot 3-game start (e.g. a 20-ppg line) reads as provisional, not established.
+
+Cohort distribution at lock (697 players): Rotation Contributor 19% · Low-Usage Glue 18% ·
+Lead Playmaker 13% · no-tag 9% · Primary Scorer 8% · Primary Shot Creator 5% · Movement Shooter
+5% · Defensive Anchor 4% · Stretch Big 4% · Two-Way Wing 4% · Spot-Up 3% · Glass Cleaner 3% ·
+Rebounding Big 2% · Slasher 2% · 3&D Wing 0.4%.
+
 ### Trajectory arrow (GP-gated, efficiency-first)
 Compares season N vs N-1 on **TS% (efficiency), role (usage/minutes), and per-36 production**,
 each season GP-gated. Public framing (kid-facing, still honest):
