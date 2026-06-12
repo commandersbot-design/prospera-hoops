@@ -204,6 +204,7 @@ function PlayerCell({ p, onOpen }) {
       </span>
       <div style={{ fontFamily: MONO, fontSize: 10.5, color: A.textMut, letterSpacing: "0.04em", marginTop: 2 }}>
         {[p.pos, p.class ? `'${String(p.class).replace(/^'/, "")}` : null].filter(Boolean).join(" · ")}
+        {p.archetype ? <span style={{ color: A.accent, fontWeight: 600 }}>{(p.pos || p.class) ? " · " : ""}{p.archetype}{p.archetypeEarly ? " ·early" : ""}</span> : null}
       </div>
     </div>
   );
@@ -464,7 +465,31 @@ function useFacet(all) {
 const REGIONS = ["DC", "MD", "VA"];   // by state (real data has no NoVA split)
 const CLASSES = ["27", "28", "29", "30"];
 
-export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile }) {
+// Copy a shareable deep-link to a team page (the "text a coach their team" unlock).
+function TeamShareButton({ slug }) {
+  const [copied, setCopied] = useState(false);
+  if (!slug) return null;
+  const copy = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#/team/${slug}`;
+    try { await navigator.clipboard.writeText(url); }
+    catch { const ta = document.createElement("textarea"); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch {} ta.remove(); }
+    setCopied(true); setTimeout(() => setCopied(false), 1800);
+  };
+  return (
+    <button type="button" onClick={copy} title="Copy a shareable link to this team page"
+      style={{ fontFamily: MONO, fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, borderRadius: 6, padding: "6px 11px", cursor: "pointer", color: copied ? "#0B0E13" : A.accent, background: copied ? A.accent : "transparent", border: `1px solid ${A.accent}` }}>
+      {copied ? "Link copied ✓" : "↗ Share team"}
+    </button>
+  );
+}
+
+// Team leaders from the roster (top per-game in each category, GP-gated).
+function teamLeaders(roster) {
+  const best = (k) => roster.filter((p) => p[k] != null && (p.gp || 0) >= 1).sort((a, b) => (b[k] ?? -1) - (a[k] ?? -1))[0];
+  return [["PTS", "pts"], ["REB", "reb"], ["AST", "ast"]].map(([lab, k]) => [lab, best(k)]).filter(([, p]) => p);
+}
+
+export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile, focusTeam }) {
   useGold();
   const TEAM_DATA = teamsProp && teamsProp.length ? teamsProp : SEED_SUMMER_TEAMS;
   const [tab, setTab] = useState("players"); // DEFAULT LANDING = Players
@@ -476,6 +501,9 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   const [trackedOnly, setTrackedOnly] = useState(false);
   const [goldOnly, setGoldOnly] = useState(false);
   const [selected, setSelected] = useState(null);
+
+  // Deep-link / map-pin focus: open the Teams pane on a specific team.
+  useEffect(() => { if (focusTeam) { setTab("teams"); setSelected(focusTeam); } }, [focusTeam]);
 
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
@@ -533,10 +561,20 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
             <h2 style={{ ...NAMEPLATE, fontSize: 25, fontWeight: 700, color: A.textHi, margin: 0 }}>{team.name}</h2>
             {countElite(team.roster) > 0 ? <ElitePip n={`${countElite(team.roster)} elite`} /> : null}
             {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
+            <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, margin: "7px 0 16px", letterSpacing: "0.03em" }}>
+          <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, margin: "7px 0 12px", letterSpacing: "0.03em" }}>
             {[team.conf, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
           </div>
+          {teamLeaders(team.roster).length > 0 && (
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "0 0 16px" }}>
+              {teamLeaders(team.roster).map(([lab, p]) => (
+                <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
+                  {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
+                </span>
+              ))}
+            </div>
+          )}
           <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
           <CoverageList recaps={recaps} teamName={team.name} />
         </div>

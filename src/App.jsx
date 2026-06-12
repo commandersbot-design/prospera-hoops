@@ -2611,16 +2611,18 @@ function buildWorkspaceTeams() {
     const loc = SCHOOL_LOCATIONS[school] || {};
     const roster = (t.players || []).map((pl) => {
       const pr = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+      const a = archetypeFor(pl.name, pl.position);
       return {
         name: pl.name, pos: pl.position || null,
         class: pl.classYear ? String(pl.classYear).slice(2) : null,
         gp: pl.stats?.gp ?? 0, pts: pl.stats?.ppg ?? null, reb: pl.stats?.rpg ?? null, ast: pl.stats?.apg ?? null,
         mpg: minutesFor(pl.name)?.mpg ?? null,
+        archetype: a?.label || null, archetypeEarly: a?.earlyRead || false,
         tracked: false, id: pr?.id || null, goldTier: !!pr?.goldTier, commit: pr?.commitment || null,
       };
     });
     return {
-      name: t.name, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
+      name: t.name, slug, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
@@ -2649,6 +2651,7 @@ export default function App() {
   const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
   const [openId, setOpenId] = useState(null);
   const [focusSchool, setFocusSchool] = useState(null); // school to preselect in the Schools workspace (e.g. from a map pin)
+  const [focusTeam, setFocusTeam] = useState(null); // summer team to preselect (e.g. from a #/team/<slug> deep-link)
   const isMobile = useIsMobile(640);
 
   // Shareable deep links — #/player/<namekey> opens a profile directly (so a coach
@@ -2657,8 +2660,11 @@ export default function App() {
   useEffect(() => {
     if (!ready) return;
     const openFromHash = () => {
-      const m = (window.location.hash || "").match(/^#\/player\/([a-z0-9]+)/i);
-      if (m) { const pr = PROSPECT_BY_NAMEKEY[m[1].toLowerCase()]; if (pr) setOpenId(pr.id); }
+      const h = window.location.hash || "";
+      let m = h.match(/^#\/player\/([a-z0-9]+)/i);
+      if (m) { const pr = PROSPECT_BY_NAMEKEY[m[1].toLowerCase()]; if (pr) setOpenId(pr.id); return; }
+      m = h.match(/^#\/team\/([a-z0-9-]+)/i);
+      if (m) { const t = CH_TEAMS[m[1].toLowerCase()]; if (t) { setOpenId(null); setView("summer"); setFocusTeam(t.name); } }
     };
     openFromHash();
     window.addEventListener("hashchange", openFromHash);
@@ -2684,8 +2690,8 @@ export default function App() {
   if (!ready) return <LoadingScreen error={error} />;
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
-  const clearPlayerHash = () => { if (/^#\/player\//.test(window.location.hash)) window.history.replaceState(null, "", window.location.pathname + window.location.search); };
-  const goView = (v) => { setOpenId(null); setFocusSchool(null); setView(v); clearPlayerHash(); };
+  const clearDeepLink = () => { if (/^#\/(player|team)\//.test(window.location.hash)) window.history.replaceState(null, "", window.location.pathname + window.location.search); };
+  const goView = (v) => { setOpenId(null); setFocusSchool(null); setFocusTeam(null); setView(v); clearDeepLink(); };
   const workspaceSchools = ready ? buildWorkspaceSchools() : [];
   const workspaceTeams = ready ? buildWorkspaceTeams() : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
@@ -2736,11 +2742,11 @@ export default function App() {
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "18px 14px 48px" : "28px 24px 60px" }}>
         {open ? (
-          <Profile prospect={open} onBack={() => { setOpenId(null); clearPlayerHash(); }} onOpen={setOpenId} />
+          <Profile prospect={open} onBack={() => { setOpenId(null); clearDeepLink(); }} onOpen={setOpenId} />
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
-          <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} />
+          <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} focusTeam={focusTeam} />
         ) : view === "recaps" ? (
           <RecapsFeed recaps={recaps} />
         ) : view === "schools" ? (
