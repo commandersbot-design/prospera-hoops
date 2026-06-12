@@ -18,6 +18,7 @@ import ProfileEditor from "./components/ProfileEditor";
 import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
 import { buildArchetypeCohort, archetypeForPlayer } from "./lib/archetype";
+import StatLine from "./components/StatLine";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
 // all of that rides in a separate chunk that only downloads when the Map tab is
@@ -1069,6 +1070,10 @@ function Profile({ prospect, onBack, onOpen }) {
               of the content area. Real facts + measured stats; evaluative copy
               shows its "in progress" state until authored. */}
           <PlayerProfileCard player={cardPlayer} maxWidth="100%" />
+
+          {/* v1 deep stat line — shooting splits, eFG%/TS%, AST:TO, scoring mix,
+              per-36 when minutes exist. Computed from box scores. */}
+          {gameLogFor(p.name).length > 0 && <StatLine games={gameLogFor(p.name)} />}
 
           {/* Real authored data the card doesn't cover, kept below it. */}
           <RecruitingBlock p={p} />
