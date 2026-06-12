@@ -2615,7 +2615,25 @@ function buildWorkspaceSchools() {
       players: 0, coach: null, roster: [], directoryOnly: true,
     });
   }
-  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  // Second pass: merge near-duplicates whose DISPLAY names normalize to the same
+  // key (e.g. "Walter Johnson" vs "Walter Johnson High School", which entered the
+  // map under different keys). Keep the entry with a roster / the more official
+  // (longer) name, and carry over any missing location/coach info.
+  const byDisplay = new Map();
+  for (const e of map.values()) {
+    const k = schoolKey(e.name) || e.slug;
+    const prev = byDisplay.get(k);
+    if (!prev) { byDisplay.set(k, e); continue; }
+    const keep = (e.roster?.length || 0) > (prev.roster?.length || 0) ? e : prev;
+    const drop = keep === e ? prev : e;
+    keep.county = keep.county || drop.county;
+    keep.st = keep.st || drop.st;
+    keep.coach = keep.coach || drop.coach;
+    if (!(keep.roster?.length) && drop.roster?.length) { keep.roster = drop.roster; keep.players = drop.players; }
+    if ((drop.name || "").length > (keep.name || "").length) keep.name = drop.name; // prefer the official/longer name
+    byDisplay.set(k, keep);
+  }
+  return [...byDisplay.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 function buildWorkspaceProspects() {
   return PROSPECTS.map((p) => {
