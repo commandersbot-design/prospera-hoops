@@ -24,6 +24,8 @@ const logs = JSON.parse(fs.readFileSync("public/data/gameLogs.json", "utf8")).pl
 const team = Object.values(ch.teams).find((t) => new RegExp(TEAM, "i").test(t.name) || new RegExp(TEAM, "i").test(t.slug || ""));
 if (!team) { console.error(`No team matching "${TEAM}"`); process.exit(1); }
 const cohort = buildArchetypeCohort(logs, ch.teams);
+const CIRCUIT = team.circuit || "Capitol Hoops Summer League";
+const SEASON = team.season || "2026";
 
 const outDir = path.join("cards", team.slug || nameKey(team.name));
 fs.mkdirSync(path.join(outDir, "players"), { recursive: true });
@@ -82,7 +84,7 @@ for (const pl of team.players) {
     ${arch}
     ${bigStat(270, st.ppg, "PPG")}${bigStat(540, st.rpg, "RPG")}${bigStat(810, st.apg, "APG")}
     ${splitStat(216, st.fgPct, "FG%")}${splitStat(432, st.tpPct, "3P%")}${splitStat(648, st.ftPct, "FT%")}${splitStat(864, st.tsPct, "TS%")}
-    <text x="${W / 2}" y="1130" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">${st.gp} GAMES · CAPITOL HOOPS 2026</text>`;
+    <text x="${W / 2}" y="1130" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">${st.gp} GAMES · ${esc(CIRCUIT.toUpperCase())} ${esc(SEASON)}</text>`;
   await render(path.join(outDir, "players", `${nameKey(pl.name)}.png`), inner);
   nPlayers++;
 }
@@ -113,7 +115,7 @@ for (const g of byGame.values()) {
     <text x="${W - 160}" y="${900 + i * 70}" font-family='${SA}' font-weight="800" font-size="40" fill="${C.orange}" text-anchor="end">${t.pts} PTS · ${t.reb} REB · ${t.ast} AST</text>`).join("");
   const inner = `
     <text x="${W / 2}" y="280" font-family='${SA}' font-weight="700" font-size="28" letter-spacing="10" fill="${C.orange}" text-anchor="middle">GAME RECAP</text>
-    <text x="${W / 2}" y="340" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">CAPITOL HOOPS · ${esc((g.date || "").toUpperCase())}</text>
+    <text x="${W / 2}" y="340" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">${esc(CIRCUIT.toUpperCase())} · ${esc((g.date || "").toUpperCase())}</text>
     <text x="${W / 2}" y="470" font-family='${SA}' font-weight="800" font-size="64" fill="${C.text}" text-anchor="middle">${esc(team.name.toUpperCase())}</text>
     <text x="${W / 2}" y="560" font-family='${SA}' font-weight="800" font-size="92" fill="${scoreColor}" text-anchor="middle">${wl}  ${tScore}–${oScore}</text>
     <text x="${W / 2}" y="630" font-family='${SA}' font-weight="700" font-size="${oppSize}" letter-spacing="1" fill="${C.sage}" text-anchor="middle">${won ? "def." : "vs"} ${esc(opp.toUpperCase())}</text>

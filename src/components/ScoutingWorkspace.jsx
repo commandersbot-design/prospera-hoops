@@ -464,6 +464,7 @@ function useFacet(all) {
 // =============================================================================
 const REGIONS = ["DC", "MD", "VA"];   // by state (real data has no NoVA split)
 const CLASSES = ["27", "28", "29", "30"];
+const LEVELS = ["HS", "Summer", "AAU"]; // competition context
 
 // Copy a shareable deep-link to a team page (the "text a coach their team" unlock).
 function TeamShareButton({ slug }) {
@@ -496,6 +497,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
 
   // Teams-workspace state lives here (above the shell) so filters persist across
   // team selection and tab switches.
+  const lvl = useFacet(LEVELS);
   const region = useFacet(REGIONS);
   const klass = useFacet(CLASSES);
   const [trackedOnly, setTrackedOnly] = useState(false);
@@ -508,17 +510,19 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
   const teams = useMemo(() => TEAM_DATA.filter((t) => {
+    if (!lvl.pass(t.level || "Summer")) return false;
     if (!region.pass(t.region)) return false;
     if (!klass.pass("__all__") && !t.roster.some((p) => klass.on.has(String(p.class)))) return false;
     if (trackedOnly && countTracked(t.roster) === 0) return false;
     if (goldOnly && countElite(t.roster) === 0) return false;
     return true;
-  }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, region, klass, trackedOnly, goldOnly]);
+  }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, lvl, region, klass, trackedOnly, goldOnly]);
 
   const team = teams.find((t) => t.name === selected) || teams[0] || null;
 
   const rail = (
     <div>
+      <FacetGroup label="Level">{LEVELS.map((l) => <Chip key={l} active={lvl.on.has(l)} onClick={() => lvl.toggle(l)}>{l}</Chip>)}</FacetGroup>
       <FacetGroup label="Region">{REGIONS.map((r) => <Chip key={r} active={region.on.has(r)} onClick={() => region.toggle(r)}>{r}</Chip>)}</FacetGroup>
       <FacetGroup label="Class">{CLASSES.map((c) => <Chip key={c} active={klass.on.has(c)} onClick={() => klass.toggle(c)}>'{c}</Chip>)}</FacetGroup>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "4px 0 14px" }}>
@@ -563,8 +567,11 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
             {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
             <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, margin: "7px 0 12px", letterSpacing: "0.03em" }}>
-            {[team.conf, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 12px" }}>
+            {team.level && <span style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: A.accent, border: `1px solid ${A.accent}`, borderRadius: 4, padding: "2px 7px" }}>{team.level}</span>}
+            <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, letterSpacing: "0.03em" }}>
+              {[team.circuit, team.season, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
+            </span>
           </div>
           {teamLeaders(team.roster).length > 0 && (
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "0 0 16px" }}>
@@ -596,7 +603,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
 
   return (
     <WorkspaceShell
-      eyebrow="Capitol Hoops Summer League · 2026"
+      eyebrow="DMV Teams · HS · Summer · AAU"
       subline={tab === "teams" ? "Two-pane scouting workspace · filters persist across selection"
         : tab === "players" ? "DMV scoring leaders + your watchlist · games played leads every line"
         : "Chronological games feed · results and upcoming"}

@@ -732,7 +732,7 @@ function mapProspectToCard(p) {
     add("Playmaking", `${perGame(suS.apg)} APG`, "apg", false);
     add("Perimeter shot", `${pct(suS.threePct)} 3P%`, "threePct", true);
     add("Event steals", `${perGame(suS.spg)} SPG`, "spg", false);
-    if (rows.length) context = { cohortLabel: `vs Capitol Hoops players · n=${n}`, projected: false, rows };
+    if (rows.length) context = { cohortLabel: `vs DMV players · n=${n}`, projected: false, rows };
   }
 
   const statusLabel = p.commitment
@@ -1156,7 +1156,7 @@ function GameLogTab({ name }) {
         </div>
       ) : null}
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
-        Capitol Hoops Summer League · {games.length} game{games.length === 1 ? "" : "s"} · per-game box scores
+        {games.length} game{games.length === 1 ? "" : "s"} · per-game box scores
       </div>
       <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
@@ -1591,7 +1591,7 @@ function SummerLeaders({ onOpenProfile }) {
   return (
     <div>
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em", marginBottom: 14 }}>
-        Across all {allPlayers.length} players · 2026 Capitol Hoops · GP shown on every line · % boards require 2+ games
+        Across all {allPlayers.length} DMV players · 2026 · GP shown on every line · % boards require 2+ games
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
         {LEADER_CATS.map((cat) => (
@@ -2505,7 +2505,7 @@ function NewsTicker({ onOpen }) {
 const NAV = [
   // Big Board is parked for now — no rankings product yet.
   { key: "prospects", label: "Prospects" },
-  { key: "summer", label: "Summer League" },
+  { key: "summer", label: "Teams" },
   { key: "recaps", label: "Recaps" },
   { key: "schools", label: "Schools" },
   { key: "map", label: "Map" },
@@ -2626,6 +2626,7 @@ function buildWorkspaceTeams() {
     for (const pl of t.players || []) for (const g of gameLogFor(pl.name)) entries.push({ player: pl.name, pts: g.pts, reb: g.reb, ast: g.ast, opp: g.opp, date: g.date });
     return {
       name: t.name, slug, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
+      level: t.level || "Summer", circuit: t.circuit || "Capitol Hoops Summer League", season: t.season || "2026",
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
       topGames: topPerformances(entries, 4),
     };
