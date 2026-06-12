@@ -18,7 +18,7 @@ import ProfileEditor from "./components/ProfileEditor";
 import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
 import { buildArchetypeCohort, archetypeForPlayer, LEVEL_WEIGHT, LEVEL_LABEL, LEVEL_NOTE } from "./lib/archetype";
-import StatLine from "./components/StatLine";
+import StatLine, { seasonStatLine } from "./components/StatLine";
 import { topPerformances } from "./lib/highlights";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -934,6 +934,113 @@ function ShareButton({ name }) {
   );
 }
 
+// --- Scout-dashboard profile pieces ----------------------------------------
+const SLATE = "#5A646E";
+
+// Sticky identity rail (left column on desktop, top block on mobile).
+function ProfileRail({ c, archetype, tiles, status }) {
+  const initials = (c.name || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const measur = [["POS", c.position], ["CLASS", c.classYear ? `'${String(c.classYear).slice(2)}` : null], ["HT", c.height], ["WT", c.weight], ["WING", c.wingspan]];
+  const uncommitted = /uncommit/i.test(status || "");
+  return (
+    <aside style={{ display: "grid", gap: 14, alignContent: "start" }}>
+      <div style={{ aspectRatio: "4 / 5", borderRadius: 10, overflow: "hidden", border: `1px solid ${T.border}`, background: c.photo ? "#000" : "#1B2129", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {c.photo ? <img src={c.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          : <span style={{ ...serif, fontSize: 72, fontWeight: 800, color: T.textMute, letterSpacing: "0.02em" }}>{initials}</span>}
+      </div>
+      <div>
+        <h1 style={{ ...serif, fontSize: 32, fontWeight: 800, textTransform: "uppercase", lineHeight: 1.02, color: T.text, margin: 0 }}>{c.name}</h1>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8, alignItems: "center" }}>
+          {archetype?.label && <span style={{ ...serif, fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 700, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 999, padding: "4px 11px" }}>{archetype.label}</span>}
+          {archetype?.earlyRead && <span style={{ ...mono, fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, color: T.accent }}>Early Read · {archetype.gp} GP</span>}
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 1, background: T.border, border: `1px solid ${T.border}` }}>
+        {measur.map(([l, v]) => (
+          <div key={l} style={{ background: T.surface, padding: "8px 4px", textAlign: "center" }}>
+            <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.08em", color: T.textMute, textTransform: "uppercase" }}>{l}</div>
+            <div style={{ ...serif, fontSize: 15, fontWeight: 700, color: T.text, marginTop: 2 }}>{v || "—"}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+        {[["PPG", tiles.ppg, true], ["RPG", tiles.rpg, false], ["APG", tiles.apg, false]].map(([l, v, hot]) => (
+          <div key={l} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 6px", textAlign: "center" }}>
+            <div style={{ ...serif, fontSize: 28, fontWeight: 800, color: hot ? T.accent : T.text, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{v ?? "—"}</div>
+            <div style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: T.textMute, textTransform: "uppercase", marginTop: 6 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...mono, fontSize: 12, color: T.textDim, lineHeight: 1.5 }}>
+        {[c.school, [c.city, c.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ")}
+        {status && <> · <span style={{ color: uncommitted ? T.accent : T.textDim, fontWeight: 600 }}>{status}</span></>}
+      </div>
+      {(c.intel?.circuit || c.intel?.district) && (
+        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
+          <SectionLabel>DMV Intel</SectionLabel>
+          <div style={{ ...mono, fontSize: 12, color: T.textDim, marginTop: 8 }}>{[c.intel.circuit, c.intel.district].filter(Boolean).join(" · ")}</div>
+        </div>
+      )}
+    </aside>
+  );
+}
+
+// Production in Context — percentile bars vs the summer pool. Orange ≥75, slate
+// below; low bars always render (don't hide weaknesses).
+function PercentileBars({ context }) {
+  if (!context || !context.rows?.length) return null;
+  return (
+    <section style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
+        <SectionLabel>Production in Context</SectionLabel>
+        <span style={{ ...mono, fontSize: 11, color: T.textMute }}>{context.cohortLabel}</span>
+      </div>
+      <div style={{ display: "grid", gap: 12 }}>
+        {context.rows.map((r) => {
+          const col = r.percentile >= 75 ? T.accent : SLATE;
+          return (
+            <div key={r.key} style={{ display: "grid", gap: 5 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+                <span style={{ ...mono, fontSize: 11.5, color: T.textDim }}><b style={{ color: T.text, fontWeight: 700 }}>{r.key}</b> · {r.detail}</span>
+                <span style={{ ...serif, fontSize: 13, fontWeight: 700, color: col, fontVariantNumeric: "tabular-nums" }}>{r.percentile}th</span>
+              </div>
+              <div style={{ height: 7, background: "var(--prospera-pct-track)", borderRadius: 4, overflow: "hidden" }}>
+                <div style={{ width: `${Math.max(2, r.percentile)}%`, height: "100%", background: col, borderRadius: 4 }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// The Leap — prior-season → summer averages with +deltas in orange.
+function TheLeap({ trajectory: t }) {
+  if (!t || !t.summer) return null;
+  const f1 = (v) => (v == null ? "—" : Number(v).toFixed(1));
+  const rows = [["PTS", t.hs?.pts, t.summer.pts, t.summer.dPts], ["REB", t.hs?.reb, t.summer.reb, t.summer.dReb], ["AST", t.hs?.ast, t.summer.ast, t.summer.dAst]];
+  return (
+    <section style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
+      <SectionLabel>The Leap</SectionLabel>
+      <div style={{ ...mono, fontSize: 10.5, color: T.textMute, margin: "4px 0 12px" }}>
+        prior season{t.hsSampleN ? ` · n=${t.hsSampleN}` : ""} → summer{t.summerSampleN ? ` · n=${t.summerSampleN}` : ""}
+      </div>
+      <div style={{ display: "grid", gap: 8 }}>
+        {rows.map(([l, hs, su, d]) => (
+          <div key={l} style={{ display: "grid", gridTemplateColumns: "48px 1fr 1fr 60px", gap: 8, alignItems: "center" }}>
+            <span style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", color: T.textMute, textTransform: "uppercase" }}>{l}</span>
+            <span style={{ ...serif, fontSize: 18, fontWeight: 700, color: T.textDim, fontVariantNumeric: "tabular-nums" }}>{f1(hs)}</span>
+            <span style={{ ...serif, fontSize: 18, fontWeight: 800, color: T.text, fontVariantNumeric: "tabular-nums" }}>{f1(su)}</span>
+            <span style={{ ...serif, fontSize: 13, fontWeight: 700, color: d > 0 ? T.accent : T.textMute, fontVariantNumeric: "tabular-nums" }}>{d == null ? "" : d > 0 ? `+${f1(d)}` : f1(d)}</span>
+          </div>
+        ))}
+      </div>
+      {t.note && <div style={{ ...mono, fontSize: 10.5, color: T.textMute, marginTop: 10 }}>{t.note}</div>}
+    </section>
+  );
+}
+
 function Profile({ prospect, onBack, onOpen }) {
   const [tab, setTab] = useState("Overview");
   const [claimOpen, setClaimOpen] = useState(false);
@@ -944,6 +1051,16 @@ function Profile({ prospect, onBack, onOpen }) {
   const cardPlayer = useMemo(() => mapProspectToCard(p), [p]);
   const arc = useMemo(() => buildArc(seasonsFor(p.name), p), [p]);
   const archetype = useMemo(() => archetypeFor(p.name, p.position), [p]);
+  const narrow = useIsMobile(900);
+  const tiles = useMemo(() => {
+    const games = gameLogFor(p.name);
+    if (!games.length) return {};
+    const byLevel = {};
+    for (const g of games) { const lv = g.level || "Summer"; (byLevel[lv] ||= []).push(g); }
+    const order = Object.keys(byLevel).sort((a, b) => (LEVEL_WEIGHT[b] || 0) - (LEVEL_WEIGHT[a] || 0));
+    const line = seasonStatLine(byLevel[order[0]]);
+    return line ? { ppg: line.per.ppg, rpg: line.per.rpg, apg: line.per.apg, spg: line.per.spg } : {};
+  }, [p]);
   const gold = useGold();
   const ver = useVerified();
   const auth = useAuth();
@@ -965,7 +1082,14 @@ function Profile({ prospect, onBack, onOpen }) {
   }, [p.id, auth.user, reloadOverlay]);
 
   return (
-    <div style={{ display: "grid", gap: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "minmax(270px, 33%) 1fr", gap: narrow ? 18 : 28, alignItems: "start" }}>
+      {/* LEFT RAIL — identity / measurables / stat tiles / DMV intel (sticky on desktop) */}
+      <div style={{ position: narrow ? "static" : "sticky", top: 16 }}>
+        <ProfileRail c={cardPlayer} archetype={archetype} tiles={tiles} status={cardPlayer.status} />
+      </div>
+
+      {/* RIGHT COLUMN — action bar, tabs, content */}
+      <div style={{ display: "grid", gap: 18, minWidth: 0 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <button
           type="button"
@@ -1033,25 +1157,6 @@ function Profile({ prospect, onBack, onOpen }) {
         </div>
       </div>
 
-      {/* Archetype tag — descriptive, cohort-calibrated role label (honest:
-          never a ranking). Shows the stats that earned it + a small-sample flag. */}
-      {archetype && archetype.label && (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <span
-            title="Descriptive role from this player's statistical profile vs. the DMV cohort — not a ranking."
-            style={{ ...serif, fontSize: 14, letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 700, color: T.accent, background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.accent}`, borderRadius: 999, padding: "5px 14px" }}
-          >
-            {archetype.label}
-          </span>
-          {archetype.why && <span style={{ ...mono, fontSize: 12, color: T.textMute }}>{archetype.why}</span>}
-          {archetype.earlyRead && (
-            <span style={{ ...mono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: T.warn, border: `1px solid ${T.warn}`, borderRadius: 4, padding: "2px 7px" }}>
-              early read · {archetype.gp} GP
-            </span>
-          )}
-        </div>
-      )}
-
       {editOpen && canEdit && (
         <ProfileEditor prospect={p} onClose={() => setEditOpen(false)} onSaved={reloadOverlay} />
       )}
@@ -1087,10 +1192,16 @@ function Profile({ prospect, onBack, onOpen }) {
 
       {tab === "Overview" && (
         <div style={{ display: "grid", gap: 18 }}>
-          {/* Editorial scout card — the profile's Overview. Fills the full width
-              of the content area. Real facts + measured stats; evaluative copy
-              shows its "in progress" state until authored. */}
-          <PlayerProfileCard player={cardPlayer} maxWidth="100%" />
+          {/* Scout dashboard: snapshot → production-in-context → the leap.
+              (Identity/measurables live in the left rail.) */}
+          <section style={{ borderLeft: `3px solid ${T.accent}`, paddingLeft: 16 }}>
+            <SectionLabel>Scout Snapshot</SectionLabel>
+            <p style={{ ...mono, fontSize: 14.5, lineHeight: 1.6, color: cardPlayer.snapshot ? T.textDim : T.textMute, fontStyle: cardPlayer.snapshot ? "normal" : "italic", margin: "8px 0 0", maxWidth: "70ch" }}>
+              {cardPlayer.snapshot || "Scouting report in progress — the stats below are real where available."}
+            </p>
+          </section>
+          <PercentileBars context={cardPlayer.context} />
+          <TheLeap trajectory={cardPlayer.trajectory} />
 
           {/* v1 deep stat line, SPLIT BY COMPETITION so contexts never blend.
               HS first (weighted most); summer league flagged lighter (exhibition). */}
@@ -1156,6 +1267,7 @@ function Profile({ prospect, onBack, onOpen }) {
       {tab === "Development" && <DevelopmentSection arc={arc} prospect={p} />}
       {tab === "Game Log" && <GameLogTab name={p.name} />}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
+      </div>
     </div>
   );
 }
