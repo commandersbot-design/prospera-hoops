@@ -26,13 +26,18 @@ left   = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--team", default="hayfield")
+ap.add_argument("--new", default=None, help="Brand-new team name (blank roster, no existing stats)")
 ap.add_argument("--out", default=None)
 a = ap.parse_args()
 
-ch = json.load(open("public/data/capitolHoops.json", encoding="utf8"))
-team = next((t for t in ch["teams"].values() if re.search(a.team, t["name"], re.I) or re.search(a.team, t.get("slug",""), re.I)), None)
-if not team: raise SystemExit(f'No team matching "{a.team}"')
-players = team["players"]
+if a.new:
+    team = {"name": a.new}
+    players = []  # blank roster — coach fills names
+else:
+    ch = json.load(open("public/data/capitolHoops.json", encoding="utf8"))
+    team = next((t for t in ch["teams"].values() if re.search(a.team, t["name"], re.I) or re.search(a.team, t.get("slug",""), re.I)), None)
+    if not team: raise SystemExit(f'No team matching "{a.team}" — for a brand-new team use --new "Team Name"')
+    players = team["players"]
 out = a.out or f"docs/{re.sub(r'[^A-Za-z0-9]+','-',team['name']).strip('-')}-Intake-Template.xlsx"
 os.makedirs(os.path.dirname(out), exist_ok=True)
 
@@ -100,7 +105,8 @@ ros_comments = {
  "instagram":"(optional) player or recruiting IG handle",
 }
 style_header(ws, ros_headers, ros_comments)
-for i, p in enumerate(players, start=2):
+roster_src = players if players else [{} for _ in range(15)]  # blank rows for a new team
+for i, p in enumerate(roster_src, start=2):
     vals = [team["name"], p.get("number",""), p.get("name",""), p.get("position",""), p.get("classYear",""), "", "", "", "", "", ""]
     for c, v in enumerate(vals, 1):
         cell = ws.cell(row=i, column=c, value=v); cell.font = body_font; cell.border = border
