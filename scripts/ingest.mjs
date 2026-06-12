@@ -130,6 +130,10 @@ boxscores.forEach((b, idx) => {
     fgm, fga: num(b.fga), tpm, tpa: num(b.tpa), ftm, fta: num(b.fta),
     oreb, dreb, to: num(b.tov), pf: num(b.pf), min: num(b.min),
   };
+  // Optional "tracked extras" — only stored when the column is present/non-empty.
+  if (b.started !== undefined && b.started !== "") line.gs = num(b.started) ? 1 : 0;
+  if (b.dfl !== undefined && b.dfl !== "") line.dfl = num(b.dfl);
+  if (b.chg !== undefined && b.chg !== "") line.chg = num(b.chg);
   (linesByKey[key] ||= []).push(line);
   lineCount++;
 });
@@ -153,6 +157,7 @@ function seasonAgg(lines) {
     tsPct: tsDen > 0 ? r1((s.pts / tsDen) * 100) : null,
   };
   if (s.min > 0) out.mpg = r1(s.min / gp);
+  if (lines.some((l) => l.gs !== undefined)) out.gs = lines.reduce((n, l) => n + (l.gs || 0), 0);
   return out;
 }
 

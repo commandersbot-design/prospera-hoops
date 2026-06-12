@@ -131,14 +131,17 @@ for c, w in enumerate([10,16,18,24,12,11,10], 1): ws.column_dimensions[get_colum
 
 # ---- Box Score ----
 ws = wb.create_sheet("Box Score")
-box_headers = ["game_id","date","player","min","fgm","fga","tpm","tpa","ftm","fta","oreb","dreb","ast","stl","blk","tov","pf"]
+box_headers = ["game_id","date","player","min","fgm","fga","tpm","tpa","ftm","fta","oreb","dreb","ast","stl","blk","tov","pf","started","dfl","chg"]
 box_comments = {
  "game_id":"Same id you used on the Schedule tab for this game.","player":"Exactly as on the Roster tab.",
+ "min":"Minutes played. PLEASE fill this in — it unlocks per-36 stats and minutes load.",
  "fgm":"Field goals made (include 3s)","fga":"Field goals attempted","tpm":"3-pointers made","tpa":"3-pointers attempted",
  "ftm":"Free throws made","fta":"Free throws attempted","oreb":"Offensive rebounds","dreb":"Defensive rebounds","tov":"Turnovers","pf":"Personal fouls",
+ "started":"OPTIONAL: 1 if the player started, else 0.","dfl":"OPTIONAL: deflections.","chg":"OPTIONAL: charges drawn.",
 }
 style_header(ws, box_headers, box_comments)
 # Pre-seed one game block with all rostered players so the coach just fills numbers.
+opt_cols = set(range(len(box_headers)-2, len(box_headers)+1))  # started, dfl, chg
 for i, p in enumerate(players, start=2):
     ws.cell(row=i, column=1, value="G7").font = body_font
     ws.cell(row=i, column=3, value=p.get("name","")).font = body_font
@@ -146,6 +149,8 @@ for i, p in enumerate(players, start=2):
         ws.cell(row=i, column=c).border = border
         ws.cell(row=i, column=c).alignment = center
         if c in (1,3): ws.cell(row=i, column=c).fill = fill_pre
+        elif c == 4: ws.cell(row=i, column=c).fill = fill_todo   # minutes — please fill
+        elif c in opt_cols: ws.cell(row=i, column=c).fill = fill_pre  # optional extras
 note = ws.cell(row=len(players)+3, column=1,
     value="↑ One 15-row block = one game. For the next game, copy these name rows, change game_id (G8…) and date. Delete players who didn't play.")
 note.font = Font(name=FONT, italic=True, color=ORANGE)
