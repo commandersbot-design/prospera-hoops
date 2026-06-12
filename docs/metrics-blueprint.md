@@ -15,6 +15,17 @@ the source of truth for the player page, the ingest schema, and the cards.
 
 ---
 
+## 0. Competition contexts (stats never blend)
+Every game is tagged with a **level** — `HS` / `Summer` / `AAU` (summer = Capitol Hoops
+Summer League). A player's stats, percentiles, and archetype are computed **per level and
+compared within that level** (a summer line is ranked vs summer players, HS vs HS) — they
+are never mixed into one blended line.
+
+**Evaluative weight:** `HS (3) > AAU (2) > Summer (1)`. The high-school season is the real,
+weighted season; the summer league is treated as **exhibition (lighter weight)**. Profiles
+render each context separately, ordered HS-first, with the weight stated plainly. The
+"primary" context (highest weight present) drives the headline archetype tag.
+
 ## 1. Input schema (what we collect)
 
 ### Per-game box score — CORE (required)

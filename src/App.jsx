@@ -17,7 +17,7 @@ import ClaimPanel from "./components/ClaimPanel";
 import ProfileEditor from "./components/ProfileEditor";
 import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
-import { buildArchetypeCohort, archetypeForPlayer } from "./lib/archetype";
+import { buildArchetypeCohort, archetypeForPlayer, LEVEL_WEIGHT, LEVEL_LABEL, LEVEL_NOTE } from "./lib/archetype";
 import StatLine from "./components/StatLine";
 import { topPerformances } from "./lib/highlights";
 
@@ -190,9 +190,9 @@ function seasonsFor(name) {
 // Archetype engine — lazily build the percentile cohort from the live data the
 // first time a player page asks for a tag (see docs/metrics-blueprint.md).
 let ARCHETYPE_COHORT = null;
-function archetypeFor(name, position) {
+function archetypeFor(name, position, level) {
   if (!ARCHETYPE_COHORT) ARCHETYPE_COHORT = buildArchetypeCohort(GAME_LOGS, CH_TEAMS);
-  return archetypeForPlayer(name, ARCHETYPE_COHORT, position);
+  return archetypeForPlayer(name, ARCHETYPE_COHORT, position, level);
 }
 
 // Populate the module-level stores from the fetched datasets. Called once,
@@ -668,12 +668,13 @@ const PROFILE_TABS = ["Overview", "Film"];
 // Real percentile context from the Capitol Hoops player pool — NOT fabricated.
 // Built once, lazily, after initData() populates CH_TEAMS. Lets the editorial
 // card show measured ranks (projected:false) instead of invented percentiles.
-let _chCohort = null;
-function chCohort() {
-  if (_chCohort) return _chCohort;
+const _chCohort = {};
+function chCohort(level = "Summer") {
+  if (_chCohort[level]) return _chCohort[level];
   const cols = { ppg: [], apg: [], spg: [], threePct: [] };
   let n = 0;
   for (const team of Object.values(CH_TEAMS)) {
+    if ((team.level || "Summer") !== level) continue;   // rank within the same context only
     for (const pl of team.players || []) {
       const s = pl.stats || {};
       if (!(s.gp > 0)) continue;
@@ -682,8 +683,8 @@ function chCohort() {
     }
   }
   for (const k of Object.keys(cols)) cols[k].sort((a, b) => a - b);
-  _chCohort = { cols, n };
-  return _chCohort;
+  _chCohort[level] = { cols, n };
+  return _chCohort[level];
 }
 function pctileRank(arr, v) {
   if (!arr || !arr.length || v == null) return null;
@@ -721,7 +722,7 @@ function mapProspectToCard(p) {
   // Production-in-context: measured percentiles vs the summer pool.
   let context = null;
   if (hasSummer) {
-    const { cols, n } = chCohort();
+    const { cols, n } = chCohort("Summer");
     const rows = [];
     const add = (key, detail, statKey, watchIfLow) => {
       const pr = pctileRank(cols[statKey], suS[statKey]);
@@ -732,7 +733,7 @@ function mapProspectToCard(p) {
     add("Playmaking", `${perGame(suS.apg)} APG`, "apg", false);
     add("Perimeter shot", `${pct(suS.threePct)} 3P%`, "threePct", true);
     add("Event steals", `${perGame(suS.spg)} SPG`, "spg", false);
-    if (rows.length) context = { cohortLabel: `vs DMV players · n=${n}`, projected: false, rows };
+    if (rows.length) context = { cohortLabel: `vs summer-league players · n=${n}`, projected: false, rows };
   }
 
   const statusLabel = p.commitment
@@ -1091,9 +1092,38 @@ function Profile({ prospect, onBack, onOpen }) {
               shows its "in progress" state until authored. */}
           <PlayerProfileCard player={cardPlayer} maxWidth="100%" />
 
-          {/* v1 deep stat line — shooting splits, eFG%/TS%, AST:TO, scoring mix,
-              per-36 when minutes exist. Computed from box scores. */}
-          {gameLogFor(p.name).length > 0 && <StatLine games={gameLogFor(p.name)} />}
+          {/* v1 deep stat line, SPLIT BY COMPETITION so contexts never blend.
+              HS first (weighted most); summer league flagged lighter (exhibition). */}
+          {(() => {
+            const allGames = gameLogFor(p.name);
+            if (!allGames.length) return null;
+            const byLevel = {};
+            for (const g of allGames) { const lv = g.level || "Summer"; (byLevel[lv] ||= []).push(g); }
+            const order = Object.keys(byLevel).sort((a, b) => (LEVEL_WEIGHT[b] || 0) - (LEVEL_WEIGHT[a] || 0));
+            return (
+              <div style={{ display: "grid", gap: 16 }}>
+                {order.length > 1 && (
+                  <div style={{ ...mono, fontSize: 12, color: T.textDim, lineHeight: 1.5, background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.border}`, padding: "10px 14px", borderRadius: 8 }}>
+                    Stats are split by competition so they don't blend. <b style={{ color: T.text }}>High school</b> carries the most evaluative weight; summer league is lighter (exhibition).
+                  </div>
+                )}
+                {order.map((lv) => {
+                  const arch = archetypeFor(p.name, p.position, lv);
+                  return (
+                    <div key={lv} style={{ display: "grid", gap: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ ...mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: T.accent, border: `1px solid ${T.accent}`, borderRadius: 4, padding: "2px 7px" }}>{lv}</span>
+                        <span style={{ ...mono, fontSize: 12, color: T.textDim, fontWeight: 600 }}>{LEVEL_LABEL[lv] || lv}</span>
+                        <span style={{ ...mono, fontSize: 10.5, color: T.textMute }}>{LEVEL_NOTE[lv] || ""}</span>
+                        {arch && arch.label && <span style={{ ...mono, fontSize: 10.5, color: T.accent, fontWeight: 700 }}>· {arch.label}</span>}
+                      </div>
+                      <StatLine games={byLevel[lv]} />
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           {/* Real authored data the card doesn't cover, kept below it. */}
           <RecruitingBlock p={p} />
@@ -2612,7 +2642,7 @@ function buildWorkspaceTeams() {
     const loc = SCHOOL_LOCATIONS[school] || {};
     const roster = (t.players || []).map((pl) => {
       const pr = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
-      const a = archetypeFor(pl.name, pl.position);
+      const a = archetypeFor(pl.name, pl.position, t.level);
       return {
         name: pl.name, pos: pl.position || null,
         class: pl.classYear ? String(pl.classYear).slice(2) : null,

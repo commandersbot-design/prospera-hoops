@@ -19,6 +19,15 @@ function bucket(pos) {
 const MIN_GP = 3;
 const METRICS = ["ppg", "ts", "tpar", "ftr", "tp3", "ato", "apg", "rpg", "bpg", "orebShare", "stocks", "load"];
 
+// Competition contexts, by evaluative weight (HS = the real season, weighted most;
+// summer league = exhibition, lightest). Used to order/scope a player's stats so
+// HS / Summer / AAU never blend.
+export const LEVEL_WEIGHT = { HS: 3, AAU: 2, Summer: 1 };
+export const LEVEL_LABEL = { HS: "High School", AAU: "AAU / Circuit", Summer: "Summer League" };
+export const LEVEL_NOTE = { HS: "school season — weighted most", AAU: "travel circuit", Summer: "exhibition — lighter weight" };
+const levelOf = (g) => g.level || "Summer";
+export function primaryLevel(levels) { return [...levels].sort((a, b) => (LEVEL_WEIGHT[b] || 0) - (LEVEL_WEIGHT[a] || 0))[0] || null; }
+
 function metricsFromGames(games) {
   if (!games || games.length < MIN_GP) return null;
   const s = games.reduce((a, g) => {
@@ -41,25 +50,31 @@ function metricsFromGames(games) {
   };
 }
 
-// Build the cohort once from gameLogs (keyed by nameKey) + CH teams (for position).
+// Build the cohort from gameLogs (keyed by nameKey) + CH teams (for position).
+// Metrics + percentile arrays are bucketed BY LEVEL, so a summer line is ranked
+// against summer players and an HS line against HS players — never blended.
 export function buildArchetypeCohort(gameLogs, teams) {
   const posByKey = {};
   for (const t of Object.values(teams || {})) for (const p of (t.players || [])) {
     const k = nameKey(p.name);
     if (!(k in posByKey)) posByKey[k] = bucket(p.position);
   }
-  const rowsByKey = {};
-  const arrays = {};
-  for (const m of METRICS) arrays[m] = [];
+  const rowsByKeyLevel = {}; // key -> level -> metrics
+  const arraysByLevel = {};  // level -> metric -> sorted values
   for (const [k, e] of Object.entries(gameLogs || {})) {
-    const m = metricsFromGames(e && e.games);
-    if (!m) continue;
-    m.pos = posByKey[k] || "?";
-    rowsByKey[k] = m;
-    for (const metric of METRICS) { const v = m[metric]; if (v != null && isFinite(v)) arrays[metric].push(v); }
+    const groups = {};
+    for (const g of ((e && e.games) || [])) (groups[levelOf(g)] ||= []).push(g);
+    for (const [level, gs] of Object.entries(groups)) {
+      const m = metricsFromGames(gs);
+      if (!m) continue;
+      m.pos = posByKey[k] || "?";
+      (rowsByKeyLevel[k] ||= {})[level] = m;
+      const arr = (arraysByLevel[level] ||= Object.fromEntries(METRICS.map((x) => [x, []])));
+      for (const metric of METRICS) { const v = m[metric]; if (v != null && isFinite(v)) arr[metric].push(v); }
+    }
   }
-  for (const m of METRICS) arrays[m].sort((a, b) => a - b);
-  return { rowsByKey, arrays, posByKey, size: Object.keys(rowsByKey).length };
+  for (const lv of Object.keys(arraysByLevel)) for (const m of METRICS) arraysByLevel[lv][m].sort((a, b) => a - b);
+  return { rowsByKeyLevel, arraysByLevel, posByKey, levels: Object.keys(arraysByLevel) };
 }
 
 function pctile(arr, v) {
@@ -95,17 +110,22 @@ function classify(r, P, pos) {
   return ["Rotation Contributor", "balanced role"];
 }
 
-// Resolve a player's archetype. Returns { label, why, gp, earlyRead, percentiles }
-// or null when there isn't enough data (<3 GP / no logs).
-export function archetypeForPlayer(name, cohort, position) {
+// Resolve a player's archetype for a given competition level (default: their
+// highest-weight level — HS over AAU over Summer). Percentiles are vs that level's
+// cohort. Returns { label, why, gp, earlyRead, level, percentiles } or null.
+export function archetypeForPlayer(name, cohort, position, level) {
   if (!cohort) return null;
-  const r = cohort.rowsByKey[nameKey(name)];
+  const byLevel = cohort.rowsByKeyLevel[nameKey(name)];
+  if (!byLevel) return null;
+  const lv = level && byLevel[level] ? level : primaryLevel(Object.keys(byLevel));
+  const r = byLevel[lv];
   if (!r) return null;
   const pos = bucket(position) !== "?" ? bucket(position) : (r.pos || "?");
-  const P = (m) => pctile(cohort.arrays[m], r[m]);
+  const arrays = cohort.arraysByLevel[lv] || {};
+  const P = (m) => pctile(arrays[m], r[m]);
   const [label, why] = classify(r, P, pos);
   return {
-    label, why, gp: r.gp, earlyRead: r.gp < 5,
+    label, why, gp: r.gp, earlyRead: r.gp < 5, level: lv,
     percentiles: {
       scoring: P("ppg"), efficiency: P("ts"), playmaking: P("apg"),
       rebounding: P("rpg"), shooting: P("tpar"), stocks: P("stocks"),
