@@ -60,11 +60,40 @@ function statLine(games) {
   return { gp, ppg: r1(s.pts / gp), rpg: r1(s.reb / gp), apg: r1(s.ast / gp), fgPct: pct(s.fgm, s.fga), tpPct: pct(s.tpm, s.tpa), ftPct: pct(s.ftm, s.fta), tsPct: tsDen > 0 ? `${r1((s.pts / tsDen) * 100)}%` : "—" };
 }
 
-// --- player cards ----------------------------------------------------------
-const bigStat = (x, val, label) => `<text x="${x}" y="800" font-family='${SA}' font-weight="800" font-size="120" fill="${C.orange}" text-anchor="middle">${val}</text>
-  <text x="${x}" y="858" font-family='${SA}' font-weight="700" font-size="30" letter-spacing="6" fill="${C.mut}" text-anchor="middle">${label}</text>`;
-const splitStat = (x, val, label) => `<text x="${x}" y="1000" font-family='${SA}' font-weight="800" font-size="56" fill="${C.text}" text-anchor="middle">${val}</text>
-  <text x="${x}" y="1044" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">${label}</text>`;
+// --- player trading cards (spec layout) -------------------------------------
+// Top orange band · large photo/initials block (hairline bottom) · nameplate
+// (name, POS·HT·SCHOOL, role pill) · stat strip PPG/RPG/APG/TS%.
+const HAIR = "#20262E";
+function playerCardSVG({ name, pos, height, classYear, team, st, role, photo }) {
+  const yy = classYear ? `'${String(classYear).slice(2)}` : "";
+  const nm = name.toUpperCase();
+  const nameSize = nm.length > 18 ? 70 : nm.length > 13 ? 88 : 106;
+  const initials = name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const sub = [pos, height, team].filter(Boolean).join("  ·  ").toUpperCase();
+  const photoBlock = photo
+    ? `<image href="${photo}" x="0" y="90" width="${W}" height="640" preserveAspectRatio="xMidYMid slice"/>`
+    : `<rect x="0" y="90" width="${W}" height="640" fill="#1B2129"/>
+       <text x="${W / 2}" y="545" font-family='${SA}' font-weight="800" font-size="300" fill="#2A323C" text-anchor="middle">${esc(initials)}</text>`;
+  const pillW = Math.min(640, 70 + (role || "").length * 21);
+  const rolePill = role ? `<rect x="44" y="912" width="${pillW}" height="54" rx="27" fill="none" stroke="${C.orange}" stroke-width="2"/>
+    <text x="${44 + pillW / 2}" y="948" font-family='${SA}' font-weight="800" font-size="24" letter-spacing="3" fill="${C.orange}" text-anchor="middle">${esc(role.toUpperCase())}</text>` : "";
+  const stat = (x, val, label, accent) => `<text x="${x}" y="1150" font-family='${SA}' font-weight="800" font-size="74" fill="${accent ? C.orange : C.text}" text-anchor="middle">${val}</text>
+    <text x="${x}" y="1206" font-family='${SA}' font-weight="700" font-size="27" letter-spacing="5" fill="${C.mut}" text-anchor="middle">${label}</text>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <defs>${FONT_STYLE}</defs>
+    <rect width="${W}" height="${H}" fill="${C.bg0}"/>
+    <rect x="0" y="0" width="${W}" height="90" fill="${C.orange}"/>
+    <text x="44" y="59" font-family='${SA}' font-weight="800" font-size="36" letter-spacing="2" fill="${C.bg0}">PROSPERA HOOPS</text>
+    <text x="${W - 44}" y="59" font-family='${SA}' font-weight="800" font-size="36" fill="${C.bg0}" text-anchor="end">${yy}</text>
+    ${photoBlock}
+    <line x1="0" y1="730" x2="${W}" y2="730" stroke="${HAIR}" stroke-width="3"/>
+    <text x="44" y="826" font-family='${SA}' font-weight="800" font-size="${nameSize}" fill="${C.text}">${esc(nm)}</text>
+    <text x="44" y="882" font-family='${SA}' font-weight="700" font-size="30" letter-spacing="2" fill="${C.sage}">${esc(sub)}</text>
+    ${rolePill}
+    <line x1="44" y1="1045" x2="${W - 44}" y2="1045" stroke="${HAIR}" stroke-width="2"/>
+    ${stat(168, st.ppg, "PPG", true)}${stat(416, st.rpg, "RPG")}${stat(664, st.apg, "APG")}${stat(912, st.tsPct, "TS%")}
+  </svg>`;
+}
 
 let nPlayers = 0;
 for (const pl of team.players) {
@@ -72,20 +101,8 @@ for (const pl of team.players) {
   if (!games.length) continue;
   const st = statLine(games);
   const a = archetypeForPlayer(pl.name, cohort, pl.position);
-  const nm = pl.name.toUpperCase();
-  const nameSize = nm.length > 17 ? 66 : nm.length > 13 ? 82 : 100;
-  const meta = [team.name, pl.position, pl.classYear ? `'${String(pl.classYear).slice(2)}` : null].filter(Boolean).join("  ·  ");
-  const arch = a && a.label ? `<rect x="${W / 2 - 230}" y="500" width="460" height="56" rx="28" fill="none" stroke="${C.orange}" stroke-width="2"/>
-    <text x="${W / 2}" y="538" font-family='${SA}' font-weight="800" font-size="26" letter-spacing="3" fill="${C.orange}" text-anchor="middle">${esc(a.label.toUpperCase())}${a.earlyRead ? "  · EARLY READ" : ""}</text>` : "";
-  const inner = `
-    <text x="${W / 2}" y="280" font-family='${SA}' font-weight="700" font-size="28" letter-spacing="10" fill="${C.orange}" text-anchor="middle">PLAYER CARD</text>
-    <text x="${W / 2}" y="400" font-family='${SA}' font-weight="800" font-size="${nameSize}" letter-spacing="1" fill="${C.text}" text-anchor="middle">${esc(nm)}</text>
-    <text x="${W / 2}" y="455" font-family='${SA}' font-weight="700" font-size="30" letter-spacing="2" fill="${C.sage}" text-anchor="middle">${esc(meta)}</text>
-    ${arch}
-    ${bigStat(270, st.ppg, "PPG")}${bigStat(540, st.rpg, "RPG")}${bigStat(810, st.apg, "APG")}
-    ${splitStat(216, st.fgPct, "FG%")}${splitStat(432, st.tpPct, "3P%")}${splitStat(648, st.ftPct, "FT%")}${splitStat(864, st.tsPct, "TS%")}
-    <text x="${W / 2}" y="1130" font-family='${SA}' font-weight="700" font-size="24" letter-spacing="4" fill="${C.mut}" text-anchor="middle">${st.gp} GAMES · ${esc(CIRCUIT.toUpperCase())} ${esc(SEASON)}</text>`;
-  await render(path.join(outDir, "players", `${nameKey(pl.name)}.png`), inner);
+  const svg = playerCardSVG({ name: pl.name, pos: pl.position, height: pl.height, classYear: pl.classYear, team: team.name, st, role: a?.label, photo: null });
+  await sharp(Buffer.from(svg)).png().toFile(path.join(outDir, "players", `${nameKey(pl.name)}.png`));
   nPlayers++;
 }
 
