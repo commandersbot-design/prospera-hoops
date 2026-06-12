@@ -921,7 +921,7 @@ function ClaimForm({ prospect, onClose }) {
 function ShareButton({ name }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
-    const url = `${window.location.origin}${window.location.pathname}#/player/${nameKey(name)}`;
+    const url = `${window.location.origin}/player/${nameKey(name)}`;
     try { await navigator.clipboard.writeText(url); }
     catch { const ta = document.createElement("textarea"); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch {} ta.remove(); }
     setCopied(true); setTimeout(() => setCopied(false), 1800);
@@ -2849,9 +2849,12 @@ export default function App() {
     if (!ready) return;
     const openFromHash = () => {
       const h = window.location.hash || "";
-      let m = h.match(/^#\/player\/([a-z0-9]+)/i);
+      const pth = window.location.pathname || "";
+      // Player can arrive by hash (#/player/<key>) or path (/player/<key>, the
+      // prerendered share/og URL).
+      let m = h.match(/^#\/player\/([a-z0-9]+)/i) || pth.match(/^\/player\/([a-z0-9]+)/i);
       if (m) { const pr = PROSPECT_BY_NAMEKEY[m[1].toLowerCase()]; if (pr) setOpenId(pr.id); return; }
-      m = h.match(/^#\/team\/([a-z0-9-]+)/i);
+      m = h.match(/^#\/team\/([a-z0-9-]+)/i) || pth.match(/^\/team\/([a-z0-9-]+)/i);
       if (m) {
         // Capitol Hoops / AAU teams live in CH_TEAMS (focus by name); HS-school
         // slugs ("hs-<key>") aren't, so pass the slug — the Teams workspace
@@ -2869,8 +2872,8 @@ export default function App() {
     if (!ready || !openId) return;
     const pr = PROSPECTS.find((x) => x.id === openId);
     if (!pr) return;
-    const want = `#/player/${nameKey(pr.name)}`;
-    if (window.location.hash !== want) window.history.replaceState(null, "", want);
+    const want = `/player/${nameKey(pr.name)}`;
+    if (window.location.pathname !== want) window.history.replaceState(null, "", want);
   }, [openId, ready]);
 
   // Standalone preview of the editorial player card: open #card in the URL.
@@ -2885,7 +2888,10 @@ export default function App() {
   if (!ready) return <LoadingScreen error={error} />;
 
   const open = openId ? PROSPECTS.find((p) => p.id === openId) : null;
-  const clearDeepLink = () => { if (/^#\/(player|team)\//.test(window.location.hash)) window.history.replaceState(null, "", window.location.pathname + window.location.search); };
+  const clearDeepLink = () => {
+    const deep = /^#\/(player|team)\//.test(window.location.hash) || /^\/(player|team)\//.test(window.location.pathname);
+    if (deep) window.history.replaceState(null, "", "/");
+  };
   const goView = (v) => { setOpenId(null); setFocusTeam(null); setView(v); clearDeepLink(); };
   // Unified Teams workspace: Capitol Hoops summer teams + AAU programs (from
   // CH_TEAMS) + every DMV school as an HS-level team. The Level facet (HS/Summer/

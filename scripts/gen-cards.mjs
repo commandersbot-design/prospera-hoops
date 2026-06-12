@@ -28,8 +28,11 @@ const CIRCUIT = team.circuit || "Capitol Hoops Summer League";
 const SEASON = team.season || "2026";
 
 const outDir = path.join("cards", team.slug || nameKey(team.name));
-fs.mkdirSync(path.join(outDir, "players"), { recursive: true });
 fs.mkdirSync(path.join(outDir, "recaps"), { recursive: true });
+// Player cards are written to public/og/players/ so they're static, web-served
+// og:images (committed) — the prerender step points each /player/<key> at them.
+const OG_DIR = path.join("public", "og", "players");
+fs.mkdirSync(OG_DIR, { recursive: true });
 
 // --- brand bits (reused from the kit) --------------------------------------
 const FONT_STYLE = (fs.readFileSync("public/brand/svg/prosperahoops-wordmark-dark.svg", "utf8").match(/<style>[\s\S]*?<\/style>/) || [""])[0];
@@ -102,7 +105,7 @@ for (const pl of team.players) {
   const st = statLine(games);
   const a = archetypeForPlayer(pl.name, cohort, pl.position);
   const svg = playerCardSVG({ name: pl.name, pos: pl.position, height: pl.height, classYear: pl.classYear, team: team.name, st, role: a?.label, photo: null });
-  await sharp(Buffer.from(svg)).png().toFile(path.join(outDir, "players", `${nameKey(pl.name)}.png`));
+  await sharp(Buffer.from(svg)).png().toFile(path.join(OG_DIR, `${nameKey(pl.name)}.png`));
   nPlayers++;
 }
 
@@ -148,7 +151,7 @@ for (const g of byGame.values()) {
 // caption file + console
 fs.writeFileSync(path.join(outDir, "recap-captions.txt"), captions.join("\n\n") + "\n");
 console.log(`\nPROSPERA HOOPS · cards  →  ${outDir}/`);
-console.log(`  player cards: ${nPlayers}  (players/)`);
+console.log(`  player cards: ${nPlayers}  (public/og/players/ — static og:images)`);
 console.log(`  recap cards:  ${nRecaps}  (recaps/) + recap-captions.txt\n`);
 console.log("Recap captions:");
 for (const c of captions) console.log("  • " + c);

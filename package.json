@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender-og.mjs",
     "preview": "vite preview",
     "ingest": "node scripts/ingest.mjs",
     "cards": "node scripts/gen-cards.mjs"
