@@ -30,6 +30,12 @@ const flag = (name, def) => { const i = args.indexOf(name); return i >= 0 && arg
 const DRY = args.includes("--dry");
 const INTAKE = path.resolve(flag("--intake", "data/intake"));
 const OUT = path.resolve(flag("--out", "public/data"));
+// Competition context for this ingest. Defaults match the existing data so a
+// plain `npm run ingest` stays summer/Capitol Hoops. For an HS team:
+//   --level HS --circuit "Hayfield HS"   ; for AAU: --level AAU --circuit "Prospect U"
+const LEVEL = flag("--level", "Summer");                       // HS | Summer | AAU
+const CIRCUIT = flag("--circuit", "Capitol Hoops Summer League");
+const SEASON = flag("--season", "");
 
 // --- helpers ---------------------------------------------------------------
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");          // matches App.jsx
@@ -130,6 +136,8 @@ boxscores.forEach((b, idx) => {
     fgm, fga: num(b.fga), tpm, tpa: num(b.tpa), ftm, fta: num(b.fta),
     oreb, dreb, to: num(b.tov), pf: num(b.pf), min: num(b.min),
   };
+  line.team = playerByKey[key]._team;  // which team/context this game belongs to
+  line.level = LEVEL;
   // Optional "tracked extras" — only stored when the column is present/non-empty.
   if (b.started !== undefined && b.started !== "") line.gs = num(b.started) ? 1 : 0;
   if (b.dfl !== undefined && b.dfl !== "") line.dfl = num(b.dfl);
@@ -185,9 +193,10 @@ for (const [tslug, team] of Object.entries(teamsBySlug)) {
   });
 
   ch.teams[tslug] = {
-    slug: tslug, season: ch.teams[tslug]?.season || (schedule[0]?.event || "2026"),
     headCoach: ch.teams[tslug]?.headCoach || "", sourceUrl: ch.teams[tslug]?.sourceUrl || "",
     ...ch.teams[tslug], slug: tslug, name: team.name, players: outPlayers,
+    level: LEVEL, circuit: CIRCUIT,
+    season: SEASON || ch.teams[tslug]?.season || "2026",
   };
   display.push({ team: team.name, players: outPlayers.filter((p) => p.stats.gp) });
 }
@@ -197,15 +206,17 @@ const seenGameIds = new Set();
 for (const e of Object.values(logs.players)) for (const g of (e.games || [])) if (g.gameId) seenGameIds.add(g.gameId);
 for (const id of Object.keys(gameById)) (seenGameIds.has(id) ? tally.gamesUpd++ : tally.gamesNew++);
 
-// game logs: the workbook is the system of record for the players it covers, so
-// it REPLACES their game log (no union — avoids duplicating games that were
-// previously scraped without a game_id). Players not in the intake are untouched.
+// game logs: the workbook is the system of record for THIS team's games. Replace
+// only the player's games from this team (keep other teams/contexts — HS, summer,
+// AAU — so a kid's seasons coexist instead of overwriting each other).
 for (const [key, lines] of Object.entries(linesByKey)) {
   const p = playerByKey[key];
   const prev = logs.players[key];
+  const kept = (prev?.games || []).filter((g) => g.team !== p._team);
+  const games = [...kept, ...lines];
   logs.players[key] = {
     name: p.name, slug: slugify(p.name) + (p.classYear ? `-${p.classYear}` : ""),
-    games: lines, season: seasonAgg(lines),
+    games, season: seasonAgg(lines),
     seasons: prev?.seasons || [],
   };
 }

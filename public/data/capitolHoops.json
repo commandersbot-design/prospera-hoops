@@ -227,7 +227,9 @@
             "ppg": 13.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bcc": {
       "slug": "bcc",
@@ -488,7 +490,9 @@
             "ppg": 3.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bengals-blake": {
       "slug": "bengals-blake",
@@ -785,7 +789,9 @@
             "ppg": 3.4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bethel-academy": {
       "slug": "bethel-academy",
@@ -1082,7 +1088,9 @@
             "ppg": 5.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "boys-latin": {
       "slug": "boys-latin",
@@ -1415,7 +1423,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bruins-broadneck": {
       "slug": "bruins-broadneck",
@@ -1712,7 +1722,9 @@
             "ppg": 2
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "buccaneers-kent-island": {
       "slug": "buccaneers-kent-island",
@@ -1919,7 +1931,9 @@
             "ppg": 10
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bulldogs-churchill": {
       "slug": "bulldogs-churchill",
@@ -2180,7 +2194,9 @@
             "ppg": 0.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "bullis": {
       "slug": "bullis",
@@ -2441,7 +2457,9 @@
             "ppg": 15
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "cavaliers-cg-woodson": {
       "slug": "cavaliers-cg-woodson",
@@ -2684,7 +2702,9 @@
             "ppg": 4.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "clarksville-river-hill": {
       "slug": "clarksville-river-hill",
@@ -2999,7 +3019,9 @@
             "ppg": 4.6
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "clinton-grace": {
       "slug": "clinton-grace",
@@ -3278,7 +3300,9 @@
             "ppg": 5.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "colonels-magruder": {
       "slug": "colonels-magruder",
@@ -3467,7 +3491,9 @@
             "ppg": 0.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "concordia-prep": {
       "slug": "concordia-prep",
@@ -3656,7 +3682,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "coolidge": {
       "slug": "coolidge",
@@ -3935,7 +3963,9 @@
             "ppg": 4.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "crofton": {
       "slug": "crofton",
@@ -4142,7 +4172,9 @@
             "ppg": 1
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "dematha": {
       "slug": "dematha",
@@ -4475,7 +4507,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "flint-hill": {
       "slug": "flint-hill",
@@ -4754,7 +4788,9 @@
             "ppg": 17
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "forest-park": {
       "slug": "forest-park",
@@ -5141,7 +5177,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "glenelg-country": {
       "slug": "glenelg-country",
@@ -5402,7 +5440,9 @@
             "ppg": 1.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "gonzaga": {
       "slug": "gonzaga",
@@ -5771,7 +5811,9 @@
             "ppg": 8.4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "good-counsel": {
       "slug": "good-counsel",
@@ -6032,7 +6074,9 @@
             "ppg": 2.9
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "good-fellas-oxon-hill": {
       "slug": "good-fellas-oxon-hill",
@@ -6221,7 +6265,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "greenbelt-eleanor-roosevelt": {
       "slug": "greenbelt-eleanor-roosevelt",
@@ -6518,7 +6564,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "grindhouse-huntingtown": {
       "slug": "grindhouse-huntingtown",
@@ -6761,13 +6809,15 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "hawks-hayfield": {
-      "slug": "hawks-hayfield",
-      "season": "2026",
       "headCoach": "Carlos Poindexter",
       "sourceUrl": "https://capitolhoopssummerleague.com/team/hawks-hayfield/",
+      "slug": "hawks-hayfield",
+      "season": "2026",
       "name": "Hawks (Hayfield)",
       "players": [
         {
@@ -7083,7 +7133,9 @@
             "tsPct": 18.9
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "heritage": {
       "slug": "heritage",
@@ -7326,7 +7378,9 @@
             "ppg": 4.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "jfk-kennedy": {
       "slug": "jfk-kennedy",
@@ -7569,7 +7623,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "john-carroll": {
       "slug": "john-carroll",
@@ -7776,7 +7832,9 @@
             "ppg": 1.2
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "john-handley": {
       "slug": "john-handley",
@@ -7983,7 +8041,9 @@
             "ppg": 5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "landon": {
       "slug": "landon",
@@ -8262,7 +8322,9 @@
             "ppg": 0.4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "loyola-blakefield": {
       "slug": "loyola-blakefield",
@@ -8649,7 +8711,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "mustangs-meade": {
       "slug": "mustangs-meade",
@@ -8910,7 +8974,9 @@
             "ppg": 4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "new-hope-academy": {
       "slug": "new-hope-academy",
@@ -9081,7 +9147,9 @@
             "ppg": 8.7
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "patriot": {
       "slug": "patriot",
@@ -9360,7 +9428,9 @@
             "ppg": 0.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "patriots-wootton": {
       "slug": "patriots-wootton",
@@ -9675,7 +9745,9 @@
             "ppg": 3.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "potomac-va": {
       "slug": "potomac-va",
@@ -9972,7 +10044,9 @@
             "ppg": 3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "potomac-school": {
       "slug": "potomac-school",
@@ -10377,7 +10451,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "cardozo": {
       "slug": "cardozo",
@@ -10692,7 +10768,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "riverside-va": {
       "slug": "riverside-va",
@@ -10935,7 +11013,9 @@
             "ppg": 0.7
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "rm": {
       "slug": "rm",
@@ -11124,7 +11204,9 @@
             "ppg": 1.4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "sandy-spring": {
       "slug": "sandy-spring",
@@ -11277,7 +11359,9 @@
             "ppg": 6.9
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "screaming-eagles-seneca-v": {
       "slug": "screaming-eagles-seneca-v",
@@ -11502,7 +11586,9 @@
             "ppg": 7
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "seahawks-south-river": {
       "slug": "seahawks-south-river",
@@ -11799,7 +11885,9 @@
             "ppg": 20.1
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "severn": {
       "slug": "severn",
@@ -12132,7 +12220,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "so-md-christian": {
       "slug": "so-md-christian",
@@ -12465,7 +12555,9 @@
             "ppg": 1
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "south-county": {
       "slug": "south-county",
@@ -12726,7 +12818,9 @@
             "ppg": 0.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "spalding": {
       "slug": "spalding",
@@ -13077,7 +13171,9 @@
             "ppg": 3.7
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "st-johns-dc-2": {
       "slug": "st-johns-dc-2",
@@ -13284,7 +13380,9 @@
             "ppg": 6
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "st-marys-annapolis": {
       "slug": "st-marys-annapolis",
@@ -13545,7 +13643,9 @@
             "ppg": 11.8
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "st-stephens-st-agnes": {
       "slug": "st-stephens-st-agnes",
@@ -13788,7 +13888,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "swarmin-hornets-damascus-2": {
       "slug": "swarmin-hornets-damascus-2",
@@ -14085,7 +14187,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "takoma-academy": {
       "slug": "takoma-academy",
@@ -14400,7 +14504,9 @@
             "ppg": 1.7
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "tenley-tigers-jackson-reed": {
       "slug": "tenley-tigers-jackson-reed",
@@ -14697,7 +14803,9 @@
             "ppg": 0.5
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "the-brook-springbrook": {
       "slug": "the-brook-springbrook",
@@ -14904,7 +15012,9 @@
             "ppg": 4
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "the-west-northwest": {
       "slug": "the-west-northwest",
@@ -15183,7 +15293,9 @@
             "ppg": 8.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "vikes-whitman": {
       "slug": "vikes-whitman",
@@ -15462,7 +15574,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "virginia-academy": {
       "slug": "virginia-academy",
@@ -15759,7 +15873,9 @@
             "ppg": 4.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "wildcats-wj": {
       "slug": "wildcats-wj",
@@ -16110,7 +16226,9 @@
             "ppg": 3.3
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     },
     "yorktown": {
       "slug": "yorktown",
@@ -16497,7 +16615,9 @@
             "ppg": 0
           }
         }
-      ]
+      ],
+      "level": "Summer",
+      "circuit": "Capitol Hoops Summer League"
     }
   }
 }
