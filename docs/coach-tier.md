@@ -20,12 +20,14 @@ Defined in `CODES` in `src/lib/coachAccess.js`. Hand these to the pilot coaches 
 
 | Code | Grants |
 |---|---|
-| `PROSPERA-OWNER` | Owner access (you, on any device) |
-| `HAYFIELD-PILOT` | Hayfield HS · pilot |
-| `PROSPECTU-PILOT` | Prospect U · pilot |
-| `AKT-PILOT` | AKT · pilot |
+| `PROSPERA-OWNER-CF2E1B` | Owner access (you, on any device) |
+| `HAYFIELD-FE5D87` | Hayfield HS · pilot |
+| `PROSPECTU-054F01` | Prospect U · pilot |
+| `AKT-FE3A02` | AKT · pilot |
 
-Add a pilot by adding one line to `CODES`. A coach enters the code on the Scout HQ locked
+Codes carry a random suffix so they can't be guessed from the program name. To **rotate**
+a code (e.g. a coach leaves), edit it in `CODES` — already-redeemed devices keep access until
+they sign out or clear the pass. Add a pilot by adding one line to `CODES`. A coach enters the code on the Scout HQ locked
 screen → it unlocks on that device and shows a "Coach access · <program> · Pilot · free" bar
 with a **Sign out of coach** button.
 

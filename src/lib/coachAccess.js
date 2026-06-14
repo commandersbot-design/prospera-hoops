@@ -18,11 +18,14 @@ import { useEffect, useReducer } from "react";
 const KEY = "prospera.coachPass.v1";
 
 // Codes you hand out. Normalized to UPPER on redeem. Add a pilot here per program.
+// These carry a random suffix so they can't be guessed from the program name —
+// rotate any code by editing it here (a redeemed device keeps access until it
+// signs out or the localStorage pass is cleared).
 const CODES = {
-  "PROSPERA-OWNER": { tier: "owner", label: "Prospera (owner)" },
-  "HAYFIELD-PILOT": { tier: "pilot", team: "Hayfield", label: "Hayfield HS · Pilot" },
-  "PROSPECTU-PILOT": { tier: "pilot", team: "Prospect U", label: "Prospect U · Pilot" },
-  "AKT-PILOT": { tier: "pilot", team: "AKT", label: "AKT · Pilot" },
+  "PROSPERA-OWNER-CF2E1B": { tier: "owner", label: "Prospera (owner)" },
+  "HAYFIELD-FE5D87": { tier: "pilot", team: "Hayfield", label: "Hayfield HS · Pilot" },
+  "PROSPECTU-054F01": { tier: "pilot", team: "Prospect U", label: "Prospect U · Pilot" },
+  "AKT-FE3A02": { tier: "pilot", team: "AKT", label: "AKT · Pilot" },
 };
 
 function load() {

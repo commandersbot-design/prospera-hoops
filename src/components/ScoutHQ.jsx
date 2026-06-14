@@ -500,7 +500,7 @@ function CoachGate({ onRedeem }) {
       <form onSubmit={submit} style={{ ...card, display: "grid", gap: 10 }}>
         <div style={{ ...lab, color: T.accent }}>Have a pilot access code?</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <input value={code} onChange={(e) => { setCode(e.target.value); setErr(""); }} placeholder="e.g. HAYFIELD-PILOT"
+          <input value={code} onChange={(e) => { setCode(e.target.value); setErr(""); }} placeholder="Enter your access code"
             style={{ ...inputStyle, flex: "1 1 200px", maxWidth: 320, textTransform: "uppercase" }} />
           <button type="submit" style={{ ...ui, fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, color: T.bg, background: T.accent, border: "none", borderRadius: 6, padding: "0 18px", cursor: "pointer", minHeight: 40 }}>Unlock</button>
         </div>
