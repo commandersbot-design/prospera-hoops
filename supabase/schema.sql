@@ -8,32 +8,19 @@
 --
 -- RLS is the real security boundary: the browser only ever holds the public
 -- "anon" key, so every rule below is enforced by Postgres, not the UI.
+--
+-- ORDER MATTERS: tables are created BEFORE the helper functions, because the
+-- functions' bodies reference those tables (Postgres validates SQL function
+-- bodies at creation, so a forward reference fails on a fresh database).
 
 -- ---------------------------------------------------------------------------
--- Helper functions (SECURITY DEFINER so policies can check membership without
--- recursing through the tables' own RLS).
+-- 1. Tables (created first so the functions below can reference them)
 -- ---------------------------------------------------------------------------
 create table if not exists public.admins (
   user_id uuid primary key references auth.users (id) on delete cascade,
   created_at timestamptz not null default now()
 );
 
-create or replace function public.is_admin()
-  returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.admins where user_id = auth.uid());
-$$;
-
-create or replace function public.owns_player(p_id text)
-  returns boolean language sql stable security definer set search_path = public as $$
-  select exists (
-    select 1 from public.claims
-    where user_id = auth.uid() and player_id = p_id and status = 'approved'
-  );
-$$;
-
--- ---------------------------------------------------------------------------
--- claims
--- ---------------------------------------------------------------------------
 create table if not exists public.claims (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
@@ -49,28 +36,6 @@ create table if not exists public.claims (
   unique (user_id, player_id)
 );
 
-alter table public.claims enable row level security;
-
-drop policy if exists claims_insert_own on public.claims;
-create policy claims_insert_own on public.claims
-  for insert to authenticated
-  with check (user_id = auth.uid() and status = 'pending');
-
-drop policy if exists claims_select_own_or_admin on public.claims;
-create policy claims_select_own_or_admin on public.claims
-  for select to authenticated
-  using (user_id = auth.uid() or public.is_admin());
-
--- Only admins change status (approve/reject). Owners cannot self-approve.
-drop policy if exists claims_update_admin on public.claims;
-create policy claims_update_admin on public.claims
-  for update to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------------------
--- profile_overrides — player-editable overlay
--- ---------------------------------------------------------------------------
 create table if not exists public.profile_overrides (
   player_id text primary key,
   bio text,
@@ -102,6 +67,47 @@ alter table public.profile_overrides add column if not exists act text;
 alter table public.profile_overrides add column if not exists ncaa_status text;
 alter table public.profile_overrides add column if not exists major text;
 
+-- ---------------------------------------------------------------------------
+-- 2. Helper functions (SECURITY DEFINER so policies can check membership without
+--    recursing through the tables' own RLS). Defined AFTER the tables they read.
+-- ---------------------------------------------------------------------------
+create or replace function public.is_admin()
+  returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+
+create or replace function public.owns_player(p_id text)
+  returns boolean language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from public.claims
+    where user_id = auth.uid() and player_id = p_id and status = 'approved'
+  );
+$$;
+
+-- ---------------------------------------------------------------------------
+-- 3. Row-Level Security + policies
+-- ---------------------------------------------------------------------------
+-- claims
+alter table public.claims enable row level security;
+
+drop policy if exists claims_insert_own on public.claims;
+create policy claims_insert_own on public.claims
+  for insert to authenticated
+  with check (user_id = auth.uid() and status = 'pending');
+
+drop policy if exists claims_select_own_or_admin on public.claims;
+create policy claims_select_own_or_admin on public.claims
+  for select to authenticated
+  using (user_id = auth.uid() or public.is_admin());
+
+-- Only admins change status (approve/reject). Owners cannot self-approve.
+drop policy if exists claims_update_admin on public.claims;
+create policy claims_update_admin on public.claims
+  for update to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- profile_overrides — player-editable overlay
 alter table public.profile_overrides enable row level security;
 
 -- Base-table reads are restricted to the owner + admins. The PUBLIC reads the
