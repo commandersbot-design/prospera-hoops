@@ -480,7 +480,7 @@ function TeamShareButton({ slug }) {
   const [copied, setCopied] = useState(false);
   if (!slug) return null;
   const copy = async () => {
-    const url = `${window.location.origin}${window.location.pathname}#/team/${slug}`;
+    const url = `${window.location.origin}/team/${slug}`;
     try { await navigator.clipboard.writeText(url); }
     catch { const ta = document.createElement("textarea"); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch {} ta.remove(); }
     setCopied(true); setTimeout(() => setCopied(false), 1800);

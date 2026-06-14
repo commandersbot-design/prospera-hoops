@@ -109,6 +109,39 @@ for (const pl of team.players) {
   nPlayers++;
 }
 
+// --- team share card (og:image for the team page) ---------------------------
+const OG_TEAMS = path.join("public", "og", "teams");
+fs.mkdirSync(OG_TEAMS, { recursive: true });
+{
+  const statLeader = (key) => (team.players || []).filter((p) => p.stats?.gp > 0 && p.stats?.[key] != null).sort((a, b) => b.stats[key] - a.stats[key])[0];
+  const tLeaders = [["PPG", "ppg"], ["RPG", "rpg"], ["APG", "apg"]].map(([unit, key]) => { const p = statLeader(key); return p ? { unit, value: r1(p.stats[key]), player: p.name } : null; }).filter(Boolean);
+  const resultSet = new Map();
+  for (const pl of (team.players || [])) for (const g of ((logs[nameKey(pl.name)]?.games) || [])) { const k = `${g.date}|${g.opp}`; if (!resultSet.has(k)) resultSet.set(k, g.result); }
+  let tw = 0, tl = 0; for (const res of resultSet.values()) { const m = /(win|loss)/i.exec(res || ""); if (m) (m[1].toLowerCase() === "win" ? tw++ : tl++); }
+  const tname = team.name.toUpperCase();
+  const tSize = tname.length > 18 ? 64 : tname.length > 13 ? 80 : 98;
+  const xs = [270, 540, 810];
+  const lead = (x, lr) => `<text x="${x}" y="820" font-family='${SA}' font-weight="800" font-size="92" fill="${C.orange}" text-anchor="middle">${lr.value}</text>
+    <text x="${x}" y="872" font-family='${SA}' font-weight="700" font-size="28" letter-spacing="5" fill="${C.mut}" text-anchor="middle">${lr.unit}</text>
+    <text x="${x}" y="930" font-family='${SA}' font-weight="700" font-size="28" fill="${C.text}" text-anchor="middle">${esc(lr.player.toUpperCase())}</text>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <defs>${FONT_STYLE}</defs>
+    <rect width="${W}" height="${H}" fill="${C.bg0}"/>
+    <rect x="0" y="0" width="${W}" height="90" fill="${C.orange}"/>
+    <text x="44" y="59" font-family='${SA}' font-weight="800" font-size="36" letter-spacing="2" fill="${C.bg0}">PROSPERA HOOPS</text>
+    <text x="${W - 44}" y="59" font-family='${SA}' font-weight="800" font-size="34" fill="${C.bg0}" text-anchor="end">${esc((team.level || "Summer").toUpperCase())}</text>
+    <text x="${W / 2}" y="360" font-family='${SA}' font-weight="800" font-size="${tSize}" fill="${C.text}" text-anchor="middle">${esc(tname)}</text>
+    <text x="${W / 2}" y="420" font-family='${SA}' font-weight="700" font-size="30" letter-spacing="2" fill="${C.sage}" text-anchor="middle">${esc((CIRCUIT + " · " + SEASON).toUpperCase())}</text>
+    <text x="${W / 2}" y="565" font-family='${SA}' font-weight="800" font-size="132" fill="${C.orange}" text-anchor="middle">${tw}-${tl}</text>
+    <text x="${W / 2}" y="615" font-family='${SA}' font-weight="700" font-size="26" letter-spacing="8" fill="${C.mut}" text-anchor="middle">RECORD</text>
+    <line x1="60" y1="705" x2="${W - 60}" y2="705" stroke="${HAIR}" stroke-width="2"/>
+    ${tLeaders.map((lr, i) => lead(xs[i], lr)).join("")}
+    <text x="${W / 2}" y="1295" font-family='${SA}' font-weight="700" font-size="26" letter-spacing="4" fill="${C.mut}" text-anchor="middle">PROSPERA HOOPS · PROSPERAHOOPS.COM</text>
+  </svg>`;
+  await sharp(Buffer.from(svg)).png().toFile(path.join(OG_TEAMS, `${team.slug || nameKey(team.name)}.png`));
+  console.log(`  team card:    1  (public/og/teams/${team.slug || nameKey(team.name)}.png)`);
+}
+
 // --- game recaps -----------------------------------------------------------
 // Group the team's player-games by date+opponent.
 const byGame = new Map();
