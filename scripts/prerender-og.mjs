@@ -6,7 +6,7 @@
 import fs from "fs";
 import path from "path";
 
-const SITE = (process.env.SITE_URL || "https://prospera-preps.vercel.app").replace(/\/$/, "");
+const SITE = (process.env.SITE_URL || "https://www.prosperahoops.com").replace(/\/$/, "");
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 

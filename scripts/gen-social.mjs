@@ -220,7 +220,7 @@ async function carousel() {
     <text x="540" y="360" font-family='${SA}' font-weight="800" font-size="130" fill="${T.text}" text-anchor="middle">SCOUT</text>
     <text x="540" y="490" font-family='${SA}' font-weight="800" font-size="130" fill="${T.orange}" text-anchor="middle">ANYBODY</text>
     <text x="540" y="575" font-family='${SA}' font-weight="700" font-size="38" letter-spacing="3" fill="${T.sage}" text-anchor="middle">FREE · CLAIM YOUR PROFILE</text>
-    <text x="540" y="828" font-family='${SA}' font-weight="700" font-size="44" letter-spacing="1" fill="${T.text}" text-anchor="middle">prospera-preps.vercel.app</text>
+    <text x="540" y="828" font-family='${SA}' font-weight="700" font-size="44" letter-spacing="1" fill="${T.text}" text-anchor="middle">prosperahoops.com</text>
     ${handle}`);
   console.log("✓ launch carousel (3 slides)");
 }
