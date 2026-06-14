@@ -227,8 +227,16 @@ function RecruitingStatus({ p }) {
   return <span style={{ fontFamily: MONO, fontSize: 12, color: A.textFaint }}>—</span>;
 }
 
+// Narrow-screen check (mobile reflows the roster table to a list — no h-scroll).
+function useNarrow(bp = 900) {
+  const [n, setN] = useState(() => typeof window !== "undefined" && window.innerWidth <= bp);
+  useEffect(() => { const f = () => setN(window.innerWidth <= bp); f(); window.addEventListener("resize", f); return () => window.removeEventListener("resize", f); }, [bp]);
+  return n;
+}
+
 export function RosterTable({ players, mode = "stats", onOpen }) {
   useGold(); // re-render when a gold mark toggles
+  const narrow = useNarrow();
   const [sortKey, setSortKey] = useState("pts");
   const [dir, setDir] = useState("desc");
 
@@ -285,6 +293,30 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
     <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 14, color: A.textMut }}>{v == null ? "—" : `${Number(v).toFixed(1)}%`}</td>
   );
   const topScorer = rows.reduce((b, p) => ((p.pts ?? -1) > (b?.pts ?? -1) && (p.gp || 0) > 0 ? p : b), null);
+
+  // Mobile: reflow to a list (name + pos·class·role left, PPG/RPG/APG right). No horizontal scroll.
+  if (narrow) {
+    return (
+      <div style={{ display: "grid", gap: 1, background: A.border, border: `1px solid ${A.border}`, borderRadius: 8, overflow: "hidden" }}>
+        {rows.map((p, i) => {
+          const low = (p.gp ?? 0) < 2, top = topScorer && p === topScorer;
+          return (
+            <div key={`${p.name}-${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "11px 12px", minHeight: 44, background: top ? "#1A130C" : A.bg, borderLeft: `2px solid ${top ? A.accent : "transparent"}`, opacity: low ? 0.62 : 1 }}>
+              <div style={{ minWidth: 0 }}><PlayerCell p={p} onOpen={onOpen} /></div>
+              <div style={{ display: "flex", gap: 12, flexShrink: 0 }}>
+                {[["PPG", p.pts], ["RPG", p.reb], ["APG", p.ast]].map(([l, v]) => (
+                  <div key={l} style={{ textAlign: "right", minWidth: 30 }}>
+                    <div style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, color: l === "PPG" ? A.accent : A.text, fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{v == null ? "—" : Number(v).toFixed(1)}</div>
+                    <div style={{ fontFamily: MONO, fontSize: 8, letterSpacing: "0.1em", color: A.textFaint, textTransform: "uppercase", marginTop: 3 }}>{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
   return (
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead><tr>
