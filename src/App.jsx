@@ -3,7 +3,7 @@ import NEWS_DATA from "./data/news.json";
 import TEAM_STATS from "./data/teamStats.json";
 import SCHEDULE_DATA from "./data/schedule.json";
 import OFFICIAL_SCHOOL_NAMES from "./data/officialSchoolNames.json";
-import ProspectFilm from "./components/ProspectFilm";
+import ProspectFilm, { filmPreview } from "./components/ProspectFilm";
 import PlayerProfileCard from "./components/PlayerProfileCard";
 import { SummerLeagueSection, RecapsFeed, ProspectsBoard } from "./components/ScoutingWorkspace";
 import { useGold, useVerified } from "./lib/goldTier";
@@ -968,12 +968,18 @@ function VerTag({ state }) {
 function AcademicsBlock({ override, gradYear, canEdit }) {
   const gpa = override?.gpa || null;
   const recruiting = override?.recruiting_status || null;
+  const ncaa = override?.ncaa_status || null;
+  const major = override?.major || null;
+  const test = [override?.sat && `SAT ${override.sat}`, override?.act && `ACT ${override.act}`].filter(Boolean).join(" · ") || null;
   const rows = [
     gpa && ["GPA", gpa, "self"],
+    test && ["Test", test, "self"],
     gradYear && ["Grad Year", `Class of ${gradYear}`, null],
+    ncaa && ["NCAA", ncaa, "self"],
+    major && ["Major", major, "self"],
     recruiting && ["Status", recruiting, "self"],
   ].filter(Boolean);
-  const hasSelf = !!(gpa || recruiting);
+  const hasSelf = !!(gpa || test || ncaa || major || recruiting);
   if (!hasSelf && !canEdit) return null; // public viewer, nothing to show → hide cleanly
   return (
     <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
@@ -1012,6 +1018,41 @@ function CollapsibleCard({ title, startClosed = false, children }) {
       </button>
       {open && <div style={{ padding: "0 16px 16px" }}>{children}</div>}
     </div>
+  );
+}
+
+// Prominent film strip at the top of the middle column — surfaces tape the
+// moment a player has it (IA spec §3.5). Prefers curated clips (with a real
+// thumbnail) and falls back to a player's claimed film link. Renders nothing
+// when there's no tape, so it never shows an empty "coming soon" box up top.
+function FilmStrip({ prospectName, override, onOpenFilmTab }) {
+  const curated = filmPreview(prospectName);
+  const claimed = (override?.film_links || []).filter((f) => f && f.url);
+  if (!curated && !claimed.length) return null;
+  const count = curated ? curated.count : claimed.length;
+  const label = curated ? curated.label : (claimed[0].label || "Highlight film");
+  const thumb = curated ? curated.thumb : null;
+  const go = () => {
+    if (curated) return onOpenFilmTab();
+    const u = claimed[0].url;
+    window.open(/^https?:\/\//i.test(u) ? u : `https://${u}`, "_blank", "noopener");
+  };
+  return (
+    <button
+      type="button"
+      onClick={go}
+      style={{ width: "100%", textAlign: "left", display: "flex", alignItems: "stretch", gap: 0, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, overflow: "hidden", cursor: "pointer", padding: 0, minHeight: 84 }}
+    >
+      <div style={{ position: "relative", flex: "0 0 150px", maxWidth: 150, background: thumb ? "#000" : "var(--prospera-accent-bg-faint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {thumb && <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85 }} />}
+        <span style={{ position: "absolute", width: 34, height: 34, borderRadius: 999, background: T.accent, color: T.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, paddingLeft: 3 }}>▶</span>
+      </div>
+      <div style={{ flex: 1, minWidth: 0, padding: "12px 16px", display: "grid", gap: 3, alignContent: "center" }}>
+        <span style={{ ...mono, fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700, color: T.accent }}>Film · Watch the tape</span>
+        <span style={{ ...serif, fontSize: 18, fontWeight: 700, color: T.text, lineHeight: 1.1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+        <span style={{ ...mono, fontSize: 11, color: T.textMute }}>{count} clip{count === 1 ? "" : "s"}{curated ? "" : " · self-posted"} · tap to play ▶</span>
+      </div>
+    </button>
   );
 }
 
@@ -1279,6 +1320,10 @@ function Profile({ prospect, onBack, onOpen }) {
           ? <ClaimPanel prospect={p} onClose={() => setClaimOpen(false)} onClaimed={() => myClaimForPlayer(p.id).then(setMyClaim).catch(() => {})} />
           : <ClaimForm prospect={p} onClose={() => setClaimOpen(false)} />
       )}
+
+      {/* Prominent film strip — only when there's tape, and not on the Film tab
+          itself (where the full reel already lives). */}
+      {tab !== "Film" && <FilmStrip prospectName={p.name} override={override} onOpenFilmTab={() => setTab("Film")} />}
 
       {/* Player-maintained overlay (public, contact-masked server-side). */}
       {override && <ClaimedOverlay override={override} />}

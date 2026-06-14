@@ -86,10 +86,21 @@ create table if not exists public.profile_overrides (
   grad_year int,
   positions text,
   recruiting_status text,
+  sat text,
+  act text,
+  ncaa_status text,
+  major text,
   film_links jsonb not null default '[]'::jsonb,
   updated_at timestamptz not null default now(),
   updated_by uuid default auth.uid()
 );
+
+-- Additive columns (so re-running on an existing DB picks up new academic fields,
+-- which `create table if not exists` above would otherwise skip).
+alter table public.profile_overrides add column if not exists sat text;
+alter table public.profile_overrides add column if not exists act text;
+alter table public.profile_overrides add column if not exists ncaa_status text;
+alter table public.profile_overrides add column if not exists major text;
 
 alter table public.profile_overrides enable row level security;
 
@@ -118,6 +129,7 @@ create view public.public_profiles as
   select
     player_id, bio, instagram, twitter, hudl,
     height, weight, gpa, grad_year, positions, recruiting_status,
+    sat, act, ncaa_status, major,
     film_links, contact_public,
     case when contact_public then contact_email else null end as contact_email,
     case when contact_public then contact_phone else null end as contact_phone,

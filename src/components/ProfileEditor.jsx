@@ -20,6 +20,10 @@ const EMPTY = {
   grad_year: "",
   positions: "",
   recruiting_status: "Open",
+  sat: "",
+  act: "",
+  ncaa_status: "",
+  major: "",
   film_links: [],
 };
 
@@ -108,6 +112,22 @@ export default function ProfileEditor({ prospect, onClose, onSaved }) {
             <option>Open</option><option>Receiving interest</option><option>Has offers</option><option>Committed</option>
           </select>
         }>Recruiting</Field>
+      </div>
+
+      {/* Academics & eligibility — what college coaches scan first. Self-reported;
+          shown publicly with a "self" tag until a Prospera-verified source exists. */}
+      <div style={{ display: "grid", gap: 6 }}>
+        <span style={label}>Academics & eligibility <span style={{ color: T.textMute, fontWeight: 400, letterSpacing: 0, textTransform: "none" }}>· coaches scan this first</span></span>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 8 }}>
+          <Field hint={<input style={inputStyle} placeholder="e.g. 1180" value={d.sat} onChange={set("sat")} />}>SAT</Field>
+          <Field hint={<input style={inputStyle} placeholder="e.g. 24" value={d.act} onChange={set("act")} />}>ACT</Field>
+          <Field hint={
+            <select style={inputStyle} value={d.ncaa_status} onChange={set("ncaa_status")}>
+              <option value="">—</option><option>Not started</option><option>Registered</option><option>Eligible</option><option>Certified</option>
+            </select>
+          }>NCAA Eligibility</Field>
+          <Field hint={<input style={inputStyle} placeholder="e.g. Business" value={d.major} onChange={set("major")} />}>Intended major</Field>
+        </div>
       </div>
 
       {/* Socials */}

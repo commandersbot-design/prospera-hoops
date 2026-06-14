@@ -186,6 +186,23 @@ function typeBadge(color) {
   };
 }
 
+// Lightweight lookup for the profile's middle-column film strip: does this
+// prospect have curated tape, and what's the lead clip's thumbnail/label/count.
+// Returns null when there's nothing — callers render no strip (empty-state rule).
+export function filmPreview(prospectName, prospectId) {
+  const key = prospectId || nameToId(prospectName);
+  const videos = (key && FILM_DATA.videos?.[key]) || [];
+  if (!videos.length) return null;
+  const lead = videos[0];
+  const parsed = parseVideoUrl(lead.url);
+  return {
+    count: videos.length,
+    thumb: parsed?.thumbnailUrl || null,
+    label: lead.title || "Highlight film",
+    type: lead.type || "highlights",
+  };
+}
+
 function FilmCard({ video }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
