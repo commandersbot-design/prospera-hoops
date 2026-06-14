@@ -523,32 +523,40 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     return true;
   }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, lvl, region, klass, trackedOnly, goldOnly]);
 
-  const team = teams.find((t) => (t.slug || t.name) === selected) || teams.find((t) => t.name === selected) || teams[0] || null;
+  // A team is only "open" once clicked (or deep-linked) — otherwise we show the
+  // browsable team list full-width.
+  const team = selected ? (teams.find((t) => (t.slug || t.name) === selected) || teams.find((t) => t.name === selected) || null) : null;
 
-  const rail = (
-    <div>
+  // Shared facet controls for the browse view.
+  const facets = (
+    <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "flex-start", marginBottom: 16 }}>
       <FacetGroup label="Level">{LEVELS.map((l) => <Chip key={l} active={lvl.on.has(l)} onClick={() => lvl.toggle(l)}>{l}</Chip>)}</FacetGroup>
       <FacetGroup label="Region">{REGIONS.map((r) => <Chip key={r} active={region.on.has(r)} onClick={() => region.toggle(r)}>{r}</Chip>)}</FacetGroup>
       <FacetGroup label="Class">{CLASSES.map((c) => <Chip key={c} active={klass.on.has(c)} onClick={() => klass.toggle(c)}>'{c}</Chip>)}</FacetGroup>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "4px 0 14px" }}>
+      <FacetGroup label="Watchlist">
         <Chip tone="tracked" icon="star" active={trackedOnly} onClick={() => setTrackedOnly((v) => !v)}>My tracked only</Chip>
         <Chip tone="gold" icon="crown" active={goldOnly} onClick={() => setGoldOnly((v) => !v)}>{GOLD_TIER_LABEL}</Chip>
-      </div>
-      <Label style={{ color: A.textFaint, marginBottom: 8 }}>{teams.length} teams</Label>
-      <div style={{ display: "grid", gap: 2 }}>
+      </FacetGroup>
+    </div>
+  );
+
+  // Browse: facets + a full-width team grid. Click a team → its full page.
+  const teamBrowse = (
+    <div>
+      <Watchlist teams={TEAM_DATA} onOpen={onOpenProfile} />
+      {facets}
+      <Label style={{ color: A.textFaint, marginBottom: 10 }}>{teams.length} teams</Label>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 8 }}>
         {teams.map((t) => {
-          const on = team && (t.slug || t.name) === (team.slug || team.name);
           const nT = countTracked(t.roster), nE = countElite(t.roster);
           return (
             <button key={t.slug || t.name} type="button" className="a1ws-row" onClick={() => setSelected(t.slug || t.name)} style={{
               display: "grid", gridTemplateColumns: "1fr auto", gap: 8, alignItems: "center", textAlign: "left",
-              padding: "8px 10px", borderRadius: 8, cursor: "pointer",
-              background: on ? "rgba(255, 106, 26,0.12)" : "transparent",
-              border: `1px solid ${on ? A.accent : "transparent"}`,
+              padding: "12px 14px", borderRadius: 8, cursor: "pointer", background: A.surface, border: `1px solid ${A.border}`,
             }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ ...NAMEPLATE, fontSize: 13.5, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
-                <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 2 }}>{[t.conf, t.region, `${t.gp}gp`].filter(Boolean).join(" · ")}</div>
+                <div style={{ ...NAMEPLATE, fontSize: 14.5, fontWeight: 700, color: A.textHi, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10, color: A.textFaint, letterSpacing: "0.04em", marginTop: 3 }}>{[t.level, t.region, `${t.gp}gp`].filter(Boolean).join(" · ")}</div>
               </div>
               <div style={{ display: "flex", gap: 7, alignItems: "center" }}>
                 {nE > 0 ? <ElitePip n={nE} /> : null}
@@ -561,61 +569,60 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     </div>
   );
 
-  const teamsDetail = (
+  // Full-page team detail — roster (players) FIRST; team leaders / top
+  // performances / recaps live below (scoring leaders are the Players tab's job).
+  const teamDetailFull = team ? (
     <div>
-      <Watchlist teams={TEAM_DATA} onOpen={onOpenProfile} />
-      {team ? (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <h2 style={{ ...NAMEPLATE, fontSize: 25, fontWeight: 700, color: A.textHi, margin: 0 }}>{team.name}</h2>
-            {countElite(team.roster) > 0 ? <ElitePip n={`${countElite(team.roster)} elite`} /> : null}
-            {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
-            <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 12px" }}>
-            {team.level && <span style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: A.accent, border: `1px solid ${A.accent}`, borderRadius: 4, padding: "2px 7px" }}>{team.level}</span>}
-            <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, letterSpacing: "0.03em" }}>
-              {[team.circuit, team.season, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
+      <button type="button" onClick={() => setSelected(null)} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.14em", color: A.accent, background: "transparent", border: "none", textTransform: "uppercase", padding: 0, cursor: "pointer", marginBottom: 14 }}>← All teams</button>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <h2 style={{ ...NAMEPLATE, fontSize: 28, fontWeight: 700, color: A.textHi, margin: 0 }}>{team.name}</h2>
+        {countElite(team.roster) > 0 ? <ElitePip n={`${countElite(team.roster)} elite`} /> : null}
+        {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
+        <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 16px" }}>
+        {team.level && <span style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: A.accent, border: `1px solid ${A.accent}`, borderRadius: 4, padding: "2px 7px" }}>{team.level}</span>}
+        <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, letterSpacing: "0.03em" }}>
+          {[team.circuit, team.season, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
+        </span>
+      </div>
+      <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
+      {teamLeaders(team.roster).length > 0 && (
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "baseline", margin: "20px 0 0" }}>
+          <Label style={{ color: A.textMut }}>Leaders</Label>
+          {teamLeaders(team.roster).map(([lab, p]) => (
+            <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
+              {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
             </span>
-          </div>
-          {teamLeaders(team.roster).length > 0 && (
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", margin: "0 0 16px" }}>
-              {teamLeaders(team.roster).map(([lab, p]) => (
-                <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
-                  {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
-                </span>
-              ))}
-            </div>
-          )}
-          {team.topGames && team.topGames.length > 0 && (
-            <div style={{ margin: "0 0 16px" }}>
-              <Label style={{ color: A.textMut, marginBottom: 7 }}>Top performances</Label>
-              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                {team.topGames.map((g, i) => (
-                  <span key={i} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.03em" }}>
-                    <span style={{ color: A.textHi }}>{g.player}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{g.pts}</span> <span style={{ color: A.textFaint }}>vs {String(g.opp || "").replace(/\s*\([^)]*\)/g, "").slice(0, 16)}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-          <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
-          <CoverageList recaps={recaps} teamName={team.name} />
+          ))}
         </div>
-      ) : <Empty>No teams match these filters.</Empty>}
+      )}
+      {team.topGames && team.topGames.length > 0 && (
+        <div style={{ margin: "16px 0 0" }}>
+          <Label style={{ color: A.textMut, marginBottom: 7 }}>Top performances</Label>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            {team.topGames.map((g, i) => (
+              <span key={i} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.03em" }}>
+                <span style={{ color: A.textHi }}>{g.player}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{g.pts}</span> <span style={{ color: A.textFaint }}>vs {String(g.opp || "").replace(/\s*\([^)]*\)/g, "").slice(0, 16)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      <div style={{ marginTop: 18 }}><CoverageList recaps={recaps} teamName={team.name} /></div>
     </div>
-  );
+  ) : null;
 
   return (
     <WorkspaceShell
       eyebrow="DMV Teams · HS · Summer · AAU"
-      subline={tab === "teams" ? "Two-pane scouting workspace · filters persist across selection"
+      subline={tab === "teams" ? (team ? "Full team page · tap a player to open their profile" : "Tap a team for its full page · filters persist")
         : tab === "players" ? "DMV scoring leaders + your watchlist · games played leads every line"
         : "Chronological games feed · results and upcoming"}
       topRight={<Segmented value={tab} onChange={setTab} options={[["players", "Players"], ["teams", "Teams"], ["schedule", "Schedule"]]} />}
-      rail={tab === "teams" ? rail : null}
+      rail={null}
     >
-      {tab === "teams" ? teamsDetail : tab === "players" ? <SummerPlayers teams={TEAM_DATA} onOpen={onOpenProfile} /> : <SummerSchedule recaps={recaps} />}
+      {tab === "teams" ? (team ? teamDetailFull : teamBrowse) : tab === "players" ? <SummerPlayers teams={TEAM_DATA} onOpen={onOpenProfile} /> : <SummerSchedule recaps={recaps} />}
     </WorkspaceShell>
   );
 }
