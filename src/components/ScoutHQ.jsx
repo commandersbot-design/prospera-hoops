@@ -6,6 +6,8 @@
 import React, { useState, useMemo } from "react";
 import { T, ui, display, inputStyle } from "../lib/theme.js";
 import { teamPlaystyle, topScorerShare, pctRank, useHQStore } from "../lib/scoutHQ.js";
+import { useAuth } from "../lib/auth.jsx";
+import { useCoachAccess } from "../lib/coachAccess.js";
 
 const card = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16 };
 const lab = { ...ui, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 700, color: T.textMute };
@@ -185,7 +187,7 @@ function MatchupsTab({ teams, allPlayers, pools, store, update }) {
         {subs.map(([k, l]) => <button key={k} type="button" onClick={() => setSub(k)} style={{ ...ui, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", color: sub === k ? T.accent : T.textMute, background: "transparent", border: "none", padding: "9px 14px", borderBottom: `2px solid ${sub === k ? T.accent : "transparent"}`, cursor: "pointer", fontWeight: sub === k ? 700 : 600 }}>{l}</button>)}
       </div>
       {sub === "team" && <TeamCompare teams={teams} store={store} update={update} />}
-      {sub === "5v5" && <FiveOnFive teams={teams} allPlayers={allPlayers} />}
+      {sub === "5v5" && <FiveOnFive teams={teams} />}
       {sub === "1v1" && <OneOnOne allPlayers={allPlayers} pools={pools} store={store} update={update} />}
     </div>
   );
@@ -242,24 +244,41 @@ function TeamCompare({ teams, store, update }) {
 }
 
 const SLOTS = ["PG", "SG", "SF", "PF", "C"];
-function FiveOnFive({ teams, allPlayers }) {
+function FiveOnFive({ teams }) {
   const empty = () => ({ PG: "", SG: "", SF: "", PF: "", C: "" });
+  // Only teams that actually have box-score players are pickable.
+  const named = useMemo(() => teams.filter((t) => (t.roster || []).some((p) => (p.gp || 0) > 0 && p.pts != null)), [teams]);
+  const [teamA, setTeamA] = useState(named[0]?.name || "");
+  const [teamB, setTeamB] = useState(named[1]?.name || named[0]?.name || "");
   const [A5, setA5] = useState(empty());
   const [B5, setB5] = useState(empty());
-  const byName = useMemo(() => Object.fromEntries(allPlayers.map((p) => [p.name, p])), [allPlayers]);
-  const total = (lineup) => Object.values(lineup).map((n) => byName[n]).filter(Boolean).reduce((acc, p) => ({ ppg: acc.ppg + (p.pts || 0), rpg: acc.rpg + (p.reb || 0), apg: acc.apg + (p.ast || 0) }), { ppg: 0, rpg: 0, apg: 0 });
-  const tA = total(A5), tB = total(B5);
+  const rosterOf = (name) => ((teams.find((t) => t.name === name)?.roster) || []).filter((p) => (p.gp || 0) > 0 && p.pts != null);
+  const rosterA = useMemo(() => rosterOf(teamA), [teams, teamA]);
+  const rosterB = useMemo(() => rosterOf(teamB), [teams, teamB]);
+  const total = (lineup, roster) => {
+    const byName = Object.fromEntries(roster.map((p) => [p.name, p]));
+    return Object.values(lineup).map((n) => byName[n]).filter(Boolean).reduce((acc, p) => ({ ppg: acc.ppg + (p.pts || 0), rpg: acc.rpg + (p.reb || 0), apg: acc.apg + (p.ast || 0) }), { ppg: 0, rpg: 0, apg: 0 });
+  };
+  const tA = total(A5, rosterA), tB = total(B5, rosterB);
   const r1 = (n) => Math.round(n * 10) / 10;
-  const Lineup = ({ side, set }) => (
+  // Players can only be drawn from the lineup's own team — picking a different
+  // team resets that lineup so no off-roster name lingers.
+  const Lineup = ({ label, teamName, onTeam, roster, side, set }) => (
     <div style={card}>
-      <div style={lab}>Lineup {side === A5 ? "A" : "B"}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+        <div style={lab}>Lineup {label}</div>
+        <select style={{ ...inputStyle, maxWidth: 180 }} value={teamName} onChange={(e) => onTeam(e.target.value)}>
+          {named.length === 0 && <option value="">No teams</option>}
+          {named.map((t) => <option key={t.name} value={t.name}>{t.name}</option>)}
+        </select>
+      </div>
       <div style={{ display: "grid", gap: 8, marginTop: 10 }}>
         {SLOTS.map((s) => (
           <div key={s} style={{ display: "grid", gridTemplateColumns: "40px 1fr", gap: 8, alignItems: "center" }}>
             <span style={{ ...ui, fontSize: 11, color: T.textMute, fontWeight: 700 }}>{s}</span>
             <select style={inputStyle} value={side[s]} onChange={(e) => set({ ...side, [s]: e.target.value })}>
-              <option value="">— pick anyone —</option>
-              {allPlayers.map((p) => <option key={p.name + p.team} value={p.name}>{p.name} ({p.team})</option>)}
+              <option value="">— pick from {teamName || "team"} —</option>
+              {roster.map((p) => <option key={p.name} value={p.name}>{p.name} · {r1(p.pts || 0)} ppg</option>)}
             </select>
           </div>
         ))}
@@ -268,9 +287,10 @@ function FiveOnFive({ teams, allPlayers }) {
   );
   return (
     <div style={{ display: "grid", gap: 14 }}>
-      <div style={{ ...ui, fontSize: 12, color: T.textMute }}>Build any custom lineup — swap any player into any slot, across teams.</div>
+      <div style={{ ...ui, fontSize: 12, color: T.textMute }}>Build a lineup for each team — players are limited to that team's own roster.</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
-        <Lineup side={A5} set={setA5} /><Lineup side={B5} set={setB5} />
+        <Lineup label="A" teamName={teamA} onTeam={(v) => { setTeamA(v); setA5(empty()); }} roster={rosterA} side={A5} set={setA5} />
+        <Lineup label="B" teamName={teamB} onTeam={(v) => { setTeamB(v); setB5(empty()); }} roster={rosterB} side={B5} set={setB5} />
       </div>
       <div style={card}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={lab}>Lineup totals</span><Tag>projected</Tag></div>
@@ -440,7 +460,78 @@ function ListsNotesTab({ allPlayers, store, update, onOpenProfile }) {
 }
 
 // --- Scout HQ shell ---------------------------------------------------------
+// Locked landing shown to base users. Explains the coach tier, previews what's
+// inside, and takes a pilot/owner access code. Players/fans don't get the tools.
+function CoachGate({ onRedeem }) {
+  const [code, setCode] = useState("");
+  const [err, setErr] = useState("");
+  const submit = (e) => {
+    e.preventDefault();
+    const ok = onRedeem(code);
+    setErr(ok ? "" : "That code isn't valid. Pilot codes come from Prospera directly.");
+  };
+  const features = [
+    ["Opponent scouting", "Computed playstyle + your own scouting notes on any opponent."],
+    ["Matchup builders", "Team vs team, custom 5-on-5 lineups, and 1-on-1 reads."],
+    ["My team", "Efficiency leaders, tendencies, and auto strengths/watch-areas."],
+    ["Lists & notes", "Private boards, tags, and game-prep notes that persist."],
+  ];
+  return (
+    <div style={{ display: "grid", gap: 18, maxWidth: 720, margin: "0 auto" }}>
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Scout HQ</h1>
+          <Tag color={T.accent}>Coach tier</Tag><Tag color={T.warn}>🔒 Locked</Tag>
+        </div>
+        <div style={{ ...ui, fontSize: 13.5, color: T.textDim, lineHeight: 1.6, marginTop: 8 }}>
+          Scout HQ is the <b style={{ color: T.text }}>coach tier</b> — opponent scouting, matchup builders, and private
+          notes. It's <b style={{ color: T.text }}>free for pilot programs</b>; otherwise it's part of a coach subscription.
+          Base profiles, stats, team pages, and leaderboards stay free for everyone.
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10 }}>
+        {features.map(([h, d]) => (
+          <div key={h} style={{ ...card, opacity: 0.92 }}>
+            <div style={{ ...lab, color: T.textDim }}>{h}</div>
+            <div style={{ ...ui, fontSize: 12, color: T.textMute, lineHeight: 1.5, marginTop: 6 }}>{d}</div>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={submit} style={{ ...card, display: "grid", gap: 10 }}>
+        <div style={{ ...lab, color: T.accent }}>Have a pilot access code?</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <input value={code} onChange={(e) => { setCode(e.target.value); setErr(""); }} placeholder="e.g. HAYFIELD-PILOT"
+            style={{ ...inputStyle, flex: "1 1 200px", maxWidth: 320, textTransform: "uppercase" }} />
+          <button type="submit" style={{ ...ui, fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, color: T.bg, background: T.accent, border: "none", borderRadius: 6, padding: "0 18px", cursor: "pointer", minHeight: 40 }}>Unlock</button>
+        </div>
+        {err && <div style={{ ...ui, fontSize: 12, color: T.danger }}>{err}</div>}
+        <div style={{ ...ui, fontSize: 11.5, color: T.textMute, lineHeight: 1.5 }}>
+          Coaching a DMV program and want in? <a href="mailto:hello@prosperahoops.com?subject=Scout%20HQ%20pilot%20access" style={{ color: T.signal, textDecoration: "none" }}>Request pilot access →</a>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// Thin bar atop the unlocked tier showing who's in + a way out. Hidden for admins
+// (the owner is always in and has no pass to drop).
+function CoachAccessBar({ pass, onSignOut }) {
+  if (!pass) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.border}`, borderRadius: 8, padding: "8px 12px" }}>
+      <span style={{ ...ui, fontSize: 11.5, color: T.textDim }}>
+        Coach access: <b style={{ color: T.text }}>{pass.label || pass.tier}</b>
+        {pass.tier === "pilot" && <> <Tag color={T.positive}>Pilot · free</Tag></>}
+      </span>
+      <button type="button" onClick={onSignOut} style={{ ...ui, fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMute, background: "transparent", border: `1px solid ${T.border}`, borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>Sign out of coach</button>
+    </div>
+  );
+}
+
 export default function ScoutHQ({ teams = [], onOpenProfile }) {
+  const { isAdmin } = useAuth();
+  const { pass, redeem, clear } = useCoachAccess();
+  const access = isAdmin || !!pass;
   const [tab, setTab] = useState("opponents");
   const [store, update] = useHQStore();
   const allPlayers = useMemo(() => {
@@ -456,9 +547,15 @@ export default function ScoutHQ({ teams = [], onOpenProfile }) {
     const mk = (key) => allPlayers.map((p) => p[key]).filter((v) => v != null).sort((a, b) => a - b);
     return { ppg: mk("pts"), rpg: mk("reb"), apg: mk("ast") };
   }, [allPlayers]);
+
+  // Gate: base users get the locked landing, not the tools. (All hooks above run
+  // first so this early return never violates the rules of hooks.)
+  if (!access) return <CoachGate onRedeem={redeem} />;
+
   const TABS = [["opponents", "Opponents"], ["matchups", "Matchups"], ["players", "Players"], ["myteam", "My Team"], ["lists", "Lists & Notes"]];
   return (
     <div style={{ display: "grid", gap: 16 }}>
+      <CoachAccessBar pass={pass} onSignOut={clear} />
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Scout HQ</h1>

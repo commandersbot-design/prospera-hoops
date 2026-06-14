@@ -10,6 +10,7 @@ import { useGold, useVerified } from "./lib/goldTier";
 import { buildArc } from "./lib/developmentArc";
 import { DevelopmentSection } from "./components/DevelopmentArc";
 import { useAuth } from "./lib/auth.jsx";
+import { useCoachAccess } from "./lib/coachAccess.js";
 import { isConfigured as supabaseConfigured } from "./lib/supabaseClient.js";
 import { getOverride, myClaimForPlayer } from "./lib/profiles.js";
 import AccountButton from "./components/AccountButton";
@@ -3025,6 +3026,10 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
   const [recaps, setRecaps] = useState([]);
+  // Coach-tier access (for the Scout HQ nav lock). Admin or a redeemed pilot pass.
+  const { isAdmin } = useAuth();
+  const { hasPass } = useCoachAccess();
+  const coachAccess = isAdmin || hasPass;
 
   useEffect(() => {
     Promise.all([
@@ -3128,11 +3133,13 @@ export default function App() {
         }}>
           {NAV.map((n) => {
             const active = view === n.key && !open;
+            const locked = n.key === "scouthq" && !coachAccess;
             return (
               <button
                 key={n.key}
                 type="button"
                 onClick={() => goView(n.key)}
+                title={locked ? "Coach tier — free for pilot programs" : undefined}
                 style={{
                   ...mono, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase",
                   color: active ? T.bg : T.textDim, background: active ? T.accent : "transparent",
@@ -3140,7 +3147,7 @@ export default function App() {
                   flexShrink: 0, whiteSpace: "nowrap",
                 }}
               >
-                {n.label}
+                {n.label}{locked ? " 🔒" : ""}
               </button>
             );
           })}
