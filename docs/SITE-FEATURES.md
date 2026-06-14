@@ -22,7 +22,7 @@ A **DMV (DC/Maryland/Virginia) high-school & AAU basketball scouting platform** 
 - PWA manifest, favicon/app icons, OG meta, branded loading screen.
 
 ## 4. Navigation (top nav)
-**Prospects · Teams · Recaps · Map · Classes · Commitments** (+ hidden **Admin** "Claims" for admins). News ticker bar across the top with live leaders/headlines. Global search box (players + schools).
+**Prospects · Teams · Scout HQ · Recaps · Map · Classes · Commitments** (+ hidden **Admin** "Claims" for admins). News ticker bar across the top with live leaders/headlines. Global search box (players + schools).
 
 ---
 
@@ -102,12 +102,12 @@ Full-width page when a team is clicked (was a side-rail preview).
 ---
 
 ## 15. Deferred / planned / locked
-- ⛔ **Scout HQ** — coach analytics tier (v2, "after pilot"): tabs **Opponents · Matchups · Players · My Team · Lists & Notes**. Editable opponent reports (computed "est" playstyle from box scores + coach scouting input), matchup builders (Team / 5-on-5 custom lineups / 1-on-1), player comparisons, my-team inward view, lists/notes/custom-fields/game-prep sheets. Persistence (localStorage→Supabase). 🔒 **Locked cards** (shown, never faked): true 5-man lineup efficiency, on/off, net rating, real player-vs-defender head-to-head.
+- ✅ **Scout HQ** (live, v2 tier) — coach analytics, nav tab. Tabs **Opponents · Matchups · Players · My Team · Lists & Notes**. Editable opponent reports (computed "est" playstyle from box scores + coach scouting input + auto/coach-tagged keys), matchup builders (Team compare w/ column picker / 5-on-5 custom lineups / 1-on-1), player multi-compare w/ percentile bars, my-team inward view (efficiency leaders/laggards + auto strengths/watch), lists/notes/custom-fields. Persistence localStorage (`prospera.scoutHQ.v1`). 🔒 **Locked cards** (shown, never faked): true 5-man lineup efficiency, on/off, net rating, real player-vs-defender head-to-head. 🟡 Remaining: matchup PNG export / saved-matchups browser / game-prep template / <900px stacked pass; localStorage→Supabase.
 - ⛔ **Full self-serve accounts** — player logins / instant self-edit / film uploads (needs the Supabase layer turned on + Phase 4–5 of `docs/self-serve-profiles-spec.md`).
 - ⛔ **Big Board / rankings** — parked (gold tier is the only manual apex mark for now).
 - ⛔ **Verified measurables / combine** — a "Prospera Verified" measurement event (moat).
 - ⛔ **Scout-tagged shot type** — true movement-vs-spot-up (needs observed input, not box scores).
-- 🟡 **Mobile roster-as-list** — team roster table scrolls horizontally on phones; spec wants a reflowed list.
+- ✅ **Mobile roster-as-list** — team roster reflows to a stacked list under 900px (name + pos·class·role left, PPG/RPG/APG right, top scorer highlighted, 44px rows); no horizontal scroll.
 - ⛔ **Payments, AAU-wide expansion, opponent-adjusted splits, coach alerts/search.**
 
 ## 16. Open questions / idea space (what to add or cut)
