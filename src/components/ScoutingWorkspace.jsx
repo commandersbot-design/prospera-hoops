@@ -446,16 +446,16 @@ function Watchlist({ teams, onOpen }) {
 }
 
 // Generic facet toggle-set state helper: a Set of active values per group.
-function useFacet(all) {
-  const [on, setOn] = useState(new Set(all)); // all-on = no filter
+function useFacet() {
+  // Empty selection = NO filter (show everything). Clicking a chip adds it to the
+  // filter; clicking more is an OR. Nothing is selected by default.
+  const [on, setOn] = useState(new Set());
   const toggle = (v) => setOn((prev) => {
     const next = new Set(prev);
     next.has(v) ? next.delete(v) : next.add(v);
     return next;
   });
-  // A facet filters only when it's a strict, non-empty subset.
-  const filters = on.size > 0 && on.size < all.length;
-  const pass = (v) => !filters || on.has(v);
+  const pass = (v) => on.size === 0 || on.has(v);
   return { on, toggle, pass };
 }
 
