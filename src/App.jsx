@@ -19,6 +19,7 @@ import ClaimedOverlay from "./components/ClaimedOverlay";
 import AdminClaims from "./components/AdminClaims";
 import { buildArchetypeCohort, archetypeForPlayer, LEVEL_WEIGHT, LEVEL_LABEL, LEVEL_NOTE } from "./lib/archetype";
 import StatLine, { seasonStatLine } from "./components/StatLine";
+import ScoutHQ from "./components/ScoutHQ";
 import { topPerformances } from "./lib/highlights";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -2648,6 +2649,7 @@ const NAV = [
   // Big Board is parked for now — no rankings product yet.
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Teams" },
+  { key: "scouthq", label: "Scout HQ" },
   { key: "recaps", label: "Recaps" },
   { key: "map", label: "Map" },
   { key: "classes", label: "Classes" },
@@ -2784,8 +2786,10 @@ function buildWorkspaceTeams() {
     });
     const entries = [];
     const gmap = new Map(); // distinct played games (matchups), from game logs
+    const box = { fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0, to: 0, pts: 0, reb: 0 }; // summed team box (for Scout HQ playstyle)
     for (const pl of t.players || []) for (const g of gameLogFor(pl.name)) {
       entries.push({ player: pl.name, pts: g.pts, reb: g.reb, ast: g.ast, opp: g.opp, date: g.date });
+      for (const k of Object.keys(box)) box[k] += g[k] || 0;
       const key = `${g.date}|${g.opp}`;
       if (!gmap.has(key)) {
         const mm = /(win|loss)\s+(\d+)\s*-\s*(\d+)/i.exec(g.result || "");
@@ -2803,6 +2807,7 @@ function buildWorkspaceTeams() {
       topGames: topPerformances(entries, 4),
       matchups: [...gmap.values()], upcoming,
       record: { w: [...gmap.values()].filter((g) => g.won === true).length, l: [...gmap.values()].filter((g) => g.won === false).length },
+      box, teamGp: gmap.size,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -2965,6 +2970,8 @@ export default function App() {
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
           <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} focusTeam={focusTeam} />
+        ) : view === "scouthq" ? (
+          <ScoutHQ teams={workspaceTeams} onOpenProfile={setOpenId} />
         ) : view === "recaps" ? (
           <RecapsFeed recaps={recaps} />
         ) : view === "map" ? (
