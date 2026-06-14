@@ -531,7 +531,6 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   // team selection and tab switches.
   const lvl = useFacet(LEVELS);
   const region = useFacet(REGIONS);
-  const klass = useFacet(CLASSES);
   const [trackedOnly, setTrackedOnly] = useState(false);
   const [goldOnly, setGoldOnly] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -550,11 +549,10 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   const teams = useMemo(() => TEAM_DATA.filter((t) => {
     if (!lvl.pass(t.level || "Summer")) return false;
     if (!region.pass(t.region)) return false;
-    if (!klass.pass("__all__") && !t.roster.some((p) => klass.on.has(String(p.class)))) return false;
     if (trackedOnly && countTracked(t.roster) === 0) return false;
     if (goldOnly && countElite(t.roster) === 0) return false;
     return true;
-  }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, lvl, region, klass, trackedOnly, goldOnly]);
+  }).sort((a, b) => a.name.localeCompare(b.name)), [TEAM_DATA, lvl, region, trackedOnly, goldOnly]);
 
   // A team is only "open" once clicked (or deep-linked) — otherwise we show the
   // browsable team list full-width.
@@ -565,7 +563,6 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "flex-start", marginBottom: 16 }}>
       <FacetGroup label="Level">{LEVELS.map((l) => <Chip key={l} active={lvl.on.has(l)} onClick={() => lvl.toggle(l)}>{l}</Chip>)}</FacetGroup>
       <FacetGroup label="Region">{REGIONS.map((r) => <Chip key={r} active={region.on.has(r)} onClick={() => region.toggle(r)}>{r}</Chip>)}</FacetGroup>
-      <FacetGroup label="Class">{CLASSES.map((c) => <Chip key={c} active={klass.on.has(c)} onClick={() => klass.toggle(c)}>'{c}</Chip>)}</FacetGroup>
       <FacetGroup label="Watchlist">
         <Chip tone="tracked" icon="star" active={trackedOnly} onClick={() => setTrackedOnly((v) => !v)}>My tracked only</Chip>
         <Chip tone="gold" icon="crown" active={goldOnly} onClick={() => setGoldOnly((v) => !v)}>{GOLD_TIER_LABEL}</Chip>
