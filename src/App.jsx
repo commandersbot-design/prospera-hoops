@@ -2782,12 +2782,25 @@ function buildWorkspaceTeams() {
       };
     });
     const entries = [];
-    for (const pl of t.players || []) for (const g of gameLogFor(pl.name)) entries.push({ player: pl.name, pts: g.pts, reb: g.reb, ast: g.ast, opp: g.opp, date: g.date });
+    const gmap = new Map(); // distinct played games (matchups), from game logs
+    for (const pl of t.players || []) for (const g of gameLogFor(pl.name)) {
+      entries.push({ player: pl.name, pts: g.pts, reb: g.reb, ast: g.ast, opp: g.opp, date: g.date });
+      const key = `${g.date}|${g.opp}`;
+      if (!gmap.has(key)) {
+        const mm = /(win|loss)\s+(\d+)\s*-\s*(\d+)/i.exec(g.result || "");
+        gmap.set(key, { date: g.date, opp: g.opp, won: mm ? mm[1].toLowerCase() === "win" : null, teamScore: mm ? +mm[2] : null, oppScore: mm ? +mm[3] : null });
+      }
+    }
+    const upcoming = gamesForTeam(t.name).filter((g) => g.status !== "final").map((g) => {
+      const isHome = teamNameKey(g.home) === teamNameKey(t.name);
+      return { date: g.date, time: g.time || null, opp: isHome ? g.away : g.home, isHome };
+    });
     return {
       name: t.name, slug, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
       level: t.level || "Summer", circuit: t.circuit || "Capitol Hoops Summer League", season: t.season || "2026",
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
       topGames: topPerformances(entries, 4),
+      matchups: [...gmap.values()], upcoming,
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 }

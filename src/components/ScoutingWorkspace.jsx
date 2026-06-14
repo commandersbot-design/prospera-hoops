@@ -490,10 +490,42 @@ function teamLeaders(roster) {
   return [["PTS", "pts"], ["REB", "reb"], ["AST", "ast"]].map(([lab, k]) => [lab, best(k)]).filter(([, p]) => p);
 }
 
+// Per-team games table — results (played) or upcoming (scheduled).
+function TeamGames({ games, kind }) {
+  const clean = (o) => String(o || "").replace(/\s*\([^)]*\)/g, "").trim();
+  if (!games || !games.length) return <Empty>{kind === "results" ? "No games played yet." : "No upcoming games scheduled."}</Empty>;
+  const th = { fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: A.textMut, padding: "8px 12px", textAlign: "left", borderBottom: `1px solid ${A.border}` };
+  const td = { fontFamily: MONO, fontSize: 12.5, color: A.text, padding: "10px 12px", borderBottom: `1px solid ${A.border}` };
+  const rows = kind === "results" ? [...games].sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0)) : games;
+  return (
+    <div style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 8, overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead><tr>
+          <th style={th}>Date</th><th style={th}>Opponent</th><th style={{ ...th, textAlign: "right" }}>{kind === "results" ? "Result" : "Tip"}</th>
+        </tr></thead>
+        <tbody>
+          {rows.map((g, i) => (
+            <tr key={i}>
+              <td style={td}>{g.date}</td>
+              <td style={td}>{kind === "upcoming" ? (g.isHome ? "vs " : "@ ") : ""}{clean(g.opp)}</td>
+              <td style={{ ...td, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                {kind === "results"
+                  ? (g.won != null ? <><span style={{ color: g.won ? "#36d399" : "#f06a6a", fontWeight: 800 }}>{g.won ? "W" : "L"}</span> {g.teamScore}-{g.oppScore}</> : "—")
+                  : (g.time || "TBD")}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile, focusTeam }) {
   useGold();
   const TEAM_DATA = teamsProp && teamsProp.length ? teamsProp : SEED_SUMMER_TEAMS;
-  const [tab, setTab] = useState("players"); // DEFAULT LANDING = Players
+  const [tab, setTab] = useState("teams");    // DEFAULT = Teams list (scoring leaders live on the Prospects tab)
+  const [teamTab, setTeamTab] = useState("roster"); // inner tab on a team page: roster | matchups | schedule
 
   // Teams-workspace state lives here (above the shell) so filters persist across
   // team selection and tab switches.
@@ -511,6 +543,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     const m = TEAM_DATA.find((t) => t.slug === focusTeam || t.name === focusTeam);
     setSelected(m ? (m.slug || m.name) : focusTeam);
   }, [focusTeam, TEAM_DATA]);
+  useEffect(() => { setTeamTab("roster"); }, [selected]); // each team page opens on its roster
 
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
@@ -580,36 +613,59 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
         {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
         <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 16px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 4px" }}>
         {team.level && <span style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: A.accent, border: `1px solid ${A.accent}`, borderRadius: 4, padding: "2px 7px" }}>{team.level}</span>}
         <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, letterSpacing: "0.03em" }}>
           {[team.circuit, team.season, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
         </span>
       </div>
-      <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
-      {teamLeaders(team.roster).length > 0 && (
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "baseline", margin: "20px 0 0" }}>
-          <Label style={{ color: A.textMut }}>Leaders</Label>
-          {teamLeaders(team.roster).map(([lab, p]) => (
-            <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
-              {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
-            </span>
-          ))}
+
+      {/* inner tabs: roster first, then matchups (results) + schedule (upcoming) */}
+      <div style={{ display: "flex", gap: 2, borderBottom: `1px solid ${A.border}`, margin: "12px 0 16px" }}>
+        {["Roster", "Matchups", "Schedule"].map((lbl) => {
+          const key = lbl.toLowerCase(), active = teamTab === key;
+          return (
+            <button key={key} type="button" onClick={() => setTeamTab(key)} style={{
+              fontFamily: MONO, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase",
+              color: active ? A.accent : A.textMut, background: "transparent", border: "none",
+              padding: "10px 16px", borderBottom: `2px solid ${active ? A.accent : "transparent"}`,
+              cursor: "pointer", fontWeight: active ? 700 : 600,
+            }}>{lbl}</button>
+          );
+        })}
+      </div>
+
+      {teamTab === "roster" && (
+        <div>
+          <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
+          {teamLeaders(team.roster).length > 0 && (
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "baseline", margin: "20px 0 0" }}>
+              <Label style={{ color: A.textMut }}>Leaders</Label>
+              {teamLeaders(team.roster).map(([lab, p]) => (
+                <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
+                  {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
+                </span>
+              ))}
+            </div>
+          )}
+          {team.topGames && team.topGames.length > 0 && (
+            <div style={{ margin: "16px 0 0" }}>
+              <Label style={{ color: A.textMut, marginBottom: 7 }}>Top performances</Label>
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {team.topGames.map((g, i) => (
+                  <span key={i} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.03em" }}>
+                    <span style={{ color: A.textHi }}>{g.player}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{g.pts}</span> <span style={{ color: A.textFaint }}>vs {String(g.opp || "").replace(/\s*\([^)]*\)/g, "").slice(0, 16)}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
-      {team.topGames && team.topGames.length > 0 && (
-        <div style={{ margin: "16px 0 0" }}>
-          <Label style={{ color: A.textMut, marginBottom: 7 }}>Top performances</Label>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-            {team.topGames.map((g, i) => (
-              <span key={i} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.03em" }}>
-                <span style={{ color: A.textHi }}>{g.player}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{g.pts}</span> <span style={{ color: A.textFaint }}>vs {String(g.opp || "").replace(/\s*\([^)]*\)/g, "").slice(0, 16)}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      <div style={{ marginTop: 18 }}><CoverageList recaps={recaps} teamName={team.name} /></div>
+
+      {teamTab === "matchups" && <TeamGames games={team.matchups} kind="results" />}
+      {teamTab === "matchups" && <div style={{ marginTop: 16 }}><CoverageList recaps={recaps} teamName={team.name} /></div>}
+      {teamTab === "schedule" && <TeamGames games={team.upcoming} kind="upcoming" />}
     </div>
   ) : null;
 
@@ -617,12 +673,11 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
     <WorkspaceShell
       eyebrow="DMV Teams · HS · Summer · AAU"
       subline={tab === "teams" ? (team ? "Full team page · tap a player to open their profile" : "Tap a team for its full page · filters persist")
-        : tab === "players" ? "DMV scoring leaders + your watchlist · games played leads every line"
-        : "Chronological games feed · results and upcoming"}
-      topRight={<Segmented value={tab} onChange={setTab} options={[["players", "Players"], ["teams", "Teams"], ["schedule", "Schedule"]]} />}
+        : "Full league slate · results and upcoming"}
+      topRight={<Segmented value={tab} onChange={setTab} options={[["teams", "Teams"], ["schedule", "Schedule"]]} />}
       rail={null}
     >
-      {tab === "teams" ? (team ? teamDetailFull : teamBrowse) : tab === "players" ? <SummerPlayers teams={TEAM_DATA} onOpen={onOpenProfile} /> : <SummerSchedule recaps={recaps} />}
+      {tab === "teams" ? (team ? teamDetailFull : teamBrowse) : <SummerSchedule recaps={recaps} />}
     </WorkspaceShell>
   );
 }
