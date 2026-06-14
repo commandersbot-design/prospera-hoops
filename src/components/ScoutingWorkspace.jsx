@@ -280,27 +280,36 @@ export function RosterTable({ players, mode = "stats", onOpen }) {
       color: isGp ? (low ? A.amber : A.text) : A.text, fontWeight: 600,
     }}>{v == null ? "—" : (isGp ? v : Number(v).toFixed(1))}</td>
   );
+  // FG%/TS% only when shooting is tracked, else "—".
+  const pctCell = (v) => (
+    <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: MONO, fontVariantNumeric: "tabular-nums", fontSize: 14, color: A.textMut }}>{v == null ? "—" : `${Number(v).toFixed(1)}%`}</td>
+  );
+  const topScorer = rows.reduce((b, p) => ((p.pts ?? -1) > (b?.pts ?? -1) && (p.gp || 0) > 0 ? p : b), null);
   return (
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead><tr>
         <TH>Player</TH>
         <TH right active={sortKey === "gp"} dir={dir} onClick={() => onSort("gp")}>GP</TH>
-        <TH right active={sortKey === "mpg"} dir={dir} onClick={() => onSort("mpg")}>MPG</TH>
-        <TH right active={sortKey === "pts"} dir={dir} onClick={() => onSort("pts")}>PTS</TH>
-        <TH right active={sortKey === "reb"} dir={dir} onClick={() => onSort("reb")}>REB</TH>
-        <TH right active={sortKey === "ast"} dir={dir} onClick={() => onSort("ast")}>AST</TH>
+        <TH right active={sortKey === "pts"} dir={dir} onClick={() => onSort("pts")}>PPG</TH>
+        <TH right active={sortKey === "reb"} dir={dir} onClick={() => onSort("reb")}>RPG</TH>
+        <TH right active={sortKey === "ast"} dir={dir} onClick={() => onSort("ast")}>APG</TH>
+        <TH right active={sortKey === "fgPct"} dir={dir} onClick={() => onSort("fgPct")}>FG%</TH>
+        <TH right active={sortKey === "tsPct"} dir={dir} onClick={() => onSort("tsPct")}>TS%</TH>
       </tr></thead>
       <tbody>
         {rows.map((p, i) => {
           const low = (p.gp ?? 0) < 2; // small-sample discipline
+          const top = topScorer && p === topScorer;
+          const base = top ? { background: "#1A130C", borderLeft: `2px solid ${A.accent}` } : rowStyle(p);
           return (
-            <tr key={`${p.name}-${i}`} className="a1ws-row" style={{ ...rowStyle(p), borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
+            <tr key={`${p.name}-${i}`} className="a1ws-row" style={{ ...base, borderBottom: `1px solid ${A.border}`, opacity: low ? 0.62 : 1 }}>
               <td style={{ padding: "9px 10px" }}><PlayerCell p={p} onOpen={onOpen} /></td>
               {numCell(p.gp, low, true)}
-              {numCell(p.mpg, low)}
               {numCell(p.pts, low)}
               {numCell(p.reb, low)}
               {numCell(p.ast, low)}
+              {pctCell(p.fgPct)}
+              {pctCell(p.tsPct)}
             </tr>
           );
         })}
@@ -610,8 +619,11 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
         {countTracked(team.roster) > 0 ? <TrackedPip n={`${countTracked(team.roster)} tracked`} /> : null}
         <span style={{ marginLeft: "auto" }}><TeamShareButton slug={team.slug} /></span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "8px 0 4px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", margin: "8px 0 4px" }}>
         {team.level && <span style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, color: A.accent, border: `1px solid ${A.accent}`, borderRadius: 4, padding: "2px 7px" }}>{team.level}</span>}
+        {team.record && (team.record.w + team.record.l) > 0 ? (
+          <span style={{ ...NAMEPLATE, fontSize: 15, fontWeight: 800, color: A.textHi, letterSpacing: "0.02em" }}>{team.record.w}–{team.record.l}</span>
+        ) : null}
         <span style={{ fontFamily: MONO, fontSize: 11.5, color: A.textMut, letterSpacing: "0.03em" }}>
           {[team.circuit, team.season, team.region, `${team.gp} games`, team.coach || "—"].filter(Boolean).join(" · ")}
         </span>
@@ -636,13 +648,23 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
         <div>
           <RosterTable players={team.roster} mode="stats" onOpen={onOpenProfile} />
           {teamLeaders(team.roster).length > 0 && (
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "baseline", margin: "20px 0 0" }}>
-              <Label style={{ color: A.textMut }}>Leaders</Label>
-              {teamLeaders(team.roster).map(([lab, p]) => (
-                <span key={lab} style={{ fontFamily: MONO, fontSize: 11, color: A.textMut, letterSpacing: "0.04em" }}>
-                  {lab} <span style={{ color: A.textHi }}>{p.name}</span> <span style={{ color: A.accent, fontWeight: 700 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
-                </span>
-              ))}
+            <div style={{ margin: "22px 0 0" }}>
+              <Label style={{ color: A.textMut, marginBottom: 10 }}>Leaders</Label>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 }}>
+                {teamLeaders(team.roster).map(([lab, p]) => {
+                  const unit = lab === "PTS" ? "PPG" : lab === "REB" ? "RPG" : "APG";
+                  return (
+                    <div key={lab} style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 8, padding: "14px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                        <span style={{ ...NAMEPLATE, fontSize: 32, fontWeight: 800, color: A.accent, fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{Number(p[lab.toLowerCase()]).toFixed(1)}</span>
+                        <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: A.textMut, textTransform: "uppercase" }}>{unit}</span>
+                      </div>
+                      <div style={{ ...NAMEPLATE, fontSize: 15, fontWeight: 700, color: A.textHi, marginTop: 8 }}>{p.name}</div>
+                      <div style={{ fontFamily: MONO, fontSize: 10.5, color: A.accent, marginTop: 2 }}>{p.archetype || p.pos || ""}</div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
           {team.topGames && team.topGames.length > 0 && (

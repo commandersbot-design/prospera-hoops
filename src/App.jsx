@@ -2777,6 +2777,7 @@ function buildWorkspaceTeams() {
         class: pl.classYear ? String(pl.classYear).slice(2) : null,
         gp: pl.stats?.gp ?? 0, pts: pl.stats?.ppg ?? null, reb: pl.stats?.rpg ?? null, ast: pl.stats?.apg ?? null,
         mpg: minutesFor(pl.name)?.mpg ?? null,
+        fgPct: pl.stats?.fgPct ?? null, tsPct: pl.stats?.tsPct ?? null,
         archetype: a?.label || null, archetypeEarly: a?.earlyRead || false,
         tracked: false, id: pr?.id || null, goldTier: !!pr?.goldTier, commit: pr?.commitment || null,
       };
@@ -2801,6 +2802,7 @@ function buildWorkspaceTeams() {
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
       topGames: topPerformances(entries, 4),
       matchups: [...gmap.values()], upcoming,
+      record: { w: [...gmap.values()].filter((g) => g.won === true).length, l: [...gmap.values()].filter((g) => g.won === false).length },
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
