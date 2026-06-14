@@ -938,10 +938,97 @@ function ShareButton({ name }) {
 // --- Scout-dashboard profile pieces ----------------------------------------
 const SLATE = "#5A646E";
 
+// Per-metric verification (IA spec §5). Coaches' #1 need: know what's trustworthy.
+// "verified" = a Prospera scout confirmed the record (green ✓ corner dot);
+// "self" = the player/family entered it (hollow ring + "self-reported" tag);
+// null = a fact we hold with no claim either way (no marker).
+function VerDot({ state }) {
+  if (!state) return null;
+  const v = state === "verified";
+  return (
+    <span
+      title={v ? "Verified by Prospera staff" : "Self-reported by the player / family"}
+      style={{ position: "absolute", top: 4, right: 4, width: 6, height: 6, borderRadius: 999, background: v ? T.positive : "transparent", border: `1.5px solid ${v ? T.positive : T.textMute}` }}
+    />
+  );
+}
+function VerTag({ state }) {
+  if (!state) return null;
+  const v = state === "verified";
+  return (
+    <span style={{ ...mono, fontSize: 8.5, letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 700, color: v ? T.positive : T.textMute, border: `1px solid ${v ? "rgba(16,185,129,0.5)" : T.border}`, borderRadius: 4, padding: "1px 5px", marginLeft: 6, whiteSpace: "nowrap" }}>
+      {v ? "✓ Verified" : "◦ Self"}
+    </span>
+  );
+}
+
+// Academics & eligibility (IA spec §3.4 / §6). Self-reported values come from the
+// claim overlay; we never fabricate a GPA or test score. Hidden entirely when there's
+// no data and the viewer isn't the owner — an empty grid of em-dashes reads as neglect.
+function AcademicsBlock({ override, gradYear, canEdit }) {
+  const gpa = override?.gpa || null;
+  const recruiting = override?.recruiting_status || null;
+  const rows = [
+    gpa && ["GPA", gpa, "self"],
+    gradYear && ["Grad Year", `Class of ${gradYear}`, null],
+    recruiting && ["Status", recruiting, "self"],
+  ].filter(Boolean);
+  const hasSelf = !!(gpa || recruiting);
+  if (!hasSelf && !canEdit) return null; // public viewer, nothing to show → hide cleanly
+  return (
+    <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
+      <SectionLabel>Academics & Eligibility</SectionLabel>
+      {hasSelf ? (
+        <div style={{ display: "grid", gap: 6, marginTop: 8 }}>
+          {rows.map(([l, v, ver]) => (
+            <div key={l} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
+              <span style={{ ...mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: T.textMute }}>{l}</span>
+              <span style={{ ...mono, fontSize: 12.5, color: T.textDim, fontWeight: 600 }}>{v}<VerTag state={ver} /></span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ ...mono, fontSize: 11.5, color: T.textMute, marginTop: 8, lineHeight: 1.5 }}>
+          Add GPA, grad year, and NCAA status from <b style={{ color: T.textDim }}>Edit my profile</b> — coaches scan this first.
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Collapsible card — used to keep dense Surface-B blocks from forcing infinite
+// scroll on mobile (IA spec §4 / §6). Open by default unless startClosed.
+function CollapsibleCard({ title, startClosed = false, children }) {
+  const [open, setOpen] = useState(!startClosed);
+  return (
+    <div style={{ border: `1px solid ${T.border}`, borderRadius: 8, overflow: "hidden", background: T.surface }}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        style={{ width: "100%", minHeight: 44, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: "transparent", border: "none", padding: "0 16px", cursor: "pointer" }}
+      >
+        <span style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: T.textMute, fontWeight: 700 }}>{title}</span>
+        <span style={{ ...mono, fontSize: 13, color: T.accent, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
+      </button>
+      {open && <div style={{ padding: "0 16px 16px" }}>{children}</div>}
+    </div>
+  );
+}
+
 // Sticky identity rail (left column on desktop, top block on mobile).
-function ProfileRail({ c, archetype, tiles, status }) {
+function ProfileRail({ c, archetype, tiles, status, verified, override, canEdit }) {
   const initials = (c.name || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-  const measur = [["POS", c.position], ["CLASS", c.classYear ? `'${String(c.classYear).slice(2)}` : null], ["HT", c.height], ["WT", c.weight], ["WING", c.wingspan]];
+  // Each measurable carries a verification state: scout-verified records get the
+  // green dot; physical measurables on an unverified record stay neutral (a fact we
+  // hold, not a claim). POS/CLASS are categorical, never "verified".
+  const vPhys = verified ? "verified" : null;
+  const measur = [
+    { l: "POS", v: c.position, ver: null },
+    { l: "CLASS", v: c.classYear ? `'${String(c.classYear).slice(2)}` : null, ver: null },
+    { l: "HT", v: c.height, ver: c.height ? vPhys : null },
+    { l: "WT", v: c.weight, ver: c.weight ? vPhys : null },
+    { l: "WING", v: c.wingspan, ver: c.wingspan ? vPhys : null },
+  ];
   const uncommitted = /uncommit/i.test(status || "");
   return (
     <aside style={{ display: "grid", gap: 14, alignContent: "start" }}>
@@ -956,13 +1043,21 @@ function ProfileRail({ c, archetype, tiles, status }) {
           {archetype?.earlyRead && <span style={{ ...mono, fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, color: T.accent }}>Early Read · {archetype.gp} GP</span>}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 1, background: T.border, border: `1px solid ${T.border}` }}>
-        {measur.map(([l, v]) => (
-          <div key={l} style={{ background: T.surface, padding: "8px 4px", textAlign: "center" }}>
-            <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.08em", color: T.textMute, textTransform: "uppercase" }}>{l}</div>
-            <div style={{ ...serif, fontSize: 15, fontWeight: 700, color: T.text, marginTop: 2 }}>{v || "—"}</div>
-          </div>
-        ))}
+      <div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 1, background: T.border, border: `1px solid ${T.border}` }}>
+          {measur.map(({ l, v, ver }) => (
+            <div key={l} style={{ position: "relative", background: T.surface, padding: "8px 4px", textAlign: "center" }}>
+              <VerDot state={ver} />
+              <div style={{ ...mono, fontSize: 8.5, letterSpacing: "0.08em", color: T.textMute, textTransform: "uppercase" }}>{l}</div>
+              <div style={{ ...serif, fontSize: 15, fontWeight: 700, color: v ? T.text : T.textMute, marginTop: 2 }}>{v || "—"}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...mono, fontSize: 9, letterSpacing: "0.04em", color: T.textMute, marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+          {verified
+            ? <><span style={{ width: 6, height: 6, borderRadius: 999, background: T.positive, display: "inline-block" }} /> Measurables verified by Prospera</>
+            : <><span style={{ width: 6, height: 6, borderRadius: 999, border: `1.5px solid ${T.textMute}`, display: "inline-block" }} /> Unverified — not yet measured by staff</>}
+        </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
         {[["PPG", tiles.ppg, true], ["RPG", tiles.rpg, false], ["APG", tiles.apg, false]].map(([l, v, hot]) => (
@@ -976,6 +1071,7 @@ function ProfileRail({ c, archetype, tiles, status }) {
         {[c.school, [c.city, c.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ")}
         {status && <> · <span style={{ color: uncommitted ? T.accent : T.textDim, fontWeight: 600 }}>{status}</span></>}
       </div>
+      <AcademicsBlock override={override} gradYear={c.classYear} canEdit={canEdit} />
       {(c.intel?.circuit || c.intel?.district) && (
         <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
           <SectionLabel>DMV Intel</SectionLabel>
@@ -1053,6 +1149,7 @@ function Profile({ prospect, onBack, onOpen }) {
   const arc = useMemo(() => buildArc(seasonsFor(p.name), p), [p]);
   const archetype = useMemo(() => archetypeFor(p.name, p.position), [p]);
   const narrow = useIsMobile(900);
+  const wideViewport = useMinWidth(1200); // 3-column command center (IA spec §4)
   const tiles = useMemo(() => {
     const games = gameLogFor(p.name);
     if (!games.length) return {};
@@ -1082,14 +1179,30 @@ function Profile({ prospect, onBack, onOpen }) {
     if (auth.user) myClaimForPlayer(p.id).then(setMyClaim).catch(() => setMyClaim(null));
   }, [p.id, auth.user, reloadOverlay]);
 
+  // The right rail only earns its column when it has real content — otherwise we
+  // fall back to the 2-col layout instead of reserving an empty 320px (§6 empty-state).
+  const hasMetrics = !!(cardPlayer.context?.rows?.length || cardPlayer.trajectory?.summer || p.recruiting?.services);
+  const wide = wideViewport && hasMetrics;
+
+  // Surface-B metrics column. On wide screens it sits in a persistent right rail
+  // (visible across tabs); on narrower screens these fold back into Overview below.
+  // Each piece self-hides when it has no data, so the column collapses cleanly.
+  const metricsCol = (
+    <div style={{ display: "grid", gap: 18, alignContent: "start" }}>
+      <PercentileBars context={cardPlayer.context} />
+      <TheLeap trajectory={cardPlayer.trajectory} />
+      <RecruitingBlock p={p} />
+    </div>
+  );
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "minmax(270px, 33%) 1fr", gap: narrow ? 18 : 28, alignItems: "start" }}>
-      {/* LEFT RAIL — identity / measurables / stat tiles / DMV intel (sticky on desktop) */}
+    <div style={{ display: "grid", gridTemplateColumns: wide ? "300px minmax(0, 1fr) 320px" : narrow ? "1fr" : "minmax(270px, 33%) 1fr", gap: narrow ? 18 : 28, alignItems: "start" }}>
+      {/* LEFT RAIL — Bio & Academics: identity / measurables / academics / intel (sticky on desktop) */}
       <div style={{ position: narrow ? "static" : "sticky", top: 16 }}>
-        <ProfileRail c={cardPlayer} archetype={archetype} tiles={tiles} status={cardPlayer.status} />
+        <ProfileRail c={cardPlayer} archetype={archetype} tiles={tiles} status={cardPlayer.status} verified={verified} override={override} canEdit={canEdit} />
       </div>
 
-      {/* RIGHT COLUMN — action bar, tabs, content */}
+      {/* MIDDLE COLUMN — action bar, tabs, the active surface */}
       <div style={{ display: "grid", gap: 18, minWidth: 0 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <button
@@ -1201,18 +1314,20 @@ function Profile({ prospect, onBack, onOpen }) {
               {cardPlayer.snapshot || "Scouting report in progress — the stats below are real where available."}
             </p>
           </section>
-          <PercentileBars context={cardPlayer.context} />
-          <TheLeap trajectory={cardPlayer.trajectory} />
+          {/* On wide screens these live in the persistent right metrics rail. */}
+          {!wide && <PercentileBars context={cardPlayer.context} />}
+          {!wide && <TheLeap trajectory={cardPlayer.trajectory} />}
 
           {/* v1 deep stat line, SPLIT BY COMPETITION so contexts never blend.
-              HS first (weighted most); summer league flagged lighter (exhibition). */}
+              HS first (weighted most); summer league flagged lighter (exhibition).
+              Collapsed by default on phones to avoid an infinite-scroll wall. */}
           {(() => {
             const allGames = gameLogFor(p.name);
             if (!allGames.length) return null;
             const byLevel = {};
             for (const g of allGames) { const lv = g.level || "Summer"; (byLevel[lv] ||= []).push(g); }
             const order = Object.keys(byLevel).sort((a, b) => (LEVEL_WEIGHT[b] || 0) - (LEVEL_WEIGHT[a] || 0));
-            return (
+            const body = (
               <div style={{ display: "grid", gap: 16 }}>
                 {order.length > 1 && (
                   <div style={{ ...mono, fontSize: 12, color: T.textDim, lineHeight: 1.5, background: "var(--prospera-accent-bg-faint)", border: `1px solid ${T.border}`, padding: "10px 14px", borderRadius: 8 }}>
@@ -1235,10 +1350,13 @@ function Profile({ prospect, onBack, onOpen }) {
                 })}
               </div>
             );
+            return narrow
+              ? <CollapsibleCard title="By the Numbers · full splits" startClosed>{body}</CollapsibleCard>
+              : body;
           })()}
 
-          {/* Real authored data the card doesn't cover, kept below it. */}
-          <RecruitingBlock p={p} />
+          {/* Industry recruiting ranks — on wide screens these live in the right rail. */}
+          {!wide && <RecruitingBlock p={p} />}
 
           {Array.isArray(p.offers) && p.offers.length > 0 && (
             <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
@@ -1269,6 +1387,14 @@ function Profile({ prospect, onBack, onOpen }) {
       {tab === "Game Log" && <GameLogTab name={p.name} />}
       {tab === "Film" && <ProspectFilm prospectName={p.name} />}
       </div>
+
+      {/* RIGHT COLUMN — Deep Scout Metrics (wide screens only; persists across tabs) */}
+      {wide && (
+        <div style={{ position: "sticky", top: 16 }}>
+          <SectionLabel>Deep Scout Metrics</SectionLabel>
+          <div style={{ marginTop: 12 }}>{metricsCol}</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2684,6 +2810,19 @@ function useIsMobile(bp = 640) {
     return () => window.removeEventListener("resize", f);
   }, [bp]);
   return m;
+}
+
+// True at/above a breakpoint — the wide-desktop tier for the 3-column profile
+// command center (IA spec §4). Default 1200px.
+function useMinWidth(bp = 1200) {
+  const [w, setW] = useState(() => typeof window !== "undefined" && window.innerWidth >= bp);
+  useEffect(() => {
+    const f = () => setW(window.innerWidth >= bp);
+    f();
+    window.addEventListener("resize", f);
+    return () => window.removeEventListener("resize", f);
+  }, [bp]);
+  return w;
 }
 
 // --- Real-data adapters for the A1 scouting workspace ------------------------
