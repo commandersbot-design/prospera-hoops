@@ -7,6 +7,7 @@
 //
 // Brand line: hook "Proof over hype." + CTA "Track it. Prove it. Get recruited."
 import sharp from "sharp";
+import { Resvg } from "@resvg/resvg-js";
 import QRCode from "qrcode";
 import fs from "fs";
 import path from "path";
@@ -47,7 +48,11 @@ const pill = (cx, y, text, fs = 30, ls = 3) => {
   return `<rect x="${cx - w / 2}" y="${y - fs - 8}" width="${w}" height="${fs + 26}" rx="${(fs + 26) / 2}" fill="${C.orange}"/>
   <text x="${cx}" y="${y}" font-family='${HG}' font-weight="800" font-size="${fs}" letter-spacing="${ls}" fill="${C.bg}" text-anchor="middle">${text}</text>`;
 };
-const png = (svg, w, h, file) => sharp(Buffer.from(svg)).resize(w, h).png().toFile(path.join(OUT, file));
+// resvg renders SVG→PNG honoring the embedded fonts (librsvg/sharp would fall back to serif).
+const ttfBufs = (p) => [...fs.readFileSync(p, "utf8").matchAll(/base64,([A-Za-z0-9+/=]+)\)/g)].map((m) => Buffer.from(m[1], "base64"));
+const FONTS = [...ttfBufs("brand-kit/oswald-embed.svgstyle"), ...ttfBufs("brand-kit/hanken-embed.svgstyle")];
+const renderPng = (svg) => new Resvg(svg, { font: { fontBuffers: FONTS, defaultFontFamily: "Hanken Grotesk", loadSystemFonts: false } }).render().asPng();
+const png = (svg, w, h, file) => fs.writeFileSync(path.join(OUT, file), renderPng(svg));
 
 async function run() {
   // 1) raw QR
@@ -88,7 +93,7 @@ async function run() {
     <text x="${fw / 2}" y="1222" font-family='${HG}' font-weight="700" font-size="29" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. First 100 = Founding Player.</text>
     <text x="${fw / 2}" y="1300" font-family='${HG}' font-weight="700" font-size="34" letter-spacing="3" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
     ${vig(fw, fh)}</svg>`;
-  const flyerBase = await sharp(Buffer.from(flyer)).png().toBuffer();
+  const flyerBase = renderPng(flyer);
   const qrBuf = await sharp(path.join(OUT, "qr-prosperahoops.png")).resize(540, 540).toBuffer();
   await sharp(flyerBase).composite([{ input: qrBuf, top: 430, left: Math.round(fw / 2 - 270) }]).png().toFile(path.join(OUT, "qr-flyer.png"));
 

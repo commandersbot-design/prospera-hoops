@@ -2,7 +2,7 @@
 // Two-font system like the templates: Saira Condensed (condensed DISPLAY — names,
 // stat numbers, hero words) + Hanken Grotesk (BODY — header, labels, meta, footer).
 // Auto-fills REAL data. Run: node scripts/gen-posts.mjs
-import sharp from "sharp";
+import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
 import path from "path";
 import { buildArchetypeCohort, archetypeForPlayer } from "../src/lib/archetype.js";
@@ -14,6 +14,10 @@ const C = { bg: "#0B0E13", panel: "#0F141B", line: "rgba(255,255,255,0.08)", ora
 const SD = "Oswald", HG = "Hanken Grotesk";
 const FONT_SD = fs.readFileSync("brand-kit/oswald-embed.svgstyle", "utf8");
 const FONT_HG = fs.readFileSync("brand-kit/hanken-embed.svgstyle", "utf8");
+// resvg loads font buffers explicitly (librsvg ignores base64 @font-face → serif fallback).
+const ttfBufs = (p) => [...fs.readFileSync(p, "utf8").matchAll(/base64,([A-Za-z0-9+/=]+)\)/g)].map((m) => Buffer.from(m[1], "base64"));
+const FONTS = [...ttfBufs("brand-kit/oswald-embed.svgstyle"), ...ttfBufs("brand-kit/hanken-embed.svgstyle")];
+const renderPng = (svg) => new Resvg(svg, { font: { fontBuffers: FONTS, defaultFontFamily: "Hanken Grotesk", loadSystemFonts: false } }).render().asPng();
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const r1 = (n) => (isFinite(n) ? (Math.round(n * 10) / 10).toFixed(1) : "—");
@@ -66,7 +70,7 @@ const pillL = (x, y, txt, fs = 25) => { const w = txt.length * (fs * 0.6) + 54; 
 const statTrio = (y, items) => items.map((it, i) => { const cx = [232, 540, 848][i]; return `${TD(cx, y, 100, 800, it.hot ? C.orange : C.text, esc(it.v), { anchor: "middle" })}${T(cx, y + 50, 26, 800, C.mut, esc(it.l), { ls: 3, anchor: "middle" })}`; }).join("");
 const cluster = (x, y, s, op = 1) => `<g transform="translate(${x},${y}) scale(${s})" opacity="${op}"><rect x="0" y="60" width="26" height="60" rx="4" fill="#9A3E12"/><rect x="34" y="36" width="26" height="84" rx="4" fill="#C24A14"/><rect x="68" y="12" width="26" height="108" rx="4" fill="#E0531B"/><rect x="102" y="34" width="26" height="86" rx="4" fill="#FF6A1A"/></g>`;
 const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
-const write = (svg, f) => sharp(Buffer.from(svg)).png().toFile(path.join(OUT, f));
+const write = (svg, f) => { fs.writeFileSync(path.join(OUT, f), renderPng(svg)); };
 
 async function run() {
   const teams = Object.keys(ch.teams).length, nPlayers = prospects.length;
