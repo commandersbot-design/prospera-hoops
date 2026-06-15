@@ -11,27 +11,31 @@ use yet, so nobody squats it).
 
 ## 1. Account bios
 
+**Register:** professional / authority — not a hype account. Emojis are *functional accents only*
+(one brand signal + a CTA arrow); typographic separators (`·`) and the `↓` arrow do the visual work.
+Zero emoji where the audience is parents (Facebook) or off-platform (site/email/press/cards).
+
 ### Instagram (primary — clips, cards, players live here)
 ```
-📊 The DMV's basketball scouting system of record
-🏀 DC · MD · VA — HS + AAU stats, profiles & film
-🎯 Real numbers. Honest evals. Your recruiting home.
-👇 Claim your FREE profile
+The DMV's basketball scouting system of record.
+DC · MD · VA — high school & AAU stats, profiles & film.
+Real numbers. Honest evaluation. 🏀
+Claim your free profile ↓
 ```
 Link: `prosperahoops.com`  ·  Category: *Sports* / *Sports League*  ·  Name field: `Prospera Hoops · DMV Basketball`
 
 ### X / Twitter (recruiting news, commitments, coaches)
 ```
-The scouting system of record for DMV basketball 🏀 DC/MD/VA · HS + AAU.
-Real stats, honest evals, shareable recruiting profiles. Players — claim yours free 👇
+The scouting system of record for DMV basketball. DC/MD/VA high school & AAU — real stats,
+honest evaluation, shareable recruiting profiles. Players: claim yours free ↓
 ```
 Link: `prosperahoops.com`  ·  Location: `DC · MD · VA`
 
 ### TikTok (fastest organic growth — game highlights)
 ```
-DMV hoops, tracked 📊🏀
-Stats • profiles • film
-Claim your free profile ⬇️
+DMV basketball, tracked.
+Stats · profiles · film.
+Claim your free profile ↓
 ```
 Link: `prosperahoops.com`
 
@@ -55,12 +59,12 @@ the **badge** (`brand-kit/prospera-badge-512.png`) where a name-in-logo reads be
 
 ## 2. Should you post before launch? YES.
 
-A launch into empty accounts converts terribly. Spend **Sun–Tue seeding + building a list** so
-Wednesday lands on an audience instead of silence. Pre-launch posts don't say "go use it" (site
-isn't live) — they say **"this is coming, get in first."**
+A launch into empty accounts converts terribly. You have a **2-day runway — today (Monday) and
+Tuesday** — to seed content + build a list so Wednesday lands on an audience instead of silence.
+Pre-launch posts don't say "go use it" (site isn't live) — they say **"this is coming, get in first."**
 
-Goal of pre-launch: **(a)** ~10–15 posts of content so the grid isn't empty, **(b)** a waitlist of
-players who want their profile, **(c)** the "Founding 100" promo seeded (below).
+Goal of the 2 days: **(a)** ~6–8 posts so the grid isn't empty, **(b)** a waitlist of players who
+want their profile, **(c)** the "Founding 100" promo seeded (below). Move fast — it's tight but plenty.
 
 ---
 
@@ -133,27 +137,24 @@ The site **generates pillars 1–3 for you** (cards + recaps). You supply 4–6.
 - **TikTok:** 1–2/day (sideline clips — highest organic upside).
 - Cross-post the card/clip; tailor the caption per platform.
 
-### Sunday (today/pre-launch · Day −3) — STAND UP THE ACCOUNTS
+### Monday (today · Day −2) — STAND UP THE ACCOUNTS + REVEAL
 1. Create/secure @prosperahoops on IG, X, TikTok, Facebook (+ reserve YouTube).
-2. Set bios (above), profile pic (coin), banner (use `brand-kit` lockup).
-3. **Post 1 (announce):** brand reveal. *"The DMV finally has a scouting system of record. Prospera Hoops drops Wednesday. Every DC/MD/VA hooper — tracked, with real stats and a recruiting profile. 🏀📊 Your profile, free. #DMVHoops"* + the logo/lockup.
-4. **Story:** "Players — want first access? Comment/DM your name + school." (start the waitlist)
+2. Set bios (above), profile pic (coin icon), banner (`brand-kit` lockup).
+3. **Post 1 (announce):** brand reveal. *"The DMV's basketball scouting system of record arrives Wednesday. Every DC/MD/VA hooper — high school and AAU — tracked with real stats and a recruiting profile. Free. prosperahoops.com"* + logo/lockup.
+4. **Post 2 (the cards):** carousel of 3–4 real stat cards (Hayfield / leaders). *"This is your recruiting card — real stats, auto-updated, shareable anywhere. Every DMV player gets one, free. Wednesday."*
+5. **Story:** "Players — want first access? Comment or DM your name + school." (start the waitlist). Countdown sticker (2 days).
 
-### Monday (Day −2) — TEASE THE PRODUCT
-5. **Post 2 (the cards):** carousel of 3–4 real stat cards (Hayfield/leaders). *"This is your recruiting card. Real stats, auto-updated, share it anywhere. Every DMV player gets one — free. Wed."*
-6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim get a permanent Founding Player badge + a custom card + a shot at [prize]. Wednesday. Don't sleep."*
-7. **Stories:** countdown sticker (2 days), poll "what's your PPG this summer? 👀"
-
-### Tuesday (Day −1) — BUILD THE SPIKE
-8. **Post 4:** "Tomorrow." Short hype reel — quick cuts of cards + "prosperahoops.com goes live 🏀". Countdown sticker (1 day).
-9. **Print the QR code**, charge your phone, pre-write tomorrow's launch posts.
-10. DM everyone on the waitlist: "We go live tomorrow — you're on the early list. I'll be at [event] if you want yours done in person."
+### Tuesday (Day −1) — PROMO + SPIKE
+6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim their profile get a permanent Founding Player badge, a custom stat card, and a shot at [prize]. Wednesday."*
+7. **Post 4 ("tomorrow"):** short reel — quick cuts of cards + *"prosperahoops.com goes live tomorrow."* Countdown sticker (1 day).
+8. **Print the QR code**, charge your phone, pre-write the launch posts.
+9. **DM the waitlist:** "We go live tomorrow — you're on the early list. I'll be at [event] if you want yours done in person."
 
 ### WEDNESDAY (LAUNCH + first games) — GO
-11. **Morning — Post 5 (LAUNCH):** *"WE'RE LIVE. prosperahoops.com — the DMV's scouting system of record. Claim your free profile. Founding 100 starts NOW. 🏀📊"* Pin it. Link in bio + link sticker in story.
-12. **All day at the game:** run the **in-person loop** (§4). Stories nonstop: "claiming players live," clips, "Founding Player #1, #2…".
-13. **Night — Post 6 (recap):** the day's top performer card + "covered [event] today. Tomorrow: [next]. Get your team on here."
-14. Post the running **Founding 100 count** to story ("37/100 claimed") — scarcity engine.
+10. **Morning — Post 5 (LAUNCH):** *"We're live. prosperahoops.com — the DMV's scouting system of record. Claim your free profile. Founding 100 starts now."* Pin it. Link in bio + link sticker in story.
+11. **All day at the game:** run the **in-person loop** (§4). Stories nonstop — "claiming players live," clips, "Founding Player #1, #2…".
+12. **Night — Post 6 (recap):** the day's top-performer card + *"Covered [event] today. Tomorrow: [next]. Get your team on here."*
+13. Post the running **Founding 100 count** to story ("37/100 claimed") — scarcity engine.
 
 ### Thursday–Sunday (Week 1) — REPEAT + COMPOUND
 - Every game day: cover it → cards + recaps → tag players/teams → they repost.
