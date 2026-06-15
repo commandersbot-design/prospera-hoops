@@ -9,6 +9,15 @@ use yet, so nobody squats it).
 
 ---
 
+## 0. Brand lines (taglines)
+
+- **Hook (sticky, goes everywhere):** **"Proof over hype."** — short, memorable, and it *is* the
+  differentiator (real stats vs. every hype recruiting account).
+- **CTA (player action):** **"Track it. Prove it. Get recruited."** — the loop, dead clear.
+- **Descriptor (credibility, for coaches/parents/SEO):** "The DMV's basketball scouting system of record."
+
+Lead with the **hook**, support with the **descriptor**, close with the **CTA**.
+
 ## 1. Account bios
 
 **Register:** professional / authority — not a hype account. Emojis are *functional accents only*
@@ -17,24 +26,24 @@ Zero emoji where the audience is parents (Facebook) or off-platform (site/email/
 
 ### Instagram (primary — clips, cards, players live here)
 ```
-The DMV's basketball scouting system of record.
-DC · MD · VA — high school & AAU stats, profiles & film.
-Real numbers. Honest evaluation. 🏀
-Claim your free profile ↓
+Proof over hype. 🏀
+The DMV's basketball scouting system of record — DC · MD · VA, HS & AAU.
+Real stats. Honest evals. Your recruiting home, free.
+Claim yours ↓
 ```
 Link: `prosperahoops.com`  ·  Category: *Sports* / *Sports League*  ·  Name field: `Prospera Hoops · DMV Basketball`
 
 ### X / Twitter (recruiting news, commitments, coaches)
 ```
-The scouting system of record for DMV basketball. DC/MD/VA high school & AAU — real stats,
-honest evaluation, shareable recruiting profiles. Players: claim yours free ↓
+Proof over hype. The scouting system of record for DMV basketball — DC/MD/VA, HS & AAU.
+Real stats, honest evals, shareable recruiting profiles. Players: claim yours free ↓
 ```
 Link: `prosperahoops.com`  ·  Location: `DC · MD · VA`
 
 ### TikTok (fastest organic growth — game highlights)
 ```
-DMV basketball, tracked.
-Stats · profiles · film.
+Proof over hype.
+DMV basketball, tracked — stats · profiles · film.
 Claim your free profile ↓
 ```
 Link: `prosperahoops.com`
