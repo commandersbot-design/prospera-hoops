@@ -2498,9 +2498,9 @@ function CommitmentsTracker({ onOpen }) {
   return (
     <div style={{ display: "grid", gap: 18 }}>
       <div>
-        <SectionLabel>Commitments · 2026 Class</SectionLabel>
+        <SectionLabel>Recruiting Commitments</SectionLabel>
         <p style={{ fontSize: 13, color: T.textDim, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 640 }}>
-          DMV prospects who've made their college choice. Updates as commitments roll in.
+          DMV prospects (classes of 2027–2030) who've made their college choice. Updates as commitments roll in.
         </p>
       </div>
 
