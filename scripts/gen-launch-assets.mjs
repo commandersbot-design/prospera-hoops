@@ -65,9 +65,9 @@ async function run() {
       <text x="${W / 2}" y="600" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${C.text}" text-anchor="middle">PROOF OVER</text>
       <text x="${W / 2}" y="745" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${C.orange}" text-anchor="middle">HYPE.</text>
       ${rule(W / 2, 800, 120)}
-      <text x="${W / 2}" y="905" font-family='${SA}' font-weight="700" font-size="42" fill="${C.text}" text-anchor="middle">Every DMV hooper, finally tracked.</text>
-      <text x="${W / 2}" y="958" font-family='${SA}' font-weight="700" font-size="38" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. Your recruiting home — free.</text>
-      ${pill(W / 2, 1110, "LIVE WEDNESDAY", 44, 5)}
+      <text x="${W / 2}" y="905" font-family='${SA}' font-weight="800" font-size="50" letter-spacing="1" fill="${C.text}" text-anchor="middle">Your game, on the record.</text>
+      <text x="${W / 2}" y="958" font-family='${SA}' font-weight="700" font-size="36" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. Your recruiting home — free.</text>
+      ${pill(W / 2, 1110, "LIVE THURSDAY", 44, 5)}
     </g>
     <text x="${W / 2}" y="1290" font-family='${SA}' font-weight="700" font-size="38" letter-spacing="4" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
     ${vig(W, H)}</svg>`;
@@ -80,12 +80,12 @@ async function run() {
     ${cluster(-40, 1150, 2.4, 0.09)}${cluster(840, 70, 2.0, 0.07)}
     ${emblemAt(fw / 2, 70, 116)}
     ${lockup(fw / 2, 256, 44)}
-    ${chip(fw / 2, 322, "TRACK IT.  PROVE IT.  GET RECRUITED.", 22, 3)}
+    ${chip(fw / 2, 322, "YOUR GAME · ON THE RECORD", 22, 4)}
     <rect x="${fw / 2 - 300}" y="400" width="600" height="600" rx="30" fill="#FFFFFF"/>
     ${[[fw / 2 - 300, 400, 1, 1], [fw / 2 + 300, 400, -1, 1], [fw / 2 - 300, 1000, 1, -1], [fw / 2 + 300, 1000, -1, -1]].map(([x, y, sx, sy]) => `<path d="M ${x + sx * 6} ${y + sy * 56} L ${x + sx * 6} ${y + sy * 6} L ${x + sx * 56} ${y + sy * 6}" fill="none" stroke="${C.orange}" stroke-width="8" stroke-linecap="round"/>`).join("")}
-    <text x="${fw / 2}" y="1090" font-family='${SA}' font-weight="800" font-size="70" fill="${C.text}" text-anchor="middle">SCAN TO CLAIM</text>
-    <text x="${fw / 2}" y="1158" font-family='${SA}' font-weight="800" font-size="70" fill="${C.orange}" text-anchor="middle">YOUR FREE PROFILE</text>
-    <text x="${fw / 2}" y="1218" font-family='${SA}' font-weight="700" font-size="30" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. First 100 = Founding Player.</text>
+    <g transform="translate(${fw / 2},1088) skewX(-10)"><text x="0" y="0" font-family='${SA}' font-weight="800" font-size="80" letter-spacing="-1.5" fill="${C.text}" text-anchor="middle">SCAN TO CLAIM</text></g>
+    <g transform="translate(${fw / 2},1162) skewX(-10)"><text x="0" y="0" font-family='${SA}' font-weight="800" font-size="80" letter-spacing="-1.5" fill="${C.orange}" text-anchor="middle">YOUR FREE PROFILE</text></g>
+    <text x="${fw / 2}" y="1222" font-family='${SA}' font-weight="700" font-size="29" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. First 100 = Founding Player.</text>
     <text x="${fw / 2}" y="1300" font-family='${SA}' font-weight="700" font-size="34" letter-spacing="3" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
     ${vig(fw, fh)}</svg>`;
   const flyerBase = await sharp(Buffer.from(flyer)).png().toBuffer();

@@ -1,8 +1,9 @@
 # Prospera Hoops — Launch & Social Playbook
 
-Everything to launch the brand and lock in users. Site goes live **Wednesday** at
-**prosperahoops.com**. You'll be at summer-league games **in person starting Wednesday** —
-that's the #1 acquisition channel, so the whole plan is built around it.
+Everything to launch the brand and lock in users. Site goes live **Thursday** at
+**prosperahoops.com**. You'll be at summer-league games **in person starting Wednesday** (soft-launch
++ data collection Wednesday, public launch Thursday) — being there is the #1 acquisition channel, so
+the whole plan is built around it.
 
 Handle everywhere: **@prosperahoops** (claim it on every platform today, even ones you won't
 use yet, so nobody squats it).
@@ -11,12 +12,14 @@ use yet, so nobody squats it).
 
 ## 0. Brand lines (taglines)
 
-- **Hook (sticky, goes everywhere):** **"Proof over hype."** — short, memorable, and it *is* the
-  differentiator (real stats vs. every hype recruiting account).
-- **CTA (player action):** **"Track it. Prove it. Get recruited."** — the loop, dead clear.
-- **Descriptor (credibility, for coaches/parents/SEO):** "The DMV's basketball scouting system of record."
+- **Hook (sticky, positioning):** **"Proof over hype."** — short, memorable; it *is* the differentiator
+  (real stats vs. every hype recruiting account).
+- **Tagline (catchy, player-personal):** **"Your game, on the record."** — emotional, and ties to the
+  "system of record." Great on cards, profiles, the announce graphic.
+- **CTA (action):** **"Track it. Prove it. Get recruited."** — the loop, dead clear.
+- **Descriptor (credibility, coaches/parents/SEO):** "The DMV's basketball scouting system of record."
 
-Lead with the **hook**, support with the **descriptor**, close with the **CTA**.
+Lead with the **hook** or **tagline**, support with the **descriptor**, close with the **CTA**.
 
 ## 1. Account bios
 
@@ -68,12 +71,13 @@ the **badge** (`brand-kit/prospera-badge-512.png`) where a name-in-logo reads be
 
 ## 2. Should you post before launch? YES.
 
-A launch into empty accounts converts terribly. You have a **2-day runway — today (Monday) and
-Tuesday** — to seed content + build a list so Wednesday lands on an audience instead of silence.
+A launch into empty accounts converts terribly. You have a **3-day runway — today (Monday), Tuesday,
+and Wednesday** — to seed content + build a list so **Thursday** lands on an audience instead of silence.
 Pre-launch posts don't say "go use it" (site isn't live) — they say **"this is coming, get in first."**
 
-Goal of the 2 days: **(a)** ~6–8 posts so the grid isn't empty, **(b)** a waitlist of players who
-want their profile, **(c)** the "Founding 100" promo seeded (below). Move fast — it's tight but plenty.
+Goal of the 3 days: **(a)** ~8–10 posts so the grid isn't empty, **(b)** a waitlist of players who want
+their profile, **(c)** the "Founding 100" promo seeded (below). Bonus: you're **at the games Wednesday** —
+soft-launch in person (collect rosters + sign early Founding Players) before going public Thursday.
 
 ---
 
@@ -102,7 +106,7 @@ stats you can't back. "Founding Player" = *was here first*, not *is ranked #1*.
 
 You're physically at the games where these kids and parents are. Convert on the spot.
 
-**Before you go (Tuesday):**
+**Before the games (by Tuesday night):**
 - Print a **QR code** that opens `prosperahoops.com` (I can generate the PNG — see end). Put it on:
   a phone lock-screen, a few printed cards/flyers, and a shirt/sticker if you can.
 - Have the **claim flow ready** and your phone logged in.
@@ -145,24 +149,27 @@ The site **generates pillars 1–3 for you** (cards + recaps). You supply 4–6.
 - **TikTok:** 1–2/day (sideline clips — highest organic upside).
 - Cross-post the card/clip; tailor the caption per platform.
 
-### Monday (today · Day −2) — STAND UP THE ACCOUNTS + REVEAL
+### Monday (today · Day −3) — STAND UP THE ACCOUNTS + REVEAL
 1. Create/secure @prosperahoops on IG, X, TikTok, Facebook (+ reserve YouTube).
 2. Set bios (above), profile pic (coin icon), banner (`brand-kit` lockup).
-3. **Post 1 (announce):** brand reveal. *"The DMV's basketball scouting system of record arrives Wednesday. Every DC/MD/VA hooper — high school and AAU — tracked with real stats and a recruiting profile. Free. prosperahoops.com"* + logo/lockup.
-4. **Post 2 (the cards):** carousel of 3–4 real stat cards (Hayfield / leaders). *"This is your recruiting card — real stats, auto-updated, shareable anywhere. Every DMV player gets one, free. Wednesday."*
-5. **Story:** "Players — want first access? Comment or DM your name + school." (start the waitlist). Countdown sticker (2 days).
+3. **Post 1 (announce):** the `launch-announce.png` reveal — *"Proof over hype. The DMV's basketball scouting system of record arrives Thursday. Every DC/MD/VA hooper — high school and AAU — tracked, with real stats and a recruiting profile. Free."*
+4. **Post 2 (the cards):** carousel of 3–4 real stat cards (Hayfield / leaders). *"Your game, on the record. This is your recruiting card — real stats, auto-updated, shareable anywhere. Every DMV player gets one, free. Thursday."*
+5. **Story:** "Players — want first access? Comment or DM your name + school." (start the waitlist). Countdown sticker (3 days).
 
-### Tuesday (Day −1) — PROMO + SPIKE
-6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim their profile get a permanent Founding Player badge, a custom stat card, and a featured spotlight across our channels. Wednesday."*
-7. **Post 4 ("tomorrow"):** short reel — quick cuts of cards + *"prosperahoops.com goes live tomorrow."* Countdown sticker (1 day).
-8. **Print the QR code**, charge your phone, pre-write the launch posts.
-9. **DM the waitlist:** "We go live tomorrow — you're on the early list. I'll be at [event] if you want yours done in person."
+### Tuesday (Day −2) — THE PROMO
+6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim get a permanent Founding Player badge, a custom stat card, and a featured spotlight across our channels. Thursday. Track it. Prove it. Get recruited."*
+7. **Story:** poll/engagement ("what's your summer PPG? 👀"), countdown (2 days). DM new waitlist sign-ups.
 
-### WEDNESDAY (LAUNCH + first games) — GO
-10. **Morning — Post 5 (LAUNCH):** *"We're live. prosperahoops.com — the DMV's scouting system of record. Claim your free profile. Founding 100 starts now."* Pin it. Link in bio + link sticker in story.
-11. **All day at the game:** run the **in-person loop** (§4). Stories nonstop — "claiming players live," clips, "Founding Player #1, #2…".
-12. **Night — Post 6 (recap):** the day's top-performer card + *"Covered [event] today. Tomorrow: [next]. Get your team on here."*
-13. Post the running **Founding 100 count** to story ("37/100 claimed") — scarcity engine.
+### Wednesday (Day −1) — SOFT-LAUNCH AT THE GAMES + SPIKE
+8. **You're at the games.** Run a quiet version of the in-person loop (§4): film buckets, collect rosters/box scores, and tell players *"profiles go live tomorrow — you'll be a Founding Player."* Capture names for the waitlist.
+9. **Post 4 ("tomorrow"):** short reel — sideline clips + cards + *"prosperahoops.com goes live tomorrow."* Countdown (1 day).
+10. **Print the QR flyer** (`qr-flyer.png`), charge your phone, pre-write Thursday's posts. **DM the waitlist:** "We go live tomorrow — you're first."
+
+### THURSDAY (LAUNCH + games) — GO
+11. **Morning — Post 5 (LAUNCH):** *"We're live. prosperahoops.com. Your game, on the record — claim your free profile. Founding 100 starts now."* Pin it. Link in bio + link sticker in story.
+12. **All day at the games:** run the full **in-person loop** (§4). Stories nonstop — "claiming players live," clips, "Founding Player #1, #2…". Load the rosters/box scores you grabbed Wednesday so cards are ready *today*.
+13. **Night — Post 6 (recap):** the day's top-performer card + *"Covered [event]. Get your team on here."*
+14. Post the running **Founding 100 count** to story ("37/100 claimed") — scarcity engine.
 
 ### Thursday–Sunday (Week 1) — REPEAT + COMPOUND
 - Every game day: cover it → cards + recaps → tag players/teams → they repost.
