@@ -3030,6 +3030,10 @@ export default function App() {
   const { isAdmin } = useAuth();
   const { hasPass } = useCoachAccess();
   const coachAccess = isAdmin || hasPass;
+  // Hide the Commitments tab until there's at least one committed prospect — an
+  // empty tab is a weak first impression. Auto-reappears when data is added.
+  const hasCommitments = ready && PROSPECTS.some((p) => p.status === "committed" || p.status === "signed");
+  const navItems = NAV.filter((n) => n.key !== "commitments" || hasCommitments);
 
   useEffect(() => {
     Promise.all([
@@ -3131,7 +3135,7 @@ export default function App() {
           paddingBottom: isMobile ? 4 : 0,
           scrollbarWidth: "none",
         }}>
-          {NAV.map((n) => {
+          {navItems.map((n) => {
             const active = view === n.key && !open;
             const locked = n.key === "scouthq" && !coachAccess;
             return (
