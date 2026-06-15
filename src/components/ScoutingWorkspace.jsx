@@ -588,7 +588,10 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
   // Fork (a): the Class facet keeps a team if ANY roster player matches a
   // selected class (team-level) — the default. (Alternative: filter roster ROWS.)
   const teams = useMemo(() => TEAM_DATA.filter((t) => {
-    if (!lvl.pass(t.level || "Summer")) return false;
+    // A team can belong to several levels (a summer team that's also a high school) —
+    // it passes the Level filter if ANY of its levels matches.
+    const levs = t.levels && t.levels.length ? t.levels : [t.level || "Summer"];
+    if (!levs.some((l) => lvl.pass(l))) return false;
     if (!region.pass(t.region)) return false;
     if (trackedOnly && countTracked(t.roster) === 0) return false;
     if (goldOnly && countElite(t.roster) === 0) return false;

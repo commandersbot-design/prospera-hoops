@@ -2952,9 +2952,21 @@ function buildWorkspaceProspects() {
     };
   });
 }
+// Set of canonical school keys known to the DMV directory — used to recognize
+// when a Capitol Hoops summer team (e.g. "Hawks (Hayfield)") IS a real high school
+// (Hayfield), so the two aren't shown as separate teams.
+function dmvSchoolKeySet() {
+  const s = new Set();
+  for (const name of Object.keys(SCHOOLS)) s.add(schoolKey(name));
+  for (const d of DMV_DIRECTORY) s.add(schoolKey(d.name));
+  return s;
+}
 function buildWorkspaceTeams() {
+  const dmvKeys = dmvSchoolKeySet();
   return Object.entries(CH_TEAMS).map(([slug, t]) => {
     const school = canonicalSchool(slug, t.name);
+    const ck = schoolKey(school);
+    const isHsProgram = dmvKeys.has(ck); // a Capitol Hoops team that's also a DMV high school
     const loc = SCHOOL_LOCATIONS[school] || {};
     const roster = (t.players || []).map((pl) => {
       const pr = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
@@ -2987,7 +2999,12 @@ function buildWorkspaceTeams() {
     });
     return {
       name: t.name, slug, conf: null, region: loc.state || SCHOOLS[school]?.state || null,
-      level: t.level || "Summer", circuit: t.circuit || "Capitol Hoops Summer League", season: t.season || "2026",
+      level: t.level || "Summer",
+      // A summer team that's also a known DMV high school belongs under BOTH the
+      // Summer and HS filters as one program (not two split teams).
+      levels: [...new Set([t.level || "Summer", ...(isHsProgram ? ["HS"] : [])])],
+      schoolKeyCanon: ck,
+      circuit: t.circuit || "Capitol Hoops Summer League", season: t.season || "2026",
       gp: roster.reduce((m, p) => Math.max(m, p.gp || 0), 0), coach: t.headCoach || null, roster,
       topGames: topPerformances(entries, 4),
       matchups: [...gmap.values()], upcoming,
@@ -3015,7 +3032,8 @@ function uniqueSlugs(list) {
 // once an HS season is ingested for that program).
 function schoolToTeam(s) {
   return {
-    name: s.name, slug: `hs-${s.slug || schoolKey(s.name)}`, level: "HS", circuit: "High School", season: "2026",
+    name: s.name, slug: `hs-${s.slug || schoolKey(s.name)}`, level: "HS", levels: ["HS"],
+    schoolKeyCanon: schoolKey(s.name), circuit: "High School", season: "2026",
     region: s.st || null, coach: s.coach || null, gp: 0, topGames: [],
     roster: (s.roster || []).map((r) => ({ ...r, gp: 0, pts: null, reb: null, ast: null, mpg: null, archetype: null, archetypeEarly: false })),
     directoryOnly: s.directoryOnly || false,
@@ -3182,7 +3200,16 @@ export default function App() {
   // Unified Teams workspace: Capitol Hoops summer teams + AAU programs (from
   // CH_TEAMS) + every DMV school as an HS-level team. The Level facet (HS/Summer/
   // AAU) splits them — so there's no separate Schools tab.
-  const workspaceTeams = ready ? uniqueSlugs([...buildWorkspaceTeams(), ...buildWorkspaceSchools().map(schoolToTeam)]) : [];
+  // Merge Capitol Hoops (summer) teams with the DMV school directory into ONE
+  // entry per program: a summer team that IS a known high school (e.g. "Hawks
+  // (Hayfield)" → Hayfield) absorbs the HS slot, so the same team never appears
+  // twice. The CH entry keeps the real roster/stats; the empty HS stub is dropped.
+  const workspaceTeams = ready ? (() => {
+    const chTeams = buildWorkspaceTeams();
+    const covered = new Set(chTeams.map((t) => t.schoolKeyCanon).filter(Boolean));
+    const hsTeams = buildWorkspaceSchools().map(schoolToTeam).filter((t) => !covered.has(t.schoolKeyCanon));
+    return uniqueSlugs([...chTeams, ...hsTeams]);
+  })() : [];
   const workspaceProspects = ready ? buildWorkspaceProspects() : [];
 
   return (
