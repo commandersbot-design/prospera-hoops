@@ -15,8 +15,8 @@ const OUT = "docs/launch-assets";
 fs.mkdirSync(OUT, { recursive: true });
 const SITE = "https://www.prosperahoops.com";
 const C = { bg: "#0B0E13", panel: "#12161C", orange: "#FF6A1A", rust: "#C24A14", text: "#f6f6f4", mut: "#9aa0a8", hair: "rgba(255,255,255,0.10)" };
-const SA = '"Saira Condensed", sans-serif';
-const FONT = (fs.readFileSync("public/brand/svg/prosperahoops-wordmark-dark.svg", "utf8").match(/<style[\s\S]*?<\/style>/) || [""])[0];
+const SA = "Saira"; // template-pack display font (embedded, non-condensed)
+const FONT = fs.readFileSync("brand-kit/saira-embed.svgstyle", "utf8");
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8");
 const emblemInner = EMBLEM.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 
