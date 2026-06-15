@@ -16,7 +16,9 @@ Regenerate: `node scripts/gen-launch-set.mjs`. Captions below are **post copy** 
 ## Captions
 
 **06.15 — Announcement**
-> A home for DMV hoopers. Every player seen. Every step tracked. All in one place. No hype — just the tape and the numbers. 06.18 ⛹️ #DMVHoops #DMVBasketball #CapitolHoops
+> A home for DMV hoopers. Every player seen, every game tracked — real stats, no hype, no fake rankings. Claim your profile to add your photo, film, and contact. 06.18 ⛹️ #DMVHoops #DMVBasketball #CapitolHoops
+
+> Note: lead with the **numbers** (real for every player now); **film is "add yours" via claim**, not a promise — don't say "the tape" until coverage exists.
 
 **06.16 — Pillar: Seen**
 > If you hooped in the DMV this summer, you're in here. Every player. Every game. 2 days. ⛹️ #DMVHoops #DMVBasketball #CapitolHoops
