@@ -32,7 +32,7 @@ const INTAKE = path.resolve(flag("--intake", "data/intake"));
 const OUT = path.resolve(flag("--out", "public/data"));
 // Competition context for this ingest. Defaults match the existing data so a
 // plain `npm run ingest` stays summer/Capitol Hoops. For an HS team:
-//   --level HS --circuit "Hayfield HS"   ; for AAU: --level AAU --circuit "Prospect U"
+//   --level HS --circuit "Hayfield HS"   ; for AAU: --level AAU --circuit "Washington Warriors 3SSB"
 const LEVEL = flag("--level", "Summer");                       // HS | Summer | AAU
 const CIRCUIT = flag("--circuit", "Capitol Hoops Summer League");
 const SEASON = flag("--season", "");

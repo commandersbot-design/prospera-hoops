@@ -5,7 +5,7 @@ intake sheet. Lead with what they already want — **stat tracking + a recruitin
 for their players** — not "an app." The pitch is: *you keep playing, we turn your box scores
 into player profiles, leaderboards, recaps, and a team page — free.*
 
-Pilots already lined up: **Hayfield** (HS, live) · **Prospect U** + **AKT** (AAU, rosters pending).
+Pilots already lined up: **Hayfield** (HS, live) · **Washington Warriors 3SSB** + **AKT** (AAU, rosters pending).
 
 ---
 
@@ -95,7 +95,7 @@ Generate it per program:
 
 ```bash
 python scripts/gen-intake-template.py --team hayfield          # prefilled from existing roster
-python scripts/gen-intake-template.py --new "Prospect U 17U"   # blank roster for a new program
+python scripts/gen-intake-template.py --new "Washington Warriors 3SSB 17U"   # blank roster for a new program
 # → docs/<Program>-Intake-Template.xlsx
 ```
 

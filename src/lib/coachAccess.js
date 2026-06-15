@@ -24,7 +24,7 @@ const KEY = "prospera.coachPass.v1";
 const CODES = {
   "PROSPERA-OWNER-CF2E1B": { tier: "owner", label: "Prospera (owner)" },
   "HAYFIELD-FE5D87": { tier: "pilot", team: "Hayfield", label: "Hayfield HS · Pilot" },
-  "PROSPECTU-054F01": { tier: "pilot", team: "Prospect U", label: "Prospect U · Pilot" },
+  "WARRIORS-3SSB-054F01": { tier: "pilot", team: "Washington Warriors 3SSB", label: "Washington Warriors 3SSB · Pilot" },
   "AKT-FE3A02": { tier: "pilot", team: "AKT", label: "AKT · Pilot" },
 };
 

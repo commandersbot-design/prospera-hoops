@@ -22,7 +22,7 @@ Defined in `CODES` in `src/lib/coachAccess.js`. Hand these to the pilot coaches 
 |---|---|
 | `PROSPERA-OWNER-CF2E1B` | Owner access (you, on any device) |
 | `HAYFIELD-FE5D87` | Hayfield HS · pilot |
-| `PROSPECTU-054F01` | Prospect U · pilot |
+| `WARRIORS-3SSB-054F01` | Washington Warriors 3SSB · pilot |
 | `AKT-FE3A02` | AKT · pilot |
 
 Codes carry a random suffix so they can't be guessed from the program name. To **rotate**

@@ -96,7 +96,7 @@ Full-width page when a team is clicked (was a side-rail preview).
 
 ## 14. Pilots & coach intake
 - **Hayfield** = HS pilot, fully loaded (workbook-owned, live end-to-end).
-- **Prospect U** + **AKT** = AAU pilots — blank coach workbooks generated (`docs/*-Intake-Template.xlsx`), rosters not loaded yet.
+- **Washington Warriors 3SSB** (formerly Prospect U) + **AKT** = AAU pilots — blank coach workbooks generated (`docs/*-Intake-Template.xlsx`), rosters not loaded yet.
 - Weekly loop: coach fills workbook → `npm run ingest` → pages/cards update → `npm run cards` to post.
 
 ---
