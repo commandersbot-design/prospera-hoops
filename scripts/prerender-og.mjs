@@ -26,7 +26,11 @@ function injectOg({ title, desc, img, url }) {
   html = html.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${esc(desc)}" />`);
   html = html.replace(/<meta property="og:image"[^>]*>/, `<meta property="og:image" content="${img}" />`);
   html = html.replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${esc(desc)}" />`);
-  html = html.replace(/<meta name="twitter:card"[^>]*>/, `$&\n    <meta name="twitter:image" content="${img}" />\n    <meta property="og:url" content="${url}" />`);
+  // Replace (not append) the per-page tags so each player/team page is canonical to
+  // itself — the base index.html carries homepage defaults for these.
+  html = html.replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${url}" />`);
+  html = html.replace(/<meta name="twitter:image"[^>]*>/, `<meta name="twitter:image" content="${img}" />`);
+  html = html.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${url}" />`);
   return html;
 }
 
