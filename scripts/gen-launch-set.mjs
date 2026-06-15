@@ -18,6 +18,9 @@ const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8").replace(
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const T = (x, y, s, w, fill, font, txt, ls = 0, anchor = "start") => `<text x="${x}" y="${y}" font-family="${font}" font-weight="${w}" font-size="${s}" fill="${fill}" letter-spacing="${ls}" text-anchor="${anchor}">${esc(txt)}</text>`;
 const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
+// official lockup (vector, transparent) — emblem + PROSPERA/HOOPS wordmark in Saira Condensed.
+const LOCKUP_SVG = fs.readFileSync("brand-kit/prospera-lockup-dark.svg", "utf8").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const lockupAt = (x, y, hgt) => `<g transform="translate(${x},${y})"><svg width="${(hgt * 560 / 200).toFixed(1)}" height="${hgt}" viewBox="0 0 560 200">${LOCKUP_SVG}</svg></g>`;
 
 // triad row: lays SEEN · TRACKED · HOME centered at (cx,y); lit[i] => orange, else dim.
 function triad(cx, y, fs, lit) {
@@ -35,9 +38,8 @@ function triad(cx, y, fs, lit) {
 function artboard(w, h, g) {
   const story = h > w, cx = w / 2, m = story ? 100 : 80;
   // logo lockup
-  const logoY = m, logo = story
-    ? `${emblemAt(cx - 27, logoY, 54)}${T(cx, logoY + 88, 30, 800, C.off, HG, "PROSPERA HOOPS", 1, "middle")}`
-    : `${emblemAt(m, logoY, 54)}${T(m + 70, logoY + 38, 30, 800, C.off, HG, "PROSPERA HOOPS", 1)}`;
+  const lhH = story ? 84 : 76, lhW = lhH * 560 / 200;
+  const logo = story ? lockupAt(cx - lhW / 2, m - 18, lhH) : lockupAt(m - 12, m - 18, lhH);
   const triadY = story ? h * 0.66 : h * 0.70;
   const triadFS = g.bigTriad ? (story ? 132 : 116) : (story ? 60 : 52);
   let body;
