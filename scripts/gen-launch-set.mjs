@@ -45,8 +45,9 @@ function artboard(w, h, g) {
     const eyeY = story ? h * 0.22 : h * 0.22;
     const fs = story ? 200 : 172, lh = fs;
     const words = ["SEEN.", "TRACKED.", "HOME."];
+    const cols = [C.off, C.off, C.orange]; // SEEN/TRACKED white, HOME orange (the payoff)
     const first = h * 0.5 - 0.72 * fs;
-    const stack = words.map((wd, i) => T(cx, first + i * lh, fs, 800, g.lit[i] ? C.orange : C.dim, SC, wd, 1, "middle")).join("");
+    const stack = words.map((wd, i) => T(cx, first + i * lh, fs, 800, cols[i], SC, wd, 1, "middle")).join("");
     body = `${T(cx, eyeY, story ? 30 : 28, 700, C.orange, HG, g.eyebrow, 6, "middle")}
       ${stack}
       ${T(cx, first + 2 * lh + (story ? 96 : 82), story ? 36 : 34, 500, C.mut, HG, g.sub, 0.5, "middle")}`;
