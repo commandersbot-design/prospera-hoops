@@ -1,6 +1,7 @@
-// Launch graphic set ("A1 Graphite", broadcast-grade) → docs/launch-set/
-// 5 graphics × 2 canvases (feed 1080x1080, story 1080x1920) = 10 export-ready PNGs.
-// Display: Oswald (confirmed) · Body: Hanken Grotesk. Brand: PROSPERA HOOPS.
+// Launch graphic set — "A1 Graphite" illuminated-triad campaign → docs/launch-set/
+// 4 dates × 2 canvases (feed 1080x1080 + story 1080x1920) = 8 export-ready PNGs.
+// The triad SEEN · TRACKED · HOME sits in a fixed band; each day lights a different word.
+// Display: Saira Condensed 800 · Body: Hanken Grotesk. Rendered via resvg (real fonts, no serif).
 // Run: node scripts/gen-launch-set.mjs
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
@@ -8,66 +9,80 @@ import path from "path";
 
 const OUT = "docs/launch-set";
 fs.mkdirSync(OUT, { recursive: true });
-// Render via resvg with explicit font buffers — librsvg/sharp ignores base64 @font-face,
-// so it would fall back to a serif. resvg loads the TTFs and renders Oswald/Hanken correctly.
+const C = { off: "#F4F2ED", orange: "#F25C1F", dim: "rgba(244,242,237,0.16)", mut: "#9A9DA4", hair: "rgba(244,242,237,0.10)" };
+const SC = "Saira Condensed", HG = "Hanken Grotesk";
 const ttfBufs = (p) => [...fs.readFileSync(p, "utf8").matchAll(/base64,([A-Za-z0-9+/=]+)\)/g)].map((m) => Buffer.from(m[1], "base64"));
-const FONTS = [...ttfBufs("brand-kit/oswald-embed.svgstyle"), ...ttfBufs("brand-kit/hanken-embed.svgstyle")];
+const FONTS = [...ttfBufs("brand-kit/saira-condensed-embed.svgstyle"), ...ttfBufs("brand-kit/hanken-embed.svgstyle")];
 const renderPng = (svg) => new Resvg(svg, { font: { fontBuffers: FONTS, defaultFontFamily: "Hanken Grotesk", loadSystemFonts: false } }).render().asPng();
-const C = { bg: "#141414", bg2: "#0E0E0E", orange: "#FF6A1A", text: "#F4F4F2", mut: "#8A8F98", faint: "#55585F", hair: "rgba(255,255,255,0.09)" };
-const OS = "Oswald", HG = "Hanken Grotesk";
-const FONT = "<style>" + ["brand-kit/oswald-embed.svgstyle", "brand-kit/hanken-embed.svgstyle"].map((f) => fs.readFileSync(f, "utf8").replace(/<\/?style>/g, "")).join("") + "</style>";
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const tc = (x, y, s, w, fill, font, txt, ls = 0) => `<text x="${x}" y="${y}" font-family="${font}" font-weight="${w}" font-size="${s}" fill="${fill}" letter-spacing="${ls}" text-anchor="middle">${esc(txt)}</text>`;
+const T = (x, y, s, w, fill, font, txt, ls = 0, anchor = "start") => `<text x="${x}" y="${y}" font-family="${font}" font-weight="${w}" font-size="${s}" fill="${fill}" letter-spacing="${ls}" text-anchor="${anchor}">${esc(txt)}</text>`;
+const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
 
-const defs = `<defs>${FONT}
-  <radialGradient id="vig" cx="0.5" cy="0.42" r="0.85"><stop offset="0.45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.55"/></radialGradient>
-  <radialGradient id="glow" cx="0.5" cy="0.4" r="0.6"><stop offset="0" stop-color="#FF6A1A" stop-opacity="0.07"/><stop offset="1" stop-color="#FF6A1A" stop-opacity="0"/></radialGradient></defs>`;
-const emblemAt = (cx, y, s) => `<g transform="translate(${cx - s / 2},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
-// broadcast corner registration marks
-const marks = (w, h, m) => [[m, m, 1, 1], [w - m, m, -1, 1], [m, h - m, 1, -1], [w - m, h - m, -1, -1]]
-  .map(([x, y, sx, sy]) => `<path d="M ${x} ${y + sy * 26} L ${x} ${y} L ${x + sx * 26} ${y}" fill="none" stroke="${C.faint}" stroke-width="2"/>`).join("");
-const chip = (cx, y, txt, fs) => { const w = txt.length * (fs * 0.6) + 64; return `<rect x="${cx - w / 2}" y="${y - fs - 12}" width="${w}" height="${fs + 30}" rx="8" fill="${C.orange}"/>${tc(cx, y, fs, 700, "#1A0E07", HG, txt, 2)}`; };
+// triad row: lays SEEN · TRACKED · HOME centered at (cx,y); lit[i] => orange, else dim.
+function triad(cx, y, fs, lit) {
+  const words = ["SEEN", "TRACKED", "HOME"], cw = fs * 0.5, sepW = fs * 0.78;
+  const ww = words.map((w) => w.length * cw);
+  let x = cx - (ww[0] + ww[1] + ww[2] + 2 * sepW) / 2, out = "";
+  words.forEach((w, i) => {
+    out += `<text x="${x}" y="${y}" font-family="${SC}" font-weight="800" font-size="${fs}" fill="${lit[i] ? C.orange : C.dim}" letter-spacing="1">${w}</text>`;
+    x += ww[i];
+    if (i < 2) { out += `<text x="${x + sepW * 0.32}" y="${y}" font-family="${SC}" font-weight="800" font-size="${fs}" fill="${C.dim}">·</text>`; x += sepW; }
+  });
+  return out;
+}
 
-// Compose one artboard. g = { kicker, hero:[{t,accent}], subline, counter, cta, stampDate }
 function artboard(w, h, g) {
-  const cx = w / 2, m = w >= h ? 64 : 96;
-  const heroLH = w >= h ? (g.hero.length >= 3 ? 150 : 168) : (g.hero.length >= 3 ? 188 : 208);
-  const heroFS = heroLH * 0.86;
-  const blockH = g.hero.length * heroLH;
-  const first = h * 0.5 - blockH / 2 + heroFS * 0.78;
-  const heroSvg = g.hero.map((ln, i) => tc(cx, first + i * heroLH, heroFS, 700, ln.accent ? C.orange : C.text, OS, ln.t, -0.5)).join("");
-  const kY = first - heroFS * 0.78 - (w >= h ? 70 : 90);
-  const subY = first + (g.hero.length - 1) * heroLH + (w >= h ? 78 : 96);
-  const extraY = subY + (w >= h ? 96 : 120);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${defs}
-    <rect width="${w}" height="${h}" fill="${C.bg}"/><rect width="${w}" height="${h}" fill="url(#glow)"/>
-    ${marks(w, h, m)}
-    ${emblemAt(cx, m + (w >= h ? 4 : 30), 60)}
-    <line x1="${cx - 30}" y1="${kY - 34}" x2="${cx + 30}" y2="${kY - 34}" stroke="${C.orange}" stroke-width="3"/>
-    ${tc(cx, kY, 26, 700, C.orange, HG, g.kicker, 5)}
-    ${heroSvg}
-    ${g.subline ? tc(cx, subY, w >= h ? 32 : 38, 500, C.mut, HG, g.subline, 0.5) : ""}
-    ${g.counter ? tc(cx, extraY, w >= h ? 40 : 50, 700, C.text, OS, g.counter, 4) : ""}
-    ${g.cta ? chip(cx, extraY, g.cta, w >= h ? 30 : 36) : ""}
-    <line x1="${m}" y1="${h - m - 44}" x2="${w - m}" y2="${h - m - 44}" stroke="${C.hair}" stroke-width="1.5"/>
-    ${tc(cx, h - m, 22, 700, C.mut, HG, g.stamp, 4)}
-    <rect width="${w}" height="${h}" fill="url(#vig)"/></svg>`;
+  const story = h > w, cx = w / 2, m = story ? 100 : 80;
+  // logo lockup
+  const logoY = m, logo = story
+    ? `${emblemAt(cx - 27, logoY, 54)}${T(cx, logoY + 88, 30, 800, C.off, HG, "PROSPERA HOOPS", 1, "middle")}`
+    : `${emblemAt(m, logoY, 54)}${T(m + 70, logoY + 38, 30, 800, C.off, HG, "PROSPERA HOOPS", 1)}`;
+  const triadY = story ? h * 0.66 : h * 0.70;
+  const triadFS = g.bigTriad ? (story ? 132 : 116) : (story ? 60 : 52);
+  let body;
+  if (g.bigTriad) {
+    const eyeY = story ? h * 0.40 : h * 0.40;
+    body = `${T(cx, eyeY, story ? 30 : 28, 700, C.orange, HG, g.eyebrow, 6, "middle")}
+      ${triad(cx, triadY, triadFS, g.lit)}
+      ${T(cx, triadY + (story ? 110 : 96), story ? 36 : 34, 500, C.mut, HG, g.sub, 0.5, "middle")}`;
+  } else {
+    const eyeY = story ? h * 0.26 : h * 0.25;
+    const heroY = story ? h * 0.50 : h * 0.50;
+    const heroFS = story ? 250 : 210;
+    body = `${T(cx, eyeY, story ? 30 : 28, 700, C.orange, HG, g.eyebrow, 5, "middle")}
+      ${T(cx, heroY, heroFS, 800, C.off, SC, g.hero, 1, "middle")}
+      ${T(cx, heroY + (story ? 80 : 74), story ? 38 : 36, 500, C.mut, HG, g.sub, 0.5, "middle")}
+      <line x1="${cx - 40}" y1="${triadY - (story ? 80 : 72)}" x2="${cx + 40}" y2="${triadY - (story ? 80 : 72)}" stroke="${C.hair}" stroke-width="2"/>
+      ${triad(cx, triadY, triadFS, g.lit)}`;
+  }
+  // footer
+  const fy = h - m;
+  const chip = g.chip ? `<rect x="${cx + 100}" y="${fy - 30}" width="92" height="38" rx="8" fill="${C.orange}"/>${T(cx + 146, fy - 3, 24, 800, "#1A0E07", HG, "06.18", 1, "middle")}` : "";
+  const footer = g.chip
+    ? `${T(cx - 110, fy, 22, 700, C.mut, HG, "THE DMV'S HOME COURT", 3, "middle")}${chip}`
+    : T(cx, fy, 22, 700, C.mut, HG, "THE DMV'S HOME COURT", 4, "middle");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16181C"/><stop offset="1" stop-color="#0D0E11"/></linearGradient>
+    <radialGradient id="gl" cx="0.5" cy="${g.bigTriad ? 0.5 : 0.7}" r="0.6"><stop offset="0" stop-color="#F25C1F" stop-opacity="${g.glow ? 0.16 : 0.06}"/><stop offset="1" stop-color="#F25C1F" stop-opacity="0"/></radialGradient></defs>
+    <rect width="${w}" height="${h}" fill="url(#bg)"/><rect width="${w}" height="${h}" fill="url(#gl)"/>
+    <line x1="${m}" y1="${(story ? m + 110 : m + 70)}" x2="${w - m}" y2="${(story ? m + 110 : m + 70)}" stroke="${C.hair}" stroke-width="1.5"/>
+    ${logo}${body}
+    <line x1="${m}" y1="${fy - 40}" x2="${w - m}" y2="${fy - 40}" stroke="${C.hair}" stroke-width="1.5"/>
+    ${footer}</svg>`;
 }
 
 const GRAPHICS = [
-  { id: "1-announce", kicker: "A HOME FOR DMV HOOPERS", hero: [{ t: "SEEN." }, { t: "TRACKED." }, { t: "HOME.", accent: true }], subline: "Every player seen. Every step tracked. All in one place.", stamp: "THE DMV'S HOME COURT  ·  06.18" },
-  { id: "2-seen", kicker: "IF YOU HOOPED HERE, YOU'RE IN", hero: [{ t: "EVERY PLAYER." }, { t: "SEEN.", accent: true }], subline: "Every DMV summer-league hooper. Every game.", counter: "2 DAYS", stamp: "THE DMV'S HOME COURT  ·  06.18" },
-  { id: "3-tracked", kicker: "GROWTH IS THE STORY", hero: [{ t: "EVERY STEP." }, { t: "TRACKED.", accent: true }], subline: "Your development, tracked all summer long.", counter: "TOMORROW", stamp: "THE DMV'S HOME COURT  ·  06.18" },
-  { id: "4-launch", kicker: "IT'S LIVE", hero: [{ t: "THE DMV'S" }, { t: "HOME COURT.", accent: true }], subline: "Every player seen. Every step tracked. All in one place.", cta: "GO FIND YOUR GAME", stamp: "LIVE NOW  ·  06.18" },
-  { id: "5-coach", kicker: "FOR COACHES & SCOUTS", hero: [{ t: "FIND." }, { t: "EVALUATE." }, { t: "TRACK.", accent: true }], subline: "Every DMV hooper, one board. Real stats, real development.", stamp: "THE DMV'S HOME COURT" },
+  { id: "0615-announce", eyebrow: "LAUNCHING 06.18", bigTriad: true, lit: [1, 1, 1], sub: "A home for DMV hoopers.", chip: true },
+  { id: "0616-seen", eyebrow: "06.16 · 2 DAYS OUT", hero: "SEEN.", sub: "Every player. Every game.", lit: [1, 0, 0], chip: true },
+  { id: "0617-tracked", eyebrow: "06.17 · TOMORROW", hero: "TRACKED.", sub: "Every step of your development.", lit: [0, 1, 0], chip: true },
+  { id: "0618-launch", eyebrow: "06.18 · NOW LIVE", hero: "IT'S LIVE.", sub: "A home for DMV hoopers — go find your game.", lit: [1, 1, 1], glow: true, chip: false },
 ];
 
-async function run() {
-  for (const g of GRAPHICS) {
-    fs.writeFileSync(path.join(OUT, `${g.id}-feed.png`), renderPng(artboard(1080, 1080, g)));
-    fs.writeFileSync(path.join(OUT, `${g.id}-story.png`), renderPng(artboard(1080, 1920, g)));
-  }
-  console.log(`launch set → ${OUT}/: ${GRAPHICS.length} graphics × feed+story (${GRAPHICS.length * 2} PNGs)`);
+for (const g of GRAPHICS) {
+  fs.writeFileSync(path.join(OUT, `prospera_launch_${g.id}_square.png`), renderPng(artboard(1080, 1080, g)));
+  fs.writeFileSync(path.join(OUT, `prospera_launch_${g.id}_story.png`), renderPng(artboard(1080, 1920, g)));
 }
-run();
+// clean old (pre-triad) set
+for (const f of fs.readdirSync(OUT)) if (/^[1-5]-/.test(f)) fs.rmSync(path.join(OUT, f));
+console.log(`launch set → ${OUT}/: ${GRAPHICS.length} dates × square+story (${GRAPHICS.length * 2} PNGs)`);
