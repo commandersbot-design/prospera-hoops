@@ -75,12 +75,11 @@ Scarcity + status + a real prize. Costs you almost nothing and creates urgency a
 > **The first 100 DMV players to claim their Prospera profile get:**
 > - A permanent **"Founding Player"** badge on their profile (exclusive, never offered again)
 > - A free custom **highlight stat-card** (the shareable trading card)
-> - Entry to win **[PRIZE]**
+> - A **featured spotlight** — we post their card across all our channels
 
-**Pick your prize (cheapest → splashiest):**
-1. **Free** — a **featured spotlight** post (you post their card to all channels) + the badge. Status only. Genuinely enough.
-2. **~$50–100** — a gift card (Hoop Culture / Dick's / Eastbay) or a gear drop. Add this for buzz.
-3. **Product-tied** — a free **"Prospera Verified"** measurement (height/wingspan/vert) when you run a combine. Best long-term, ties prize to the moat.
+**Prize (locked): spotlight + badge — free.** Status and scarcity, zero cost, fully on-brand for an
+honest "system of record." You can **upgrade later** if you want buzz (a $50–100 gear/gift-card raffle)
+or tie it to the moat (a free **"Prospera Verified"** combine measurement) — but launch on this.
 
 **Multiplier (referral):** "Claim **+** tag 3 teammates who also claim = 2× your entry." This is what
 makes it spread on a roster.
@@ -145,7 +144,7 @@ The site **generates pillars 1–3 for you** (cards + recaps). You supply 4–6.
 5. **Story:** "Players — want first access? Comment or DM your name + school." (start the waitlist). Countdown sticker (2 days).
 
 ### Tuesday (Day −1) — PROMO + SPIKE
-6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim their profile get a permanent Founding Player badge, a custom stat card, and a shot at [prize]. Wednesday."*
+6. **Post 3 (the promo):** announce **Founding 100**. *"First 100 DMV players to claim their profile get a permanent Founding Player badge, a custom stat card, and a featured spotlight across our channels. Wednesday."*
 7. **Post 4 ("tomorrow"):** short reel — quick cuts of cards + *"prosperahoops.com goes live tomorrow."* Countdown sticker (1 day).
 8. **Print the QR code**, charge your phone, pre-write the launch posts.
 9. **DM the waitlist:** "We go live tomorrow — you're on the early list. I'll be at [event] if you want yours done in person."
