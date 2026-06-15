@@ -9,7 +9,7 @@ import path from "path";
 
 const OUT = "docs/launch-set";
 fs.mkdirSync(OUT, { recursive: true });
-const C = { off: "#F4F2ED", orange: "#F25C1F", dim: "rgba(244,242,237,0.16)", mut: "#9A9DA4", hair: "rgba(244,242,237,0.10)" };
+const C = { off: "#F4F2ED", orange: "#F25C1F", dim: "rgba(244,242,237,0.22)", mut: "#9A9DA4", hair: "rgba(244,242,237,0.10)" };
 const SC = "Saira Condensed", HG = "Hanken Grotesk";
 const ttfBufs = (p) => [...fs.readFileSync(p, "utf8").matchAll(/base64,([A-Za-z0-9+/=]+)\)/g)].map((m) => Buffer.from(m[1], "base64"));
 const FONTS = [...ttfBufs("brand-kit/saira-condensed-embed.svgstyle"), ...ttfBufs("brand-kit/hanken-embed.svgstyle")];
@@ -42,10 +42,14 @@ function artboard(w, h, g) {
   const triadFS = g.bigTriad ? (story ? 132 : 116) : (story ? 60 : 52);
   let body;
   if (g.bigTriad) {
-    const eyeY = story ? h * 0.40 : h * 0.40;
+    const eyeY = story ? h * 0.22 : h * 0.22;
+    const fs = story ? 200 : 172, lh = fs;
+    const words = ["SEEN.", "TRACKED.", "HOME."];
+    const first = h * 0.5 - 0.72 * fs;
+    const stack = words.map((wd, i) => T(cx, first + i * lh, fs, 800, g.lit[i] ? C.orange : C.dim, SC, wd, 1, "middle")).join("");
     body = `${T(cx, eyeY, story ? 30 : 28, 700, C.orange, HG, g.eyebrow, 6, "middle")}
-      ${triad(cx, triadY, triadFS, g.lit)}
-      ${T(cx, triadY + (story ? 110 : 96), story ? 36 : 34, 500, C.mut, HG, g.sub, 0.5, "middle")}`;
+      ${stack}
+      ${T(cx, first + 2 * lh + (story ? 96 : 82), story ? 36 : 34, 500, C.mut, HG, g.sub, 0.5, "middle")}`;
   } else {
     const eyeY = story ? h * 0.26 : h * 0.25;
     const heroY = story ? h * 0.50 : h * 0.50;
