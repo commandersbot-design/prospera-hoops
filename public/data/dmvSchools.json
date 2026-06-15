@@ -199,7 +199,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/a/9/1a967401-ea53-4c42-85ff-694bd98517f1.gif?version=638271836400000000&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.80903,
-      "lng": -77.08088
+      "lng": -77.08088,
+      "roster": [
+        {
+          "id": "elijahsimpkins",
+          "name": "Elijah Simpkins",
+          "number": 1,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "Bishop McNamara",
@@ -914,7 +923,23 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/4/d/8/4d811f65-8691-4681-9eed-e1c1801edcf3.gif?version=638554281174315720&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.8262,
-      "lng": -77.09839
+      "lng": -77.09839,
+      "roster": [
+        {
+          "id": "benedmonds",
+          "name": "Ben Edmonds",
+          "number": 4,
+          "pos": null,
+          "class": null
+        },
+        {
+          "id": "chumaachifusi",
+          "name": "Chuma Achifusi",
+          "number": 8,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "Fairfax",
@@ -980,7 +1005,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/d/b/fdb8e179-2bef-4ec1-a767-bf58e3303df3.gif?version=636632813400000000&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.87498,
-      "lng": -77.30932
+      "lng": -77.30932,
+      "roster": [
+        {
+          "id": "blakefitzgerald",
+          "name": "Blake Fitzgerald",
+          "number": 6,
+          "pos": "F",
+          "class": "28"
+        }
+      ]
     },
     {
       "name": "Flowers",
@@ -2014,7 +2048,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/b/b/8/bb880a21-1afe-4499-afc8-bdd2a8a08d6a.gif?version=634855912200000000&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.83195,
-      "lng": -77.06333
+      "lng": -77.06333,
+      "roster": [
+        {
+          "id": "onealallotey",
+          "name": "O'Neal Allotey",
+          "number": 11,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "Mountain View",
@@ -2377,7 +2420,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/1/c/3/1c3ccc31-4ddf-40e7-8700-070f311148b4.gif?version=634538609400000000&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.9152,
-      "lng": -77.4454
+      "lng": -77.4454,
+      "roster": [
+        {
+          "id": "ryanbahr",
+          "name": "Ryan Bahr",
+          "number": 7,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "Perry Hall",
@@ -2729,7 +2781,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/f/0/3/f03caf68-8c6c-4a2e-b0d6-85e949c78a27.gif?version=639069526438974050&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 38.93913,
-      "lng": -77.0745
+      "lng": -77.0745,
+      "roster": [
+        {
+          "id": "alexgarrett",
+          "name": "Alex Garrett",
+          "number": 5,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "South Carroll",
@@ -2938,7 +2999,16 @@
       "mascotUrl": "https://image.maxpreps.io/school-mascot/3/0/5/3052a842-2148-49f7-9c6b-1bae2ea57680.gif?version=636553177800000000&width=1024&height=1024",
       "source": "maxpreps",
       "lat": 39.04911,
-      "lng": -77.50951
+      "lng": -77.50951,
+      "roster": [
+        {
+          "id": "kevinreyes",
+          "name": "Kevin Reyes",
+          "number": 3,
+          "pos": null,
+          "class": null
+        }
+      ]
     },
     {
       "name": "Strasburg",

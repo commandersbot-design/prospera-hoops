@@ -16618,6 +16618,80 @@
       ],
       "level": "Summer",
       "circuit": "Capitol Hoops Summer League"
+    },
+    "akt-17u": {
+      "slug": "akt-17u",
+      "name": "AKT 17u",
+      "headCoach": null,
+      "sourceUrl": null,
+      "season": "2026",
+      "level": "AAU",
+      "circuit": "HGSL",
+      "players": [
+        {
+          "number": 0,
+          "name": "Maddox Davis",
+          "position": null,
+          "height": "5'11",
+          "classYear": null
+        },
+        {
+          "number": 1,
+          "name": "Elijah Simpkins",
+          "position": null,
+          "height": "6'2",
+          "classYear": null
+        },
+        {
+          "number": 3,
+          "name": "Kevin Reyes",
+          "position": null,
+          "height": "6'3",
+          "classYear": null
+        },
+        {
+          "number": 4,
+          "name": "Ben Edmonds",
+          "position": null,
+          "height": "6'2",
+          "classYear": null
+        },
+        {
+          "number": 5,
+          "name": "Alex Garrett",
+          "position": null,
+          "height": "6'7",
+          "classYear": null
+        },
+        {
+          "number": 6,
+          "name": "Blake Fitzgerald",
+          "position": null,
+          "height": "6'8",
+          "classYear": null
+        },
+        {
+          "number": 7,
+          "name": "Ryan Bahr",
+          "position": null,
+          "height": "6'6",
+          "classYear": null
+        },
+        {
+          "number": 8,
+          "name": "Chuma Achifusi",
+          "position": null,
+          "height": "6'5",
+          "classYear": null
+        },
+        {
+          "number": 11,
+          "name": "O'Neal Allotey",
+          "position": null,
+          "height": "6'8",
+          "classYear": null
+        }
+      ]
     }
   }
 }
