@@ -2823,7 +2823,8 @@ const NAV = [
   { key: "summer", label: "Teams" },
   { key: "scouthq", label: "Scout HQ" },
   { key: "recaps", label: "Recaps" },
-  { key: "map", label: "Map" },
+  // Map is parked off the live nav (the DmvMap component + its view branch stay in
+  // place to morph/repurpose later — just not surfaced to users for now).
   { key: "classes", label: "Classes" },
   { key: "commitments", label: "Commitments" },
 ];
