@@ -30,6 +30,9 @@ function injectOg({ title, desc, img, url }) {
   return html;
 }
 
+// Collect every canonical URL for the sitemap as we prerender.
+const sitemapUrls = [`${SITE}/`];
+
 // Player pages → dist/player/<key>/index.html
 let n = 0;
 const seen = new Set();
@@ -45,6 +48,7 @@ for (const p of prospects) {
     desc: `${p.name} — DMV scouting profile: stats, role, and development, tracked on Prospera Hoops.`,
     img, url: `${SITE}/player/${key}`,
   }));
+  sitemapUrls.push(`${SITE}/player/${key}`);
   n++;
 }
 
@@ -62,6 +66,13 @@ for (const [slug, t] of Object.entries(ch.teams || {})) {
     desc: `${t.name} — ${[t.circuit, t.season].filter(Boolean).join(" ")}: roster, stats, leaders, and games on Prospera Hoops.`,
     img, url: `${SITE}/team/${slug}`,
   }));
+  sitemapUrls.push(`${SITE}/team/${slug}`);
   nTeams++;
 }
-console.log(`prerender-og: ${n} player pages (cards ${[...seen].filter(haveCard).length}) + ${nTeams} team pages (cards ${teamCards}) → dist/`);
+
+// sitemap.xml → so search engines index every player + team page (coaches Google
+// player names). robots.txt (static, in public/) points here.
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`;
+fs.writeFileSync(path.join("dist", "sitemap.xml"), sitemap);
+
+console.log(`prerender-og: ${n} player pages (cards ${[...seen].filter(haveCard).length}) + ${nTeams} team pages (cards ${teamCards}) + sitemap.xml (${sitemapUrls.length} urls) → dist/`);
