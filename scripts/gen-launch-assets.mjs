@@ -15,8 +15,8 @@ const OUT = "docs/launch-assets";
 fs.mkdirSync(OUT, { recursive: true });
 const SITE = "https://www.prosperahoops.com";
 const C = { bg: "#0B0E13", panel: "#12161C", orange: "#FF6A1A", rust: "#C24A14", text: "#f6f6f4", mut: "#9aa0a8", hair: "rgba(255,255,255,0.10)" };
-const SA = "Saira"; // template-pack display font (embedded, non-condensed)
-const FONT = fs.readFileSync("brand-kit/saira-embed.svgstyle", "utf8");
+const SD = "Saira Condensed", HG = "Hanken Grotesk"; // display (condensed) + body — matches the template pack
+const FONT = (fs.readFileSync("public/brand/svg/prosperahoops-wordmark-dark.svg", "utf8").match(/<style[\s\S]*?<\/style>/) || [""])[0] + fs.readFileSync("brand-kit/hanken-embed.svgstyle", "utf8");
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8");
 const emblemInner = EMBLEM.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 
@@ -34,18 +34,18 @@ const cluster = (x, y, s, op) => `<g transform="translate(${x},${y}) scale(${s})
   <rect x="68" y="12" width="26" height="108" rx="4" fill="#E0531B"/><rect x="102" y="34" width="26" height="86" rx="4" fill="#FF6A1A"/>
   <circle cx="115" cy="-2" r="26" fill="#FF6A1A"/></g>`;
 const emblemAt = (cx, y, size) => `<g transform="translate(${cx - size / 2},${y})"><svg width="${size}" height="${size}" viewBox="0 0 200 200">${emblemInner}</svg></g>`;
-const lockup = (cx, y, s) => `<text x="${cx}" y="${y}" font-family='${SA}' font-weight="800" font-size="${s}" letter-spacing="2" text-anchor="middle"><tspan fill="${C.text}">PROSPERA</tspan><tspan fill="${C.orange}">HOOPS</tspan></text>`;
+const lockup = (cx, y, s) => `<text x="${cx}" y="${y}" font-family='${HG}' font-weight="800" font-size="${s}" letter-spacing="2" text-anchor="middle"><tspan fill="${C.text}">PROSPERA</tspan><tspan fill="${C.orange}">HOOPS</tspan></text>`;
 const rule = (cx, y, w) => `<rect x="${cx - w / 2}" y="${y}" width="${w}" height="5" rx="2.5" fill="${C.orange}"/>`;
 // Saira Condensed bold renders at ~0.62 char-aspect; size pills generously so text never clips.
 const chip = (cx, y, text, fs = 22, ls = 4) => {
   const w = text.length * (fs * 0.60 + ls) + 60;
   return `<rect x="${cx - w / 2}" y="${y - fs - 4}" width="${w}" height="${fs + 16}" rx="${(fs + 16) / 2}" fill="rgba(255,106,26,0.10)" stroke="${C.orange}" stroke-width="1.5"/>
-  <text x="${cx}" y="${y}" font-family='${SA}' font-weight="700" font-size="${fs}" letter-spacing="${ls}" fill="${C.orange}" text-anchor="middle">${text}</text>`;
+  <text x="${cx}" y="${y}" font-family='${HG}' font-weight="700" font-size="${fs}" letter-spacing="${ls}" fill="${C.orange}" text-anchor="middle">${text}</text>`;
 };
 const pill = (cx, y, text, fs = 30, ls = 3) => {
   const w = text.length * (fs * 0.62 + ls) + 80;
   return `<rect x="${cx - w / 2}" y="${y - fs - 8}" width="${w}" height="${fs + 26}" rx="${(fs + 26) / 2}" fill="${C.orange}"/>
-  <text x="${cx}" y="${y}" font-family='${SA}' font-weight="800" font-size="${fs}" letter-spacing="${ls}" fill="${C.bg}" text-anchor="middle">${text}</text>`;
+  <text x="${cx}" y="${y}" font-family='${HG}' font-weight="800" font-size="${fs}" letter-spacing="${ls}" fill="${C.bg}" text-anchor="middle">${text}</text>`;
 };
 const png = (svg, w, h, file) => sharp(Buffer.from(svg)).resize(w, h).png().toFile(path.join(OUT, file));
 
@@ -62,14 +62,14 @@ async function run() {
     ${lockup(W / 2, 290, 46)}
     <g transform="translate(0,28)">
       ${chip(W / 2, 360, "DC · MD · VA  ·  HIGH SCHOOL + AAU", 22, 4)}
-      <text x="${W / 2}" y="600" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${C.text}" text-anchor="middle">PROOF OVER</text>
-      <text x="${W / 2}" y="745" font-family='${SA}' font-weight="800" font-size="150" letter-spacing="1" fill="${C.orange}" text-anchor="middle">HYPE.</text>
+      <text x="${W / 2}" y="600" font-family='${SD}' font-weight="800" font-size="138" letter-spacing="0" fill="${C.text}" text-anchor="middle">PROOF OVER</text>
+      <text x="${W / 2}" y="752" font-family='${SD}' font-weight="800" font-size="164" letter-spacing="0" fill="${C.orange}" text-anchor="middle">HYPE.</text>
       ${rule(W / 2, 800, 120)}
-      <text x="${W / 2}" y="905" font-family='${SA}' font-weight="800" font-size="50" letter-spacing="1" fill="${C.text}" text-anchor="middle">Your game, on the record.</text>
-      <text x="${W / 2}" y="958" font-family='${SA}' font-weight="700" font-size="36" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. Your recruiting home — free.</text>
+      <text x="${W / 2}" y="905" font-family='${HG}' font-weight="800" font-size="50" letter-spacing="1" fill="${C.text}" text-anchor="middle">Your game, on the record.</text>
+      <text x="${W / 2}" y="958" font-family='${HG}' font-weight="700" font-size="36" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. Your recruiting home — free.</text>
       ${pill(W / 2, 1110, "LIVE THURSDAY", 44, 5)}
     </g>
-    <text x="${W / 2}" y="1290" font-family='${SA}' font-weight="700" font-size="38" letter-spacing="4" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
+    <text x="${W / 2}" y="1290" font-family='${HG}' font-weight="700" font-size="38" letter-spacing="4" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
     ${vig(W, H)}</svg>`;
   await png(announce, W, H, "launch-announce.png");
 
@@ -83,10 +83,10 @@ async function run() {
     ${chip(fw / 2, 322, "YOUR GAME · ON THE RECORD", 22, 4)}
     <rect x="${fw / 2 - 300}" y="400" width="600" height="600" rx="30" fill="#FFFFFF"/>
     ${[[fw / 2 - 300, 400, 1, 1], [fw / 2 + 300, 400, -1, 1], [fw / 2 - 300, 1000, 1, -1], [fw / 2 + 300, 1000, -1, -1]].map(([x, y, sx, sy]) => `<path d="M ${x + sx * 6} ${y + sy * 56} L ${x + sx * 6} ${y + sy * 6} L ${x + sx * 56} ${y + sy * 6}" fill="none" stroke="${C.orange}" stroke-width="8" stroke-linecap="round"/>`).join("")}
-    <g transform="translate(${fw / 2},1088) skewX(-10)"><text x="0" y="0" font-family='${SA}' font-weight="800" font-size="80" letter-spacing="-1.5" fill="${C.text}" text-anchor="middle">SCAN TO CLAIM</text></g>
-    <g transform="translate(${fw / 2},1162) skewX(-10)"><text x="0" y="0" font-family='${SA}' font-weight="800" font-size="80" letter-spacing="-1.5" fill="${C.orange}" text-anchor="middle">YOUR FREE PROFILE</text></g>
-    <text x="${fw / 2}" y="1222" font-family='${SA}' font-weight="700" font-size="29" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. First 100 = Founding Player.</text>
-    <text x="${fw / 2}" y="1300" font-family='${SA}' font-weight="700" font-size="34" letter-spacing="3" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
+    <g transform="translate(${fw / 2},1090) skewX(-10)"><text x="0" y="0" font-family='${SD}' font-weight="800" font-size="92" letter-spacing="0" fill="${C.text}" text-anchor="middle">SCAN TO CLAIM</text></g>
+    <g transform="translate(${fw / 2},1166) skewX(-10)"><text x="0" y="0" font-family='${SD}' font-weight="800" font-size="92" letter-spacing="0" fill="${C.orange}" text-anchor="middle">YOUR FREE PROFILE</text></g>
+    <text x="${fw / 2}" y="1222" font-family='${HG}' font-weight="700" font-size="29" fill="${C.mut}" text-anchor="middle">Real stats. Honest evals. First 100 = Founding Player.</text>
+    <text x="${fw / 2}" y="1300" font-family='${HG}' font-weight="700" font-size="34" letter-spacing="3" fill="${C.text}" text-anchor="middle">PROSPERAHOOPS.COM</text>
     ${vig(fw, fh)}</svg>`;
   const flyerBase = await sharp(Buffer.from(flyer)).png().toBuffer();
   const qrBuf = await sharp(path.join(OUT, "qr-prosperahoops.png")).resize(540, 540).toBuffer();
@@ -100,10 +100,10 @@ async function run() {
     <circle cx="${cx}" cy="${cy}" r="246" fill="none" stroke="${C.orange}" stroke-width="5"/>
     <circle cx="${cx}" cy="${cy}" r="214" fill="none" stroke="${C.orange}" stroke-width="2" stroke-opacity="0.55"/>
     ${star(cx, 168, 30)}
-    <text x="${cx}" y="270" font-family='${SA}' font-weight="800" font-size="58" fill="${C.text}" text-anchor="middle">FOUNDING</text>
-    <text x="${cx}" y="326" font-family='${SA}' font-weight="800" font-size="58" fill="${C.orange}" text-anchor="middle">PLAYER</text>
+    <text x="${cx}" y="272" font-family='${SD}' font-weight="800" font-size="66" fill="${C.text}" text-anchor="middle">FOUNDING</text>
+    <text x="${cx}" y="330" font-family='${SD}' font-weight="800" font-size="66" fill="${C.orange}" text-anchor="middle">PLAYER</text>
     <rect x="${cx - 50}" y="350" width="100" height="3" rx="1.5" fill="${C.orange}"/>
-    <text x="${cx}" y="392" font-family='${SA}' font-weight="700" font-size="26" letter-spacing="5" fill="${C.mut}" text-anchor="middle">EST. 2026</text>
+    <text x="${cx}" y="392" font-family='${HG}' font-weight="700" font-size="26" letter-spacing="5" fill="${C.mut}" text-anchor="middle">EST. 2026</text>
   </svg>`;
   await png(badge, S, S, "founding-player-badge.png");
 
