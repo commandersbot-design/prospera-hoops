@@ -3022,6 +3022,79 @@ function schoolToTeam(s) {
   };
 }
 
+// Home landing — the first thing a cold visitor sees. Orients them (what this is,
+// who it's for), proves it with LIVE counts + REAL scoring leaders, and routes them
+// with clear CTAs — instead of dropping them into the Teams filter UI. All numbers
+// are derived from the loaded data; nothing is fabricated.
+function HomeLanding({ onOpenProfile, onGoView, teamsCount }) {
+  const stats = useMemo(() => {
+    const boxscores = Object.values(GAME_LOGS).reduce((s, v) => s + (v.games?.length || 0), 0);
+    return { players: PROSPECTS.length, teams: teamsCount || Object.keys(CH_TEAMS).length, boxscores };
+  }, [teamsCount]);
+  const leaders = useMemo(() => {
+    const all = [];
+    for (const [slug, t] of Object.entries(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, school: canonicalSchool(slug, t.name) });
+    return all.filter((p) => (p.stats?.gp ?? 0) >= 2 && p.stats?.ppg != null).sort((a, b) => b.stats.ppg - a.stats.ppg).slice(0, 6);
+  }, []);
+  const fmt = (n) => n.toLocaleString("en-US");
+  const cta = (label, v, primary) => (
+    <button type="button" onClick={() => onGoView(v)} style={{ ...mono, fontSize: 12.5, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, padding: "12px 20px", borderRadius: 8, cursor: "pointer", color: primary ? T.bg : T.text, background: primary ? T.accent : "transparent", border: `1px solid ${primary ? T.accent : T.border}` }}>{label}</button>
+  );
+  return (
+    <div style={{ display: "grid", gap: 30 }}>
+      <section style={{ display: "grid", gap: 20, padding: "8px 0 4px" }}>
+        <div>
+          <div style={{ ...mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700, color: T.accent }}>The DMV's scouting system of record</div>
+          <h1 style={{ ...serif, fontSize: "clamp(34px, 6vw, 58px)", fontWeight: 800, textTransform: "uppercase", lineHeight: 1.02, color: T.text, margin: "10px 0 0" }}>
+            Every DMV hooper, tracked&nbsp;and&nbsp;proven.
+          </h1>
+          <p style={{ ...mono, fontSize: 15, lineHeight: 1.6, color: T.textDim, margin: "14px 0 0", maxWidth: "62ch" }}>
+            Real stats over time, honest evaluation, and a shareable recruiting profile for high-school &amp; AAU players across DC, Maryland, and Virginia — built for players, coaches, and college scouts.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {cta("Browse prospects", "prospects", true)}
+          {cta("Explore teams", "summer", false)}
+          {cta("For coaches → Scout HQ", "scouthq", false)}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, maxWidth: 540 }}>
+          {[["Players tracked", fmt(stats.players)], ["Teams", fmt(stats.teams)], ["Box scores", fmt(stats.boxscores)]].map(([l, v]) => (
+            <div key={l} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 10px", textAlign: "center" }}>
+              <div style={{ ...serif, fontSize: 30, fontWeight: 800, color: T.accent, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{v}</div>
+              <div style={{ ...mono, fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: T.textMute, marginTop: 6 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+      {leaders.length > 0 && (
+        <section style={{ display: "grid", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
+            <SectionLabel>Summer Scoring Leaders</SectionLabel>
+            <button type="button" onClick={() => onGoView("prospects")} style={{ ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: T.signal, background: "transparent", border: "none", cursor: "pointer" }}>All prospects →</button>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 8 }}>
+            {leaders.map((pl, i) => {
+              const tracked = PROSPECT_BY_NAMEKEY[nameKey(pl.name)];
+              return (
+                <button key={pl.name + i} type="button" disabled={!tracked} onClick={() => tracked && onOpenProfile(tracked.id)}
+                  style={{ display: "flex", alignItems: "center", gap: 12, textAlign: "left", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", cursor: tracked ? "pointer" : "default", color: T.text }}>
+                  <span style={{ ...serif, fontSize: 22, fontWeight: 800, color: i === 0 ? T.accent : T.textMute, width: 22, fontVariantNumeric: "tabular-nums" }}>{i + 1}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: T.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{pl.name}</span>
+                    <span style={{ ...mono, fontSize: 10, color: T.textMute, letterSpacing: "0.04em" }}>{pl.school}</span>
+                  </span>
+                  <span style={{ ...serif, fontSize: 20, fontWeight: 800, color: T.accent, fontVariantNumeric: "tabular-nums" }}>{perGame(pl.stats.ppg)}<span style={{ ...mono, fontSize: 8, color: T.textMute, marginLeft: 2 }}>PPG</span></span>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ ...mono, fontSize: 10, color: T.textMute }}>Summer-league averages (Capitol Hoops) · 2+ games. <span style={{ color: T.textDim }}>High-school production weighs more in evaluation.</span></div>
+        </section>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
@@ -3050,7 +3123,7 @@ export default function App() {
 
   // Default to Summer League — the Big Board is a "coming soon" placeholder
   // until rankings are authored, so we land users on real content.
-  const [view, setView] = useState("summer"); // "board" | "summer" | "commitments"
+  const [view, setView] = useState("home"); // home landing | prospects | summer | scouthq | ...
   const [openId, setOpenId] = useState(null);
   const [focusTeam, setFocusTeam] = useState(null); // team/school to preselect in the Teams workspace (e.g. from a map pin or #/team deep-link)
   const isMobile = useIsMobile(640);
@@ -3121,7 +3194,9 @@ export default function App() {
           becomes a single horizontally-scrollable row (instead of wrapping to
           ~3 rows and eating vertical space). */}
       <header style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? "12px 14px" : "16px 28px", display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, flexWrap: "wrap" }}>
-        <img src="/brand/svg/prosperahoops-lockup-dark.svg" alt="Prospera Hoops" style={{ height: isMobile ? 30 : 38, width: "auto", display: "block", order: 1 }} />
+        <button type="button" onClick={() => goView("home")} title="Home" style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", order: 1, lineHeight: 0 }}>
+          <img src="/brand/svg/prosperahoops-lockup-dark.svg" alt="Prospera Hoops" style={{ height: isMobile ? 30 : 38, width: "auto", display: "block" }} />
+        </button>
         <div style={{ marginLeft: "auto", order: isMobile ? 2 : 3, display: "flex", alignItems: "center", gap: 10 }}>
           <SearchBox onOpen={setOpenId} />
           <AccountButton onOpenAdmin={() => goView("admin")} />
@@ -3161,6 +3236,8 @@ export default function App() {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "18px 14px 48px" : "28px 24px 60px" }}>
         {open ? (
           <Profile prospect={open} onBack={() => { setOpenId(null); clearDeepLink(); }} onOpen={setOpenId} />
+        ) : view === "home" ? (
+          <HomeLanding onOpenProfile={setOpenId} onGoView={goView} teamsCount={workspaceTeams.length} />
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
