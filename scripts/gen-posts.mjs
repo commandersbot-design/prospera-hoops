@@ -11,8 +11,8 @@ const OUT = "docs/social-posts";
 fs.mkdirSync(OUT, { recursive: true });
 const W = 1080, H = 1350;
 const C = { bg: "#0B0E13", panel: "#0F141B", line: "rgba(255,255,255,0.08)", orange: "#FF6A1A", text: "#f6f6f4", mut: "#8b929c", faint: "#5a626c" };
-const SD = "Saira Condensed", HG = "Hanken Grotesk";
-const FONT_SD = (fs.readFileSync("public/brand/svg/prosperahoops-wordmark-dark.svg", "utf8").match(/<style[\s\S]*?<\/style>/) || [""])[0];
+const SD = "Oswald", HG = "Hanken Grotesk";
+const FONT_SD = fs.readFileSync("brand-kit/oswald-embed.svgstyle", "utf8");
 const FONT_HG = fs.readFileSync("brand-kit/hanken-embed.svgstyle", "utf8");
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -64,6 +64,8 @@ const hero = (inner) => `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" he
 const pillO = (cx, y, txt, fs = 34) => { const w = txt.length * (fs * 0.5) + 70; return `<rect x="${cx - w / 2}" y="${y - fs - 4}" width="${w}" height="${fs + 24}" rx="${(fs + 24) / 2}" fill="none" stroke="${C.orange}" stroke-width="2"/>${T(cx, y, fs, 700, C.orange, esc(txt), { anchor: "middle" })}`; };
 const pillL = (x, y, txt, fs = 25) => { const w = txt.length * (fs * 0.6) + 54; return `<rect x="${x}" y="${y - fs - 3}" width="${w}" height="${fs + 14}" rx="${(fs + 14) / 2}" fill="none" stroke="${C.orange}" stroke-width="2"/>${T(x + w / 2, y, fs, 700, C.orange, esc(txt), { ls: 1, anchor: "middle" })}`; };
 const statTrio = (y, items) => items.map((it, i) => { const cx = [232, 540, 848][i]; return `${TD(cx, y, 100, 800, it.hot ? C.orange : C.text, esc(it.v), { anchor: "middle" })}${T(cx, y + 50, 26, 800, C.mut, esc(it.l), { ls: 3, anchor: "middle" })}`; }).join("");
+const cluster = (x, y, s, op = 1) => `<g transform="translate(${x},${y}) scale(${s})" opacity="${op}"><rect x="0" y="60" width="26" height="60" rx="4" fill="#9A3E12"/><rect x="34" y="36" width="26" height="84" rx="4" fill="#C24A14"/><rect x="68" y="12" width="26" height="108" rx="4" fill="#E0531B"/><rect x="102" y="34" width="26" height="86" rx="4" fill="#FF6A1A"/></g>`;
+const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
 const write = (svg, f) => sharp(Buffer.from(svg)).png().toFile(path.join(OUT, f));
 
 async function run() {
@@ -119,6 +121,39 @@ async function run() {
       ${TD(W / 2, 930, 92, 800, C.text, esc(p.name.toUpperCase()), { anchor: "middle" })}
       ${T(W / 2, 985, 28, 600, C.mut, esc(`${p.pos || ""} · ${p.school} · ${p.gp} GP`.toUpperCase()), { ls: 1, anchor: "middle" })}`, "STAT DROP"), `statdrop-${p.key}.png`);
   }
-  console.log(`posts → ${OUT}/: live, teaser, claim, top5, spotlight + statdrop (${byPpg[0]?.name}). ${players.length} players.`);
+  // RECAP — a notable game (a win with the biggest single performance)
+  const games = [];
+  for (const [slug, t] of Object.entries(ch.teams)) {
+    const byGame = new Map();
+    for (const pl of (t.players || [])) for (const g of (logs[nameKey(pl.name)]?.games || [])) {
+      const k = `${g.date}|${g.opp}`;
+      if (!byGame.has(k)) byGame.set(k, { date: g.date, opp: g.opp, result: g.result, team: canon(slug, t.name), circuit: t.circuit || "Capitol Hoops Summer League", lines: [] });
+      byGame.get(k).lines.push({ player: pl.name, pts: g.pts || 0, reb: g.reb || 0, ast: g.ast || 0 });
+    }
+    for (const gm of byGame.values()) {
+      const m = /(win|loss)\s+(\d+)\s*-\s*(\d+)/i.exec(gm.result || "");
+      if (!m) continue;
+      const top = gm.lines.sort((a, b) => b.pts - a.pts)[0];
+      if (top) games.push({ ...gm, won: m[1].toLowerCase() === "win", ts: +m[2], os: +m[3], top });
+    }
+  }
+  const g = games.filter((x) => x.won && x.top.pts > 0).sort((a, b) => b.top.pts - a.top.pts)[0];
+  if (g) {
+    const tline = [[g.top.pts, "PTS"], [g.top.reb, "REB"], [g.top.ast, "AST"]].filter(([v]) => v > 0).map(([v, l]) => `${v} ${l}`).join("  ·  ");
+    const recap = frame(`<rect x="64" y="195" width="${W - 128}" height="380" rx="22" fill="${C.panel}" stroke="${C.line}" stroke-width="1.5"/>
+      ${T(300, 348, 42, 700, C.text, esc(g.team.toUpperCase().slice(0, 13)), { anchor: "middle" })}
+      ${TD(300, 480, 150, 800, C.orange, String(g.ts), { anchor: "middle" })}
+      ${T(300, 535, 30, 800, C.orange, "W", { anchor: "middle" })}
+      <rect x="525" y="448" width="30" height="8" rx="4" fill="${C.faint}"/>
+      ${T(780, 348, 42, 700, C.mut, esc(cleanOpp(g.opp).toUpperCase().slice(0, 13)), { anchor: "middle" })}
+      ${TD(780, 480, 150, 800, C.text, String(g.os), { anchor: "middle" })}
+      ${T(64, 650, 26, 800, C.orange, "TOP PERFORMER", { ls: 3 })}
+      ${TD(64, 732, 92, 800, C.text, esc(g.top.player.toUpperCase()))}
+      ${T(64, 794, 30, 700, C.mut, esc(tline), { ls: 1 })}
+      ${T(64, 892, 26, 600, C.mut, esc(`${g.circuit} · ${g.date}`))}
+      ${cluster(770, 1040, 2.6, 0.92)}`, "FINAL");
+    await write(recap, "recap.png");
+  }
+  console.log(`posts → ${OUT}/: live, teaser, claim, top5, spotlight + statdrop (${byPpg[0]?.name}), recap (${g ? g.top.player : "—"}). ${players.length} players.`);
 }
 run();
