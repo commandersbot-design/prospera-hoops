@@ -89,7 +89,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   ${T(W - 64, 200, 19, 800, C.ink, "BOYS BASKETBALL", { ls: 2, anchor: "end" })}
   ${T(W - 64, 232, 16, 700, C.inkSoft, "Alexandria, VA", { ls: 1, anchor: "end" })}
 
-  ${T(W / 2, 338, 23, 800, C.sky, "SUMMER STANDOUTS — FOUR TO WATCH", { ls: 3, anchor: "middle" })}
+  ${T(W / 2, 338, 23, 800, C.sky, "THE NUCLEUS — FOUR TO BUILD AROUND", { ls: 3, anchor: "middle" })}
 
   ${tile(colL, row1, tiles[0])}
   ${tile(colR, row1, tiles[1])}

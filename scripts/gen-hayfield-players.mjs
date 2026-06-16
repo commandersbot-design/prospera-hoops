@@ -73,7 +73,7 @@ function card(p) {
     <rect x="0" y="0" width="${W}" height="104" fill="url(#band)"/>
     <image href="${HAWK}" x="34" y="16" width="84" height="76" preserveAspectRatio="xMidYMid meet"/>
     ${T(138, 67, 46, 800, C.ink, "HAYFIELD HAWKS", { font: SD })}
-    ${T(W - 40, 60, 18, 800, C.ink, "SUMMER STANDOUT", { ls: 2, anchor: "end" })}
+    ${T(W - 40, 60, 18, 800, C.ink, "THE NUCLEUS", { ls: 2, anchor: "end" })}
 
     ${TD(60, 812, 104, 800, C.text, p.name)}
     ${T(64, 864, 28, 700, C.orange, p.meta, { ls: 1 })}
