@@ -109,8 +109,19 @@ async function run() {
     ${TD(W - 80, y + 46, 70, 800, C.text, r1(p.ppg), { anchor: "end" })}`; }).join("");
   await write(frame(`${TD(64, 250, 86, 800, C.text, "TOP 5 SCORERS")}${T(64, 296, 26, 700, C.mut, "CAPITOL HOOPS SUMMER LEAGUE · 2+ GP", { ls: 2 })}${rows}${T(64, 1210, 24, 500, C.faint, "Summer-league averages. HS production weighs more.")}`, "LEADERS"), "top5.png");
 
-  // SPOTLIGHT + STATDROP for the top scorer (sample)
-  for (const p of byPpg.slice(0, 1)) {
+  // SPOTLIGHT + STATDROP. Defaults to the top scorer; pass --player "Name" (repeatable
+  // or comma-separated) to feature specific players. Match is tolerant of spelling
+  // (exact key → contains → last-name token), so "Cristian Towe" still finds "Christian Towe".
+  const argPlayers = [];
+  for (let i = 2; i < process.argv.length; i++) {
+    if (process.argv[i] === "--player" && process.argv[i + 1]) argPlayers.push(...process.argv[++i].split(",").map((s) => s.trim()).filter(Boolean));
+  }
+  const findPlayer = (n) => {
+    const k = nameKey(n), last = n.trim().split(/\s+/).pop().toLowerCase();
+    return players.find((p) => p.key === k) || players.find((p) => p.name.toLowerCase().includes(n.toLowerCase())) || players.find((p) => p.name.toLowerCase().includes(last));
+  };
+  const featured = argPlayers.length ? argPlayers.map((n) => { const p = findPlayer(n); if (!p) console.warn(`  ⚠ no match for --player "${n}"`); return p; }).filter(Boolean) : byPpg.slice(0, 1);
+  for (const p of featured) {
     const meta = [p.pos, p.classYr ? "CLASS OF " + p.classYr : null, `${p.school}${p.state ? " (" + p.state + ")" : ""}`].filter(Boolean).join("  ·  ").toUpperCase();
     await write(frame(`<rect x="64" y="150" width="${W - 128}" height="560" rx="22" fill="${C.panel}" stroke="${C.line}" stroke-width="1.5"/>
       ${p.headshot ? `<clipPath id="ph"><rect x="64" y="150" width="${W - 128}" height="560" rx="22"/></clipPath><image href="${p.headshot}" x="64" y="150" width="${W - 128}" height="560" preserveAspectRatio="xMidYMid slice" clip-path="url(#ph)"/>` : T(W / 2, 445, 42, 700, C.faint, "PHOTO", { ls: 8, anchor: "middle" })}
@@ -158,6 +169,6 @@ async function run() {
       ${cluster(770, 1040, 2.6, 0.92)}`, "FINAL");
     await write(recap, "recap.png");
   }
-  console.log(`posts → ${OUT}/: live, teaser, claim, top5, spotlight + statdrop (${byPpg[0]?.name}), recap (${g ? g.top.player : "—"}). ${players.length} players.`);
+  console.log(`posts → ${OUT}/: live, teaser, claim, top5, spotlight + statdrop (${featured.map((p) => p.name).join(", ")}), recap (${g ? g.top.player : "—"}). ${players.length} players.`);
 }
 run();
