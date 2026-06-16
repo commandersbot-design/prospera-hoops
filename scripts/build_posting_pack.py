@@ -11,7 +11,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Image as R
 from PIL import Image as PILImage
 
 ROOT = r"C:\LocalDesktop\prospera-preps"
-OUT = r"C:\Users\danud\OneDrive\Desktop\Prospera-Posting-Pack-06.16.pdf"
+OUT = r"C:\Users\danud\OneDrive\Desktop\Prospera-Today-Playbook-06.16.pdf"
 ORANGE = HexColor("#FF6A1A"); INK = HexColor("#14181F"); MUT = HexColor("#5d6470")
 BOX = HexColor("#FBEDE3")
 
@@ -37,23 +37,42 @@ def caption(text):
 
 story = []
 
-# ---- Cover ----
+# ---- Cover / playbook ----
+sched = ParagraphStyle("sched", fontName="Helvetica", fontSize=11, textColor=INK, leading=15, spaceAfter=7, leftIndent=4)
+time_ = ParagraphStyle("time", fontName="Helvetica-Bold", fontSize=11, textColor=ORANGE, leading=15)
 story += [
-    Spacer(1, 40),
     Paragraph("PROSPERA HOOPS", styles["title"]),
-    Paragraph("Posting Pack &mdash; Tuesday, June 16 (2 days out)", styles["sub"]),
-    Spacer(1, 18),
-    Paragraph("Tonight&rsquo;s posts (in order):", styles["h"]),
-    Paragraph("1.&nbsp; Hayfield &lsquo;The Nucleus&rsquo; &mdash; IG carousel (5 slides)", styles["body"]),
-    Paragraph("2.&nbsp; Daily countdown &lsquo;SEEN&rsquo; &mdash; feed + story", styles["body"]),
-    Paragraph("3.&nbsp; Stat Drop &mdash; Christian Towe (optional / extra)", styles["body"]),
-    Spacer(1, 16),
-    Paragraph("Notes", styles["h"]),
-    Paragraph("&bull; Emojis are left out of the captions below (PDFs can&rsquo;t render them) &mdash; "
-              "add the hawk + baller emojis when you post.", styles["note"]),
-    Paragraph("&bull; The site is hidden behind the &lsquo;Launching 06.18&rsquo; page, so any link lands on "
-              "that countdown &mdash; that&rsquo;s intended.", styles["note"]),
-    Paragraph("&bull; Reply to comments in the first hour &mdash; lead with the numbers, not promises.", styles["note"]),
+    Paragraph("Today&rsquo;s Playbook &mdash; Tuesday, June 16 (2 days out)", styles["sub"]),
+    Spacer(1, 14),
+
+    Paragraph("Posting schedule (in order)", styles["h"]),
+    Paragraph("<font color='#FF6A1A'><b>~10&ndash;11 AM &middot; IG STORY.</b></font> &nbsp;SEEN story + add the "
+              "<b>Countdown sticker</b> set to Thu 6/18. Keeps presence early. &nbsp;<i>(Post 2 art)</i>", sched),
+    Paragraph("<font color='#FF6A1A'><b>~12:30 PM &middot; STAT DROP (feed + X).</b></font> &nbsp;Towe&rsquo;s line. "
+              "Quick value tease. &nbsp;<i>(Post 3 &mdash; optional; he&rsquo;s also in the carousel)</i>", sched),
+    Paragraph("<font color='#FF6A1A'><b>~6:30 PM &middot; MARQUEE (feed).</b></font> &nbsp;Hayfield &lsquo;The "
+              "Nucleus&rsquo; carousel &mdash; your big post, when engagement peaks. &nbsp;<i>(Post 1 art)</i>", sched),
+    Paragraph("<font color='#FF6A1A'><b>Right after &middot; STORY RE-SHARE.</b></font> &nbsp;Re-share the carousel "
+              "to your Story; tag Hayfield + the players.", sched),
+    Spacer(1, 6),
+
+    Paragraph("Do these too (more reach than another post)", styles["h"]),
+    Paragraph("&bull; <b>DM each player their own card</b> so they repost to their stories &mdash; four players "
+              "resharing to their followings beats anything you post yourself.", sched),
+    Paragraph("&bull; <b>Cross-post the carousel</b> to TikTok (photo/slideshow) + X, same caption. Tag the "
+              "<b>Hayfield Hawks</b> program account so they reshare.", sched),
+    Spacer(1, 6),
+
+    Paragraph("Skip today (on purpose)", styles["h"]),
+    Paragraph("&bull; The live-site <b>screen-record reel</b> &mdash; the site is gated behind the &lsquo;Launching "
+              "06.18&rsquo; page, so it&rsquo;d only show the countdown. Save it for launch day.", sched),
+    Spacer(1, 4),
+
+    Paragraph("Reminders", styles["h"]),
+    Paragraph("&bull; <b>Add emojis when posting</b> &mdash; they&rsquo;re left out of the captions below (PDF fonts "
+              "render them as boxes). The hawk + baller emojis are in our chat.", styles["note"]),
+    Paragraph("&bull; <b>Reply to comments in the first hour</b> &mdash; lead with the numbers, not promises.", styles["note"]),
+    Paragraph("&bull; <b>Jackson&rsquo;s headshot</b> shows a non-Hayfield jersey &mdash; swap it if it&rsquo;s the wrong shot.", styles["note"]),
     PageBreak(),
 ]
 
