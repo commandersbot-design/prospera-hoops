@@ -14,7 +14,9 @@ const W = 1080, H = 1350;
 const C = {
   bg: "#0B0E13", panel: "#0F141B", line: "rgba(255,255,255,0.08)",
   orange: "#FF6A1A", text: "#f6f6f4", mut: "#8b929c", faint: "#5a626c",
-  navy: "#13294B", navy2: "#1C3A66", sky: "#6BA4E8", skyLine: "rgba(107,164,232,0.35)",
+  // Hayfield Hawks identity: orange + black.
+  hawk: "#F4731E", hawk2: "#FF8A3D", sky: "#FF6A1A", skyLine: "rgba(255,106,26,0.32)",
+  ink: "#0B0E13", inkSoft: "rgba(11,14,19,0.70)",
 };
 const SD = "Oswald", HG = "Hanken Grotesk";
 const ttfBufs = (p) => [...fs.readFileSync(p, "utf8").matchAll(/base64,([A-Za-z0-9+/=]+)\)/g)].map((m) => Buffer.from(m[1], "base64"));
@@ -52,8 +54,8 @@ const tiles = [
 // --- helpers ---------------------------------------------------------------
 const defs = `<defs>${FONT_SD}${FONT_HG}
   <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1219"/><stop offset="1" stop-color="#080A0E"/></linearGradient>
-  <radialGradient id="glow" cx="0.5" cy="0.26" r="0.7"><stop offset="0" stop-color="#1C3A66" stop-opacity="0.30"/><stop offset="1" stop-color="#1C3A66" stop-opacity="0"/></radialGradient>
-  <linearGradient id="band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.navy}"/><stop offset="1" stop-color="${C.navy2}"/></linearGradient></defs>`;
+  <radialGradient id="glow" cx="0.5" cy="0.26" r="0.7"><stop offset="0" stop-color="${C.hawk}" stop-opacity="0.16"/><stop offset="1" stop-color="${C.hawk}" stop-opacity="0"/></radialGradient>
+  <linearGradient id="band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.hawk}"/><stop offset="1" stop-color="${C.hawk2}"/></linearGradient></defs>`;
 const T = (x, y, s, w, fill, txt, o = {}) => `<text x="${x}" y="${y}" font-family="${o.font || HG}" font-weight="${w}" font-size="${s}" fill="${fill}"${o.ls ? ` letter-spacing="${o.ls}"` : ""}${o.anchor ? ` text-anchor="${o.anchor}"` : ""}>${txt}</text>`;
 const TD = (x, y, s, w, fill, txt, o = {}) => T(x, y, s, w, fill, txt, { ...o, font: SD });
 const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
@@ -80,11 +82,11 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   ${T(118, 94, 12, 700, C.mut, "DMV HOOPS DATA", { ls: 3 })}
   ${T(W - 40, 70, 18, 700, C.sky, "STAT DROP", { ls: 2, anchor: "end" })}
 
-  <rect x="40" y="150" width="${W - 80}" height="118" rx="18" fill="url(#band)" stroke="${C.skyLine}" stroke-width="1.5"/>
-  <rect x="40" y="150" width="8" height="118" rx="4" fill="${C.sky}"/>
-  ${T(74, 216, 58, 800, C.text, "HAYFIELD HAWKS", { font: SD })}
-  ${T(W - 64, 200, 19, 800, C.sky, "BOYS BASKETBALL", { ls: 2, anchor: "end" })}
-  ${T(W - 64, 232, 16, 600, C.mut, "Alexandria, VA", { ls: 1, anchor: "end" })}
+  <rect x="40" y="150" width="${W - 80}" height="118" rx="18" fill="url(#band)" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+  <rect x="40" y="150" width="9" height="118" rx="4" fill="${C.ink}"/>
+  ${T(78, 216, 58, 800, C.ink, "HAYFIELD HAWKS", { font: SD })}
+  ${T(W - 64, 200, 19, 800, C.ink, "BOYS BASKETBALL", { ls: 2, anchor: "end" })}
+  ${T(W - 64, 232, 16, 700, C.inkSoft, "Alexandria, VA", { ls: 1, anchor: "end" })}
 
   ${T(W / 2, 338, 23, 800, C.sky, "SUMMER STANDOUTS — FOUR TO WATCH", { ls: 3, anchor: "middle" })}
 
