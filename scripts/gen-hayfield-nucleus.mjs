@@ -28,16 +28,23 @@ const TD = (x, y, s, w, fill, txt, o = {}) => T(x, y, s, w, fill, txt, { ...o, f
 
 const CX = 540, CY = 850, CORE = 116, AV = 86;
 const NODES = [
-  { last: "TOWE", pos: "PG", file: "public/headshots/christiantowe.jpg", x: 316, y: 672 },
-  { last: "JACKSON", pos: "G", file: "public/headshots/chasejackson.png", x: 764, y: 672 },
-  { last: "CAGE", pos: "G", file: "public/headshots/grantcage.png", x: 316, y: 1028 },
-  { last: "PAYNE", pos: "G", file: "public/headshots/gavinpayne.jpg", x: 764, y: 1028 },
+  { last: "TOWE", pos: "PG", file: "public/headshots/christiantowe.jpg", iw: 602, ih: 1024, x: 316, y: 672 },
+  { last: "JACKSON", pos: "G", file: "public/headshots/chasejackson.png", iw: 660, ih: 986, x: 764, y: 672 },
+  { last: "CAGE", pos: "G", file: "public/headshots/grantcage.png", iw: 660, ih: 980, x: 316, y: 1028 },
+  { last: "PAYNE", pos: "G", file: "public/headshots/gavinpayne.jpg", iw: 633, ih: 1024, x: 764, y: 1028 },
 ];
+
+// fit an image into a box at a zoom, sitting image-point (0.5, focus) at the box
+// center — tightens the crop onto the face. Returns {x,y,w,h} for a plain <image>.
+function frame(iw, ih, bx, by, bw, bh, zoom, focus, anchorY) {
+  const w = bw * zoom, scale = w / iw, h = ih * scale;
+  return { x: bx + (bw - w) / 2, y: by + anchorY * bh - focus * h, w, h };
+}
 
 const spokes = NODES.map((n) => `<line x1="${CX}" y1="${CY}" x2="${n.x}" y2="${n.y}" stroke="${C.spoke}" stroke-width="2.5"/>`).join("");
 const avatar = (n, i) => `<clipPath id="av${i}"><circle cx="${n.x}" cy="${n.y}" r="${AV}"/></clipPath>
   <circle cx="${n.x}" cy="${n.y}" r="${AV + 8}" fill="${C.bg}"/>
-  <image href="${dataURI(n.file)}" x="${n.x - AV}" y="${n.y - AV}" width="${AV * 2}" height="${AV * 2}" preserveAspectRatio="xMidYMin slice" clip-path="url(#av${i})"/>
+  ${(() => { const f = frame(n.iw, n.ih, n.x - AV, n.y - AV, AV * 2, AV * 2, 1.66, 0.27, 0.5); return `<image href="${dataURI(n.file)}" x="${f.x.toFixed(1)}" y="${f.y.toFixed(1)}" width="${f.w.toFixed(1)}" height="${f.h.toFixed(1)}" preserveAspectRatio="none" clip-path="url(#av${i})"/>`; })()}
   <circle cx="${n.x}" cy="${n.y}" r="${AV}" fill="none" stroke="${C.orange}" stroke-width="4"/>
   ${TD(n.x, n.y + AV + 50, 40, 800, C.text, n.last, { anchor: "middle" })}
   ${T(n.x, n.y + AV + 78, 19, 700, C.orange, n.pos, { ls: 3, anchor: "middle" })}`;

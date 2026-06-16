@@ -28,21 +28,34 @@ const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").
 const T = (x, y, s, w, fill, txt, o = {}) => `<text x="${x}" y="${y}" font-family="${o.font || HG}" font-weight="${w}" font-size="${s}" fill="${fill}"${o.ls ? ` letter-spacing="${o.ls}"` : ""}${o.anchor ? ` text-anchor="${o.anchor}"` : ""}>${esc(txt)}</text>`;
 const TD = (x, y, s, w, fill, txt, o = {}) => T(x, y, s, w, fill, txt, { ...o, font: SD });
 
-// players — stats shown are curated; Capitol Hoops = summer avgs, Payne = VHSL Live game.
+// players — stats curated; Capitol Hoops = summer avgs, Payne = VHSL Live game.
+// iw/ih = headshot pixels; zoom (>1 tighter) + focus (frac of photo height to sit
+// the face on) frame the crop so the busy backdrop falls out of frame.
 const PLAYERS = [
   { id: "christiantowe", file: "public/headshots/christiantowe.jpg", name: "CHRISTIAN TOWE", meta: "PG · #1 · HAYFIELD HAWKS",
+    iw: 602, ih: 1024, zoom: 1.28, focus: 0.22,
     mode: "avg", stats: [{ v: "20.0", l: "PPG", hot: true }, { v: "7.3", l: "RPG" }, { v: "3.3", l: "APG" }],
     tag: "CAPITOL HOOPS", note: "Capitol Hoops Summer League · 3 GP" },
   { id: "chasejackson", file: "public/headshots/chasejackson.png", name: "CHASE JACKSON", meta: "G · HAYFIELD HAWKS",
+    iw: 660, ih: 986, zoom: 1.32, focus: 0.24,
     mode: "avg", stats: [{ v: "16.2", l: "PPG", hot: true }, { v: "39.5%", l: "3PT" }, { v: "6.0", l: "RPG" }],
     tag: "CAPITOL HOOPS", note: "Capitol Hoops Summer League · 6 GP" },
   { id: "grantcage", file: "public/headshots/grantcage.png", name: "GRANT CAGE", meta: "G · HAYFIELD HAWKS",
+    iw: 660, ih: 980, zoom: 1.30, focus: 0.26,
     mode: "avg", stats: [{ v: "10.2", l: "PPG", hot: true }, { v: "4.8", l: "RPG" }, { v: "3.0", l: "APG" }],
     tag: "CAPITOL HOOPS", note: "Capitol Hoops Summer League · 6 GP" },
   { id: "gavinpayne", file: "public/headshots/gavinpayne.jpg", name: "GAVIN PAYNE", meta: "G · HAYFIELD HAWKS",
+    iw: 633, ih: 1024, zoom: 1.28, focus: 0.22,
     mode: "game", big: "19", bigUnit: "PTS", ctx: "GAME HIGH · W vs YORKTOWN",
     tag: "VHSL LIVE", note: "VHSL Live game high · summer avg 4.4 PPG (Capitol Hoops)" },
 ];
+
+// fit an image into a box (bx,by,bw,bh) at a zoom, sitting image-point (0.5, focus)
+// at (box center x, by + anchorY*bh). Returns {x,y,w,h} for a non-distorting <image>.
+function frame(iw, ih, bx, by, bw, bh, zoom, focus, anchorY) {
+  const w = bw * zoom, scale = w / iw, h = ih * scale;
+  return { x: bx + (bw - w) / 2, y: by + anchorY * bh - focus * h, w, h };
+}
 
 const tagPill = (cx, y, txt) => { const fs = 20, w = txt.length * (fs * 0.6) + 46; return `<rect x="${cx - w / 2}" y="${y - fs - 3}" width="${w}" height="${fs + 16}" rx="${(fs + 16) / 2}" fill="none" stroke="${C.orange}" stroke-width="2"/>${T(cx, y, fs, 800, C.orange, txt, { ls: 2, anchor: "middle" })}`; };
 
@@ -67,7 +80,7 @@ function card(p) {
       <clipPath id="photo"><rect x="0" y="0" width="${W}" height="${photoH}"/></clipPath></defs>
     <rect width="${W}" height="${H}" fill="${C.bg}"/>
 
-    <image href="${dataURI(p.file)}" x="0" y="0" width="${W}" height="${photoH}" preserveAspectRatio="xMidYMin slice" clip-path="url(#photo)"/>
+    ${(() => { const f = frame(p.iw, p.ih, 0, 0, W, photoH, p.zoom, p.focus, 0.30); return `<image href="${dataURI(p.file)}" x="${f.x.toFixed(1)}" y="${f.y.toFixed(1)}" width="${f.w.toFixed(1)}" height="${f.h.toFixed(1)}" preserveAspectRatio="none" clip-path="url(#photo)"/>`; })()}
     <rect x="0" y="470" width="${W}" height="${photoH - 470}" fill="url(#fade)"/>
 
     <rect x="0" y="0" width="${W}" height="104" fill="url(#band)"/>
