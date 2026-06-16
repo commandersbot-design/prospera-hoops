@@ -25,6 +25,7 @@ const FONT_SD = fs.readFileSync("brand-kit/oswald-embed.svgstyle", "utf8");
 const FONT_HG = fs.readFileSync("brand-kit/hanken-embed.svgstyle", "utf8");
 const renderPng = (svg) => new Resvg(svg, { font: { fontBuffers: FONTS, defaultFontFamily: "Hanken Grotesk", loadSystemFonts: false } }).render().asPng();
 const EMBLEM = fs.readFileSync("brand-kit/prospera-emblem.svg", "utf8").replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+const HAWK = "data:image/png;base64," + fs.readFileSync("brand-kit/hayfield-hawk-black.png").toString("base64");
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const r1 = (n) => (isFinite(n) ? (Math.round(n * 10) / 10).toFixed(1) : "—");
 
@@ -83,8 +84,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   ${T(W - 40, 70, 18, 700, C.sky, "STAT DROP", { ls: 2, anchor: "end" })}
 
   <rect x="40" y="150" width="${W - 80}" height="118" rx="18" fill="url(#band)" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
-  <rect x="40" y="150" width="9" height="118" rx="4" fill="${C.ink}"/>
-  ${T(78, 216, 58, 800, C.ink, "HAYFIELD HAWKS", { font: SD })}
+  <image href="${HAWK}" x="66" y="161" width="106" height="96" preserveAspectRatio="xMidYMid meet"/>
+  ${T(194, 216, 56, 800, C.ink, "HAYFIELD HAWKS", { font: SD })}
   ${T(W - 64, 200, 19, 800, C.ink, "BOYS BASKETBALL", { ls: 2, anchor: "end" })}
   ${T(W - 64, 232, 16, 700, C.inkSoft, "Alexandria, VA", { ls: 1, anchor: "end" })}
 
