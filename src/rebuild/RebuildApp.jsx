@@ -260,7 +260,19 @@ function PublicProfile({ player, data, go }) {
       </div>
 
       {arc && arc.seasons && arc.seasons.length > 0 && (
-        <div style={{ marginTop: 16 }}><DevelopmentSection arc={arc} prospect={prospect} /></div>
+        <div className="card" style={{ marginTop: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <p className="ttl" style={{ margin: 0 }}>Development Arc</p>
+            <span className="bdg gold">★ Prospera+</span>
+          </div>
+          <div className="lock" style={{ paddingTop: 10 }}>
+            <div className="blur" style={{ maxWidth: 420, margin: "4px auto 12px" }}><span style={{ width: "92%" }} /><span style={{ width: "74%" }} /><span style={{ width: "85%" }} /><span style={{ width: "66%" }} /></div>
+            <div style={{ fontSize: 12.5, color: "var(--muted)", maxWidth: 360, margin: "0 auto 12px", lineHeight: 1.5 }}>
+              See how {(p.name || "").split(" ")[0]} has grown season over season — scoring efficiency, role, and the honest read behind the numbers.
+            </div>
+            <button className="claim-big" style={{ fontSize: 15, padding: "11px 18px" }} onClick={() => go("dash")}>🔒 Unlock with Prospera+ · $5/mo</button>
+          </div>
+        </div>
       )}
 
       <div className="pf-grid">
