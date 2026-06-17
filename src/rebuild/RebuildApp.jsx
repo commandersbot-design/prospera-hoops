@@ -203,8 +203,8 @@ function Landing({ data, go, openPlayer }) {
             <input value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" placeholder="Search your name" />
             <button>Search</button>
             <div className={results.length ? "results on" : "results"}>
-              {results.map((p) => (
-                <div className="rrow" key={p.id} onClick={() => openPlayer(p)}>
+              {results.map((p, i) => (
+                <div className="rrow" key={`${p.id}-${i}`} onClick={() => openPlayer(p)}>
                   <div className="rav">{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
                   <div className="rinfo"><div className="n">{p.name}</div><div className="m">{p.meta}</div></div>
                   <div className="rclaim">Claim this profile →</div>
@@ -1112,7 +1112,7 @@ function LineupSide({ data, ids, setIds, label, lineups }) {
                 <div style={{ margin: "6px 0 4px", border: "1px solid var(--orange)", borderRadius: 11, overflow: "hidden", background: "var(--raised)" }}>
                   <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search any player for ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13.5, padding: "11px 13px", border: "none", borderBottom: "1px solid var(--line)", borderRadius: 0, background: "var(--surface)" }} />
                   <div style={{ maxHeight: 240, overflowY: "auto" }}>
-                    {results.map((r) => <div key={r.id} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "11px 13px", cursor: "pointer", fontSize: 13.5, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
+                    {results.map((r, ri) => <div key={`${r.id}-${ri}`} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "11px 13px", cursor: "pointer", fontSize: 13.5, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
                     {results.length === 0 && <div style={{ padding: "11px 13px", fontSize: 12.5, color: "var(--faint)" }}>No players match “{q}”.</div>}
                   </div>
                 </div>
@@ -1199,7 +1199,7 @@ function OneOnOne({ data, openPlayer }) {
   const A = statsFor(data, data.players.find((p) => p.id === p1));
   const B = statsFor(data, data.players.find((p) => p.id === p2));
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", fontSize: 14, padding: "12px 14px" };
-  const Sel = ({ value, onChange, ph }) => <select value={value} onChange={(e) => onChange(e.target.value)} style={inp}><option value="">{ph}</option>{opts.map((p) => <option key={p.id} value={p.id}>{p.name} · {cleanOpp(p.school)}</option>)}</select>;
+  const Sel = ({ value, onChange, ph }) => <select value={value} onChange={(e) => onChange(e.target.value)} style={inp}><option value="">{ph}</option>{opts.map((p, i) => <option key={`${p.id}-${i}`} value={p.id}>{p.name} · {cleanOpp(p.school)}</option>)}</select>;
   const Row = ({ l, a, b, aN, bN, tone, higherBetter = true }) => {
     const na = aN != null ? aN : (a == null ? null : parseFloat(a)), nb = bN != null ? bN : (b == null ? null : parseFloat(b));
     const cmp = (x, y) => (na == null || nb == null || Number.isNaN(na) || Number.isNaN(nb)) ? false : (higherBetter ? x > y : x < y);
@@ -1424,8 +1424,8 @@ function CoachHQ({ data, openPlayer, go }) {
         <div className="ctools">
           <div className="card">
             <p className="ttl">Watchlist ({watchPlayers.length})</p>
-            {watchPlayers.length ? watchPlayers.map((p) => (
-              <div className="wl" key={p.id}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG · {p.school}</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
+            {watchPlayers.length ? watchPlayers.map((p, i) => (
+              <div className="wl" key={`${p.id}-${i}`}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG · {p.school}</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
             )) : <p style={{ fontSize: 12.5, color: "var(--faint)", margin: 0 }}>No players yet — add from the board or a scouting report.</p>}
             <p className="ttl" style={{ margin: "16px 0 8px" }}>Game-prep notes</p>
             <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_notes", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Private notes, tags, game plan…" style={{ ...inp, width: "100%", minHeight: 90, fontSize: 13, padding: 10, resize: "vertical" }} />
@@ -1437,8 +1437,8 @@ function CoachHQ({ data, openPlayer, go }) {
             </div>
             <table className="board"><tbody>
               <tr><th>Player</th><th>Team</th><th>PPG</th><th /></tr>
-              {board.map((p) => (
-                <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.lead}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓" : "+ Watch"}</span></td></tr>
+              {board.map((p, i) => (
+                <tr key={`${p.id}-${i}`}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.lead}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓" : "+ Watch"}</span></td></tr>
               ))}
             </tbody></table>
           </div>
@@ -1660,7 +1660,7 @@ function LeadersView({ data, openPlayer }) {
           <table className="board"><tbody>
             <tr><th>#</th><th>Player</th><th>Team</th><th>{lab}</th><th>GP</th></tr>
             {list.map((p, i) => (
-              <tr key={p.id}>
+              <tr key={`${p.id}-${i}`}>
                 <td style={{ fontFamily: "var(--disp)", fontWeight: 800, color: i < 3 ? "var(--orange)" : "var(--faint)" }}>{i + 1}</td>
                 <td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>{p.name}</b> <span style={{ color: "var(--faint)", fontSize: 11 }}>{p.pos || ""}</span></td>
                 <td>{cleanOpp(p.school)}</td>
