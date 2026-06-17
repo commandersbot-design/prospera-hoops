@@ -10,6 +10,8 @@ import SCHEDULE_DATA from "../data/schedule.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
 import { startCheckout, hasPlus } from "../lib/billing.js";
+import { seasonStatLine } from "../components/StatLine.jsx";
+import { playerHighlights } from "../lib/highlights.js";
 
 const LOGO = "/brand/svg/prosperahoops-lockup-dark.svg";
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -215,6 +217,80 @@ function Landing({ data, go, openPlayer }) {
 
 // ---- PUBLIC PROFILE (read-only) — real data + the rich Development engine --
 const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
+
+// "By the Numbers" — full box-score line, rebuild-styled (reuses seasonStatLine).
+const StatCell = ({ l, v, accent, sub }) => (
+  <div style={{ minWidth: 58 }}>
+    <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 23, lineHeight: 1, color: accent ? "var(--orange)" : "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{v}</div>
+    <div style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--faint)", marginTop: 4, fontWeight: 600 }}>{l}</div>
+    {sub && <div style={{ fontSize: 9.5, color: "var(--faint)", marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+const StatGrp = ({ title, note, children }) => (
+  <div style={{ marginTop: 16 }}>
+    <div style={{ fontFamily: "var(--sans)", fontSize: 10.5, letterSpacing: ".12em", textTransform: "uppercase", fontWeight: 700, color: "var(--muted)", marginBottom: 11 }}>{title}{note && <span style={{ color: "var(--faint)", fontWeight: 400 }}> · {note}</span>}</div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 26px" }}>{children}</div>
+  </div>
+);
+function ByTheNumbers({ games }) {
+  const d = useMemo(() => seasonStatLine(games), [games]);
+  if (!d) return null;
+  const h = playerHighlights(games);
+  const notable = h ? [h.g30 > 0 && `${h.g30}× 30-pt`, h.g30 === 0 && h.g20 > 0 && `${h.g20}× 20-pt`, h.td > 0 && `${h.td} triple-dbl`, h.dd > 0 && `${h.dd} double-dbl`].filter(Boolean) : [];
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <div className="ttl" style={{ color: "var(--orange)" }}>By the Numbers <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {d.gp} GP · from box scores</span></div>
+      <StatGrp title="Season averages">
+        <StatCell l="PPG" v={d.per.ppg} accent /><StatCell l="RPG" v={d.per.rpg} /><StatCell l="APG" v={d.per.apg} /><StatCell l="SPG" v={d.per.spg} /><StatCell l="BPG" v={d.per.bpg} /><StatCell l="TOPG" v={d.per.topg} />{d.per.mpg != null && <StatCell l="MPG" v={d.per.mpg} />}
+      </StatGrp>
+      <StatGrp title="Shooting">
+        <StatCell l="FG" v={d.shoot.fg} /><StatCell l="FG%" v={d.shoot.fgPct} /><StatCell l="3PT" v={d.shoot.tp} /><StatCell l="3P%" v={d.shoot.tpPct} /><StatCell l="FT" v={d.shoot.ft} /><StatCell l="FT%" v={d.shoot.ftPct} /><StatCell l="eFG%" v={d.shoot.efg} accent /><StatCell l="TS%" v={d.shoot.ts} accent />
+      </StatGrp>
+      <StatGrp title={d.per36 ? "Per-36 & role" : "Role & efficiency"} note={d.per36 ? null : "add minutes to unlock per-36"}>
+        {d.per36 && <><StatCell l="P36 PTS" v={d.per36.pts} /><StatCell l="P36 REB" v={d.per36.reb} /><StatCell l="P36 AST" v={d.per36.ast} /></>}
+        <StatCell l="AST:TO" v={d.role.ato} accent /><StatCell l="TOV%" v={d.role.tovPct} /><StatCell l="PTS MIX" v={`${d.role.mix2}/${d.role.mix3}/${d.role.mixFt}`} />
+      </StatGrp>
+      {h && (h.highs.pts || h.highs.reb || h.highs.ast) && (
+        <StatGrp title="Season highs" note={notable.length ? notable.join(" · ") : null}>
+          {h.highs.pts && <StatCell l="PTS HIGH" v={h.highs.pts.v} accent sub={h.highs.pts.opp ? `vs ${cleanOpp(h.highs.pts.opp).slice(0, 16)}` : null} />}
+          {h.highs.reb && <StatCell l="REB HIGH" v={h.highs.reb.v} accent sub={h.highs.reb.opp ? `vs ${cleanOpp(h.highs.reb.opp).slice(0, 16)}` : null} />}
+          {h.highs.ast && <StatCell l="AST HIGH" v={h.highs.ast.v} accent sub={h.highs.ast.opp ? `vs ${cleanOpp(h.highs.ast.opp).slice(0, 16)}` : null} />}
+          {h.highs.tpm && h.highs.tpm.v > 0 && <StatCell l="3PM HIGH" v={h.highs.tpm.v} accent sub={h.highs.tpm.opp ? `vs ${cleanOpp(h.highs.tpm.opp).slice(0, 16)}` : null} />}
+        </StatGrp>
+      )}
+      <div style={{ fontSize: 10.5, color: "var(--faint)", marginTop: 16, lineHeight: 1.5 }}>PTS MIX = share of points from 2s / 3s / free throws. eFG% and TS% weight 3-pointers and free throws.</div>
+    </div>
+  );
+}
+
+// "The Leap" — prior season vs. latest, from multi-season game logs.
+function TheLeapCard({ seasons }) {
+  if (!Array.isArray(seasons) || seasons.length < 2) return null;
+  const sorted = [...seasons].sort((a, b) => String(a.season).localeCompare(String(b.season)));
+  const prior = sorted[sorted.length - 2], latest = sorted[sorted.length - 1];
+  const d = (a, b) => (a != null && b != null ? +(a - b).toFixed(1) : null);
+  const Row = ({ l, a, b }) => {
+    const dl = d(b, a);
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "54px 1fr 1fr 60px", gap: 10, alignItems: "center", padding: "9px 0", borderTop: "1px solid var(--line)" }}>
+        <span style={{ fontSize: 10.5, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--faint)", fontWeight: 600 }}>{l}</span>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: "var(--muted)", fontVariantNumeric: "tabular-nums" }}>{a ?? "—"}</span>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{b ?? "—"}</span>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14, color: dl > 0 ? "var(--orange)" : dl < 0 ? "var(--muted)" : "var(--faint)", fontVariantNumeric: "tabular-nums" }}>{dl != null ? (dl > 0 ? `+${dl}` : dl) : ""}</span>
+      </div>
+    );
+  };
+  const gOf = (s) => s.g || s.gp || "—";
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <div className="ttl" style={{ color: "var(--blue)" }}>The Leap <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {prior.season} ({gOf(prior)}g) → {latest.season} ({gOf(latest)}g)</span></div>
+      <div style={{ display: "grid", gridTemplateColumns: "54px 1fr 1fr 60px", gap: 10, fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", margin: "10px 0 0", fontWeight: 600 }}><span /><span>Prior</span><span>Now</span><span>Δ</span></div>
+      <Row l="PTS" a={prior.ppg} b={latest.ppg} />
+      <Row l="REB" a={prior.rpg} b={latest.rpg} />
+      <Row l="AST" a={prior.apg} b={latest.apg} />
+    </div>
+  );
+}
 function PublicProfile({ player, data, go }) {
   const [tab, setTab] = useState("su");
   const p = player || {};
@@ -325,6 +401,9 @@ function PublicProfile({ player, data, go }) {
           {!hasSummary && <> A full written report{hasMeasur ? "" : ", verified measurements,"} and recruiting timeline are pending — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={() => setClaimOpen(true)}>claim this profile</b> to add them, free.</>}
         </p>
       </div>
+
+      <ByTheNumbers games={games} />
+      <TheLeapCard seasons={seasons} />
 
       {arc && arc.seasons && arc.seasons.length > 0 && (
         <div className="card" style={{ marginTop: 16 }}>
