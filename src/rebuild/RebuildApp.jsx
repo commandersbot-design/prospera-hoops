@@ -40,6 +40,26 @@ function teamType(name, locByKey) {
   return teamState(name, locByKey) ? "Public" : null;
 }
 
+// ---- color storytelling — tone a stat by how good it is --------------------
+// Four-band scale: low → ok → good → elite. Used to color stats sitewide so the
+// numbers tell the story at a glance instead of reading as flat grey.
+const STAT_BANDS = {
+  ppg: [8, 14, 20], rpg: [3.5, 6, 9], apg: [2, 3.5, 5.5], spg: [1, 1.7, 2.5], bpg: [0.5, 1, 1.7],
+  fgPct: [40, 46, 52], threePct: [30, 35, 40], ftPct: [62, 72, 80], tsPct: [48, 54, 60], efg: [45, 52, 58], ato: [0.9, 1.4, 2],
+};
+const TONE_LOW = "#e07a5f", TONE_OK = "var(--ink)", TONE_GOOD = "var(--gold-a)", TONE_ELITE = "var(--teal)";
+function statTone(kind, v) {
+  const b = STAT_BANDS[kind];
+  const n = typeof v === "string" ? parseFloat(v) : v;
+  if (!b || n == null || Number.isNaN(n)) return "var(--ink)";
+  if (n >= b[2]) return TONE_ELITE; if (n >= b[1]) return TONE_GOOD; if (n >= b[0]) return TONE_OK; return TONE_LOW;
+}
+// Tone by 0–100 percentile (for percentile-driven UI).
+function pctTone(p) { if (p == null) return "var(--muted)"; if (p >= 80) return TONE_ELITE; if (p >= 60) return TONE_GOOD; if (p >= 35) return TONE_OK; return TONE_LOW; }
+const TrendArrow = ({ d, unit }) => (d == null || d === 0 ? null : (
+  <span style={{ color: d > 0 ? "var(--teal)" : "#e07a5f", fontWeight: 800, fontSize: 11, whiteSpace: "nowrap" }}>{d > 0 ? "▲" : "▼"} {Math.abs(d)}{unit || ""}</span>
+));
+
 // ---- shared: Scout Card (matches prototype .scout) -------------------------
 const HEADSHOT_EMAIL = "headshots@prosperahoops.com";
 function ScoutCard({ p, portrait, onClick }) {
@@ -267,9 +287,9 @@ function GameLog({ games }) {
 }
 
 // "By the Numbers" — full box-score line, rebuild-styled (reuses seasonStatLine).
-const StatCell = ({ l, v, accent, sub }) => (
+const StatCell = ({ l, v, accent, sub, color }) => (
   <div style={{ minWidth: 58 }}>
-    <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 23, lineHeight: 1, color: accent ? "var(--orange)" : "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{v}</div>
+    <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 23, lineHeight: 1, color: color || (accent ? "var(--orange)" : "var(--ink)"), fontVariantNumeric: "tabular-nums" }}>{v}</div>
     <div style={{ fontSize: 10, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--faint)", marginTop: 4, fontWeight: 600 }}>{l}</div>
     {sub && <div style={{ fontSize: 9.5, color: "var(--faint)", marginTop: 2 }}>{sub}</div>}
   </div>
@@ -289,14 +309,14 @@ function ByTheNumbers({ games }) {
     <div className="card" style={{ marginTop: 16 }}>
       <div className="ttl" style={{ color: "var(--orange)" }}>By the Numbers <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {d.gp} GP · from box scores</span></div>
       <StatGrp title="Season averages">
-        <StatCell l="PPG" v={d.per.ppg} accent /><StatCell l="RPG" v={d.per.rpg} /><StatCell l="APG" v={d.per.apg} /><StatCell l="SPG" v={d.per.spg} /><StatCell l="BPG" v={d.per.bpg} /><StatCell l="TOPG" v={d.per.topg} />{d.per.mpg != null && <StatCell l="MPG" v={d.per.mpg} />}
+        <StatCell l="PPG" v={d.per.ppg} color={statTone("ppg", d.per.ppg)} /><StatCell l="RPG" v={d.per.rpg} color={statTone("rpg", d.per.rpg)} /><StatCell l="APG" v={d.per.apg} color={statTone("apg", d.per.apg)} /><StatCell l="SPG" v={d.per.spg} color={statTone("spg", d.per.spg)} /><StatCell l="BPG" v={d.per.bpg} color={statTone("bpg", d.per.bpg)} /><StatCell l="TOPG" v={d.per.topg} />{d.per.mpg != null && <StatCell l="MPG" v={d.per.mpg} />}
       </StatGrp>
       <StatGrp title="Shooting">
-        <StatCell l="FG" v={d.shoot.fg} /><StatCell l="FG%" v={d.shoot.fgPct} /><StatCell l="3PT" v={d.shoot.tp} /><StatCell l="3P%" v={d.shoot.tpPct} /><StatCell l="FT" v={d.shoot.ft} /><StatCell l="FT%" v={d.shoot.ftPct} /><StatCell l="eFG%" v={d.shoot.efg} accent /><StatCell l="TS%" v={d.shoot.ts} accent />
+        <StatCell l="FG" v={d.shoot.fg} /><StatCell l="FG%" v={d.shoot.fgPct} color={statTone("fgPct", d.shoot.fgPct)} /><StatCell l="3PT" v={d.shoot.tp} /><StatCell l="3P%" v={d.shoot.tpPct} color={statTone("threePct", d.shoot.tpPct)} /><StatCell l="FT" v={d.shoot.ft} /><StatCell l="FT%" v={d.shoot.ftPct} color={statTone("ftPct", d.shoot.ftPct)} /><StatCell l="eFG%" v={d.shoot.efg} color={statTone("efg", d.shoot.efg)} /><StatCell l="TS%" v={d.shoot.ts} color={statTone("tsPct", d.shoot.ts)} />
       </StatGrp>
       <StatGrp title={d.per36 ? "Per-36 & role" : "Role & efficiency"} note={d.per36 ? null : "add minutes to unlock per-36"}>
         {d.per36 && <><StatCell l="P36 PTS" v={d.per36.pts} /><StatCell l="P36 REB" v={d.per36.reb} /><StatCell l="P36 AST" v={d.per36.ast} /></>}
-        <StatCell l="AST:TO" v={d.role.ato} accent /><StatCell l="TOV%" v={d.role.tovPct} /><StatCell l="PTS MIX" v={`${d.role.mix2}/${d.role.mix3}/${d.role.mixFt}`} />
+        <StatCell l="AST:TO" v={d.role.ato} color={statTone("ato", d.role.ato)} /><StatCell l="TOV%" v={d.role.tovPct} /><StatCell l="PTS MIX" v={`${d.role.mix2}/${d.role.mix3}/${d.role.mixFt}`} />
       </StatGrp>
       {h && (h.highs.pts || h.highs.reb || h.highs.ast) && (
         <StatGrp title="Season highs" note={notable.length ? notable.join(" · ") : null}>
@@ -431,7 +451,7 @@ function PublicProfile({ player, data, go }) {
         <div className="card">
           <p className="ttl">Percentiles vs. DMV peers</p>
           {percentiles.map((r) => (
-            <div className="pctrow" key={r.l}><span className="pl">{r.l}</span><span className="pb"><i style={{ width: `${Math.max(2, r.v)}%` }} /></span><span className="pv2">{r.v}</span></div>
+            <div className="pctrow" key={r.l}><span className="pl">{r.l}</span><span className="pb"><i style={{ width: `${Math.max(2, r.v)}%`, background: pctTone(r.v) }} /></span><span className="pv2" style={{ color: pctTone(r.v) }}>{r.v}</span></div>
           ))}
           <p style={{ fontSize: 11, color: "var(--faint)", margin: "8px 0 0" }}>Where he ranks vs. every tracked summer player — 75 means better than 75%.</p>
           <p className="ttl" style={{ margin: "16px 0 8px" }}>Archetype</p>
@@ -894,27 +914,53 @@ function TeamReport({ team, schedule, wl, openPlayer, headLabel = "Read" }) {
 }
 
 // One side of a custom 5-on-5 lineup — search-add up to 5, with summed production.
-function LineupSide({ data, ids, setIds, label }) {
+const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
+const EMPTY5 = () => [null, null, null, null, null];
+// Saved lineups persist per-device (synced to the coach account once billing is live).
+function useLineups() {
+  const [list, setList] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_lineups") || "[]"); } catch (e) { return []; } });
+  const persist = (next) => { setList(next); try { localStorage.setItem("ph_lineups", JSON.stringify(next)); } catch (e) { /* ignore */ } };
+  return {
+    list,
+    add: (name, ids) => persist([{ id: `lu_${Date.now()}`, name: name || "Untitled", ids: [...ids] }, ...list].slice(0, 40)),
+    remove: (id) => persist(list.filter((l) => l.id !== id)),
+  };
+}
+
+function LineupSide({ data, ids, setIds, label, lineups }) {
   const [q, setQ] = useState("");
+  const [name, setName] = useState("");
   const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
-  const sel = ids.map((id) => byId[id]).filter(Boolean);
-  const sum = (k) => sel.reduce((s, p) => s + (p[k] || 0), 0);
+  const sel = ids.map((id) => (id ? byId[id] : null));
+  const sum = (k) => sel.filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
+  const filled = sel.filter(Boolean).length;
+  const fillFirst = (pid) => { const i = ids.findIndex((s) => !s); if (i >= 0) { const n = [...ids]; n[i] = pid; setIds(n); setQ(""); } };
+  const clear = (i) => { const n = [...ids]; n[i] = null; setIds(n); };
   const results = q.trim().length >= 2 ? data.players.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()) && !ids.includes(p.id)).slice(0, 6) : [];
-  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 9, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   return (
     <div>
-      <p className="ttl" style={{ margin: "0 0 8px" }}>{label} ({sel.length}/5)</p>
+      <p className="ttl" style={{ margin: "0 0 10px" }}>{label} <span style={{ color: filled === 5 ? "var(--teal)" : "var(--faint)", fontFamily: "var(--sans)" }}>({filled}/5)</span></p>
       <div style={{ display: "grid", gap: 6 }}>
-        {sel.map((p) => (
-          <div key={p.id} className="wl" style={{ padding: "7px 0" }}><span className="n" style={{ fontSize: 13 }}>{p.name}</span><span className="s">{r1(p.ppg)} ppg</span><span className="add" onClick={() => setIds(ids.filter((x) => x !== p.id))} style={{ marginLeft: 8 }}>✕</span></div>
-        ))}
+        {POSITIONS.map((pos, i) => {
+          const p = sel[i];
+          return (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "30px 1fr auto", gap: 9, alignItems: "center", padding: "8px 10px", borderRadius: 9, border: `1px solid ${p ? "var(--line)" : "rgba(244,242,237,.06)"}`, background: p ? "var(--surface)" : "transparent" }}>
+              <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)" }}>{pos}</span>
+              {p ? <>
+                <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 9 }}><b style={{ fontFamily: "var(--disp)", fontSize: 14, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b><span className="add" onClick={() => clear(i)}>✕</span></span>
+              </> : <span style={{ color: "var(--faint)", fontSize: 12, gridColumn: "2 / span 2" }}>Empty — add a {pos === "C" ? "center" : pos === "PG" ? "point guard" : "player"}</span>}
+            </div>
+          );
+        })}
       </div>
-      {sel.length < 5 && (
+      {filled < 5 && (
         <div style={{ position: "relative", marginTop: 8 }}>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Add a player…" style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a player to add…" style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
           {results.length > 0 && (
             <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "var(--raised)", border: "1px solid var(--line)", borderRadius: 10, marginTop: 4, zIndex: 20, overflow: "hidden" }}>
-              {results.map((p) => <div key={p.id} onClick={() => { setIds([...ids, p.id]); setQ(""); }} style={{ padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r1(p.ppg)} ppg · {cleanOpp(p.school)}</span></div>)}
+              {results.map((p) => <div key={p.id} onClick={() => fillFirst(p.id)} style={{ padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r1(p.ppg)} ppg · {cleanOpp(p.school)}</span></div>)}
             </div>
           )}
         </div>
@@ -922,27 +968,53 @@ function LineupSide({ data, ids, setIds, label }) {
       <div style={{ display: "flex", gap: 18, marginTop: 14 }}>
         {[["PPG", "ppg"], ["RPG", "rpg"], ["APG", "apg"]].map(([l, k]) => <div key={k}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, color: "var(--ink)" }}>{r1(sum(k))}</div><div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>)}
       </div>
+      {filled > 0 && lineups && (
+        <div style={{ display: "flex", gap: 7, marginTop: 12 }}>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name this lineup…" style={{ ...inp, flex: 1, fontSize: 12.5, padding: "8px 11px" }} onKeyDown={(e) => e.key === "Enter" && (lineups.add(name || label, ids), setName(""))} />
+          <button className="bbtn pri" onClick={() => { lineups.add(name || label, ids); setName(""); }}>Save</button>
+        </div>
+      )}
     </div>
   );
 }
 
 function FiveOnFive({ data }) {
-  const [aIds, setAIds] = useState([]);
-  const [bIds, setBIds] = useState([]);
+  const [aIds, setAIds] = useState(EMPTY5);
+  const [bIds, setBIds] = useState(EMPTY5);
+  const lineups = useLineups();
   const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
-  const sum = (ids, k) => ids.map((id) => byId[id]).filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
-  const ready = aIds.length && bIds.length;
+  const sum = (ids, k) => ids.map((id) => (id ? byId[id] : null)).filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
+  const ready = aIds.filter(Boolean).length && bIds.filter(Boolean).length;
   const ppA = sum(aIds, "ppg"), ppB = sum(bIds, "ppg");
+  const loadInto = (setter, l) => setter([...l.ids, ...EMPTY5()].slice(0, 5));
   return (
     <div>
-      <p className="ttl">Custom 5-on-5 — build two lineups</p>
+      <p className="ttl">Custom 5-on-5 — fill both lineups</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-        <LineupSide data={data} ids={aIds} setIds={setAIds} label="Lineup A" />
-        <LineupSide data={data} ids={bIds} setIds={setBIds} label="Lineup B" />
+        <LineupSide data={data} ids={aIds} setIds={setAIds} label="Lineup A" lineups={lineups} />
+        <LineupSide data={data} ids={bIds} setIds={setBIds} label="Lineup B" lineups={lineups} />
       </div>
       {ready
         ? <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 16, lineHeight: 1.5 }}><b style={{ color: "var(--orange)", fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 11, letterSpacing: ".06em" }}>Projected edge</b> — Lineup {ppA >= ppB ? "A" : "B"} projects {r1(Math.abs(ppA - ppB))} more combined PPG. Production only — adjust for fit, pace, and matchups.</p>
-        : <p style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 14 }}>Add players to both lineups to see the projected production edge.</p>}
+        : <p style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 14 }}>Fill both lineups to see the projected production edge.</p>}
+      {lineups.list.length > 0 && (
+        <div style={{ marginTop: 18, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
+          <p className="ttl" style={{ margin: "0 0 9px" }}>Saved lineups <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {lineups.list.length}</span></p>
+          <div style={{ display: "grid", gap: 7 }}>
+            {lineups.list.map((l) => (
+              <div key={l.id} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", padding: "9px 12px", border: "1px solid var(--line)", borderRadius: 9, background: "var(--surface)" }}>
+                <b style={{ fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 13.5 }}>{l.name}</b>
+                <span style={{ fontSize: 11, color: "var(--faint)", flex: 1, minWidth: 120, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.ids.filter(Boolean).map((id) => byId[id]?.name).filter(Boolean).join(", ") || "—"}</span>
+                <span style={{ display: "flex", gap: 6 }}>
+                  <button className="bbtn" onClick={() => loadInto(setAIds, l)}>→ A</button>
+                  <button className="bbtn" onClick={() => loadInto(setBIds, l)}>→ B</button>
+                  <button className="bbtn" onClick={() => lineups.remove(l.id)}>Delete</button>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
