@@ -1596,19 +1596,40 @@ function ProspectsView({ data, openPlayer }) {
   const [cls, setCls] = useState([]);
   const [tracked, setTracked] = useState(false);
   const [sort, setSort] = useState("ranked");
+  const [showRoster, setShowRoster] = useState(false);
   const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  const list = useMemo(() => {
+  // Split matches into players with summer production (the ranked/stat board)
+  // and rostered players with no summer stats yet (their own section below).
+  const { list, rosterList } = useMemo(() => {
     const k = q.trim().toLowerCase();
-    let r = data.players.filter((p) =>
+    const matched = data.players.filter((p) =>
       (!k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) &&
       (!states.length || (p.state && states.includes(p.state))) &&
       (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
       (!cls.length || cls.includes(p.cls)) &&
       (!tracked || wl.has(p.id)));
-    r = sort === "az" ? [...r].sort((a, b) => a.name.localeCompare(b.name)) : [...r].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
-    return r.slice(0, 250);
+    const stat = matched.filter((p) => p.gp != null);
+    const roster = matched.filter((p) => p.gp == null).sort((a, b) => a.name.localeCompare(b.name));
+    const sorted = sort === "az" ? [...stat].sort((a, b) => a.name.localeCompare(b.name)) : [...stat].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
+    return { list: sorted.slice(0, 250), rosterList: roster };
   }, [q, states, poss, cls, tracked, sort, data.players, wl.ids]);
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
+  const renderRow = (p, i) => (
+    <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+      <div className="rav" style={{ width: 42, height: 42 }}>{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{p.name}</span>
+          {p.stars ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{p.stars}★{p.rankings && p.rankings.national ? ` · #${p.rankings.national} Natl` : ""}</span> : null}
+        </div>
+        <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), p.gp == null ? "on roster" : "eval pending"].filter(Boolean).join(" · ")}</div>
+      </div>
+      <div style={{ textAlign: "right" }}>
+        <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: p.gp == null ? "var(--faint)" : "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
+        <div style={{ fontSize: 9, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".06em", marginTop: 3 }}>{p.gp == null ? "roster · no summer stats" : `ppg · ${p.gp || 0}gp${(p.gp || 0) < 3 ? " · small" : ""}`}</div>
+      </div>
+    </div>
+  );
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
@@ -1641,24 +1662,22 @@ function ProspectsView({ data, openPlayer }) {
         {sort === "ranked" ? "Notable · not yet evaluated" : `${list.length} shown`}
       </div>
       <div>
-        {list.map((p, i) => (
-          <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
-            <div className="rav" style={{ width: 42, height: 42 }}>{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{p.name}</span>
-                {p.stars ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{p.stars}★{p.rankings && p.rankings.national ? ` · #${p.rankings.national} Natl` : ""}</span> : null}
-              </div>
-              <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), "eval pending"].filter(Boolean).join(" · ")}</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: p.gp == null ? "var(--faint)" : "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
-              <div style={{ fontSize: 9, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".06em", marginTop: 3 }}>{p.gp == null ? "roster · no summer stats" : `ppg · ${p.gp || 0}gp${(p.gp || 0) < 3 ? " · small" : ""}`}</div>
-            </div>
-          </div>
-        ))}
-        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No prospects match these filters.</p>}
+        {list.map(renderRow)}
+        {list.length === 0 && rosterList.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No prospects match these filters.</p>}
       </div>
+
+      {rosterList.length > 0 && (
+        <div style={{ marginTop: 30 }}>
+          <div onClick={() => setShowRoster((s) => !s)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "13px 14px", border: "1px solid var(--line)", borderRadius: 12, background: "var(--surface)", cursor: "pointer" }}>
+            <div>
+              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", fontSize: 13.5, color: "var(--ink)" }}>On rosters · no summer stats yet <span style={{ color: "var(--orange)" }}>{rosterList.length}</span></div>
+              <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}>Full team rosters from Capitol Hoops — tracked &amp; searchable. Stat lines fill in as they log summer games.</div>
+            </div>
+            <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)", whiteSpace: "nowrap" }}>{showRoster ? "Hide ▴" : "Show ▾"}</span>
+          </div>
+          {showRoster && <div style={{ marginTop: 8 }}>{rosterList.slice(0, 400).map(renderRow)}</div>}
+        </div>
+      )}
       <div style={{ height: 40 }} />
     </div>
   );
