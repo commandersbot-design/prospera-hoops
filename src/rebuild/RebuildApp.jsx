@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { DevelopmentSection } from "../components/DevelopmentArc";
 import { buildArc } from "../lib/developmentArc";
 import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
+import SCHEDULE_DATA from "../data/schedule.json";
 
 const LOGO = "/brand/svg/prosperahoops-lockup-dark.svg";
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -345,20 +346,59 @@ function useWatchlist() {
 // ---- TEAMS — directory + detail -------------------------------------------
 function TeamsView({ data, openTeam }) {
   const [q, setQ] = useState("");
-  const list = useMemo(() => { const k = q.trim().toLowerCase(); return data.teams.filter((t) => !k || t.name.toLowerCase().includes(k)); }, [q, data.teams]);
+  const [mode, setMode] = useState("teams"); // teams | schedule
+  const list = useMemo(() => { const k = q.trim().toLowerCase(); return data.teams.filter((t) => (!k || t.name.toLowerCase().includes(k))); }, [q, data.teams]);
+  const teamNames = useMemo(() => new Set(data.teams.map((t) => t.name.toLowerCase())), [data.teams]);
+  const games = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    return (data.schedule || [])
+      .filter((g) => (!k || (g.home || "").toLowerCase().includes(k) || (g.away || "").toLowerCase().includes(k)))
+      .filter((g) => g.date)
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+      .slice(0, 80);
+  }, [q, data.schedule]);
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div className="hello">Teams</div>
       <div className="sub">{data.teams.length} teams · Capitol Hoops Summer League &amp; DMV programs</div>
-      <div className="csearch"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a team…" /></div>
-      <div className="anat" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", marginTop: 4 }}>
-        {list.map((t) => (
-          <div className="feat" key={t.slug} style={{ cursor: "pointer" }} onClick={() => openTeam(t)}>
-            <p className="ft">{t.name}</p>
-            <p>{t.n} players{t.top ? ` · top scorer ${t.top.name} (${r1(t.top.ppg)} PPG)` : ""}</p>
-          </div>
-        ))}
+
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", margin: "14px 0 4px" }}>
+        <FilterChip on={mode === "teams"} onClick={() => setMode("teams")}>Teams</FilterChip>
+        <FilterChip on={mode === "schedule"} onClick={() => setMode("schedule")}>Schedule</FilterChip>
       </div>
+      <div className="csearch" style={{ marginTop: 10 }}><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={mode === "teams" ? "Search a team…" : "Search by team in the schedule…"} /></div>
+
+      {mode === "teams" ? (
+        <div className="anat" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", marginTop: 4 }}>
+          {list.length ? list.map((t) => (
+            <div className="feat" key={t.slug} style={{ cursor: "pointer" }} onClick={() => openTeam(t)}>
+              <p className="ft">{t.name}</p>
+              <p>{t.n} players{t.top ? ` · top scorer ${t.top.name} (${r1(t.top.ppg)} PPG)` : ""}</p>
+            </div>
+          )) : <p style={{ fontSize: 13, color: "var(--faint)", gridColumn: "1/-1" }}>No teams match those filters.</p>}
+        </div>
+      ) : (
+        <div className="card" style={{ marginTop: 4 }}>
+          <p className="ttl">League schedule &amp; results</p>
+          {games.length ? (
+            <table className="log"><tbody>
+              <tr><th>Date</th><th>Matchup</th><th>Result</th></tr>
+              {games.map((g, i) => {
+                const fin = g.status === "final" && g.homeScore != null;
+                const hk = teamNames.has((g.home || "").toLowerCase()), ak = teamNames.has((g.away || "").toLowerCase());
+                const tm = (nm, known) => <span onClick={() => { const t = data.teams.find((x) => x.name.toLowerCase() === (nm || "").toLowerCase()); if (t) openTeam(t); }} style={known ? { cursor: "pointer", color: "var(--ink)", fontWeight: 600 } : {}}>{cleanOpp(nm)}</span>;
+                return (
+                  <tr key={i}>
+                    <td style={{ whiteSpace: "nowrap" }}>{(g.dateLabel || g.date || "").replace(/,?\s*\d{4}$/, "")}</td>
+                    <td>{tm(g.away, ak)} <span style={{ color: "var(--faint)" }}>@</span> {tm(g.home, hk)}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{fin ? <b>{g.awayScore}–{g.homeScore}</b> : (g.time || "—")}</td>
+                  </tr>
+                );
+              })}
+            </tbody></table>
+          ) : <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No games match that search.</p>}
+        </div>
+      )}
       <div style={{ height: 40 }} />
     </div>
   );
@@ -566,9 +606,9 @@ function useData() {
       fetch("/data/prospects.json").then((r) => r.json()).catch(() => ({ prospects: [] })),
       fetch("/data/capitolHoops.json").then((r) => r.json()).catch(() => ({ teams: {} })),
       fetch("/data/dmvSchools.json").then((r) => r.ok ? r.json() : { schools: [] }).catch(() => ({ schools: [] })),
-      fetch("/data/schedule.json").then((r) => r.ok ? r.json() : { games: [] }).catch(() => ({ games: [] })),
       fetch("/data/gameLogs.json").then((r) => r.ok ? r.json() : { players: {} }).catch(() => ({ players: {} })),
-    ]).then(([pj, ch, sc, sj, gj]) => {
+    ]).then(([pj, ch, sc, gj]) => {
+      const sj = { games: SCHEDULE_DATA.games || SCHEDULE_DATA };
       const prospects = pj.prospects || pj;
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
       const gl = gj.players || {};
@@ -627,7 +667,9 @@ function useData() {
           .filter((p) => p.stats && p.stats.gp > 0 && p.stats.ppg != null)
           .map((p) => { const pr = prByKey[nameKey(p.name)]; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: pr?.headshot || null, ...p.stats }; })
           .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
-        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length };
+        const ln = (t.name || "").toLowerCase();
+        const ctx = /hayfield/.test(ln) ? "HS" : (/\bakt\b|warriors|3ssb|\baau\b/.test(ln) ? "AAU" : "SUMMER");
+        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length, ctx };
       }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
       const schedule = (sj.games || []);
       setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey });
