@@ -10,6 +10,7 @@ import SCHEDULE_DATA from "../data/schedule.json";
 
 const LOGO = "/brand/svg/prosperahoops-lockup-dark.svg";
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const slugify = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const initials = (n) => (n || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 const r1 = (n) => (n == null || Number.isNaN(+n) ? "—" : (Math.round(+n * 10) / 10).toFixed(1));
 
@@ -790,14 +791,33 @@ function ProspectsView({ data, openPlayer }) {
   );
 }
 
+// View ↔ URL mapping for the simple state router (History API).
+const VIEW_PATH = { landing: "/", prospects: "/prospects", teams: "/teams", coach: "/coach", dash: "/dashboard" };
+const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
+
 export default function RebuildApp() {
   const [view, setView] = useState("landing");
   const [selected, setSelected] = useState(null);
   const [team, setTeam] = useState(null);
   const data = useData();
-  const go = (v) => { setView(v); window.scrollTo(0, 0); };
-  const openPlayer = (p) => { setSelected(p); setView("profile"); window.scrollTo(0, 0); };
-  const openTeam = (t) => { setTeam(t); setView("teamDetail"); window.scrollTo(0, 0); };
+  const go = (v) => { setView(v); pushUrl(VIEW_PATH[v] || "/"); window.scrollTo(0, 0); };
+  const openPlayer = (p) => { setSelected(p); setView("profile"); pushUrl(`/p/${slugify(p.name)}`); window.scrollTo(0, 0); };
+  const openTeam = (t) => { setTeam(t); setView("teamDetail"); pushUrl(`/t/${t.slug}`); window.scrollTo(0, 0); };
+
+  // Resolve the URL to a view on first load + on browser back/forward.
+  useEffect(() => {
+    if (!data) return;
+    const resolve = () => {
+      const path = window.location.pathname;
+      if (path.startsWith("/p/")) { const s = path.slice(3).replace(/\/$/, ""); const pl = data.players.find((p) => slugify(p.name) === s); if (pl) { setSelected(pl); setView("profile"); return; } }
+      if (path.startsWith("/t/")) { const s = path.slice(3).replace(/\/$/, ""); const tm = data.teams.find((t) => t.slug === s); if (tm) { setTeam(tm); setView("teamDetail"); return; } }
+      const byPath = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
+      setView(byPath[path] || "landing");
+    };
+    resolve();
+    window.addEventListener("popstate", resolve);
+    return () => window.removeEventListener("popstate", resolve);
+  }, [data]);
 
   if (!data) return <div className="rebuild" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--muted)", fontFamily: "var(--disp)", letterSpacing: ".2em", textTransform: "uppercase", fontSize: 12 }}>Loading the board…</div>;
 
