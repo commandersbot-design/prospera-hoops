@@ -52,6 +52,11 @@ async function get(url) {
   return null;
 }
 
+// Normalize source team names to our canonical display names (e.g. the Capitol
+// Hoops mascot label → the school name). Keep in sync with scrape-capitol-hoops.
+const TEAM_RENAME = { "Hawks (Hayfield)": "Hayfield Secondary" };
+const renameTeam = (s) => TEAM_RENAME[String(s || "")] || s;
+
 function parseGameLog(html) {
   const t = (html.match(/<table[^>]*class="sp-player-game-log[^"]*"[^>]*>[\s\S]*?<\/table>/) || [])[0];
   if (!t) return [];
@@ -65,7 +70,7 @@ function parseGameLog(html) {
     const g = {};
     head.forEach((h, i) => {
       if (h === "Date") g.date = r[i];
-      else if (/Opp/.test(h)) g.opp = r[i];
+      else if (/Opp/.test(h)) g.opp = renameTeam(r[i]);
       else if (h === "Result") g.result = r[i];
       else if (FIELD[h]) g[FIELD[h]] = num(r[i]);
     });
