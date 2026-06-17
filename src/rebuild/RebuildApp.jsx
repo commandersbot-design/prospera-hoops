@@ -9,6 +9,7 @@ import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 import SCHEDULE_DATA from "../data/schedule.json";
 import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
+import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
@@ -277,7 +278,27 @@ function Landing({ data, go, openPlayer }) {
 }
 
 // ---- PUBLIC PROFILE (read-only) — real data + the rich Development engine --
-const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
+// Resolve a Capitol Hoops team/opponent/school string to its real, official
+// school name. CH summer-league names look like "Brand (School)" — the
+// parenthetical IS the actual school ("GrindHouse (Huntingtown)" → Huntingtown
+// HS). A "(VA)"/"(MD)"/"(DC)" paren is a state disambiguator, not a school.
+// Idempotent (safe to apply to an already-official name) and falls back to the
+// cleaned base name when nothing maps (e.g. the AKT 17U AAU pilot).
+const OFFICIAL_NAMES = OFFICIAL_SCHOOL_NAMES.names || {};
+const OFFICIAL_VALUES = new Set(Object.values(OFFICIAL_NAMES));
+const schoolLabel = (s) => {
+  const raw = String(s || "").trim();
+  if (!raw || OFFICIAL_VALUES.has(raw)) return raw; // already official → no-op
+  const base = raw.replace(/\s*\([^)]*\)/g, "").trim();
+  const pm = raw.match(/\(([^)]+)\)/);
+  const paren = pm ? pm[1].trim() : "";
+  const isState = /^(VA|MD|DC)$/i.test(paren);
+  const cands = isState ? [raw, base] : [raw, paren, base];
+  for (const c of cands) if (c && OFFICIAL_NAMES[c]) return OFFICIAL_NAMES[c];
+  return paren && !isState ? paren : base;
+};
+// Back-compat alias: every existing call site passes a team/school/opponent name.
+const cleanOpp = schoolLabel;
 
 // Full per-game log — every game, with W/L + shooting splits, expandable.
 function GameLog({ games }) {
@@ -803,7 +824,7 @@ function TeamsView({ data, openTeam }) {
   const list = useMemo(() => {
     const k = q.trim().toLowerCase();
     return data.teams.filter((t) =>
-      (!k || t.name.toLowerCase().includes(k)) &&
+      (!k || t.name.toLowerCase().includes(k) || (t.label || "").toLowerCase().includes(k)) &&
       (!states.length || (t.state && states.includes(t.state))) &&
       (!types.length || (t.type && types.includes(t.type))));
   }, [q, states, types, data.teams]);
@@ -845,7 +866,7 @@ function TeamsView({ data, openTeam }) {
               <div className="rav" style={{ width: 42, height: 42 }}>{initials(t.name)}</div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{t.name}</span>
+                  <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{t.label || t.name}</span>
                   {t.state ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--faint)", border: "1px solid var(--line)", borderRadius: 4, padding: "1px 5px" }}>{t.state}{t.type ? ` · ${t.type}` : ""}</span> : null}
                 </div>
                 <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[`${t.n} players`, t.top && `top scorer ${t.top.name}`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
@@ -896,14 +917,15 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
     { k: "spg", l: "SPG", tone: "spg" }, { k: "bpg", l: "BPG", tone: "bpg" }, { k: "fgPct", l: "FG%", tone: "fgPct", pct: true }, { k: "threePct", l: "3P%", tone: "threePct", pct: true }, { k: "tsPct", l: "TS%", tone: "tsPct", pct: true },
   ];
   const [sort, setSort] = useState({ k: "ppg", dir: -1 });
-  const sorted = useMemo(() => [...team.players].sort((a, b) => (((a[sort.k] ?? -1) - (b[sort.k] ?? -1)) * sort.dir)), [team.players, sort]);
+  const roster = team.roster || team.players;
+  const sorted = useMemo(() => [...roster].sort((a, b) => (((a[sort.k] ?? -1) - (b[sort.k] ?? -1)) * sort.dir)), [roster, sort]);
   const setSortKey = (k) => setSort((s) => (s.k === k ? { k, dir: -s.dir } : { k, dir: -1 }));
   const arrow = (k) => (sort.k === k ? (sort.dir < 0 ? " ▾" : " ▴") : "");
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <a onClick={back} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700 }}>← Teams</a>
-      <div className="hello" style={{ marginTop: 8 }}>{team.name}</div>
-      <div className="sub">{team.n} players{team.coach ? ` · Coach ${team.coach}` : ""}{team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}</div>
+      <div className="hello" style={{ marginTop: 8 }}>{team.label || team.name}</div>
+      <div className="sub">{team.n} players{team.statN != null && team.statN < team.n ? ` · ${team.statN} with summer stats` : ""}{team.coach ? ` · Coach ${team.coach}` : ""}{team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}</div>
       <div className="pf-grid" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
         <div className="card">
           <p className="ttl">Roster &amp; stats <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· tap a column to sort</span></p>
@@ -913,9 +935,9 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
                 <th>Player</th><th>Pos</th>
                 {ROSTER_COLS.map((c) => <th key={c.k} onClick={() => setSortKey(c.k)} style={{ cursor: "pointer", whiteSpace: "nowrap", color: sort.k === c.k ? "var(--orange)" : undefined }}>{c.l}{arrow(c.k)}</th>)}
               </tr>
-              {sorted.map((p) => (
-                <tr key={p.id}>
-                  <td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>{p.name}</b></td>
+              {sorted.map((p, i) => (
+                <tr key={`${p.id}-${i}`} style={p.hasStats === false ? { opacity: 0.6 } : undefined}>
+                  <td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>{p.name}</b>{p.hasStats === false ? <span style={{ fontSize: 9.5, color: "var(--faint)", marginLeft: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".04em" }}>roster</span> : null}</td>
                   <td>{p.pos || "—"}</td>
                   {ROSTER_COLS.map((c) => <td key={c.k} style={{ color: c.tone ? statTone(c.tone, p[c.k]) : "var(--muted)", fontWeight: sort.k === c.k ? 700 : 400, fontVariantNumeric: "tabular-nums" }}>{p[c.k] == null ? "—" : (c.pct ? `${r1(p[c.k])}%` : r1(p[c.k]))}</td>)}
                 </tr>
@@ -1052,7 +1074,7 @@ function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
       {finals.length > 0 && <><p className="ttl" style={{ margin: "18px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 8).map((g, i) => { const home = (g.home || "").toLowerCase() === team.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(224,122,95,.14)", color: win ? "var(--teal)" : "#e9a08c" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
 
       <p className="ttl" style={{ margin: "18px 0 8px" }}>{opp ? "Your scouting notes" : "Coach's notes"}</p>
-      <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={opp ? `Defensive game plan, coverages, tendencies on ${team.name}…` : "Practice focus, rotations, reminders…"} style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", minHeight: 76, fontSize: 13, padding: 11, resize: "vertical" }} />
+      <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={opp ? `Defensive game plan, coverages, tendencies on ${team.label || team.name}…` : "Practice focus, rotations, reminders…"} style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", minHeight: 76, fontSize: 13, padding: 11, resize: "vertical" }} />
     </div>
   );
 }
@@ -1308,7 +1330,7 @@ function CoachHQ({ data, openPlayer, go }) {
   const find = (slug) => data.teams.find((t) => t.slug === slug) || null;
   const Picker = ({ value, onChange, ph }) => (
     <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...inp, width: "100%", fontSize: 14, padding: "12px 14px" }}>
-      <option value="">{ph}</option>{data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
+      <option value="">{ph}</option>{data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.label || t.name}</option>)}
     </select>
   );
   const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 50); }, [q, data.players]);
@@ -1383,9 +1405,9 @@ function CoachHQ({ data, openPlayer, go }) {
             return (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, marginBottom: 8, alignItems: "center" }}>
-                  <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{a.name}</span>
+                  <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{a.label || a.name}</span>
                   <span style={{ color: "var(--faint)", fontFamily: "var(--disp)", fontSize: 14 }}>vs</span>
-                  <span style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{b.name}</span>
+                  <span style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{b.label || b.name}</span>
                 </div>
                 {row("Record", `${ra.w}-${ra.l}`, `${rb.w}-${rb.l}`, wp(ra) >= wp(rb) ? "a" : "b")}
                 {row("Avg PPG/player", aa, ab, aa >= ab ? "a" : "b")}
@@ -1398,7 +1420,7 @@ function CoachHQ({ data, openPlayer, go }) {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12 }}>
                   {[[a, aN], [b, bN]].map(([t, n], i) => (
                     <div key={i} style={{ border: "1px solid var(--line)", borderRadius: 9, padding: "9px 11px", background: "var(--surface)" }}>
-                      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 12.5 }}>{t.name}</div>
+                      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 12.5 }}>{t.label || t.name}</div>
                       <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 3 }}>{n.guardHeavy ? "Guard-heavy, perimeter" : n.bigs >= 2 ? "Size up front" : "Balanced"} · {n.balanced ? "scores by committee" : `${(t.top?.name || "").split(" ")[0]}-led`}</div>
                     </div>
                   ))}
@@ -1480,14 +1502,14 @@ function useData() {
           const pr = prByKey[nameKey(pl.name)];
           const gy = pr?.gradYear || pl.classYear;
           all.push({
-            id: pr?.id || nameKey(pl.name), key: nameKey(pl.name), name: pl.name, school: t.name,
+            id: pr?.id || nameKey(pl.name), key: nameKey(pl.name), name: pl.name, school: schoolLabel(t.name),
             pos: pl.position || pr?.position || null,
             cls: gy ? `'${String(gy).slice(2)}` : "",
             gradYear: gy || null,
             state: pr?.state || null,
             stars: pr?.stars || null, rankings: pr?.rankings || null,
             status: pr?.status || pr?.commitment || null,
-            meta: `${t.name}${pl.position ? " · " + pl.position : ""}`,
+            meta: `${schoolLabel(t.name)}${pl.position ? " · " + pl.position : ""}`,
             headshot: shotFor(pl.name, pr),
             ...pl.stats,
             lead: r1(pl.stats.ppg), leadK: "PPG",
@@ -1523,15 +1545,18 @@ function useData() {
         hs: (sc.schools || sc || []).length || 0,
       };
       // Teams with rosters (for the Teams view + Coach HQ opponent scouting).
+      const NO_STATS = { gp: null, ppg: null, rpg: null, apg: null, spg: null, bpg: null, fgPct: null, ftPct: null, threePct: null, tsPct: null };
       const teams = Object.entries(ch.teams || {}).map(([slug, t]) => {
-        const players = (t.players || [])
-          .filter((p) => p.stats && p.stats.gp > 0 && p.stats.ppg != null)
-          .map((p) => { const pr = prByKey[nameKey(p.name)]; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: shotFor(p.name, pr), ...p.stats }; })
-          .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
+        // Full roster — every rostered player, not only summer stat-posters.
+        // Players who logged no summer minutes carry null stats (render as "—").
+        const roster = (t.players || [])
+          .map((p) => { const pr = prByKey[nameKey(p.name)]; const has = p.stats && p.stats.gp > 0 && p.stats.ppg != null; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: shotFor(p.name, pr), hasStats: !!has, ...(has ? p.stats : NO_STATS) }; })
+          .sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
+        const players = roster.filter((p) => p.hasStats); // stat-qualified, for analytics/top scorer
         const ln = (t.name || "").toLowerCase();
         const ctx = /hayfield/.test(ln) ? "HS" : (/\bakt\b|warriors|3ssb|\baau\b/.test(ln) ? "AAU" : "SUMMER");
-        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length, ctx, state: teamState(t.name, locByKey), type: teamType(t.name, locByKey) };
-      }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
+        return { slug, name: t.name, label: schoolLabel(t.name), coach: t.headCoach || null, roster, players, top: players[0] || null, n: roster.length, statN: players.length, ctx, state: teamState(t.name, locByKey), type: teamType(t.name, locByKey) };
+      }).filter((t) => t.players.length > 0).sort((a, b) => a.label.localeCompare(b.label));
       const schedule = (sj.games || []);
       // HS-season lines (teamStats.json), keyed by player for the profile "High school" tab.
       const hsByKey = {};
