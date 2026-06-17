@@ -100,4 +100,16 @@ card("post-leaders", `${header("LEADERS")}
   ${T(W / 2, 1230, 17, 500, C.faint, "Real box scores. No fake rankings. Min. 5 games played.", { anchor: "middle" })}
   ${footer("Box scores: Capitol Hoops Summer League")}`);
 
-console.log("\nDone → docs/social-posts/ (post-will-redhot, post-major-leap, post-leaders)");
+// 4) LAUNCH COUNTDOWN
+card("post-launch-countdown", `${header("LAUNCH")}
+  <g transform="translate(${W / 2 - 95},250)"><svg width="190" height="190" viewBox="0 0 200 200">${EMBLEM}</svg></g>
+  ${TD(W / 2, 650, 172, 800, C.text, "TOMORROW", { anchor: "middle" })}
+  ${T(W / 2, 726, 30, 600, C.mut, "Every DMV hooper. Every team.", { anchor: "middle" })}
+  ${T(W / 2, 770, 30, 600, C.mut, "Real stats, tracked over time. On the board.", { anchor: "middle" })}
+  <rect x="266" y="852" width="548" height="76" rx="38" fill="url(#band)"/>
+  ${T(W / 2, 901, 30, 800, C.bg, "CLAIM YOUR PROFILE — FREE", { ls: 2, anchor: "middle" })}
+  ${TD(W / 2, 1042, 62, 800, C.orange, "PROSPERAHOOPS.COM", { anchor: "middle" })}
+  ${T(W / 2, 1086, 24, 700, C.mut, "GOES LIVE 6.18", { ls: 6, anchor: "middle" })}
+  ${footer("You're already on the board — the DMV's scouting platform.")}`);
+
+console.log("\nDone → docs/social-posts/ (post-nash-statline, post-major-leap, post-leaders, post-launch-countdown)");
