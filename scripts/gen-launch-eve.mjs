@@ -52,20 +52,22 @@ function card(name, body) {
   console.log(`✓ ${OUT}/${name}.png`);
 }
 
-// 1) RED HOT — Will Braun-Duin
-const statTile = (cx, top, big, unit, sub) => { const w = 468, x = cx - w / 2; return `<rect x="${x}" y="${top}" width="${w}" height="360" rx="20" fill="${C.panel}" stroke="rgba(255,106,26,0.30)" stroke-width="1.5"/>
-  ${TD(cx, top + 218, 168, 800, C.orange, big, { anchor: "middle" })}
-  ${T(cx, top + 268, 24, 800, C.mut, unit, { ls: 4, anchor: "middle" })}
-  ${T(cx, top + 322, 23, 700, C.text, esc(sub), { anchor: "middle" })}`; };
-card("post-will-redhot", `${header("STAT DROP")}
-  ${band("WILL BRAUN-DUIN", "28.6 PPG", "JOHN HANDLEY · 2ND IN THE DMV")}
-  ${T(W / 2, 338, 24, 800, C.orange, "RED HOT — A 96-POINT DAY", { ls: 5, anchor: "middle" })}
-  ${statTile(286, 392, "56", "PTS", "vs Purple Storm · W")}
-  ${statTile(794, 392, "40", "PTS", "vs Heritage")}
-  ${TD(W / 2, 880, 78, 800, C.text, "96 POINTS. ONE DAY.", { anchor: "middle" })}
-  ${T(W / 2, 940, 27, 600, C.mut, "Two games, one slate. The book is open.", { anchor: "middle" })}
-  ${tagPill(W / 2, 1058, "DOUBLEHEADER · MAY 21")}
-  ${footer("Box scores: Capitol Hoops Summer League · summer-league averages")}`);
+// 1) STAT DROP — Nash Avery (last night's double-double)
+const tile4 = (cx, top, big, unit, accent) => { const w = 226, x = cx - w / 2; return `<rect x="${x}" y="${top}" width="${w}" height="296" rx="18" fill="${C.panel}" stroke="rgba(255,106,26,0.26)" stroke-width="1.5"/>
+  ${TD(cx, top + 182, 124, 800, accent || C.orange, big, { anchor: "middle" })}
+  ${T(cx, top + 240, 23, 800, C.mut, unit, { ls: 4, anchor: "middle" })}`; };
+card("post-nash-statline", `${header("STAT DROP")}
+  ${band("NASH AVERY", "18.9 / 10.3", "SPALDING · CLASS OF '28")}
+  ${T(W / 2, 338, 24, 800, C.orange, "DOUBLE-DOUBLE · LAST NIGHT", { ls: 4, anchor: "middle" })}
+  ${tile4(174, 392, "24", "PTS")}
+  ${tile4(418, 392, "11", "REB")}
+  ${tile4(662, 392, "3", "AST", C.text)}
+  ${tile4(906, 392, "3", "STL", C.text)}
+  ${T(W / 2, 768, 27, 600, C.mut, "11-20 FG · W 75-70 vs The Brook (Springbrook)", { anchor: "middle" })}
+  ${TD(W / 2, 880, 60, 800, C.text, "AVERAGING A DOUBLE-DOUBLE", { anchor: "middle" })}
+  ${T(W / 2, 932, 26, 600, C.teal, "18.9 PTS · 10.3 REB per game as a 2028", { anchor: "middle" })}
+  ${tagPill(W / 2, 1044, "JUNE 16 · CAPITOL HOOPS")}
+  ${footer("Box score: Capitol Hoops Summer League · June 16, 2026")}`);
 
 // 2) THE LEAP — Major Jones
 const leapRow = (y, label, prior, now, delta) => `${T(150, y, 38, 800, C.mut, label, { font: SD, ls: 3 })}

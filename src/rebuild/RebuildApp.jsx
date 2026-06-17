@@ -1513,7 +1513,9 @@ function useData() {
         games: [],
       };
       const cov = {
-        players: prospects.length >= 100 ? `${Math.floor(prospects.length / 100) * 100}+` : String(prospects.length),
+        // Use the actual board population (players with tracked stats) so the
+        // landing "Players" stat matches the Prospects tab count exactly.
+        players: all.length >= 100 ? `${Math.floor(all.length / 100) * 100}+` : String(all.length),
         summer: Object.keys(ch.teams || {}).length,
         hs: (sc.schools || sc || []).length || 0,
       };

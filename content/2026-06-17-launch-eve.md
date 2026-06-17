@@ -5,30 +5,29 @@
 **Credit:** All box scores are from **Capitol Hoops Summer League** — credited on every graphic
 and in the captions. We wrote none of the recaps/box scores; they're theirs.
 
-**Will Braun-Duin's 56 and 40 were both on May 21, 2026** (a doubleheader). Framed as the
-"96-point day," not "yesterday."
+**Nash Avery's double-double was last night (June 16)** — so it's genuinely fresh. Capitol Hoops posted the box score.
 
 ## Graphics (1080×1350, same format/font as yesterday's Hayfield card)
 `docs/social-posts/` — regenerate with `node scripts/gen-launch-eve.mjs`:
-- `post-will-redhot.png` — RED HOT · 56 & 40 · "96 points. One day."
+- `post-nash-statline.png` — Nash Avery double-double (last night)
 - `post-major-leap.png` — THE LEAP · Major Jones year-over-year
 - `post-leaders.png` — DMV Summer Scoring Leaders (top 5)
 
 ## Posting order & timing
-1. ~11 AM — **Will Braun-Duin · RED HOT**
+1. ~11 AM — **Nash Avery · last night's double-double**
 2. ~2 PM — **Major Jones · THE LEAP**
 3. ~5 PM — **DMV Summer Scoring Leaders**
 4. ~8 PM — **Launch countdown** ("Tomorrow")
 
 ---
 
-### ① Will Braun-Duin — RED HOT 🔥
-> 🔥 RED HOT — Will Braun-Duin (John Handley) went for **56 and 40 in a single-day doubleheader** on the DMV summer circuit. 56 in a W over Purple Storm, 40 vs Heritage. A 96-point day. He's **2nd in the DMV at 28.6 PPG**. The book is open.
+### ① Nash Avery — last night 🌙
+> 🌙 LAST NIGHT — Nash Avery (Spalding, '28) stuffed the sheet in a 75-70 win over The Brook: **24 PTS · 11 REB · 3 AST · 3 STL** on 11-of-20. He's now **averaging a double-double — 18.9 & 10.3 — as a sophomore**. The DMV's been on notice.
 >
 > 📲 Full game log + Scout Card on Prospera Hoops — live tomorrow.
-> Box scores: Capitol Hoops Summer League.
+> Box score: Capitol Hoops Summer League.
 
-`#ProsperaHoops #DMVHoops #DMVBasketball #JohnHandley #CapitolHoops`
+`#ProsperaHoops #DMVHoops #Spalding #CapitolHoops #DMVBasketball`
 
 ### ② Major Jones — THE LEAP 📈
 > 📈 THE LEAP — Major Jones (DeMatha) made a real Year-2 jump. PTS 8.4→**11.8** (+3.4) · REB 1.6→**3.0** (+1.4) · AST 1.0→**3.5** (+2.5). The assist jump is the tell — he's running the show now. Development, tracked over time.
