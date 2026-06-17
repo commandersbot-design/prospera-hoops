@@ -130,6 +130,43 @@ card("post-launch-countdown", `${header("LAUNCH")}
   ${T(W / 2, 1086, 24, 700, C.mut, "GOES LIVE 6.18", { ls: 6, anchor: "middle" })}
   ${footer("You're already on the board — the DMV's scouting platform.")}`);
 
+// ===== SUMMER STANDOUT player card (Christian Towe format) =================
+const HAIR = "#20262E";
+function standoutCard(file, { photoKey, team, nm, sub, stats, gp }) {
+  const fp = path.join("public", "headshots", photoKey);
+  const b64 = fs.existsSync(fp) ? fs.readFileSync(fp).toString("base64") : null;
+  const photo = b64
+    ? `<image href="data:image/jpeg;base64,${b64}" x="0" y="94" width="${W}" height="760" preserveAspectRatio="xMidYMin slice"/>`
+    : `<rect x="0" y="94" width="${W}" height="760" fill="#1B2129"/>`;
+  const nameSize = nm.length > 13 ? 78 : 94;
+  const cx3 = [180, 540, 900];
+  const statCells = stats.map(([v, l], i) => `${TD(cx3[i], 1012, 88, 800, i === 0 ? C.orange : C.text, v, { anchor: "middle" })}${T(cx3[i], 1066, 25, 700, C.mut, l, { ls: 5, anchor: "middle" })}`).join("")
+    + [360, 720].map((x) => `<line x1="${x}" y1="946" x2="${x}" y2="1040" stroke="${HAIR}" stroke-width="2"/>`).join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    ${defs}<defs><linearGradient id="pfade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0E13" stop-opacity="0"/><stop offset="0.5" stop-color="#0B0E13" stop-opacity="0"/><stop offset="1" stop-color="#0B0E13" stop-opacity="0.97"/></linearGradient></defs>
+    <rect width="${W}" height="${H}" fill="#0B0E13"/>
+    ${photo}
+    <rect x="0" y="430" width="${W}" height="424" fill="url(#pfade)"/>
+    <rect x="0" y="0" width="${W}" height="94" fill="rgba(11,14,19,0.9)"/><rect x="0" y="94" width="${W}" height="4" fill="${C.orange}"/>
+    <g transform="translate(40,20)"><svg width="54" height="54" viewBox="0 0 200 200">${EMBLEM}</svg></g>
+    ${T(108, 60, 30, 800, C.text, esc(team.toUpperCase()), { ls: 1 })}
+    ${T(W - 40, 60, 22, 800, C.orange, "SUMMER STANDOUT", { ls: 3, anchor: "end" })}
+    ${TD(48, 792, nameSize, 800, C.text, esc(nm))}
+    ${T(50, 836, 28, 700, C.orange, esc(sub), { ls: 2 })}
+    <line x1="48" y1="900" x2="${W - 48}" y2="900" stroke="${HAIR}" stroke-width="2"/>
+    ${statCells}
+    ${tagPill(W / 2, 1160, "CAPITOL HOOPS")}
+    ${T(W / 2, 1202, 18, 500, "#5a626c", "Capitol Hoops Summer League · " + gp + " GP", { anchor: "middle" })}
+    <line x1="44" y1="1258" x2="${W - 44}" y2="1258" stroke="${C.line}" stroke-width="1.5"/>
+    ${T(44, 1300, 24, 800, C.orange, "ProsperaHoops.com")}
+    ${T(W - 44, 1300, 22, 700, C.mut, "@PROSPERAHOOPS", { ls: 1, anchor: "end" })}
+  </svg>`;
+  fs.writeFileSync(path.join(OUT, `${file}.png`), renderPng(svg));
+  console.log(`✓ ${OUT}/${file}.png`);
+}
+standoutCard("card-major-jones", { photoKey: "majorjones-full.jpg", team: "DeMatha", nm: "MAJOR JONES", sub: "GUARD · #0 · DEMATHA · '28", stats: [["11.8", "PPG"], ["3.0", "RPG"], ["3.5", "APG"]], gp: 6 });
+standoutCard("card-nash-avery", { photoKey: "nashavery-full.jpg", team: "Spalding", nm: "NASH AVERY", sub: "6'8 WING · #3 · SPALDING · '28", stats: [["18.9", "PPG"], ["10.3", "RPG"], ["2.6", "APG"]], gp: 7 });
+
 // ===== STORY (1080×1920) — TRACKED. teaser, matching yesterday's SEEN. =====
 const SW = 1080, SH = 1920;
 function storyCard(name, body) {
