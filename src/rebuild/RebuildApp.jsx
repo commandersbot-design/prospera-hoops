@@ -425,21 +425,40 @@ function CoachHQ({ data, openPlayer }) {
             <option value="">Choose a team…</option>
             {data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
           </select>
-          {opp ? (
-            <div>
-              <div className="cov" style={{ margin: "0 0 12px" }}>
-                <div className="covchip"><b>{teamAvg(opp, "ppg")}</b><span>Avg PPG / player</span></div>
-                <div className="covchip"><b>{opp.n}</b><span>Rostered</span></div>
+          {opp ? (() => {
+            const isOpp = (g) => [g.home, g.away].some((x) => (x || "").toLowerCase() === opp.name.toLowerCase());
+            const finals = (data.schedule || []).filter((g) => isOpp(g) && g.status === "final" && g.homeScore != null).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+            let w = 0, l = 0;
+            for (const g of finals) { const home = (g.home || "").toLowerCase() === opp.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; (us > them ? w++ : l++); }
+            const maxP = Math.max(...opp.players.slice(0, 6).map((p) => p.ppg || 0), 1);
+            const guards = opp.players.filter((p) => /g/i.test(p.pos || "")).length;
+            const guardHeavy = guards / Math.max(1, opp.players.length) > 0.5;
+            const top = opp.top;
+            return (
+              <div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                  <span className="covchip"><b>{w}-{l}</b><span>Record</span></span>
+                  <span className="covchip"><b>{teamAvg(opp, "ppg")}</b><span>Avg PPG/pl</span></span>
+                  <span className="covchip"><b>{opp.n}</b><span>Roster</span></span>
+                </div>
+                {top && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "0 0 14px", lineHeight: 1.55 }}>
+                  <b style={{ color: "var(--orange)", textTransform: "uppercase", fontFamily: "var(--disp)", letterSpacing: ".06em", fontSize: 11 }}>Game plan</b><br />
+                  {guardHeavy ? "Guard-heavy, perimeter-oriented." : "Balanced front-and-back."} <b style={{ color: "var(--ink)" }}>{top.name}</b> is the engine at {r1(top.ppg)} PPG — load the strong side and make someone else beat you.
+                </p>}
+                <p className="ttl" style={{ margin: "4px 0 10px" }}>Threats to stop</p>
+                <div style={{ display: "grid", gap: 9 }}>
+                  {opp.players.slice(0, 5).map((p) => (
+                    <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 110px 58px", gap: 10, alignItems: "center" }}>
+                      <span onClick={() => openPlayer(p)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 10.5, fontFamily: "var(--sans)" }}>{p.pos || ""}</span></span>
+                      <span style={{ height: 7, borderRadius: 9, background: "rgba(244,242,237,.08)", overflow: "hidden" }}><i style={{ display: "block", height: "100%", width: `${Math.round((p.ppg || 0) / maxP * 100)}%`, background: "linear-gradient(90deg,var(--orange),var(--gold-a))" }} /></span>
+                      <span style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14 }}>{r1(p.ppg)}</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
+                    </div>
+                  ))}
+                </div>
+                {finals.length > 0 && <><p className="ttl" style={{ margin: "16px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 6).map((g, i) => { const home = (g.home || "").toLowerCase() === opp.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(244,242,237,.06)", color: win ? "var(--teal)" : "var(--muted)" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
               </div>
-              <p className="ttl" style={{ margin: "4px 0 8px" }}>Top scorers to game-plan around</p>
-              <table className="log"><tbody>
-                <tr><th>Player</th><th>PPG</th><th>RPG</th><th>APG</th><th /></tr>
-                {opp.players.slice(0, 6).map((p) => (
-                  <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ Watching" : "+ Watch"}</span></td></tr>
-                ))}
-              </tbody></table>
-            </div>
-          ) : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their roster, scoring averages, and the players to plan around.</p>}
+            );
+          })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report.</p>}
         </div>
         <div className="card">
           <p className="ttl">Your watchlist ({watchPlayers.length})</p>
@@ -541,20 +560,25 @@ function useData() {
   return data;
 }
 
-// ---- PROSPECTS — searchable/filterable player directory --------------------
+// ---- PROSPECTS — rich searchable/filterable directory (pre-rebuild depth) --
 function ProspectsView({ data, openPlayer }) {
   const [q, setQ] = useState("");
   const [pos, setPos] = useState("");
+  const [cls, setCls] = useState("");
   const [sort, setSort] = useState("ppg");
+  const classes = useMemo(() => [...new Set(data.players.map((p) => p.cls).filter(Boolean))].sort().reverse(), [data.players]);
   const list = useMemo(() => {
     const k = q.trim().toLowerCase();
     let r = data.players.filter((p) =>
       (!k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) &&
-      (!pos || (p.pos || "").toUpperCase().includes(pos)));
+      (!pos || (p.pos || "").toUpperCase().includes(pos)) &&
+      (!cls || p.cls === cls));
     r = sort === "ppg" ? [...r].sort((a, b) => (b.ppg || 0) - (a.ppg || 0)) : [...r].sort((a, b) => a.name.localeCompare(b.name));
-    return r.slice(0, 120);
-  }, [q, pos, sort, data.players]);
+    return r.slice(0, 150);
+  }, [q, pos, cls, sort, data.players]);
+  const archeOf = (p) => { try { return data.cohort ? (archetypeForPlayer(p.name, data.cohort, p.pos)?.label || "") : ""; } catch (e) { return ""; } };
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", fontSize: 13, padding: "10px 12px", outline: "none" };
+  const archePill = { display: "inline-block", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".03em", fontSize: 10.5, color: "var(--orange)", border: "1px solid var(--accent-border,rgba(255,106,26,.4))", borderRadius: 999, padding: "2px 9px", whiteSpace: "nowrap" };
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div className="hello">Prospects</div>
@@ -564,18 +588,29 @@ function ProspectsView({ data, openPlayer }) {
         <select value={pos} onChange={(e) => setPos(e.target.value)} style={inp}>
           <option value="">All positions</option><option value="G">Guards</option><option value="W">Wings</option><option value="F">Forwards</option><option value="C">Centers</option>
         </select>
+        <select value={cls} onChange={(e) => setCls(e.target.value)} style={inp}>
+          <option value="">All classes</option>{classes.map((c) => <option key={c} value={c}>Class of {c}</option>)}
+        </select>
         <select value={sort} onChange={(e) => setSort(e.target.value)} style={inp}>
           <option value="ppg">Top scorers</option><option value="az">A–Z</option>
         </select>
       </div>
-      <div className="card" style={{ marginTop: 4 }}>
-        <table className="board"><tbody>
-          <tr><th>Player</th><th>Team</th><th>Class</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
+      <div style={{ ...inp, padding: 0, background: "transparent", border: "none", marginTop: 2 }}>
+        <p style={{ fontSize: 11.5, color: "var(--faint)", margin: "0 0 10px" }}>{list.length} shown{list.length >= 150 ? " (top 150 — filter to narrow)" : ""}</p>
+      </div>
+      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+        <table className="board" style={{ width: "100%" }}><tbody>
+          <tr><th style={{ paddingLeft: 16 }}>Player</th><th>Team</th><th>Class</th><th>Archetype</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
           {list.map((p) => (
-            <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.cls || "—"}</td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td></tr>
+            <tr key={p.id} style={{ cursor: "pointer" }} onClick={() => openPlayer(p)}>
+              <td style={{ paddingLeft: 16 }}><b>{p.name}</b></td>
+              <td>{p.school}</td><td>{p.cls || "—"}</td>
+              <td>{archeOf(p) ? <span style={archePill}>{archeOf(p)}</span> : <span style={{ color: "var(--faint)" }}>—</span>}</td>
+              <td><b style={{ color: "var(--orange)" }}>{r1(p.ppg)}</b></td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td>
+            </tr>
           ))}
         </tbody></table>
-        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 10 }}>No players match.</p>}
+        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No players match.</p>}
       </div>
       <div style={{ height: 40 }} />
     </div>
