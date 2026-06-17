@@ -1145,6 +1145,9 @@ function PercentileBars({ context }) {
         <SectionLabel>Production in Context</SectionLabel>
         <span style={{ ...mono, fontSize: 11, color: T.textMute }}>{context.cohortLabel}</span>
       </div>
+      <div style={{ ...mono, fontSize: 10.5, color: T.textMute, lineHeight: 1.5, marginTop: -6, marginBottom: 12 }}>
+        How he ranks vs. every tracked summer player — <b style={{ color: T.textDim }}>75th</b> means better than 75% of them.
+      </div>
       <div style={{ display: "grid", gap: 12 }}>
         {context.rows.map((r) => {
           const col = r.percentile >= 75 ? T.accent : SLATE;
