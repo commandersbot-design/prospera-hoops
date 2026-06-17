@@ -881,34 +881,106 @@ function teamRecord(team, schedule) {
 }
 const teamAvgPpg = (t) => t.players.length ? (t.players.reduce((s, p) => s + (p.ppg || 0), 0) / t.players.length).toFixed(1) : "—";
 
-function TeamReport({ team, schedule, wl, openPlayer, headLabel = "Read" }) {
+// Team analytics + coach-facing insights, derived honestly from roster stats.
+function teamAnalytics(team) {
+  const ps = team.players || [];
+  const n = ps.length || 1;
+  const guards = ps.filter((p) => /g/i.test(p.pos || "")).length;
+  const bigs = ps.filter((p) => /c/i.test(p.pos || "") || /pf/i.test(p.pos || "")).length;
+  const totalPpg = ps.reduce((s, p) => s + (p.ppg || 0), 0);
+  const top = team.top;
+  const topShare = totalPpg ? Math.round((top?.ppg || 0) / totalPpg * 100) : 0;
+  const shooters = ps.filter((p) => (p.threePct || 0) >= 33 && (p.ppg || 0) >= 4);
+  const scorers = ps.filter((p) => (p.ppg || 0) >= 10);
+  const stockGuys = ps.filter((p) => ((p.spg || 0) + (p.bpg || 0)) >= 2);
+  return { ps, n, guards, bigs, totalPpg, top, topShare, shooters, scorers, stockGuys, guardHeavy: guards / n > 0.5, balanced: topShare <= 28 && scorers.length >= 3 };
+}
+function coachInsights(team, opp) {
+  const a = teamAnalytics(team), out = [];
+  if (a.guardHeavy) out.push(["Guard-heavy, perimeter-oriented", opp ? "Pressure the ball; chase them off the three-point line." : "Push pace and play through your guards."]);
+  else if (a.bigs >= 2) out.push(["Size up front", opp ? "Box out — limit second-chance points." : "Pound the paint and crash the offensive glass."]);
+  else out.push(["Balanced front-and-back", opp ? "No single coverage wins — match personnel." : "Attack mismatches across positions."]);
+  if (a.top && a.topShare >= 32) out.push([`${(a.top.name || "").split(" ")[0]} carries the scoring`, opp ? `${a.topShare}% of their points run through him — make someone else beat you.` : `${a.topShare}% of scoring is one man — build a reliable second option.`]);
+  else if (a.balanced) out.push(["Scores by committee", opp ? `${a.scorers.length} double-figure scorers — pick your poison.` : `${a.scorers.length} double-figure scorers — hard to game-plan against.`]);
+  if (a.shooters.length >= 3) out.push([`${a.shooters.length} live shooters`, opp ? "Close out hard; don't help off shooters." : "Space the floor — shooting is your weapon."]);
+  if (a.stockGuys.length) out.push(["Disruptive defenders", opp ? `Value the ball vs. ${a.stockGuys.slice(0, 2).map((p) => (p.name || "").split(" ")[0]).join(" & ")}.` : "Lean into pressure D — you generate turnovers."]);
+  return out;
+}
+function useTeamNotes(slug) {
+  const key = `ph_teamnote_${slug || ""}`;
+  const [note, setNote] = useState("");
+  useEffect(() => { try { setNote(localStorage.getItem(key) || ""); } catch (e) { setNote(""); } }, [key]);
+  const save = (v) => { setNote(v); try { localStorage.setItem(key, v); } catch (e) { /* ignore */ } };
+  return [note, save];
+}
+
+function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
+  const opp = mode === "opponent";
+  const [note, setNote] = useTeamNotes(team.slug);
   const finals = (schedule || []).filter((g) => [g.home, g.away].some((x) => (x || "").toLowerCase() === team.name.toLowerCase()) && g.status === "final" && g.homeScore != null).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   const rec = teamRecord(team, schedule);
+  const winPct = (rec.w + rec.l) ? rec.w / (rec.w + rec.l) : null;
+  const recColor = winPct == null ? "var(--ink)" : winPct >= 0.6 ? "var(--teal)" : winPct < 0.4 ? "#e07a5f" : "var(--ink)";
   const maxP = Math.max(...team.players.slice(0, 6).map((p) => p.ppg || 0), 1);
-  const guardHeavy = team.players.filter((p) => /g/i.test(p.pos || "")).length / Math.max(1, team.players.length) > 0.5;
-  const top = team.top;
+  const insights = coachInsights(team, opp);
+  const grp = [
+    ["Guards", team.players.filter((p) => /g/i.test(p.pos || ""))],
+    ["Wings/Forwards", team.players.filter((p) => /f|w/i.test(p.pos || "") && !/g/i.test(p.pos || "") && !/c/i.test(p.pos || ""))],
+    ["Bigs", team.players.filter((p) => /c/i.test(p.pos || ""))],
+  ].filter(([, list]) => list.length);
   return (
     <div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-        <span className="covchip"><b>{rec.w}-{rec.l}</b><span>Record</span></span>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+        <span className="covchip"><b style={{ color: recColor }}>{rec.w}-{rec.l}</b><span>Record</span></span>
         <span className="covchip"><b>{teamAvgPpg(team)}</b><span>Avg PPG/pl</span></span>
         <span className="covchip"><b>{team.n}</b><span>Roster</span></span>
+        {team.top && <span className="covchip"><b style={{ color: statTone("ppg", team.top.ppg) }}>{r1(team.top.ppg)}</b><span>Top scorer</span></span>}
       </div>
-      {top && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "0 0 14px", lineHeight: 1.55 }}>
-        <b style={{ color: "var(--orange)", textTransform: "uppercase", fontFamily: "var(--disp)", letterSpacing: ".06em", fontSize: 11 }}>{headLabel}</b><br />
-        {guardHeavy ? "Guard-heavy, perimeter-oriented." : "Balanced front-and-back."} <b style={{ color: "var(--ink)" }}>{top.name}</b> is the engine at {r1(top.ppg)} PPG.
-      </p>}
-      <p className="ttl" style={{ margin: "4px 0 10px" }}>Top players</p>
+
+      <p className="ttl" style={{ margin: "0 0 10px", color: "var(--orange)" }}>{opp ? "Keys to the game" : "Team strengths & watch-areas"}</p>
+      <div style={{ display: "grid", gap: 9, marginBottom: 18 }}>
+        {insights.map(([t, d], i) => (
+          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <span style={{ flex: "none", width: 6, height: 6, borderRadius: 9, background: "var(--orange)", marginTop: 6 }} />
+            <span style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.5 }}><b style={{ color: "var(--ink)" }}>{t}.</b> {d}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="ttl" style={{ margin: "0 0 10px" }}>{opp ? "Threats to stop" : "Your leaders"}</p>
       <div style={{ display: "grid", gap: 9 }}>
         {team.players.slice(0, 6).map((p) => (
           <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 110px 58px", gap: 10, alignItems: "center" }}>
             <span onClick={() => openPlayer(p)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 10.5, fontFamily: "var(--sans)" }}>{p.pos || ""}</span></span>
             <span style={{ height: 7, borderRadius: 9, background: "rgba(244,242,237,.08)", overflow: "hidden" }}><i style={{ display: "block", height: "100%", width: `${Math.round((p.ppg || 0) / maxP * 100)}%`, background: "linear-gradient(90deg,var(--orange),var(--gold-a))" }} /></span>
-            <span style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14 }}>{r1(p.ppg)}</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
+            <span style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
           </div>
         ))}
       </div>
-      {finals.length > 0 && <><p className="ttl" style={{ margin: "16px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 6).map((g, i) => { const home = (g.home || "").toLowerCase() === team.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(244,242,237,.06)", color: win ? "var(--teal)" : "var(--muted)" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
+
+      {grp.length > 1 && <>
+        <p className="ttl" style={{ margin: "18px 0 10px" }}>Depth chart</p>
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${grp.length}, 1fr)`, gap: 14 }}>
+          {grp.map(([label, list]) => (
+            <div key={label}>
+              <div style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--faint)", marginBottom: 7 }}>{label}</div>
+              <div style={{ display: "grid", gap: 5 }}>
+                {[...list].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 5).map((p) => (
+                  <div key={p.id} onClick={() => openPlayer(p)} style={{ display: "flex", justifyContent: "space-between", gap: 6, cursor: "pointer", fontSize: 12 }}>
+                    <span style={{ color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
+                    <b style={{ fontFamily: "var(--disp)", color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </>}
+
+      {finals.length > 0 && <><p className="ttl" style={{ margin: "18px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 8).map((g, i) => { const home = (g.home || "").toLowerCase() === team.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(224,122,95,.14)", color: win ? "var(--teal)" : "#e9a08c" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
+
+      <p className="ttl" style={{ margin: "18px 0 8px" }}>{opp ? "Your scouting notes" : "Coach's notes"}</p>
+      <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={opp ? `Defensive game plan, coverages, tendencies on ${team.name}…` : "Practice focus, rotations, reminders…"} style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", minHeight: 76, fontSize: 13, padding: 11, resize: "vertical" }} />
     </div>
   );
 }
@@ -1133,7 +1205,7 @@ function CoachHQ({ data, openPlayer, go }) {
         <div className="card">
           <p className="ttl">Scout an opponent</p>
           <div style={{ marginBottom: 12 }}><Picker value={oppA} onChange={setOppA} ph="Choose a team…" /></div>
-          {a ? <TeamReport team={a} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Game plan" />
+          {a ? <TeamReport team={a} schedule={data.schedule} wl={wl} openPlayer={openPlayer} mode="opponent" />
             : (
               <div>
                 <p style={{ fontSize: 13, color: "var(--muted)", margin: "0 0 18px" }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report. Or scan the league’s top scorers below.</p>
@@ -1201,7 +1273,7 @@ function CoachHQ({ data, openPlayer, go }) {
         <div className="card">
           <p className="ttl">My team</p>
           <div style={{ marginBottom: 12 }}><Picker value={mine} onChange={setMine} ph="Choose your team…" /></div>
-          {my ? <TeamReport team={my} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Strengths" />
+          {my ? <TeamReport team={my} schedule={data.schedule} wl={wl} openPlayer={openPlayer} mode="myteam" />
             : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick your team to see your efficiency leaders, tendencies, and recent form.</p>}
         </div>
       ))}
