@@ -161,8 +161,16 @@ async function run() {
     return;
   }
 
+  // Preserve manually-added teams that aren't part of the Capitol Hoops scrape
+  // list (e.g. the AKT 17u AAU pilot) — a refresh must NEVER drop them.
+  const scrapeSlugs = new Set(list.map(([s]) => s));
+  let keptManual = 0;
+  for (const [slug, t] of Object.entries(prior)) {
+    if (!scrapeSlugs.has(slug) && !teams[slug]) { teams[slug] = t; keptManual++; console.log(`KEPT non-Capitol-Hoops team: ${t.name || slug} (${(t.players || []).length} players)`); }
+  }
+
   const out = {
-    _README: "Capitol Hoops Summer League team + player + stat data. Auto-scraped from capitolhoopssummerleague.com via scripts/scrape-capitol-hoops.mjs. 2026 season. Keyed by team slug; each player merges roster bio + season stats.",
+    _README: "Capitol Hoops Summer League team + player + stat data. Auto-scraped from capitolhoopssummerleague.com via scripts/scrape-capitol-hoops.mjs. 2026 season. Keyed by team slug; each player merges roster bio + season stats. Non-Capitol-Hoops teams (e.g. AAU pilots) are preserved across refreshes.",
     _source: "https://capitolhoopssummerleague.com",
     _note: "Auto-scraped Capitol Hoops Summer League stats. Player social handles are intentionally NOT stored (minors' privacy). Stats are small-sample (summer league). Re-run the scraper to refresh.",
     _scrapedAt: new Date().toISOString(),
