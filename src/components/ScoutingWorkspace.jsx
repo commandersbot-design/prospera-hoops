@@ -375,7 +375,7 @@ const SEED_SUMMER_TEAMS = [
     { name: "D. Carter", pos: "SG", class: "29", gp: 5, pts: 9.8, reb: 2.1, ast: 1.4 },
     { name: "R. Banks", pos: "PF", class: "28", gp: 6, pts: 7.2, reb: 5.5, ast: 0.8 },
   ] },
-  { name: "Hawks (Hayfield)", conf: "Public", region: "VA", gp: 4, coach: "Carlos Poindexter", roster: [
+  { name: "Hayfield Secondary", conf: "Public", region: "VA", gp: 4, coach: "Carlos Poindexter", roster: [
     { name: "Christian Towe", pos: "PG", class: "29", gp: 1, pts: 22.0, reb: 8.0, ast: 3.0, tracked: true },
     { name: "K. Reyes", pos: "SG", class: "28", gp: 4, pts: 13.4, reb: 3.2, ast: 2.0 },
     { name: "T. Diallo", pos: "PF", class: "27", gp: 4, pts: 10.1, reb: 7.0, ast: 1.2 },
@@ -562,7 +562,7 @@ function TeamGames({ games, kind }) {
   );
 }
 
-export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile, focusTeam }) {
+export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfile, focusTeam, schedule }) {
   useGold();
   const TEAM_DATA = teamsProp && teamsProp.length ? teamsProp : SEED_SUMMER_TEAMS;
   const [tab, setTab] = useState("teams");    // DEFAULT = Teams list (scoring leaders live on the Prospects tab)
@@ -731,7 +731,7 @@ export function SummerLeagueSection({ recaps = [], teams: teamsProp, onOpenProfi
       topRight={<Segmented value={tab} onChange={setTab} options={[["teams", "Teams"], ["schedule", "Schedule"]]} />}
       rail={null}
     >
-      {tab === "teams" ? (team ? teamDetailFull : teamBrowse) : <SummerSchedule recaps={recaps} />}
+      {tab === "teams" ? (team ? teamDetailFull : teamBrowse) : <SummerSchedule recaps={recaps} games={schedule} />}
     </WorkspaceShell>
   );
 }
@@ -801,15 +801,31 @@ const SEED_GAMES = [
 ];
 const subLabel = (txt) => <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: A.textMut, marginBottom: 2 }}>{txt}</div>;
 
+const RESULTS_CAP = 24;
 function SummerSchedule({ recaps = [], games }) {
   const list = useMemo(() => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
-    return (games && games.length ? games : SEED_GAMES)
-      .map((g) => { const d = parseGameDate(g.date); return { ...g, _d: d, final: d ? d < today : g.status !== "scheduled" }; })
+    const src = games && games.length ? games : SEED_GAMES;
+    return src.map((g) => {
+      const label = g.dateLabel || g.date || "";
+      const d = parseGameDate(label);
+      const hs = g.hs ?? g.homeScore, as = g.as ?? g.awayScore;
+      const hasScore = hs != null;
+      // A played game (has a score, or marked final) is a result; a future
+      // scheduled game is upcoming; a past scheduled game with no score never
+      // resolved — hide it rather than show a scoreless "Final".
+      let final, hide = false;
+      if (g.status === "final" || hasScore) final = true;
+      else if (g.status === "scheduled") { if (d && d >= today) final = false; else hide = true; }
+      else final = d ? d < today : true;
+      return { ...g, date: label.replace(/,?\s*\d{4}$/, ""), hs, as, _d: d, final, _hide: hide };
+    })
+      .filter((g) => !g._hide)
       .sort((a, b) => (b._d?.getTime() || 0) - (a._d?.getTime() || 0)); // most recent first
   }, [games]);
   const upcoming = list.filter((g) => !g.final);
-  const results = list.filter((g) => g.final);
+  const allResults = list.filter((g) => g.final);
+  const results = allResults.slice(0, RESULTS_CAP);
   return (
     <div>
       <ZoneTitle right={`${list.length} game${list.length === 1 ? "" : "s"}`}>Games feed</ZoneTitle>
@@ -823,6 +839,9 @@ function SummerSchedule({ recaps = [], games }) {
         <div style={{ display: "grid", gap: 8 }}>
           {upcoming.length > 0 && subLabel("Recent results")}
           {results.map((g, i) => <ScheduleRow key={"r" + i} g={g} recaps={recaps} />)}
+          {allResults.length > results.length && (
+            <div style={{ fontFamily: MONO, fontSize: 10.5, color: A.textFaint, marginTop: 2 }}>Showing the {results.length} most recent of {allResults.length} results.</div>
+          )}
         </div>
       )}
       {upcoming.length === 0 && (

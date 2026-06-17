@@ -735,7 +735,7 @@ function mapProspectToCard(p) {
     add("Playmaking", `${perGame(suS.apg)} APG`, "apg", false);
     add("Perimeter shot", `${pct(suS.threePct)} 3P%`, "threePct", true);
     add("Event steals", `${perGame(suS.spg)} SPG`, "spg", false);
-    if (rows.length) context = { cohortLabel: `vs summer-league players · n=${n}`, projected: false, rows };
+    if (rows.length) context = { cohortLabel: `vs ${n} tracked summer-league players`, projected: false, rows };
   }
 
   const statusLabel = p.commitment
@@ -1177,7 +1177,7 @@ function TheLeap({ trajectory: t }) {
     <section style={{ background: T.surface, border: `1px solid ${T.border}`, padding: 18 }}>
       <SectionLabel>The Leap</SectionLabel>
       <div style={{ ...mono, fontSize: 10.5, color: T.textMute, margin: "4px 0 12px" }}>
-        prior season{t.hsSampleN ? ` · n=${t.hsSampleN}` : ""} → summer{t.summerSampleN ? ` · n=${t.summerSampleN}` : ""}
+        prior season{t.hsSampleN ? ` · ${t.hsSampleN} games` : ""} → summer{t.summerSampleN ? ` · ${t.summerSampleN} games` : ""}
       </div>
       <div style={{ display: "grid", gap: 8 }}>
         {rows.map(([l, hs, su, d]) => (
@@ -3308,7 +3308,7 @@ export default function App() {
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
-          <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} focusTeam={focusTeam} />
+          <SummerLeagueSection recaps={recaps} teams={workspaceTeams} onOpenProfile={setOpenId} focusTeam={focusTeam} schedule={SCHEDULE} />
         ) : view === "scouthq" ? (
           <ScoutHQ teams={workspaceTeams} onOpenProfile={setOpenId} />
         ) : view === "recaps" ? (

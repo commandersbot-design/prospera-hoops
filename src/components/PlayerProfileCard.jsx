@@ -373,7 +373,7 @@ export const DEFAULT_PLAYER = {
     ],
   },
   intel: {
-    circuit: "Hawks (Hayfield)",
+    circuit: "Hayfield Secondary",
     district: "Patriot · 6A North",
     ageRelClass: "Born Mar '11 · young",
     frameUpside: "High · room to add",
