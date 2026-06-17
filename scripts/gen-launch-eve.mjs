@@ -79,8 +79,8 @@ card("post-nash-statline", `${header("STAT DROP")}
   ${tile4(418, 696, "11", "REB")}
   ${tile4(662, 696, "3", "AST", C.text)}
   ${tile4(906, 696, "3", "STL", C.text)}
-  ${TD(W / 2, 1078, 58, 800, C.orange, "A 6'8 WING WHO DOES IT ALL", { anchor: "middle" })}
-  ${T(W / 2, 1120, 25, 600, C.teal, "18.9 PTS · 10.3 REB a night — as a 2028", { anchor: "middle" })}
+  ${TD(W / 2, 1078, 64, 800, C.orange, "6'8. TWO-WAY. A 2028.", { anchor: "middle" })}
+  ${T(W / 2, 1122, 25, 600, C.teal, "Averaging a double-double — and just getting started.", { anchor: "middle" })}
   ${footer("Box score: Capitol Hoops Summer League · June 16, 2026")}`);
 
 // 2) THE LEAP — Major Jones
