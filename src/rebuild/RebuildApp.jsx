@@ -139,7 +139,7 @@ function Landing({ data, go, openPlayer }) {
         <div data-anim>
           <div className="eyebrow">The DMV&rsquo;s scouting platform — high school, AAU &amp; more</div>
           <h1>You&rsquo;re already<br />on the board.</h1>
-          <p className="lede">Real stats, real development — every DMV hooper, in one place.</p>
+          <p className="lede">Real stats, real development — every DMV hooper, in one place. No fake rankings. No hype.</p>
           <div className="search">
             <input value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" placeholder="Search your name" />
             <button>Search</button>
@@ -218,6 +218,34 @@ function Landing({ data, go, openPlayer }) {
 
 // ---- PUBLIC PROFILE (read-only) — real data + the rich Development engine --
 const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
+
+// Full per-game log — every game, with W/L + shooting splits, expandable.
+function GameLog({ games }) {
+  const [all, setAll] = useState(false);
+  if (!games || !games.length) return <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No per-game logs yet for this player.</p>;
+  const shown = all ? games : games.slice(0, 8);
+  const wl = (r) => { const m = /\b(win|loss|w|l)\b/i.exec(String(r || "")); return m ? (/w/i.test(m[1]) ? "W" : "L") : null; };
+  return (
+    <>
+      <div style={{ maxHeight: all ? 460 : "none", overflowY: all ? "auto" : "visible" }}>
+        <table className="log"><tbody>
+          <tr><th>Date</th><th>Opp</th><th>Res</th><th>PTS</th><th>REB</th><th>AST</th><th>FG</th><th>3PT</th></tr>
+          {shown.map((g, i) => { const r = wl(g.result); return (
+            <tr key={i}>
+              <td style={{ whiteSpace: "nowrap" }}>{String(g.date || "").replace(/,?\s*\d{4}$/, "")}</td>
+              <td>{cleanOpp(g.opp)}</td>
+              <td>{r ? <b style={{ color: r === "W" ? "var(--teal)" : "var(--muted)" }}>{r}</b> : "—"}</td>
+              <td><b>{g.pts ?? 0}</b></td><td>{g.reb ?? 0}</td><td>{g.ast ?? 0}</td>
+              <td style={{ color: "var(--muted)" }}>{g.fgm != null ? `${g.fgm}-${g.fga}` : "—"}</td>
+              <td style={{ color: "var(--muted)" }}>{g.tpm != null ? `${g.tpm}-${g.tpa}` : "—"}</td>
+            </tr>
+          ); })}
+        </tbody></table>
+      </div>
+      {games.length > 8 && <button onClick={() => setAll((v) => !v)} style={{ marginTop: 10, background: "transparent", border: "1px solid var(--line)", color: "var(--muted)", fontFamily: "var(--sans)", fontSize: 12, fontWeight: 600, padding: "7px 12px", borderRadius: 8, cursor: "pointer" }}>{all ? "Show recent only" : `Show all ${games.length} games`}</button>}
+    </>
+  );
+}
 
 // "By the Numbers" — full box-score line, rebuild-styled (reuses seasonStatLine).
 const StatCell = ({ l, v, accent, sub }) => (
@@ -445,15 +473,8 @@ function PublicProfile({ player, data, go }) {
 
       <div className="pf-grid">
         <div className="card">
-          <p className="ttl">Recent games</p>
-          {games.length ? (
-            <table className="log"><tbody>
-              <tr><th>Date</th><th>Opp</th><th>PTS</th><th>REB</th><th>AST</th><th>Source</th></tr>
-              {games.slice(0, 6).map((g, i) => (
-                <tr key={i}><td>{g.date}</td><td>{cleanOpp(g.opp)}</td><td><b>{g.pts ?? 0}</b></td><td>{g.reb ?? 0}</td><td>{g.ast ?? 0}</td><td><span className="bdg teal" style={{ padding: "2px 7px" }}>Verified</span></td></tr>
-              ))}
-            </tbody></table>
-          ) : <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No per-game logs yet for this player.</p>}
+          <p className="ttl">Game log <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {games.length} GP · verified box scores</span></p>
+          <GameLog games={games} />
         </div>
         <div className="card">
           <p className="ttl">Film</p>
@@ -700,7 +721,8 @@ function TeamsView({ data, openTeam }) {
         </div>
       ) : (
         <div className="card" style={{ marginTop: 4 }}>
-          <p className="ttl">League schedule &amp; results</p>
+          <p className="ttl">Capitol Hoops Summer League · schedule &amp; results</p>
+          <p style={{ fontSize: 12, color: "var(--faint)", margin: "-6px 0 12px" }}>The current Capitol Hoops Summer League slate. More schedules come online as new circuits are added.</p>
           {games.length ? (
             <table className="log"><tbody>
               <tr><th>Date</th><th>Matchup</th><th>Result</th></tr>
@@ -808,6 +830,101 @@ function TeamReport({ team, schedule, wl, openPlayer, headLabel = "Read" }) {
   );
 }
 
+// One side of a custom 5-on-5 lineup — search-add up to 5, with summed production.
+function LineupSide({ data, ids, setIds, label }) {
+  const [q, setQ] = useState("");
+  const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
+  const sel = ids.map((id) => byId[id]).filter(Boolean);
+  const sum = (k) => sel.reduce((s, p) => s + (p[k] || 0), 0);
+  const results = q.trim().length >= 2 ? data.players.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()) && !ids.includes(p.id)).slice(0, 6) : [];
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
+  return (
+    <div>
+      <p className="ttl" style={{ margin: "0 0 8px" }}>{label} ({sel.length}/5)</p>
+      <div style={{ display: "grid", gap: 6 }}>
+        {sel.map((p) => (
+          <div key={p.id} className="wl" style={{ padding: "7px 0" }}><span className="n" style={{ fontSize: 13 }}>{p.name}</span><span className="s">{r1(p.ppg)} ppg</span><span className="add" onClick={() => setIds(ids.filter((x) => x !== p.id))} style={{ marginLeft: 8 }}>✕</span></div>
+        ))}
+      </div>
+      {sel.length < 5 && (
+        <div style={{ position: "relative", marginTop: 8 }}>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Add a player…" style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
+          {results.length > 0 && (
+            <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "var(--raised)", border: "1px solid var(--line)", borderRadius: 10, marginTop: 4, zIndex: 20, overflow: "hidden" }}>
+              {results.map((p) => <div key={p.id} onClick={() => { setIds([...ids, p.id]); setQ(""); }} style={{ padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r1(p.ppg)} ppg · {cleanOpp(p.school)}</span></div>)}
+            </div>
+          )}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 18, marginTop: 14 }}>
+        {[["PPG", "ppg"], ["RPG", "rpg"], ["APG", "apg"]].map(([l, k]) => <div key={k}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, color: "var(--ink)" }}>{r1(sum(k))}</div><div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>)}
+      </div>
+    </div>
+  );
+}
+
+function FiveOnFive({ data }) {
+  const [aIds, setAIds] = useState([]);
+  const [bIds, setBIds] = useState([]);
+  const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
+  const sum = (ids, k) => ids.map((id) => byId[id]).filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
+  const ready = aIds.length && bIds.length;
+  const ppA = sum(aIds, "ppg"), ppB = sum(bIds, "ppg");
+  return (
+    <div>
+      <p className="ttl">Custom 5-on-5 — build two lineups</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+        <LineupSide data={data} ids={aIds} setIds={setAIds} label="Lineup A" />
+        <LineupSide data={data} ids={bIds} setIds={setBIds} label="Lineup B" />
+      </div>
+      {ready
+        ? <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 16, lineHeight: 1.5 }}><b style={{ color: "var(--orange)", fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 11, letterSpacing: ".06em" }}>Projected edge</b> — Lineup {ppA >= ppB ? "A" : "B"} projects {r1(Math.abs(ppA - ppB))} more combined PPG. Production only — adjust for fit, pace, and matchups.</p>
+        : <p style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 14 }}>Add players to both lineups to see the projected production edge.</p>}
+    </div>
+  );
+}
+
+function OneOnOne({ data, openPlayer }) {
+  const [p1, setP1] = useState("");
+  const [p2, setP2] = useState("");
+  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_1v1") || ""; } catch (e) { return ""; } });
+  const opts = useMemo(() => [...data.players].sort((a, b) => a.name.localeCompare(b.name)), [data.players]);
+  const A = data.players.find((p) => p.id === p1), B = data.players.find((p) => p.id === p2);
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", fontSize: 14, padding: "12px 14px" };
+  const Sel = ({ value, onChange, ph }) => <select value={value} onChange={(e) => onChange(e.target.value)} style={inp}><option value="">{ph}</option>{opts.map((p) => <option key={p.id} value={p.id}>{p.name} · {cleanOpp(p.school)}</option>)}</select>;
+  const row = (l, va, vb, fmt = (x) => r1(x)) => {
+    const na = +va || 0, nb = +vb || 0;
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
+        <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: na >= nb ? "var(--orange)" : "var(--ink)" }}>{fmt(va)}</span>
+        <span style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--faint)", whiteSpace: "nowrap" }}>{l}</span>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: nb >= na ? "var(--orange)" : "var(--ink)" }}>{fmt(vb)}</span>
+      </div>
+    );
+  };
+  return (
+    <div>
+      <p className="ttl">1-on-1 read — head to head</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+        <Sel value={p1} onChange={setP1} ph="Player A…" /><Sel value={p2} onChange={setP2} ph="Player B…" />
+      </div>
+      {A && B ? <>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, marginBottom: 8, alignItems: "center" }}>
+          <span onClick={() => openPlayer(A)} style={{ cursor: "pointer", textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15 }}>{A.name}</span>
+          <span style={{ color: "var(--faint)", fontFamily: "var(--disp)" }}>vs</span>
+          <span onClick={() => openPlayer(B)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15 }}>{B.name}</span>
+        </div>
+        {row("PPG", A.ppg, B.ppg)}
+        {row("RPG", A.rpg, B.rpg)}
+        {row("APG", A.apg, B.apg)}
+        {row("3P%", A.threePct, B.threePct, (x) => x != null ? `${r1(x)}%` : "—")}
+        <p className="ttl" style={{ margin: "16px 0 6px" }}>The battle — your notes</p>
+        <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_1v1", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Who guards whom, where the edge is, how to attack…" style={{ ...inp, minHeight: 80, resize: "vertical", fontSize: 13 }} />
+      </> : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two players to compare their lines head-to-head and log the matchup.</p>}
+    </div>
+  );
+}
+
 // Paywall for Coach-tier tabs: subscribe ($19/mo) or redeem a pilot code.
 function CoachLock({ feature, user, go, redeem }) {
   const [busy, setBusy] = useState(false);
@@ -850,6 +967,7 @@ function CoachHQ({ data, openPlayer, go }) {
   const [oppA, setOppA] = useState("");
   const [oppB, setOppB] = useState("");
   const [mine, setMine] = useState("");
+  const [mmode, setMmode] = useState("team"); // team | five | one
   const [q, setQ] = useState("");
   const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_notes") || ""; } catch (e) { return ""; } });
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
@@ -901,6 +1019,14 @@ function CoachHQ({ data, openPlayer, go }) {
 
       {tab === "matchup" && (gated("matchup") ? <CoachLock feature="Matchup Builder" user={user} go={go} redeem={redeem} /> : (
         <div className="card">
+          <div className="tabs" style={{ marginBottom: 16 }}>
+            {[["team", "Team vs Team"], ["five", "Custom 5-on-5"], ["one", "1-on-1 read"]].map(([k, l]) => <span key={k} className={`tab ${mmode === k ? "on" : ""}`} onClick={() => setMmode(k)}>{l}</span>)}
+          </div>
+
+          {mmode === "five" && <FiveOnFive data={data} openPlayer={openPlayer} />}
+          {mmode === "one" && <OneOnOne data={data} openPlayer={openPlayer} />}
+
+          {mmode === "team" && <>
           <p className="ttl">Build a matchup — team vs team</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
             <Picker value={oppA} onChange={setOppA} ph="Your team / Team A…" />
@@ -932,6 +1058,7 @@ function CoachHQ({ data, openPlayer, go }) {
               </div>
             );
           })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two teams to compare records, scoring, and the key individual matchup.</p>}
+          </>}
         </div>
       ))}
 
