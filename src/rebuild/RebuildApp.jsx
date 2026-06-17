@@ -41,29 +41,22 @@ function teamType(name, locByKey) {
 }
 
 // ---- shared: Scout Card (matches prototype .scout) -------------------------
+const HEADSHOT_EMAIL = "headshots@prosperahoops.com";
 function ScoutCard({ p, portrait, onClick }) {
   return (
     <div className="scout" onClick={onClick} style={onClick ? { cursor: "pointer" } : undefined}>
       <span className="crn tl" /><span className="crn tr" /><span className="crn bl" /><span className="crn br" />
       <div className="s-eye">{p.eyebrow || "Scout Card · Summer '26"}</div>
-      {portrait ? (
-        <div className="s-head">
-          <div className="s-portrait lg">
-            {p.headshot ? <img src={p.headshot} alt="" /> : <><span className="ph">{initials(p.name)}</span><span className="ph2">Headshot</span></>}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="s-name">{p.name}</div>
-            <div className="s-meta">{p.meta}</div>
-            <Badges p={p} />
-          </div>
+      <div className="s-head">
+        <div className={`s-portrait ${portrait ? "lg" : ""}`}>
+          {p.headshot ? <img src={p.headshot} alt={p.name} /> : <><span className="ph">{initials(p.name)}</span><span className="ph2">No headshot</span></>}
         </div>
-      ) : (
-        <>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div className="s-name">{p.name}</div>
           <div className="s-meta">{p.meta}</div>
           <Badges p={p} />
-        </>
-      )}
+        </div>
+      </div>
       {p.stats && (
         <div className="s-stats">
           {p.stats.slice(0, 3).map((s) => (
@@ -78,6 +71,11 @@ function ScoutCard({ p, portrait, onClick }) {
         <div className="s-arc">
           <div className="lab"><span>Development Arc</span><b>▲ Trending up</b></div>
           <ArcSvg points={p.arc} />
+        </div>
+      )}
+      {!p.headshot && !onClick && (
+        <div className="s-nohead" onClick={(e) => e.stopPropagation()}>
+          No headshot on file. <a href={`mailto:${HEADSHOT_EMAIL}?subject=Headshot for ${encodeURIComponent(p.name || "player")}`}>Add one →</a>
         </div>
       )}
     </div>
@@ -231,6 +229,7 @@ function Landing({ data, go, openPlayer }) {
         <div className="stamp">The DMV&rsquo;s <b>home court</b></div>
         <div className="fmore"><a>Map</a><a>Classes</a><a>Commitments</a><a>Recaps</a></div>
         <div className="fnote">Real stats. No fake rankings. No hype.</div>
+        <div className="fnote" style={{ marginTop: 8 }}>Missing a player headshot? Email <a href={`mailto:${HEADSHOT_EMAIL}`} style={{ color: "var(--orange)", fontWeight: 700 }}>{HEADSHOT_EMAIL}</a> to add or update one.</div>
       </div></footer>
     </>
   );

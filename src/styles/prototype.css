@@ -7,7 +7,12 @@
   --sans:'Hanken Grotesk','Inter',Arial,sans-serif;
   --disp:'Saira Condensed','Oswald','Arial Narrow',sans-serif;
 }
-.rebuild{min-height:100vh;background:var(--graphite);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.rebuild{min-height:100vh;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 70% at 50% -8%, #17120d 0%, transparent 52%),
+    radial-gradient(80% 50% at 100% 0%, rgba(255,106,26,.05), transparent 55%),
+    var(--graphite);
+  background-attachment:fixed}
 .rebuild, .rebuild *{box-sizing:border-box}
 .rebuild a{text-decoration:none;color:inherit;cursor:pointer}
 .rebuild .wrap{max-width:1280px;margin:0 auto;padding:0 28px}
@@ -78,7 +83,15 @@
 
 /* LANDING */
 .rebuild .hero{position:relative;overflow:hidden}
-.rebuild .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(70% 80% at 76% 30%,rgba(255,106,26,.12),transparent 60%)}
+.rebuild .hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(58% 70% at 80% 26%,rgba(255,106,26,.20),transparent 62%),
+  radial-gradient(46% 56% at 8% 16%,rgba(59,158,255,.08),transparent 60%),
+  radial-gradient(90% 70% at 50% 128%,rgba(255,106,26,.07),transparent 62%)}
+.rebuild .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:linear-gradient(rgba(244,242,237,.028) 1px,transparent 1px) 0 0/100% 66px,
+  linear-gradient(90deg,rgba(244,242,237,.028) 1px,transparent 1px) 0 0/66px 100%;
+  -webkit-mask-image:radial-gradient(82% 78% at 52% 32%,#000,transparent 76%);
+  mask-image:radial-gradient(82% 78% at 52% 32%,#000,transparent 76%)}
 .rebuild .hero-in{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-top:60px;padding-bottom:52px}
 @media(max-width:860px){.rebuild .hero-in{grid-template-columns:1fr;padding-top:38px;padding-bottom:38px}}
 .rebuild .search{position:relative;display:flex;gap:8px;max-width:420px}
@@ -256,6 +269,25 @@
 }
 /* hero Scout Card — premium interactive lift + bracket glow */
 .rebuild .crn{transition:border-color .2s ease}
-.rebuild .scout{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
-.rebuild .scout:hover{transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.5);border-color:rgba(244,242,237,.2)}
+.rebuild .scout{
+  background:linear-gradient(168deg,#1e1813,var(--raised) 56%);
+  border-color:rgba(244,242,237,.14);
+  box-shadow:0 20px 54px rgba(0,0,0,.46),0 0 0 1px rgba(255,106,26,.06),inset 0 1px 0 rgba(244,242,237,.05);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.rebuild .scout:hover{transform:translateY(-3px);box-shadow:0 26px 60px rgba(0,0,0,.55),0 0 0 1px rgba(255,106,26,.16);border-color:rgba(255,106,26,.22)}
+.rebuild .crn{border-color:rgba(255,106,26,.5)}
 .rebuild .scout:hover .crn{border-color:var(--orange)}
+/* no-headshot contact note inside the card */
+.rebuild .s-nohead{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--faint)}
+.rebuild .s-nohead a{color:var(--orange);font-weight:700;white-space:nowrap}
+.rebuild .s-nohead a:hover{text-decoration:underline}
+/* content cards — depth + hover lift (less flat, more premium) */
+.rebuild .pcard,.rebuild .feat,.rebuild .acard{
+  background:linear-gradient(166deg,#181311,var(--surface) 58%);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.rebuild .pcard:hover,.rebuild .feat:hover{transform:translateY(-3px);border-color:rgba(255,106,26,.32);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.rebuild .acard{position:relative;overflow:hidden}
+.rebuild .acard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),transparent 72%)}
+.rebuild .acard:hover{transform:translateY(-2px);border-color:rgba(255,106,26,.3);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+/* coverage pills get the same subtle depth */
+.rebuild .covchip{background:linear-gradient(166deg,#181311,var(--surface) 58%)}
