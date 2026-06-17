@@ -72,15 +72,15 @@ card("post-nash-statline", `${header("STAT DROP")}
   ${T(W / 2, 188, 24, 800, C.orange, "DOUBLE-DOUBLE · LAST NIGHT", { ls: 6, anchor: "middle" })}
   ${portrait(W / 2, 300, 76, "nashavery", "NA")}
   ${TD(W / 2, 512, 100, 800, C.text, "NASH AVERY", { anchor: "middle" })}
-  ${T(W / 2, 552, 26, 700, C.sage, "SPALDING · CLASS OF '28 · WING", { ls: 2, anchor: "middle" })}
+  ${T(W / 2, 552, 26, 700, C.sage, "SPALDING · 6'8 WING · CLASS OF '28", { ls: 2, anchor: "middle" })}
   ${T(W / 2, 612, 25, 600, C.mut, "Spalding's sophomore did a little of everything in a 75-70 win", { anchor: "middle" })}
   ${T(W / 2, 646, 25, 600, C.mut, "over The Brook — and he's been doing it all summer.", { anchor: "middle" })}
   ${tile4(174, 696, "24", "PTS")}
   ${tile4(418, 696, "11", "REB")}
   ${tile4(662, 696, "3", "AST", C.text)}
   ${tile4(906, 696, "3", "STL", C.text)}
-  ${TD(W / 2, 1078, 58, 800, C.orange, "A DOUBLE-DOUBLE MACHINE", { anchor: "middle" })}
-  ${T(W / 2, 1120, 25, 600, C.teal, "Averaging 18.9 PTS · 10.3 REB as a 2028", { anchor: "middle" })}
+  ${TD(W / 2, 1078, 58, 800, C.orange, "A 6'8 WING WHO DOES IT ALL", { anchor: "middle" })}
+  ${T(W / 2, 1120, 25, 600, C.teal, "18.9 PTS · 10.3 REB a night — as a 2028", { anchor: "middle" })}
   ${footer("Box score: Capitol Hoops Summer League · June 16, 2026")}`);
 
 // 2) THE LEAP — Major Jones
