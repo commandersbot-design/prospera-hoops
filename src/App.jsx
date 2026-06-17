@@ -1058,7 +1058,7 @@ function FilmStrip({ prospectName, override, onOpenFilmTab }) {
 }
 
 // Sticky identity rail (left column on desktop, top block on mobile).
-function ProfileRail({ c, archetype, tiles, status, verified, override, canEdit }) {
+function ProfileRail({ c, archetype, tiles, status, verified, override, canEdit, onClaim }) {
   const initials = (c.name || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   // Each measurable carries a verification state: scout-verified records get the
   // green dot; physical measurables on an unverified record stay neutral (a fact we
@@ -1101,6 +1101,12 @@ function ProfileRail({ c, archetype, tiles, status, verified, override, canEdit 
             : <><span style={{ width: 6, height: 6, borderRadius: 999, border: `1.5px solid ${T.textMute}`, display: "inline-block" }} /> Unverified — not yet measured by staff</>}
         </div>
       </div>
+      {!canEdit && onClaim && (!c.height || !c.weight || !c.wingspan) && (
+        <button type="button" onClick={onClaim}
+          style={{ ...mono, fontSize: 10.5, letterSpacing: "0.03em", lineHeight: 1.55, textAlign: "left", color: T.textDim, background: "rgba(255,106,26,0.06)", border: `1px solid ${T.border}`, borderRadius: 8, padding: "9px 11px", cursor: "pointer" }}>
+          <span style={{ color: T.accent, fontWeight: 700 }}>Is this you?</span> Height, weight, wingspan, film &amp; contact aren&rsquo;t added yet — <span style={{ color: T.accent, fontWeight: 700 }}>claim this profile</span> to add them.
+        </button>
+      )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
         {[["PPG", tiles.ppg, true], ["RPG", tiles.rpg, false], ["APG", tiles.apg, false]].map(([l, v, hot]) => (
           <div key={l} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 6px", textAlign: "center" }}>
@@ -1241,7 +1247,7 @@ function Profile({ prospect, onBack, onOpen }) {
     <div style={{ display: "grid", gridTemplateColumns: wide ? "300px minmax(0, 1fr) 320px" : narrow ? "1fr" : "minmax(270px, 33%) 1fr", gap: narrow ? 18 : 28, alignItems: "start" }}>
       {/* LEFT RAIL — Bio & Academics: identity / measurables / academics / intel (sticky on desktop) */}
       <div style={{ position: narrow ? "static" : "sticky", top: 16 }}>
-        <ProfileRail c={cardPlayer} archetype={archetype} tiles={tiles} status={cardPlayer.status} verified={verified} override={override} canEdit={canEdit} />
+        <ProfileRail c={cardPlayer} archetype={archetype} tiles={tiles} status={cardPlayer.status} verified={verified} override={override} canEdit={canEdit} onClaim={() => setClaimOpen(true)} />
       </div>
 
       {/* MIDDLE COLUMN — action bar, tabs, the active surface */}
