@@ -752,14 +752,14 @@ function TeamsView({ data, openTeam }) {
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={mode === "teams" ? "Search a team…" : "Search the schedule…"} style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
       </div>
 
-      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", margin: "16px 0 8px", alignItems: "center" }}>
-        <FilterChip on={mode === "teams"} onClick={() => setMode("teams")}>Teams</FilterChip>
-        <FilterChip on={mode === "schedule"} onClick={() => setMode("schedule")}>Schedule</FilterChip>
+      <div style={{ display: "flex", gap: 22, flexWrap: "wrap", margin: "20px 0 14px", alignItems: "flex-end" }}>
+        <ChipGroup label="View">
+          <FilterChip on={mode === "teams"} onClick={() => setMode("teams")}>Teams</FilterChip>
+          <FilterChip on={mode === "schedule"} onClick={() => setMode("schedule")}>Schedule</FilterChip>
+        </ChipGroup>
         {mode === "teams" && <>
-          {divider}
-          {["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}
-          {divider}
-          {["Public", "Private"].map((t) => <FilterChip key={t} on={types.includes(t)} onClick={() => tog(types, setTypes, t)}>{t}</FilterChip>)}
+          <ChipGroup label="Region">{["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}</ChipGroup>
+          <ChipGroup label="Type">{["Public", "Private"].map((t) => <FilterChip key={t} on={types.includes(t)} onClick={() => tog(types, setTypes, t)}>{t}</FilterChip>)}</ChipGroup>
         </>}
       </div>
 
@@ -1248,7 +1248,10 @@ function useData() {
 
 // ---- PROSPECTS — button-filter board (pre-rebuild UX + depth) --------------
 const FilterChip = ({ on, onClick, children }) => (
-  <button type="button" onClick={onClick} style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".05em", fontSize: 12, padding: "6px 12px", borderRadius: 8, cursor: "pointer", border: `1px solid ${on ? "var(--orange)" : "var(--line)"}`, background: on ? "var(--orange)" : "transparent", color: on ? "#1c0d03" : "var(--muted)", whiteSpace: "nowrap" }}>{children}</button>
+  <button type="button" className={`fchip ${on ? "on" : ""}`} onClick={onClick}>{children}</button>
+);
+const ChipGroup = ({ label, children }) => (
+  <div className="fgroup"><span className="fglabel">{label}</span><div className="fgrow">{children}</div></div>
 );
 const posIn = (pos, b) => { const x = (pos || "").toUpperCase(); if (b === "G") return /G/.test(x); if (b === "W") return /W|SF/.test(x); if (b === "F") return /F|C/.test(x); return false; };
 const divider = <span style={{ width: 1, height: 20, background: "var(--line)", margin: "0 4px" }} />;
@@ -1284,20 +1287,15 @@ function ProspectsView({ data, openPlayer }) {
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search player or school…" style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
       </div>
 
-      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", margin: "16px 0 8px", alignItems: "center" }}>
-        {["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}
-        {divider}
-        {["G", "W", "F"].map((b) => <FilterChip key={b} on={poss.includes(b)} onClick={() => tog(poss, setPoss, b)}>{b}</FilterChip>)}
-        {divider}
-        {["'27", "'28", "'29", "'30"].map((c) => <FilterChip key={c} on={cls.includes(c)} onClick={() => tog(cls, setCls, c)}>{c}</FilterChip>)}
-        {divider}
-        <FilterChip on={tracked} onClick={() => setTracked(!tracked)}>☆ Tracked</FilterChip>
+      <div style={{ display: "flex", gap: 22, flexWrap: "wrap", margin: "20px 0 14px", alignItems: "flex-end" }}>
+        <ChipGroup label="Region">{["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}</ChipGroup>
+        <ChipGroup label="Position">{["G", "W", "F"].map((b) => <FilterChip key={b} on={poss.includes(b)} onClick={() => tog(poss, setPoss, b)}>{b}</FilterChip>)}</ChipGroup>
+        <ChipGroup label="Class">{["'27", "'28", "'29", "'30"].map((c) => <FilterChip key={c} on={cls.includes(c)} onClick={() => tog(cls, setCls, c)}>{c}</FilterChip>)}</ChipGroup>
+        <ChipGroup label="Watchlist"><FilterChip on={tracked} onClick={() => setTracked(!tracked)}>☆ Tracked</FilterChip></ChipGroup>
       </div>
-      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: 7 }}>
-          {[["ranked", "Ranked"], ["ppg", "PPG"], ["az", "A–Z"]].map(([v, l]) => <FilterChip key={v} on={sort === v} onClick={() => setSort(v)}>{l}</FilterChip>)}
-        </div>
-        <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", fontSize: 11, color: "var(--faint)" }}>{data.players.length} prospects · 0 ranked</span>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between" }}>
+        <ChipGroup label="Sort by">{[["ranked", "Ranked"], ["ppg", "PPG"], ["az", "A–Z"]].map(([v, l]) => <FilterChip key={v} on={sort === v} onClick={() => setSort(v)}>{l}</FilterChip>)}</ChipGroup>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", fontSize: 11.5, color: "var(--faint)" }}>{data.players.length} prospects · 0 ranked</span>
       </div>
 
       {sort === "ranked" && (

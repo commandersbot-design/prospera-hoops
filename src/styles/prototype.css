@@ -212,3 +212,24 @@
 .rebuild .feat p{font-size:13.5px}
 /* Tabs / chips — easier to read and tap */
 .rebuild .tab{font-size:13.5px}
+
+/* ── Filter chips & tabs — bigger, tactile, hover/active states (immersive) ── */
+.rebuild .fchip{
+  font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  font-size:13.5px;line-height:1;padding:10px 16px;border-radius:11px;cursor:pointer;
+  border:1.5px solid var(--line);background:var(--surface);color:var(--muted);white-space:nowrap;
+  transition:border-color .14s ease,background .14s ease,color .14s ease,transform .08s ease,box-shadow .14s ease;
+}
+.rebuild .fchip:hover{border-color:rgba(244,242,237,.5);color:var(--ink);background:var(--raised)}
+.rebuild .fchip:active{transform:translateY(1px)}
+.rebuild .fchip.on{background:var(--orange);border-color:var(--orange);color:#1c0d03;box-shadow:0 3px 16px rgba(255,106,26,.32)}
+.rebuild .fchip.on:hover{filter:brightness(1.06);color:#1c0d03}
+/* labelled chip cluster (LEVEL / REGION / WATCHLIST style) */
+.rebuild .fgroup{display:flex;flex-direction:column;gap:8px}
+.rebuild .fglabel{font-family:var(--sans);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.rebuild .fgrow{display:flex;gap:8px;flex-wrap:wrap}
+/* content tabs — a touch bigger + hover affordance */
+.rebuild .tabs{gap:8px}
+.rebuild .tab{padding:9px 16px;transition:border-color .14s,background .14s,color .14s,box-shadow .14s}
+.rebuild .tab:hover:not(.on){border-color:rgba(244,242,237,.42);color:var(--ink)}
+.rebuild .tab.on{box-shadow:0 2px 13px rgba(255,106,26,.26)}
