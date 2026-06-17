@@ -957,9 +957,9 @@ function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
       <p className="ttl" style={{ margin: "0 0 10px", color: "var(--orange)" }}>{opp ? "Keys to the game" : "Team strengths & watch-areas"}</p>
       <div style={{ display: "grid", gap: 9, marginBottom: 18 }}>
         {insights.map(([t, d], i) => (
-          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <span style={{ flex: "none", width: 6, height: 6, borderRadius: 9, background: "var(--orange)", marginTop: 6 }} />
-            <span style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.5 }}><b style={{ color: "var(--ink)" }}>{t}.</b> {d}</span>
+          <div key={i} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
+            <span style={{ flex: "none", width: 7, height: 7, borderRadius: 9, background: "var(--orange)", marginTop: 7 }} />
+            <span style={{ fontSize: 14, color: "var(--ink)", lineHeight: 1.55 }}><b style={{ color: "var(--ink)" }}>{t}.</b> <span style={{ color: "var(--muted)" }}>{d}</span></span>
           </div>
         ))}
       </div>
@@ -980,10 +980,10 @@ function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${grp.length}, 1fr)`, gap: 14 }}>
           {grp.map(([label, list]) => (
             <div key={label}>
-              <div style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--faint)", marginBottom: 7 }}>{label}</div>
-              <div style={{ display: "grid", gap: 5 }}>
+              <div style={{ fontFamily: "var(--sans)", fontSize: 10.5, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 8 }}>{label}</div>
+              <div style={{ display: "grid", gap: 6 }}>
                 {[...list].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 5).map((p) => (
-                  <div key={p.id} onClick={() => openPlayer(p)} style={{ display: "flex", justifyContent: "space-between", gap: 6, cursor: "pointer", fontSize: 12 }}>
+                  <div key={p.id} onClick={() => openPlayer(p)} style={{ display: "flex", justifyContent: "space-between", gap: 6, cursor: "pointer", fontSize: 13 }}>
                     <span style={{ color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
                     <b style={{ fontFamily: "var(--disp)", color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b>
                   </div>
@@ -1041,19 +1041,24 @@ function LineupSide({ data, ids, setIds, label, lineups }) {
           const active = editing === i;
           return (
             <div key={i}>
-              <div onClick={() => { setEditing(active ? null : i); setQ(""); }} style={{ display: "grid", gridTemplateColumns: "30px 1fr auto", gap: 9, alignItems: "center", padding: "9px 10px", borderRadius: 9, cursor: "pointer", border: `1px solid ${active ? "var(--orange)" : p ? "var(--line)" : "rgba(244,242,237,.08)"}`, background: p || active ? "var(--surface)" : "transparent" }}>
-                <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)" }}>{pos}</span>
-                {p ? <>
-                  <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 9 }}><b style={{ fontFamily: "var(--disp)", fontSize: 14, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b><span className="add" onClick={(e) => { e.stopPropagation(); clear(i); }}>✕</span></span>
-                </> : <span style={{ color: active ? "var(--orange)" : "var(--faint)", fontSize: 12, gridColumn: "2 / span 2" }}>{active ? "Choose a player ↓" : `+ Select a ${pos === "C" ? "center" : pos === "PG" ? "point guard" : pos}`}</span>}
+              <div className="lslot" onClick={() => { setEditing(active ? null : i); setQ(""); }} style={{ display: "grid", gridTemplateColumns: "34px 1fr auto", gap: 10, alignItems: "center", padding: "12px 13px", borderRadius: 10, cursor: "pointer", border: `1.5px solid ${active ? "var(--orange)" : "var(--line)"}`, background: "var(--surface)" }}>
+                <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 13, color: "var(--orange)" }}>{pos}</span>
+                {p
+                  ? <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 14, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
+                  : <span style={{ color: active ? "var(--orange)" : "var(--muted)", fontSize: 13, fontWeight: 500 }}>{active ? "Choose a player below…" : "Tap to pick a player"}</span>}
+                <span style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "flex-end" }}>
+                  {p && <b style={{ fontFamily: "var(--disp)", fontSize: 15, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b>}
+                  {p
+                    ? <span className="add" onClick={(e) => { e.stopPropagation(); clear(i); }} title="Remove">✕</span>
+                    : <span style={{ color: active ? "var(--orange)" : "var(--faint)", fontSize: 14, fontWeight: 800 }}>{active ? "▴" : "▾"}</span>}
+                </span>
               </div>
               {active && (
-                <div style={{ margin: "5px 0 2px" }}>
-                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search any player for ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
-                  <div style={{ background: "var(--raised)", border: "1px solid var(--line)", borderRadius: 10, marginTop: 4, overflow: "hidden", maxHeight: 230, overflowY: "auto" }}>
-                    {results.map((r) => <div key={r.id} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
-                    {results.length === 0 && <div style={{ padding: "9px 11px", fontSize: 12, color: "var(--faint)" }}>No players match.</div>}
+                <div style={{ margin: "6px 0 4px", border: "1px solid var(--orange)", borderRadius: 11, overflow: "hidden", background: "var(--raised)" }}>
+                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search any player for ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13.5, padding: "11px 13px", border: "none", borderBottom: "1px solid var(--line)", borderRadius: 0, background: "var(--surface)" }} />
+                  <div style={{ maxHeight: 240, overflowY: "auto" }}>
+                    {results.map((r) => <div key={r.id} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "11px 13px", cursor: "pointer", fontSize: 13.5, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
+                    {results.length === 0 && <div style={{ padding: "11px 13px", fontSize: 12.5, color: "var(--faint)" }}>No players match “{q}”.</div>}
                   </div>
                 </div>
               )}
@@ -1148,12 +1153,12 @@ function OneOnOne({ data, openPlayer }) {
     return (
       <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid var(--line)" }}>
         <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 17, color: col(a, aWin), fontVariantNumeric: "tabular-nums" }}>{a == null ? "—" : a}{aWin && <span style={{ color: "var(--orange)", fontSize: 11 }}> ◄</span>}</span>
-        <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--faint)", whiteSpace: "nowrap" }}>{l}</span>
+        <span style={{ fontSize: 11.5, textTransform: "uppercase", letterSpacing: ".05em", color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 600 }}>{l}</span>
         <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 17, color: col(b, bWin), fontVariantNumeric: "tabular-nums" }}>{bWin && <span style={{ color: "var(--orange)", fontSize: 11 }}>► </span>}{b == null ? "—" : b}</span>
       </div>
     );
   };
-  const Section = ({ t }) => <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--muted)", margin: "15px 0 5px" }}>{t}</div>;
+  const Section = ({ t }) => <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--orange)", margin: "16px 0 6px" }}>{t}</div>;
   const nameCell = (s, right) => <span onClick={() => openPlayer(s.p)} style={{ cursor: "pointer", textAlign: right ? "left" : "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15, lineHeight: 1.1 }}>{s.p.name}<br /><span style={{ fontSize: 10.5, color: "var(--faint)", fontFamily: "var(--sans)", fontWeight: 600 }}>{[s.p.pos, s.p.cls, cleanOpp(s.p.school)].filter(Boolean).join(" · ")}</span></span>;
   return (
     <div>
@@ -1316,7 +1321,7 @@ function CoachHQ({ data, openPlayer, go }) {
             const row = (label, va, vb, better) => (
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
                 <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: better === "a" ? "var(--orange)" : "var(--ink)" }}>{va}</span>
-                <span style={{ fontFamily: "var(--sans)", fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--faint)", whiteSpace: "nowrap" }}>{label}</span>
+                <span style={{ fontFamily: "var(--sans)", fontSize: 11.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--muted)", whiteSpace: "nowrap", fontWeight: 600 }}>{label}</span>
                 <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: better === "b" ? "var(--orange)" : "var(--ink)" }}>{vb}</span>
               </div>
             );
