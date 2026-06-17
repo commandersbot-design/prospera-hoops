@@ -88,9 +88,12 @@ function ArcSvg({ points }) {
 function Header({ view, go }) {
   const { user, signOut } = useAuth();
   const [signInOpen, setSignInOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const nav = (id, label) => { go(id); setMenuOpen(false); };
   const tab = (id, label) => <a className={view === id ? "on" : ""} onClick={() => go(id)}>{label}</a>;
+  const mtab = (id, label) => <a className={view === id ? "on" : ""} onClick={() => nav(id)}>{label}</a>;
   return (
-    <header className="hd"><div className="hd-in">
+    <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
         {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
@@ -103,7 +106,16 @@ function Header({ view, go }) {
           <a className="login" onClick={() => setSignInOpen(true)}>Log in</a>
           <button className="claim-sm" onClick={() => go("prospects")}>Claim your profile</button>
         </>}
+        <button className="nav-burger" aria-label="Menu" onClick={() => setMenuOpen((v) => !v)}>{menuOpen ? "✕" : "☰"}</button>
       </div>
+      {menuOpen && (
+        <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
+          <div className="mdiv" />
+          {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
+            : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
+        </div>
+      )}
       {signInOpen && <Modal onClose={() => setSignInOpen(false)}><p className="ttl" style={{ marginTop: 0 }}>Sign in to Prospera</p><SignInForm onSignedIn={() => setSignInOpen(false)} intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Enter your email and we’ll send a one-tap sign-in link — no password.</p>} /></Modal>}
     </div></header>
   );
