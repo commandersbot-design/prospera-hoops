@@ -106,7 +106,7 @@ function classify(r, P, pos) {
   if (pt >= .80 && p3 != null && p3 >= .50 && pl < .55) return ["Floor Spacer", why("low-usage spacer", `${(r.tp3 * 100).toFixed(0)}% 3P`)];
   if (perim && pp >= .55 && ps >= .62) return ["Two-Way Wing", why("scores", `${r.stocks.toFixed(1)} stocks`)];
   if (pl <= .40 && (pao >= .50 || pts_ >= .55)) return ["Low-Usage Glue", why("efficient role", "low turnovers")];
-  if (pp <= .25 && pl <= .30) return [null, "limited role / small sample"];
+  if (pp <= .25 && pl <= .30) return [null, "limited role so far"];
   return ["Rotation Contributor", "balanced role"];
 }
 

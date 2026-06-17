@@ -205,7 +205,7 @@ function Trajectory({ t }) {
   const hsBlock = t.hs ? (
     <TrajBlock
       title="HS Season"
-      sampleTag={t.hsSampleN ? `n=${t.hsSampleN}` : ""}
+      sampleTag={t.hsSampleN ? `${t.hsSampleN} ${t.hsSampleN === 1 ? "game" : "games"}` : ""}
       tiles={[
         { label: "PTS", value: t.hs.pts },
         { label: "REB", value: t.hs.reb },
@@ -218,7 +218,7 @@ function Trajectory({ t }) {
     <TrajBlock
       deWeighted={both}
       title="Summer"
-      sampleTag={`${both ? "· " : ""}n=${t.summerSampleN ?? "?"}${(t.summerSampleN ?? 99) <= 2 ? " · small sample" : ""}`}
+      sampleTag={t.summerSampleN != null ? `${both ? "· " : ""}${t.summerSampleN} ${t.summerSampleN === 1 ? "game" : "games"}` : ""}
       tagColor={C.amber}
       tiles={[
         { label: "PTS", value: t.summer.pts, delta: both ? t.summer.dPts : null },
