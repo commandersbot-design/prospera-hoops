@@ -1,0 +1,49 @@
+/* Prospera Hoops — design system (§2). Canonical tokens extracted from
+ * prospera-prototype.html. New rebuild surfaces read these `--ds-*` / bare names;
+ * we re-skin the legacy `--prospera-*` vars onto this palette as pages migrate.
+ * Graphite = page bg · Surface = cards · Raised = elevated (Scout Card) · Line = hairlines.
+ */
+:root {
+  /* §2.1 exact tokens */
+  --graphite: #0b0a09;
+  --surface: #141110;
+  --raised: #1a1614;
+  --line: rgba(244, 242, 237, 0.09);
+
+  --ink: #F4F2ED;
+  --muted: rgba(244, 242, 237, 0.55);
+  --faint: rgba(244, 242, 237, 0.34);
+
+  --orange: #FF6A1A;
+  --gold-a: #F5C451;
+  --gold-b: #E0A23C;
+  --teal: #2FBF8F;   /* Verified Stats */
+  --blue: #3B9EFF;   /* Verified Account */
+
+  /* §2.2 type */
+  --font-display: 'Saira Condensed', 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* §2.3 shape */
+  --r-card: 15px;
+  --r-control: 10px;
+  --r-pill: 999px;
+  --page-max: 1080px;
+  --gutter: 22px;
+  --section-pad: 50px;
+}
+
+/* §2.5 motion — staggered fade-up entrance; respect reduced motion. */
+@keyframes ds-fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.ds-fade-up { animation: ds-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .ds-fade-up { animation: none; }
+}
+
+/* §2.4 foundational helpers (component-specific CSS lands with each component). */
+.ds-eyebrow {
+  font-family: var(--font-body); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange);
+}
+.ds-hairline { border: none; border-top: 1px solid var(--line); margin: 0; }
+.ds-display { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.005em; }

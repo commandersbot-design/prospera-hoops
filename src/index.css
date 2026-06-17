@@ -6,6 +6,8 @@
 
 /* Prospera identity tokens — every component reads var(--prospera-*). */
 @import './styles/tokens.css';
+/* §2 design system (rebuild) — graphite palette + Saira/Hanken type tokens. */
+@import './styles/design-system.css';
 
 @tailwind base;
 @tailwind components;
