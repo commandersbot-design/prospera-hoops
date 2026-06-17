@@ -224,6 +224,16 @@ function PublicProfile({ player, data, go }) {
     ],
   };
   const why = archetype && (Array.isArray(archetype.why) ? archetype.why.join(" · ") : archetype.why);
+  // Editorial depth (carried from the pre-rebuild card): measurables + written read.
+  const inFt = (i) => (i ? `${Math.floor(i / 12)}'${i % 12}"` : null);
+  const wtStr = prospect.weightLbs ? `${prospect.weightLbs} lb` : null;
+  const measur = [["Height", inFt(prospect.heightInches)], ["Weight", wtStr], ["Wingspan", inFt(prospect.wingspanInches)], ["Class", p.cls || null], ["Pos", p.pos || null]];
+  const hasMeasur = measur.some(([, v]) => v);
+  const hasSummary = prospect.summary && prospect.summary.length > 20 && !/profile in progress/i.test(prospect.summary);
+  const first = (p.name || "").split(" ")[0] || "This player";
+  const autoRead = archetype?.label
+    ? `${first} profiles as a ${archetype.label.toLowerCase()} in summer-league play${why ? ` — ${why.toLowerCase()}` : ""}.`
+    : `${first}'s summer-league stat line is live and verified.`;
   return (
     <div className="wrap" style={{ paddingTop: 26 }}>
       <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
@@ -258,6 +268,20 @@ function PublicProfile({ player, data, go }) {
           <div className="arche">{archetype?.label || "Rotation Contributor"}</div>
           {why && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "6px 0 0", lineHeight: 1.5 }}>{why}</p>}
         </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <p className="ttl">Scouting report</p>
+        <div style={{ display: "flex", gap: 22, flexWrap: "wrap", margin: "2px 0 16px" }}>
+          {measur.map(([l, v]) => (
+            <div key={l}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, lineHeight: 1.1, color: v ? "var(--ink)" : "var(--faint)" }}>{v || "—"}</div><div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>
+          ))}
+        </div>
+        <p className="ttl" style={{ margin: "0 0 7px" }}>The read</p>
+        <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>
+          {hasSummary ? prospect.summary : autoRead}
+          {!hasSummary && <> A full written report{hasMeasur ? "" : ", verified measurements,"} and recruiting timeline are pending — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={() => go("dash")}>claim this profile</b> to add them, free.</>}
+        </p>
       </div>
 
       {arc && arc.seasons && arc.seasons.length > 0 && (
@@ -743,8 +767,8 @@ function ProspectsView({ data, openPlayer }) {
         {sort === "ranked" ? "Notable · not yet evaluated" : `${list.length} shown`}
       </div>
       <div>
-        {list.map((p) => (
-          <div key={p.id} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+        {list.map((p, i) => (
+          <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
             <div className="rav" style={{ width: 42, height: 42 }}>{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
