@@ -1074,9 +1074,14 @@ function ProfileRail({ c, archetype, tiles, status, verified, override, canEdit,
   const uncommitted = /uncommit/i.test(status || "");
   return (
     <aside style={{ display: "grid", gap: 14, alignContent: "start" }}>
-      <div style={{ aspectRatio: "4 / 5", borderRadius: 10, overflow: "hidden", border: `1px solid ${T.border}`, background: c.photo ? "#000" : "#1B2129", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {/* With a photo: full 4:5 portrait. Without one: a compact placeholder so it
+          doesn't dominate the (mobile) layout — initials + an honest 'no photo' note. */}
+      <div style={{ ...(c.photo ? { aspectRatio: "4 / 5" } : { height: 172 }), borderRadius: 10, overflow: "hidden", border: `1px solid ${T.border}`, background: c.photo ? "#000" : "#1B2129", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
         {c.photo ? <img src={c.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          : <span style={{ ...serif, fontSize: 72, fontWeight: 800, color: T.textMute, letterSpacing: "0.02em" }}>{initials}</span>}
+          : <>
+              <span style={{ ...serif, fontSize: 52, fontWeight: 800, color: T.textMute, letterSpacing: "0.02em", lineHeight: 1 }}>{initials}</span>
+              <span style={{ ...mono, fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: T.textMute }}>No photo yet</span>
+            </>}
       </div>
       <div>
         <h1 style={{ ...serif, fontSize: 32, fontWeight: 800, textTransform: "uppercase", lineHeight: 1.02, color: T.text, margin: 0 }}>{c.name}</h1>
