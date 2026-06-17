@@ -437,6 +437,19 @@ function PublicProfile({ player, data, go }) {
           {loc && <><span style={{ color: "var(--faint)" }}>·</span><span>{loc}</span></>}
           {commit && <><span style={{ color: "var(--faint)" }}>·</span><span style={{ color: commit === "Uncommitted" ? "var(--orange)" : "var(--teal)", fontWeight: 600 }}>{commit}</span></>}
         </div>
+        {(prospect.stars || prospect.rankings || (prospect.offers || []).length) ? (
+          <div style={{ margin: "0 0 16px" }}>
+            <p className="ttl" style={{ margin: "0 0 7px", color: "var(--gold-a)" }}>Recruiting · services</p>
+            <div style={{ display: "flex", gap: 7, flexWrap: "wrap", alignItems: "center" }}>
+              {prospect.stars ? <span className="bdg gold">{prospect.stars}★</span> : null}
+              {prospect.rankings?.national ? <span className="bdg">#{prospect.rankings.national} National</span> : null}
+              {prospect.rankings?.state ? <span className="bdg">#{prospect.rankings.state} {prospect.state}</span> : null}
+              {prospect.rankings?.position ? <span className="bdg">#{prospect.rankings.position} {p.pos}</span> : null}
+              {(prospect.offers || []).length ? <span className="bdg">{prospect.offers.length} offer{prospect.offers.length > 1 ? "s" : ""}</span> : null}
+            </div>
+            {(prospect.offers || []).length ? <p style={{ fontSize: 12, color: "var(--muted)", margin: "8px 0 0" }}>{prospect.offers.slice(0, 8).join(" · ")}</p> : null}
+          </div>
+        ) : null}
         <p className="ttl" style={{ margin: "0 0 7px" }}>The read</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>
           {hasSummary ? prospect.summary : autoRead}
