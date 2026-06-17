@@ -7,6 +7,8 @@ import { DevelopmentSection } from "../components/DevelopmentArc";
 import { buildArc } from "../lib/developmentArc";
 import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 import SCHEDULE_DATA from "../data/schedule.json";
+import TEAM_STATS from "../data/teamStats.json";
+import NEWS_DATA from "../data/news.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
@@ -137,7 +139,7 @@ function Header({ view, go }) {
     <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {user ? <>
@@ -151,7 +153,7 @@ function Header({ view, go }) {
       </div>
       {menuOpen && (
         <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
-          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
             : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
@@ -163,6 +165,24 @@ function Header({ view, go }) {
 }
 
 // ---- LANDING ---------------------------------------------------------------
+// "Live Wire" news ticker — hand-authored items + auto top performances.
+function NewsTicker({ items, openPlayer }) {
+  if (!items || !items.length) return null;
+  const row = [...items, ...items];
+  return (
+    <div className="ticker">
+      <div className="ticker-tag">Live Wire</div>
+      <div className="ticker-vp"><div className="ticker-row">
+        {row.map((n, i) => (
+          <span key={i} className="ticker-item" onClick={() => (n.player ? openPlayer(n.player) : (n.url && window.open(n.url, "_blank", "noopener")))} style={{ cursor: n.player || n.url ? "pointer" : "default" }}>
+            <span className="dot">●</span>{n.text}
+          </span>
+        ))}
+      </div></div>
+    </div>
+  );
+}
+
 function Landing({ data, go, openPlayer }) {
   const [q, setQ] = useState("");
   const results = useMemo(() => {
@@ -173,6 +193,7 @@ function Landing({ data, go, openPlayer }) {
   const featured = data.featured;
   return (
     <>
+      <NewsTicker items={data.news} openPlayer={openPlayer} />
       <section className="hero"><div className="wrap hero-in">
         <div data-anim>
           <div className="eyebrow">The DMV&rsquo;s scouting platform — high school, AAU &amp; more</div>
@@ -379,7 +400,8 @@ function PublicProfile({ player, data, go }) {
     { l: "Rebounding", v: pc.rebounding },
   ];
   const summerRow = { split: "Summer '26", gp: p.gp ?? "—", ppg: r1(p.ppg), rpg: r1(p.rpg), apg: r1(p.apg), tp: p.threePct != null ? `${r1(p.threePct)}%` : "—" };
-  const ctx = { hs: null, su: summerRow, aau: null };
+  const hsRow = (data.hsByKey && data.hsByKey[key]) || null;
+  const ctx = { hs: hsRow, su: summerRow, aau: null };
   const row = ctx[tab];
   const scoutP = {
     name: p.name, headshot: p.headshot,
@@ -1470,7 +1492,19 @@ function useData() {
         return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length, ctx, state: teamState(t.name, locByKey), type: teamType(t.name, locByKey) };
       }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
       const schedule = (sj.games || []);
-      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey });
+      // HS-season lines (teamStats.json), keyed by player for the profile "High school" tab.
+      const hsByKey = {};
+      for (const ht of Object.values(TEAM_STATS || {})) {
+        for (const pl of (ht.players || [])) {
+          const g = pl.gameStats || {}, sh = pl.shooting || {};
+          hsByKey[pl.id || nameKey(pl.name)] = { split: `HS ${ht.season || "season"}`, gp: pl.gp ?? "—", ppg: r1(g.ppg), rpg: r1(g.rpg), apg: r1(g.apg), spg: r1(g.spg), bpg: r1(g.bpg), tp: sh.tpPct != null ? `${r1(sh.tpPct)}%` : "—", fgPct: sh.fgPct, ftPct: sh.ftPct };
+        }
+      }
+      // Live Wire ticker: hand-authored news + auto top summer performances.
+      const newsHand = (NEWS_DATA.items || []).map((it) => ({ text: it.headline, url: it.url || null, player: it.prospectId ? (all.find((p) => p.id === it.prospectId) || null) : null }));
+      const newsPerf = [...all].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 8).map((p) => ({ text: `${p.name} — ${r1(p.ppg)} PPG this summer for ${cleanOpp(p.school)}`, player: p }));
+      const news = [...newsHand, ...newsPerf];
+      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news });
     });
   }, []);
   return data;
@@ -1562,8 +1596,47 @@ function ProspectsView({ data, openPlayer }) {
   );
 }
 
+// ---- LEADERS — public statistical leaderboards ----------------------------
+function LeadersView({ data, openPlayer }) {
+  const [cat, setCat] = useState("ppg");
+  const CATS = [["ppg", "Scoring", "PPG"], ["rpg", "Rebounding", "RPG"], ["apg", "Assists", "APG"], ["spg", "Steals", "SPG"], ["bpg", "Blocks", "BPG"], ["threePct", "3-Point %", "3P%"], ["tsPct", "True Shooting", "TS%"]];
+  const isPct = cat === "threePct" || cat === "tsPct";
+  const toneKey = cat === "threePct" ? "threePct" : cat === "tsPct" ? "tsPct" : cat;
+  const list = useMemo(() => {
+    const minGp = isPct ? 3 : 1;
+    return [...data.players].filter((p) => (p.gp || 0) >= minGp && p[cat] != null && (!isPct || p[cat] > 0)).sort((a, b) => (b[cat] || 0) - (a[cat] || 0)).slice(0, 30);
+  }, [cat, data.players]);
+  const lab = CATS.find((c) => c[0] === cat)?.[2] || "";
+  return (
+    <div className="wrap" style={{ paddingTop: 24 }}>
+      <div className="keye">Leaders</div>
+      <div className="sub" style={{ marginTop: 4 }}>DMV summer-league statistical leaders{isPct ? " · min. 3 GP" : ""}</div>
+      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", margin: "18px 0 14px" }}>
+        {CATS.map(([k, l]) => <FilterChip key={k} on={cat === k} onClick={() => setCat(k)}>{l}</FilterChip>)}
+      </div>
+      <div className="card">
+        <div style={{ overflowX: "auto" }}>
+          <table className="board"><tbody>
+            <tr><th>#</th><th>Player</th><th>Team</th><th>{lab}</th><th>GP</th></tr>
+            {list.map((p, i) => (
+              <tr key={p.id}>
+                <td style={{ fontFamily: "var(--disp)", fontWeight: 800, color: i < 3 ? "var(--orange)" : "var(--faint)" }}>{i + 1}</td>
+                <td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>{p.name}</b> <span style={{ color: "var(--faint)", fontSize: 11 }}>{p.pos || ""}</span></td>
+                <td>{cleanOpp(p.school)}</td>
+                <td style={{ fontFamily: "var(--disp)", fontWeight: 800, fontVariantNumeric: "tabular-nums", color: statTone(toneKey, p[cat]) }}>{isPct ? `${r1(p[cat])}%` : r1(p[cat])}</td>
+                <td style={{ color: "var(--muted)" }}>{p.gp}</td>
+              </tr>
+            ))}
+          </tbody></table>
+        </div>
+      </div>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -1599,6 +1672,7 @@ export default function RebuildApp() {
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
       {view === "profile" && <PublicProfile player={selected || data.featured} data={data} go={go} />}
       {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
+      {view === "leaders" && <LeadersView data={data} openPlayer={openPlayer} />}
       {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
