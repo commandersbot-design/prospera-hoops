@@ -459,7 +459,7 @@ function PublicProfile({ player, data, go }) {
   const scoutP = {
     name: p.name, headshot: p.headshot,
     meta: `${p.school || ""}${p.pos ? " · " + p.pos : ""}${p.cls ? " · " + p.cls : ""}`,
-    statsVerified: true,
+    statsVerified: (p.statsVerified !== false) || !!hsRow,
     stats: [
       { v: r1(p.ppg), k: "PPG", pct: Math.round(pc.scoring ?? 0) || null },
       { v: r1(p.rpg), k: "RPG", pct: Math.round(pc.rebounding ?? 0) || null },
@@ -1494,11 +1494,14 @@ function useData() {
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
       const gl = gj.players || {};
       let cohort = null; try { cohort = buildArchetypeCohort(gl, ch.teams || {}); } catch (e) { cohort = null; }
-      // Flatten capitolHoops players with a lead stat for marquee/board.
+      // Flatten EVERY rostered Capitol Hoops player into the database. Players
+      // who logged summer minutes carry their stats; the rest are included with
+      // null stats (render as "—", sort last) so the full roster is searchable.
+      const NO_STATS = { gp: null, ppg: null, rpg: null, apg: null, spg: null, bpg: null, fgPct: null, ftPct: null, threePct: null, tsPct: null };
       const all = [];
       for (const t of Object.values(ch.teams || {})) {
         for (const pl of (t.players || [])) {
-          if (!(pl.stats && pl.stats.gp > 0 && pl.stats.ppg != null)) continue;
+          const has = pl.stats && pl.stats.gp > 0 && pl.stats.ppg != null;
           const pr = prByKey[nameKey(pl.name)];
           const gy = pr?.gradYear || pl.classYear;
           all.push({
@@ -1511,13 +1514,13 @@ function useData() {
             status: pr?.status || pr?.commitment || null,
             meta: `${schoolLabel(t.name)}${pl.position ? " · " + pl.position : ""}`,
             headshot: shotFor(pl.name, pr),
-            ...pl.stats,
-            lead: r1(pl.stats.ppg), leadK: "PPG",
-            statsVerified: true,
+            ...(has ? pl.stats : NO_STATS),
+            lead: has ? r1(pl.stats.ppg) : "—", leadK: "PPG",
+            statsVerified: has,
           });
         }
       }
-      all.sort((a, b) => b.ppg - a.ppg);
+      all.sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
       // Featured: a real, headshot-bearing standout (prefer one with a photo).
       const withPhoto = all.find((p) => p.headshot) || all[0];
       const featured = withPhoto && {
@@ -1545,7 +1548,6 @@ function useData() {
         hs: (sc.schools || sc || []).length || 0,
       };
       // Teams with rosters (for the Teams view + Coach HQ opponent scouting).
-      const NO_STATS = { gp: null, ppg: null, rpg: null, apg: null, spg: null, bpg: null, fgPct: null, ftPct: null, threePct: null, tsPct: null };
       const teams = Object.entries(ch.teams || {}).map(([slug, t]) => {
         // Full roster — every rostered player, not only summer stat-posters.
         // Players who logged no summer minutes carry null stats (render as "—").
@@ -1650,8 +1652,8 @@ function ProspectsView({ data, openPlayer }) {
               <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), "eval pending"].filter(Boolean).join(" · ")}</div>
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
-              <div style={{ fontSize: 9, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".06em", marginTop: 3 }}>ppg · {p.gp || 0}gp{(p.gp || 0) < 3 ? " · small" : ""}</div>
+              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: p.gp == null ? "var(--faint)" : "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
+              <div style={{ fontSize: 9, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".06em", marginTop: 3 }}>{p.gp == null ? "roster · no summer stats" : `ppg · ${p.gp || 0}gp${(p.gp || 0) < 3 ? " · small" : ""}`}</div>
             </div>
           </div>
         ))}
