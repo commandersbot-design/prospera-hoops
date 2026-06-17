@@ -103,7 +103,7 @@ card("post-major-leap", `${header("THE LEAP")}
   ${leapRow(854, "PTS", "8.4", "11.8", "3.4")}
   ${leapRow(932, "REB", "1.6", "3.0", "1.4")}
   ${leapRow(1010, "AST", "1.0", "3.5", "2.5")}
-  ${TD(W / 2, 1120, 44, 800, C.text, "DEVELOPMENT, NOT A HOT STREAK", { anchor: "middle" })}
+  ${TD(W / 2, 1120, 44, 800, C.text, "DEVELOPMENT, TRACKED OVER TIME", { anchor: "middle" })}
   ${footer("Box scores: Capitol Hoops Summer League · summer-league averages")}`);
 
 // 3) DMV Summer Scoring Leaders
