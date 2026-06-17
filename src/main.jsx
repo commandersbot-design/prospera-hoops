@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import RebuildApp from './rebuild/RebuildApp.jsx'
 import { AuthProvider } from './lib/auth.jsx'
 import ComingSoon from './ComingSoon.jsx'
 import './index.css'
@@ -36,7 +37,7 @@ if (!root) {
     ) : (
       <React.StrictMode>
         <AuthProvider>
-          <App />
+          <RebuildApp />
         </AuthProvider>
       </React.StrictMode>
     ),

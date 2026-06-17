@@ -8,6 +8,8 @@
 @import './styles/tokens.css';
 /* §2 design system (rebuild) — graphite palette + Saira/Hanken type tokens. */
 @import './styles/design-system.css';
+/* Canonical prototype styles (rebuild views, scoped under .rebuild). */
+@import './styles/prototype.css';
 
 @tailwind base;
 @tailwind components;
