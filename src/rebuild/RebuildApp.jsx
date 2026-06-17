@@ -7,6 +7,9 @@ import { DevelopmentSection } from "../components/DevelopmentArc";
 import { buildArc } from "../lib/developmentArc";
 import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 import SCHEDULE_DATA from "../data/schedule.json";
+import { useAuth } from "../lib/auth.jsx";
+import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
+import { startCheckout, hasPlus } from "../lib/billing.js";
 
 const LOGO = "/brand/svg/prosperahoops-lockup-dark.svg";
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -82,7 +85,9 @@ function ArcSvg({ points }) {
 }
 
 // ---- header ----------------------------------------------------------------
-function Header({ view, go, account }) {
+function Header({ view, go }) {
+  const { user, signOut } = useAuth();
+  const [signInOpen, setSignInOpen] = useState(false);
   const tab = (id, label) => <a className={view === id ? "on" : ""} onClick={() => go(id)}>{label}</a>;
   return (
     <header className="hd"><div className="hd-in">
@@ -91,9 +96,15 @@ function Header({ view, go, account }) {
         {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
-        {account ? <div className="av" onClick={() => go("dash")}>{initials(account.name)}</div>
-          : <><a className="login" onClick={() => go("dash")}>Log in</a><button className="claim-sm" onClick={() => go("dash")}>Claim your profile</button></>}
+        {user ? <>
+          <div className="av" onClick={() => go("dash")} title={user.email}>{initials(user.email)}</div>
+          <a className="login" onClick={() => signOut()}>Log out</a>
+        </> : <>
+          <a className="login" onClick={() => setSignInOpen(true)}>Log in</a>
+          <button className="claim-sm" onClick={() => go("prospects")}>Claim your profile</button>
+        </>}
       </div>
+      {signInOpen && <Modal onClose={() => setSignInOpen(false)}><p className="ttl" style={{ marginTop: 0 }}>Sign in to Prospera</p><SignInForm onSignedIn={() => setSignInOpen(false)} intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Enter your email and we’ll send a one-tap sign-in link — no password.</p>} /></Modal>}
     </div></header>
   );
 }
@@ -235,12 +246,30 @@ function PublicProfile({ player, data, go }) {
   const autoRead = archetype?.label
     ? `${first} profiles as a ${archetype.label.toLowerCase()} in summer-league play${why ? ` — ${why.toLowerCase()}` : ""}.`
     : `${first}'s summer-league stat line is live and verified.`;
+  const { user } = useAuth();
+  const [claimOpen, setClaimOpen] = useState(false);
+  const [myClaim, setMyClaim] = useState(null);
+  const [plus, setPlus] = useState(false);
+  useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
+  useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
   return (
     <div className="wrap" style={{ paddingTop: 26 }}>
-      <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
-        <h3>Is this you?</h3><p>This profile is on Prospera but hasn&rsquo;t been claimed yet. Claim it to manage your stats, film, and recruiting info — free.</p>
-        <div className="bbtns"><button className="bbtn pri" onClick={() => go("dash")}>Claim this profile</button><button className="bbtn">Not me</button></div>
-      </div></div>
+      {myClaim?.status === "approved" ? (
+        <div className="banner" style={{ borderColor: "rgba(47,191,143,.4)" }}><div className="ico" style={{ color: "var(--teal)" }}>✓</div><div style={{ flex: 1 }}>
+          <h3>You own this profile</h3><p>Manage your stats, film, and recruiting info from your dashboard.</p>
+          <div className="bbtns"><button className="bbtn pri" onClick={() => go("dash")}>Go to dashboard</button></div>
+        </div></div>
+      ) : myClaim ? (
+        <div className="banner orange"><div className="ico">⏳</div><div style={{ flex: 1 }}>
+          <h3>Claim pending review</h3><p>Your claim on this profile is being confirmed — we’ll email you when it’s approved, usually within a day.</p>
+        </div></div>
+      ) : (
+        <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
+          <h3>Is this you?</h3><p>This profile is on Prospera but hasn&rsquo;t been claimed yet. Claim it to manage your stats, film, and recruiting info — free.</p>
+          <div className="bbtns"><button className="bbtn pri" onClick={() => setClaimOpen(true)}>Claim this profile</button><button className="bbtn" onClick={() => go("prospects")}>Not me</button></div>
+        </div></div>
+      )}
+      {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
 
       <ScoutCard p={scoutP} portrait />
 
@@ -281,7 +310,7 @@ function PublicProfile({ player, data, go }) {
         <p className="ttl" style={{ margin: "0 0 7px" }}>The read</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>
           {hasSummary ? prospect.summary : autoRead}
-          {!hasSummary && <> A full written report{hasMeasur ? "" : ", verified measurements,"} and recruiting timeline are pending — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={() => go("dash")}>claim this profile</b> to add them, free.</>}
+          {!hasSummary && <> A full written report{hasMeasur ? "" : ", verified measurements,"} and recruiting timeline are pending — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={() => setClaimOpen(true)}>claim this profile</b> to add them, free.</>}
         </p>
       </div>
 
@@ -291,13 +320,17 @@ function PublicProfile({ player, data, go }) {
             <p className="ttl" style={{ margin: 0 }}>Development Arc</p>
             <span className="bdg gold">★ Prospera+</span>
           </div>
-          <div className="lock" style={{ paddingTop: 10 }}>
-            <div className="blur" style={{ maxWidth: 420, margin: "4px auto 12px" }}><span style={{ width: "92%" }} /><span style={{ width: "74%" }} /><span style={{ width: "85%" }} /><span style={{ width: "66%" }} /></div>
-            <div style={{ fontSize: 12.5, color: "var(--muted)", maxWidth: 360, margin: "0 auto 12px", lineHeight: 1.5 }}>
-              See how {(p.name || "").split(" ")[0]} has grown season over season — scoring efficiency, role, and the honest read behind the numbers.
+          {plus ? (
+            <div style={{ marginTop: 10 }}><DevelopmentSection arc={arc} prospect={prospect} /></div>
+          ) : (
+            <div className="lock" style={{ paddingTop: 10 }}>
+              <div className="blur" style={{ maxWidth: 420, margin: "4px auto 12px" }}><span style={{ width: "92%" }} /><span style={{ width: "74%" }} /><span style={{ width: "85%" }} /><span style={{ width: "66%" }} /></div>
+              <div style={{ fontSize: 12.5, color: "var(--muted)", maxWidth: 360, margin: "0 auto 12px", lineHeight: 1.5 }}>
+                See how {(p.name || "").split(" ")[0]} has grown season over season — scoring efficiency, role, and the honest read behind the numbers.
+              </div>
+              <button className="claim-big" style={{ fontSize: 15, padding: "11px 18px" }} onClick={() => go("plus")}>🔒 Unlock with Prospera+ · $5/mo</button>
             </div>
-            <button className="claim-big" style={{ fontSize: 15, padding: "11px 18px" }} onClick={() => go("dash")}>🔒 Unlock with Prospera+ · $5/mo</button>
-          </div>
+          )}
         </div>
       )}
 
@@ -324,37 +357,191 @@ function PublicProfile({ player, data, go }) {
   );
 }
 
+// ---- auth + claim ----------------------------------------------------------
+const INP = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", fontSize: 14, padding: "12px 14px" };
+
+function Modal({ children, onClose }) {
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.62)", backdropFilter: "blur(3px)", display: "grid", placeItems: "center", zIndex: 200, padding: 18 }}>
+      <div onClick={(e) => e.stopPropagation()} className="card" style={{ maxWidth: 440, width: "100%", position: "relative" }}>
+        <span onClick={onClose} style={{ position: "absolute", top: 10, right: 14, cursor: "pointer", color: "var(--faint)", fontSize: 22, lineHeight: 1 }}>×</span>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Magic-link sign-in. Falls back to an honest email CTA when Supabase is unconfigured.
+function SignInForm({ onSignedIn, intro }) {
+  const { configured, signIn, user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
+  if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:claims@prosperahoops.com" style={{ color: "var(--orange)" }}>claims@prosperahoops.com</a> and we’ll set you up.</p>;
+  if (user) return null;
+  const send = async () => { setErr(""); if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; } setBusy(true); try { await signIn(email); setSent(true); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  if (sent) return <div>{intro}<p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p><p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email}</b>. Open it on this device to finish.</p></div>;
+  return (
+    <div>
+      {intro}
+      <input value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} type="email" placeholder="you@email.com" style={INP} />
+      {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
+      <button className="cta" style={{ marginTop: 12 }} onClick={send} disabled={busy}>{busy ? "Sending…" : "Send magic link"}</button>
+    </div>
+  );
+}
+
+// Claim a specific player profile. Sign-in → role → submitClaim (pending review).
+function ClaimPanel({ player, onClose }) {
+  const { user } = useAuth();
+  const [claim, setClaim] = useState(null);
+  const [role, setRole] = useState("player");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  useEffect(() => { let live = true; if (user && player?.id) myClaimForPlayer(player.id).then((c) => { if (live) setClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, player?.id]);
+  const submit = async () => { setErr(""); setBusy(true); try { const c = await submitClaim({ player_id: player.id, player_name: player.name, school: player.school, role }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  const first = (player.name || "").split(" ")[0] || "this player";
+  return (
+    <Modal onClose={onClose}>
+      <p className="ttl" style={{ marginTop: 0 }}>Claim {player.name}</p>
+      {claim ? (
+        <div>
+          <span className="bdg teal" style={{ display: "inline-block", marginBottom: 10 }}>{claim.status === "approved" ? "✓ You own this profile" : "Claim submitted"}</span>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>{claim.status === "approved" ? "You can manage your stats, film, and recruiting info from your dashboard." : "Your claim is pending review — we’ll email you when it’s approved, usually within a day."}</p>
+        </div>
+      ) : !user ? (
+        <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Sign in to claim this profile — free. Manage your stats, film, and recruiting info.</p>} />
+      ) : (
+        <div>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Your relationship to {first}:</p>
+          <div style={{ display: "flex", gap: 8, margin: "10px 0 14px" }}>{["player", "parent", "coach"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
+          {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "0 0 8px" }}>{err}</p>}
+          <button className="cta" onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit claim"}</button>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 // ---- PLAYER DASHBOARD ------------------------------------------------------
-function Dashboard({ go }) {
+function Dashboard({ go, openClaimedPlayer }) {
+  const { user, configured, loading, signOut } = useAuth();
+  const [claims, setClaims] = useState(null);
+  useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
+
+  // Not signed in → sign-in prompt.
+  if (!user) {
+    return (
+      <div className="wrap" style={{ paddingTop: 24, maxWidth: 460 }}>
+        <div className="hello">Your dashboard</div>
+        <div className="sub">Sign in to claim and manage your profile.</div>
+        <div className="card" style={{ marginTop: 18 }}>
+          {loading ? <p style={{ color: "var(--muted)", fontSize: 13, margin: 0 }}>Checking your session…</p>
+            : <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>{configured ? "Enter your email and we’ll send a one-tap sign-in link — no password." : "Accounts open at launch."}</p>} />}
+        </div>
+        <div style={{ height: 40 }} />
+      </div>
+    );
+  }
+
+  const approved = (claims || []).filter((c) => c.status === "approved");
+  const pending = (claims || []).filter((c) => c.status !== "approved");
+  const firstName = (approved[0]?.player_name || user.email || "").split(/[ @]/)[0];
+
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
-      <div className="hello">Welcome back, <span>Marcus.</span></div>
-      <div className="sub">Hyattsville, MD · Class of 2027 · Guard</div>
-      <div className="banner orange" style={{ marginTop: 18 }}><div className="ico">⚠</div><div style={{ flex: 1 }}>
-        <h3>Confirm it&rsquo;s really you</h3><p>Your profile is claimed, but unverified. Verify your identity to unlock your contact controls and earn the blue Verified badge. Fastest way is a quick confirm from your coach.</p>
-        <div className="bbtns"><button className="bbtn pri">Confirm with my coach</button><button className="bbtn">Use my school email</button><button className="bbtn">Request a review</button></div>
-      </div></div>
-      <div className="dgrid">
-        <div className="card">
-          <p className="ttl">Your Scout Card</p>
-          <ScoutCard p={{ name: "Marcus Allen", meta: "Northwestern HS · 6'2\" Guard · 2027", founding: true, statsVerified: true, accountPending: true, stats: [{ v: "18.4", k: "PPG" }, { v: "5.1", k: "APG" }, { v: "39%", k: "3PT" }] }} portrait />
-          <p className="ttl" style={{ marginTop: 16 }}>Profile completeness</p>
-          <div className="mrow"><span>You&rsquo;re almost there</span><b>72%</b></div>
-          <div className="meter"><i style={{ width: "72%" }} /></div>
-          <div className="chips"><span className="chip">Add headshot</span><span className="chip">Add GPA</span><span className="chip">Add test scores</span><span className="chip">Add 2 film clips</span></div>
-        </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
         <div>
-          <div className="card"><p className="ttl">Who viewed you</p>
-            <div className="lock"><div className="big">3</div><div className="lbl">profile views this week</div>
-              <div className="blur"><span style={{ width: "90%" }} /><span style={{ width: "70%" }} /><span style={{ width: "80%" }} /></div>
-              <div className="lockcta">🔒 Unlock who viewed you</div></div>
-          </div>
-          <div className="up"><h3>Prospera+</h3><div className="price"><b>$5/mo</b> · or $39/yr</div>
-            <ul><li>See who viewed your profile</li><li>Verified badge</li><li>Printable recruiting one-pager</li><li>More film + alerts</li></ul>
-            <button className="cta">Start 30-day free trial</button>
-            <div className="alt">★ or apply for a Founding spot — free for life</div>
-          </div>
+          <div className="hello">Welcome{firstName ? <>, <span>{firstName}.</span></> : "."}</div>
+          <div className="sub">{user.email}</div>
         </div>
+        <a className="login" style={{ cursor: "pointer" }} onClick={() => signOut()}>Log out</a>
+      </div>
+
+      {claims === null ? <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 18 }}>Loading your profiles…</p> : (
+        <>
+          {pending.length > 0 && (
+            <div className="banner orange" style={{ marginTop: 18 }}><div className="ico">⏳</div><div style={{ flex: 1 }}>
+              <h3>{pending.length === 1 ? "Claim pending review" : `${pending.length} claims pending review`}</h3>
+              <p>We’re confirming {pending.length === 1 ? "your claim" : "your claims"} for {pending.map((c) => c.player_name).join(", ")}. You’ll get an email the moment {pending.length === 1 ? "it’s" : "they’re"} approved — usually within a day.</p>
+            </div></div>
+          )}
+
+          <div className="dgrid" style={{ marginTop: 18 }}>
+            <div className="card">
+              <p className="ttl">Your claimed profiles</p>
+              {claims.length === 0 ? (
+                <div>
+                  <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>You haven’t claimed a profile yet. Find yours on the board and hit <b style={{ color: "var(--ink)" }}>Claim this profile</b>.</p>
+                  <button className="cta" onClick={() => go("prospects")}>Find my profile</button>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gap: 10 }}>
+                  {claims.map((c) => (
+                    <div key={c.id || c.player_id} className="wl" style={{ cursor: c.status === "approved" ? "pointer" : "default" }} onClick={() => c.status === "approved" && openClaimedPlayer && openClaimedPlayer(c.player_id)}>
+                      <span className="n">{c.player_name}</span>
+                      <span className="s">{c.school || ""}</span>
+                      <span className={`bdg ${c.status === "approved" ? "teal" : ""}`} style={{ marginLeft: 8 }}>{c.status === "approved" ? "✓ Owned" : "Pending"}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="up"><h3>Prospera+</h3><div className="price"><b>$5/mo</b> · or $39/yr</div>
+                <ul><li>Full Development Arc</li><li>See who viewed your profile</li><li>Verified badge</li><li>Printable recruiting one-pager</li></ul>
+                <button className="cta" onClick={() => go("plus")}>Start 30-day free trial</button>
+                <div className="alt">★ or apply for a Founding spot — free for life</div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
+// ---- PROSPERA+ checkout ----------------------------------------------------
+function PlusView({ go }) {
+  const { user } = useAuth();
+  const [plan, setPlan] = useState("monthly");
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState("");
+  const start = async () => {
+    if (!user) { setNote("Sign in first — then your free trial is one tap."); go("dash"); return; }
+    setNote(""); setBusy(true);
+    const res = await startCheckout({ plan, email: user.email, userId: user.id });
+    setBusy(false);
+    if (!res.ok) setNote(res.reason === "unconfigured"
+      ? "Prospera+ checkout opens at launch — you’re signed in, so we’ll email you the moment it’s live."
+      : (res.detail || "Couldn’t start checkout — please try again in a moment."));
+  };
+  const price = plan === "yearly" ? { big: "$39", per: "/yr", sub: "Two months free vs. monthly" } : { big: "$5", per: "/mo", sub: "30-day free trial · cancel anytime" };
+  return (
+    <div className="wrap" style={{ paddingTop: 26, maxWidth: 560 }}>
+      <a onClick={() => go("dash")} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700, cursor: "pointer" }}>← Back</a>
+      <div className="hello" style={{ marginTop: 8 }}>Prospera<span style={{ color: "var(--orange)" }}>+</span></div>
+      <div className="sub">Your whole profile, unlocked — and the full Development Arc.</div>
+      <div className="up" style={{ marginTop: 20 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+          <FilterChip on={plan === "monthly"} onClick={() => setPlan("monthly")}>Monthly</FilterChip>
+          <FilterChip on={plan === "yearly"} onClick={() => setPlan("yearly")}>Yearly · save</FilterChip>
+        </div>
+        <div className="price"><b>{price.big}</b> {price.per}</div>
+        <div style={{ fontSize: 12, color: "var(--faint)", margin: "2px 0 12px" }}>{price.sub}</div>
+        <ul>
+          <li>Full Development Arc — season-over-season growth + the honest read</li>
+          <li>See who viewed your profile</li>
+          <li>Verified badge</li>
+          <li>Printable recruiting one-pager</li>
+          <li>More film slots + recruiting alerts</li>
+        </ul>
+        <button className="cta" onClick={start} disabled={busy}>{busy ? "Starting…" : (user ? "Start 30-day free trial" : "Sign in to start")}</button>
+        <div className="alt">★ or apply for a Founding spot — free for life</div>
+        {note && <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 12, lineHeight: 1.5 }}>{note}</p>}
       </div>
       <div style={{ height: 40 }} />
     </div>
@@ -792,7 +979,7 @@ function ProspectsView({ data, openPlayer }) {
 }
 
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", teams: "/teams", coach: "/coach", dash: "/dashboard" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -803,6 +990,7 @@ export default function RebuildApp() {
   const go = (v) => { setView(v); pushUrl(VIEW_PATH[v] || "/"); window.scrollTo(0, 0); };
   const openPlayer = (p) => { setSelected(p); setView("profile"); pushUrl(`/p/${slugify(p.name)}`); window.scrollTo(0, 0); };
   const openTeam = (t) => { setTeam(t); setView("teamDetail"); pushUrl(`/t/${t.slug}`); window.scrollTo(0, 0); };
+  const openClaimedPlayer = (playerId) => { const pl = data && data.players.find((p) => p.id === playerId); if (pl) openPlayer(pl); else go("prospects"); };
 
   // Resolve the URL to a view on first load + on browser back/forward.
   useEffect(() => {
@@ -827,7 +1015,8 @@ export default function RebuildApp() {
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
       {view === "profile" && <PublicProfile player={selected || data.featured} data={data} go={go} />}
       {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
-      {view === "dash" && <Dashboard go={go} />}
+      {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
+      {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
       {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} />}
