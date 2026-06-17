@@ -402,86 +402,157 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
   );
 }
 
-// ---- COACH HQ — full features ---------------------------------------------
+// ---- COACH HQ — full coach tier (Scouting / Matchup / My Team / Lists) -----
+function teamRecord(team, schedule) {
+  let w = 0, l = 0;
+  for (const g of (schedule || [])) {
+    const home = (g.home || "").toLowerCase() === team.name.toLowerCase();
+    if (!(home || (g.away || "").toLowerCase() === team.name.toLowerCase()) || g.status !== "final" || g.homeScore == null) continue;
+    const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore;
+    (us > them ? w++ : l++);
+  }
+  return { w, l };
+}
+const teamAvgPpg = (t) => t.players.length ? (t.players.reduce((s, p) => s + (p.ppg || 0), 0) / t.players.length).toFixed(1) : "—";
+
+function TeamReport({ team, schedule, wl, openPlayer, headLabel = "Read" }) {
+  const finals = (schedule || []).filter((g) => [g.home, g.away].some((x) => (x || "").toLowerCase() === team.name.toLowerCase()) && g.status === "final" && g.homeScore != null).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const rec = teamRecord(team, schedule);
+  const maxP = Math.max(...team.players.slice(0, 6).map((p) => p.ppg || 0), 1);
+  const guardHeavy = team.players.filter((p) => /g/i.test(p.pos || "")).length / Math.max(1, team.players.length) > 0.5;
+  const top = team.top;
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+        <span className="covchip"><b>{rec.w}-{rec.l}</b><span>Record</span></span>
+        <span className="covchip"><b>{teamAvgPpg(team)}</b><span>Avg PPG/pl</span></span>
+        <span className="covchip"><b>{team.n}</b><span>Roster</span></span>
+      </div>
+      {top && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "0 0 14px", lineHeight: 1.55 }}>
+        <b style={{ color: "var(--orange)", textTransform: "uppercase", fontFamily: "var(--disp)", letterSpacing: ".06em", fontSize: 11 }}>{headLabel}</b><br />
+        {guardHeavy ? "Guard-heavy, perimeter-oriented." : "Balanced front-and-back."} <b style={{ color: "var(--ink)" }}>{top.name}</b> is the engine at {r1(top.ppg)} PPG.
+      </p>}
+      <p className="ttl" style={{ margin: "4px 0 10px" }}>Top players</p>
+      <div style={{ display: "grid", gap: 9 }}>
+        {team.players.slice(0, 6).map((p) => (
+          <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 110px 58px", gap: 10, alignItems: "center" }}>
+            <span onClick={() => openPlayer(p)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 10.5, fontFamily: "var(--sans)" }}>{p.pos || ""}</span></span>
+            <span style={{ height: 7, borderRadius: 9, background: "rgba(244,242,237,.08)", overflow: "hidden" }}><i style={{ display: "block", height: "100%", width: `${Math.round((p.ppg || 0) / maxP * 100)}%`, background: "linear-gradient(90deg,var(--orange),var(--gold-a))" }} /></span>
+            <span style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14 }}>{r1(p.ppg)}</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
+          </div>
+        ))}
+      </div>
+      {finals.length > 0 && <><p className="ttl" style={{ margin: "16px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 6).map((g, i) => { const home = (g.home || "").toLowerCase() === team.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(244,242,237,.06)", color: win ? "var(--teal)" : "var(--muted)" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
+    </div>
+  );
+}
+
 function CoachHQ({ data, openPlayer }) {
   const wl = useWatchlist();
-  const [oppSlug, setOppSlug] = useState("");
+  const [tab, setTab] = useState("scout");
+  const [oppA, setOppA] = useState("");
+  const [oppB, setOppB] = useState("");
+  const [mine, setMine] = useState("");
   const [q, setQ] = useState("");
-  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_notes") || ""; } catch { return ""; } });
-  const opp = data.teams.find((t) => t.slug === oppSlug) || null;
-  const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 40); }, [q, data.players]);
-  const watchPlayers = data.players.filter((p) => wl.has(p.id));
-  const teamAvg = (t, k) => t.players.length ? (t.players.reduce((s, p) => s + (p[k] || 0), 0) / t.players.length).toFixed(1) : "—";
+  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_notes") || ""; } catch (e) { return ""; } });
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
+  const find = (slug) => data.teams.find((t) => t.slug === slug) || null;
+  const Picker = ({ value, onChange, ph }) => (
+    <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...inp, width: "100%", fontSize: 14, padding: "12px 14px" }}>
+      <option value="">{ph}</option>{data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
+    </select>
+  );
+  const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 50); }, [q, data.players]);
+  const watchPlayers = data.players.filter((p) => wl.has(p.id));
+  const a = find(oppA), b = find(oppB), my = find(mine);
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
-      <div className="hello">Coach HQ</div>
-      <div className="sub">Scout every opponent before tip-off. <span className="ctx" style={{ marginLeft: 6 }}>Free this season</span></div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div className="hello">Coach HQ</div><span className="ctx">Free this season</span>
+      </div>
+      <div className="sub">Scout opponents, build matchups, and run your team — your whole sideline brain, in one place.</div>
+      <div className="tabs" style={{ margin: "16px 0", flexWrap: "wrap" }}>
+        {[["scout", "Opponent Scouting"], ["matchup", "Matchup Builder"], ["myteam", "My Team"], ["lists", "Lists & Notes"]].map(([k, l]) => <span key={k} className={`tab ${tab === k ? "on" : ""}`} onClick={() => setTab(k)}>{l}</span>)}
+      </div>
 
-      <div className="ctools" style={{ marginTop: 14 }}>
+      {tab === "scout" && (
         <div className="card">
           <p className="ttl">Scout an opponent</p>
-          <select value={oppSlug} onChange={(e) => setOppSlug(e.target.value)} style={{ ...inp, width: "100%", fontSize: 14, padding: "12px 14px", marginBottom: 12 }}>
-            <option value="">Choose a team…</option>
-            {data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
-          </select>
-          {opp ? (() => {
-            const isOpp = (g) => [g.home, g.away].some((x) => (x || "").toLowerCase() === opp.name.toLowerCase());
-            const finals = (data.schedule || []).filter((g) => isOpp(g) && g.status === "final" && g.homeScore != null).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-            let w = 0, l = 0;
-            for (const g of finals) { const home = (g.home || "").toLowerCase() === opp.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; (us > them ? w++ : l++); }
-            const maxP = Math.max(...opp.players.slice(0, 6).map((p) => p.ppg || 0), 1);
-            const guards = opp.players.filter((p) => /g/i.test(p.pos || "")).length;
-            const guardHeavy = guards / Math.max(1, opp.players.length) > 0.5;
-            const top = opp.top;
-            return (
-              <div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                  <span className="covchip"><b>{w}-{l}</b><span>Record</span></span>
-                  <span className="covchip"><b>{teamAvg(opp, "ppg")}</b><span>Avg PPG/pl</span></span>
-                  <span className="covchip"><b>{opp.n}</b><span>Roster</span></span>
-                </div>
-                {top && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "0 0 14px", lineHeight: 1.55 }}>
-                  <b style={{ color: "var(--orange)", textTransform: "uppercase", fontFamily: "var(--disp)", letterSpacing: ".06em", fontSize: 11 }}>Game plan</b><br />
-                  {guardHeavy ? "Guard-heavy, perimeter-oriented." : "Balanced front-and-back."} <b style={{ color: "var(--ink)" }}>{top.name}</b> is the engine at {r1(top.ppg)} PPG — load the strong side and make someone else beat you.
-                </p>}
-                <p className="ttl" style={{ margin: "4px 0 10px" }}>Threats to stop</p>
-                <div style={{ display: "grid", gap: 9 }}>
-                  {opp.players.slice(0, 5).map((p) => (
-                    <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 110px 58px", gap: 10, alignItems: "center" }}>
-                      <span onClick={() => openPlayer(p)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 10.5, fontFamily: "var(--sans)" }}>{p.pos || ""}</span></span>
-                      <span style={{ height: 7, borderRadius: 9, background: "rgba(244,242,237,.08)", overflow: "hidden" }}><i style={{ display: "block", height: "100%", width: `${Math.round((p.ppg || 0) / maxP * 100)}%`, background: "linear-gradient(90deg,var(--orange),var(--gold-a))" }} /></span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14 }}>{r1(p.ppg)}</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
-                    </div>
-                  ))}
-                </div>
-                {finals.length > 0 && <><p className="ttl" style={{ margin: "16px 0 8px" }}>Recent form</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{finals.slice(0, 6).map((g, i) => { const home = (g.home || "").toLowerCase() === opp.name.toLowerCase(); const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; const win = us > them; return <span key={i} title={`${home ? "vs " : "@ "}${cleanOpp(home ? g.away : g.home)}`} style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 11, padding: "4px 8px", borderRadius: 6, background: win ? "rgba(47,191,143,.15)" : "rgba(244,242,237,.06)", color: win ? "var(--teal)" : "var(--muted)" }}>{win ? "W" : "L"} {us}-{them}</span>; })}</div></>}
+          <div style={{ marginBottom: 12 }}><Picker value={oppA} onChange={setOppA} ph="Choose a team…" /></div>
+          {a ? <TeamReport team={a} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Game plan" />
+            : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report.</p>}
+        </div>
+      )}
+
+      {tab === "matchup" && (
+        <div className="card">
+          <p className="ttl">Build a matchup — team vs team</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+            <Picker value={oppA} onChange={setOppA} ph="Your team / Team A…" />
+            <Picker value={oppB} onChange={setOppB} ph="Opponent / Team B…" />
+          </div>
+          {a && b ? (() => {
+            const ra = teamRecord(a, data.schedule), rb = teamRecord(b, data.schedule);
+            const aa = +teamAvgPpg(a), ab = +teamAvgPpg(b);
+            const wp = (r) => r.w / Math.max(1, r.w + r.l);
+            const row = (label, va, vb, better) => (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
+                <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: better === "a" ? "var(--orange)" : "var(--ink)" }}>{va}</span>
+                <span style={{ fontFamily: "var(--sans)", fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--faint)", whiteSpace: "nowrap" }}>{label}</span>
+                <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: better === "b" ? "var(--orange)" : "var(--ink)" }}>{vb}</span>
               </div>
             );
-          })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report.</p>}
+            return (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, marginBottom: 8, alignItems: "center" }}>
+                  <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{a.name}</span>
+                  <span style={{ color: "var(--faint)", fontFamily: "var(--disp)", fontSize: 14 }}>vs</span>
+                  <span style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 16 }}>{b.name}</span>
+                </div>
+                {row("Record", `${ra.w}-${ra.l}`, `${rb.w}-${rb.l}`, wp(ra) >= wp(rb) ? "a" : "b")}
+                {row("Avg PPG/player", aa, ab, aa >= ab ? "a" : "b")}
+                {row("Top scorer", a.top ? r1(a.top.ppg) : "—", b.top ? r1(b.top.ppg) : "—", (a.top?.ppg || 0) >= (b.top?.ppg || 0) ? "a" : "b")}
+                {row("Roster size", a.n, b.n, a.n >= b.n ? "a" : "b")}
+                <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 14, lineHeight: 1.5 }}><b style={{ color: "var(--orange)", fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 11, letterSpacing: ".06em" }}>Key matchup</b> — {a.top?.name} vs {b.top?.name}. Win the {aa >= ab ? a.name : b.name} scoring edge and control tempo.</p>
+              </div>
+            );
+          })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two teams to compare records, scoring, and the key individual matchup.</p>}
         </div>
-        <div className="card">
-          <p className="ttl">Your watchlist ({watchPlayers.length})</p>
-          {watchPlayers.length ? watchPlayers.map((p) => (
-            <div className="wl" key={p.id}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
-          )) : <p style={{ fontSize: 12.5, color: "var(--faint)", margin: 0 }}>No players yet — add from the board or an opponent report.</p>}
-          <p className="ttl" style={{ margin: "16px 0 8px" }}>Private notes</p>
-          <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_notes", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Scouting notes, game plan…" style={{ ...inp, width: "100%", minHeight: 80, fontSize: 13, padding: 10, resize: "vertical" }} />
-        </div>
-      </div>
+      )}
 
-      <div className="card" style={{ marginTop: 14 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
-          <p className="ttl" style={{ margin: 0 }}>The board</p>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search players or schools…" style={{ ...inp, fontSize: 13, padding: "8px 12px", minWidth: 220 }} />
+      {tab === "myteam" && (
+        <div className="card">
+          <p className="ttl">My team</p>
+          <div style={{ marginBottom: 12 }}><Picker value={mine} onChange={setMine} ph="Choose your team…" /></div>
+          {my ? <TeamReport team={my} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Strengths" />
+            : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick your team to see your efficiency leaders, tendencies, and recent form.</p>}
         </div>
-        <table className="board"><tbody>
-          <tr><th>Player</th><th>Team</th><th>Class</th><th>PPG</th><th /></tr>
-          {board.map((p) => (
-            <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.cls || "—"}</td><td>{p.lead}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ Watching" : "+ Watchlist"}</span></td></tr>
-          ))}
-        </tbody></table>
-      </div>
+      )}
+
+      {tab === "lists" && (
+        <div className="ctools">
+          <div className="card">
+            <p className="ttl">Watchlist ({watchPlayers.length})</p>
+            {watchPlayers.length ? watchPlayers.map((p) => (
+              <div className="wl" key={p.id}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG · {p.school}</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
+            )) : <p style={{ fontSize: 12.5, color: "var(--faint)", margin: 0 }}>No players yet — add from the board or a scouting report.</p>}
+            <p className="ttl" style={{ margin: "16px 0 8px" }}>Game-prep notes</p>
+            <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_notes", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Private notes, tags, game plan…" style={{ ...inp, width: "100%", minHeight: 90, fontSize: 13, padding: 10, resize: "vertical" }} />
+          </div>
+          <div className="card">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+              <p className="ttl" style={{ margin: 0 }}>The board</p>
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search players…" style={{ ...inp, fontSize: 13, padding: "8px 12px", minWidth: 160 }} />
+            </div>
+            <table className="board"><tbody>
+              <tr><th>Player</th><th>Team</th><th>PPG</th><th /></tr>
+              {board.map((p) => (
+                <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.lead}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓" : "+ Watch"}</span></td></tr>
+              ))}
+            </tbody></table>
+          </div>
+        </div>
+      )}
       <div style={{ height: 40 }} />
     </div>
   );
