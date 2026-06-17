@@ -26,6 +26,18 @@ const T = (x, y, s, w, fill, txt, o = {}) => `<text x="${x}" y="${y}" font-famil
 const TD = (x, y, s, w, fill, txt, o = {}) => T(x, y, s, w, fill, txt, { ...o, font: SD });
 const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
 const tagPill = (cx, y, txt, col = C.orange) => { const fz = 18, w = txt.length * (fz * 0.6) + 44; return `<rect x="${cx - w / 2}" y="${y - fz - 2}" width="${w}" height="${fz + 14}" rx="${(fz + 14) / 2}" fill="none" stroke="${col}" stroke-width="1.5"/>${T(cx, y, fz, 700, col, esc(txt), { ls: 2, anchor: "middle" })}`; };
+// Player portrait medallion: real headshot if public/headshots/<key>.jpg exists, else a monogram.
+const portrait = (cx, cy, r, key, initials) => {
+  const fp = path.join("public", "headshots", key + ".jpg");
+  if (fs.existsSync(fp)) {
+    const b64 = fs.readFileSync(fp).toString("base64");
+    return `<clipPath id="cp_${key}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+      <image href="data:image/jpeg;base64,${b64}" x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#cp_${key})"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${C.orange}" stroke-width="5"/>`;
+  }
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#16110d" stroke="${C.orange}" stroke-width="5"/>
+    ${TD(cx, cy + r * 0.34, r * 1.02, 800, C.orange, initials, { anchor: "middle" })}`;
+};
 
 const defs = `<defs>${FONT_SD}${FONT_HG}
   <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1219"/><stop offset="1" stop-color="#080A0E"/></linearGradient>
@@ -57,16 +69,18 @@ const tile4 = (cx, top, big, unit, accent) => { const w = 226, x = cx - w / 2; r
   ${TD(cx, top + 182, 124, 800, accent || C.orange, big, { anchor: "middle" })}
   ${T(cx, top + 240, 23, 800, C.mut, unit, { ls: 4, anchor: "middle" })}`; };
 card("post-nash-statline", `${header("STAT DROP")}
-  ${band("NASH AVERY", "18.9 / 10.3", "SPALDING · CLASS OF '28")}
-  ${T(W / 2, 338, 24, 800, C.orange, "DOUBLE-DOUBLE · LAST NIGHT", { ls: 4, anchor: "middle" })}
-  ${tile4(174, 392, "24", "PTS")}
-  ${tile4(418, 392, "11", "REB")}
-  ${tile4(662, 392, "3", "AST", C.text)}
-  ${tile4(906, 392, "3", "STL", C.text)}
-  ${T(W / 2, 768, 27, 600, C.mut, "11-20 FG · W 75-70 vs The Brook (Springbrook)", { anchor: "middle" })}
-  ${TD(W / 2, 880, 60, 800, C.text, "AVERAGING A DOUBLE-DOUBLE", { anchor: "middle" })}
-  ${T(W / 2, 932, 26, 600, C.teal, "18.9 PTS · 10.3 REB per game as a 2028", { anchor: "middle" })}
-  ${tagPill(W / 2, 1044, "JUNE 16 · CAPITOL HOOPS")}
+  ${T(W / 2, 188, 24, 800, C.orange, "DOUBLE-DOUBLE · LAST NIGHT", { ls: 6, anchor: "middle" })}
+  ${portrait(W / 2, 300, 76, "nashavery", "NA")}
+  ${TD(W / 2, 512, 100, 800, C.text, "NASH AVERY", { anchor: "middle" })}
+  ${T(W / 2, 552, 26, 700, C.sage, "SPALDING · CLASS OF '28 · WING", { ls: 2, anchor: "middle" })}
+  ${T(W / 2, 612, 25, 600, C.mut, "Spalding's sophomore did a little of everything in a 75-70 win", { anchor: "middle" })}
+  ${T(W / 2, 646, 25, 600, C.mut, "over The Brook — and he's been doing it all summer.", { anchor: "middle" })}
+  ${tile4(174, 696, "24", "PTS")}
+  ${tile4(418, 696, "11", "REB")}
+  ${tile4(662, 696, "3", "AST", C.text)}
+  ${tile4(906, 696, "3", "STL", C.text)}
+  ${TD(W / 2, 1078, 58, 800, C.orange, "A DOUBLE-DOUBLE MACHINE", { anchor: "middle" })}
+  ${T(W / 2, 1120, 25, 600, C.teal, "Averaging 18.9 PTS · 10.3 REB as a 2028", { anchor: "middle" })}
   ${footer("Box score: Capitol Hoops Summer League · June 16, 2026")}`);
 
 // 2) THE LEAP — Major Jones
@@ -76,16 +90,20 @@ const leapRow = (y, label, prior, now, delta) => `${T(150, y, 38, 800, C.mut, la
   ${TD(706, y + 6, 96, 800, C.text, now, { anchor: "middle" })}
   ${TD(905, y, 56, 800, C.teal, "+" + delta, { anchor: "middle" })}`;
 card("post-major-leap", `${header("THE LEAP")}
-  ${band("MAJOR JONES", "DEMATHA", "YEAR-OVER-YEAR JUMP")}
-  <rect x="80" y="360" width="920" height="560" rx="20" fill="${C.panel}" stroke="rgba(59,158,255,0.30)" stroke-width="1.5"/>
-  ${T(440, 432, 24, 700, C.mut, "'25", { ls: 4, anchor: "middle" })}
-  ${T(706, 432, 24, 700, C.orange, "'26", { ls: 4, anchor: "middle" })}
-  <line x1="130" y1="462" x2="950" y2="462" stroke="${C.line}" stroke-width="1.5"/>
-  ${leapRow(560, "PTS", "8.4", "11.8", "3.4")}
-  ${leapRow(700, "REB", "1.6", "3.0", "1.4")}
-  ${leapRow(840, "AST", "1.0", "3.5", "2.5")}
-  ${T(W / 2, 1010, 30, 600, C.mut, "Development, tracked over time.", { anchor: "middle" })}
-  ${tagPill(W / 2, 1098, "SUMMER · '25 → '26", C.blue)}
+  ${T(W / 2, 188, 24, 800, C.blue, "YEAR-OVER-YEAR", { ls: 6, anchor: "middle" })}
+  ${portrait(W / 2, 300, 76, "majorjones", "MJ")}
+  ${TD(W / 2, 512, 100, 800, C.text, "MAJOR JONES", { anchor: "middle" })}
+  ${T(W / 2, 552, 26, 700, C.sage, "DEMATHA · GUARD · YEAR 2", { ls: 2, anchor: "middle" })}
+  ${T(W / 2, 612, 25, 600, C.mut, "A year ago, a role player. This summer, the engine —", { anchor: "middle" })}
+  ${T(W / 2, 646, 25, 600, C.mut, "scoring up, boards nearly doubled, assists up 3.5×.", { anchor: "middle" })}
+  <rect x="80" y="696" width="920" height="356" rx="20" fill="${C.panel}" stroke="rgba(59,158,255,0.30)" stroke-width="1.5"/>
+  ${T(440, 752, 24, 700, C.mut, "'25", { ls: 4, anchor: "middle" })}
+  ${T(706, 752, 24, 700, C.orange, "'26", { ls: 4, anchor: "middle" })}
+  <line x1="130" y1="778" x2="950" y2="778" stroke="${C.line}" stroke-width="1.5"/>
+  ${leapRow(854, "PTS", "8.4", "11.8", "3.4")}
+  ${leapRow(932, "REB", "1.6", "3.0", "1.4")}
+  ${leapRow(1010, "AST", "1.0", "3.5", "2.5")}
+  ${TD(W / 2, 1120, 44, 800, C.text, "DEVELOPMENT, NOT A HOT STREAK", { anchor: "middle" })}
   ${footer("Box scores: Capitol Hoops Summer League · summer-league averages")}`);
 
 // 3) DMV Summer Scoring Leaders
