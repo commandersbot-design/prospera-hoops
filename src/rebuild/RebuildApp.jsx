@@ -3,6 +3,9 @@
 // Landing · Public profile · Player dashboard · Coach HQ. Uses the .rebuild
 // scoped classes from styles/prototype.css.
 import React, { useEffect, useMemo, useState } from "react";
+import { DevelopmentSection } from "../components/DevelopmentArc";
+import { buildArc } from "../lib/developmentArc";
+import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 
 const LOGO = "/brand/svg/prosperahoops-lockup-dark.svg";
 const nameKey = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -83,7 +86,7 @@ function Header({ view, go, account }) {
     <header className="hd"><div className="hd-in">
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {account ? <div className="av" onClick={() => go("dash")}>{initials(account.name)}</div>
@@ -185,12 +188,41 @@ function Landing({ data, go, openPlayer }) {
   );
 }
 
-// ---- PUBLIC PROFILE (read-only) — wired to a selected player --------------
-function PublicProfile({ player, go }) {
+// ---- PUBLIC PROFILE (read-only) — real data + the rich Development engine --
+const cleanOpp = (s) => String(s || "").replace(/\s*\([^)]*\)/g, "").trim();
+function PublicProfile({ player, data, go }) {
   const [tab, setTab] = useState("su");
   const p = player || {};
-  const ctx = p.context || { hs: null, su: p.summerRow || null, aau: null };
+  const key = p.key || nameKey(p.name);
+  const prospect = (data.prByKey && data.prByKey[key]) || p;
+  const glRec = (data.gl && data.gl[key]) || {};
+  const games = glRec.games || [];
+  const seasons = glRec.seasons || [];
+  const arc = useMemo(() => { try { return buildArc(seasons, prospect); } catch (e) { return null; } }, [key]);
+  const archetype = useMemo(() => { try { return data.cohort ? archetypeForPlayer(p.name, data.cohort, p.pos) : null; } catch (e) { return null; } }, [key]);
+  const pcRaw = archetype?.percentiles || {};
+  const P100 = (x) => Math.round((x ?? 0) * 100); // pctile() returns a 0–1 fraction
+  const pc = { scoring: P100(pcRaw.scoring), playmaking: P100(pcRaw.playmaking), efficiency: P100(pcRaw.efficiency), rebounding: P100(pcRaw.rebounding) };
+  const percentiles = [
+    { l: "Scoring", v: pc.scoring },
+    { l: "Playmaking", v: pc.playmaking },
+    { l: "Efficiency", v: pc.efficiency },
+    { l: "Rebounding", v: pc.rebounding },
+  ];
+  const summerRow = { split: "Summer '26", gp: p.gp ?? "—", ppg: r1(p.ppg), rpg: r1(p.rpg), apg: r1(p.apg), tp: p.threePct != null ? `${r1(p.threePct)}%` : "—" };
+  const ctx = { hs: null, su: summerRow, aau: null };
   const row = ctx[tab];
+  const scoutP = {
+    name: p.name, headshot: p.headshot,
+    meta: `${p.school || ""}${p.pos ? " · " + p.pos : ""}${p.cls ? " · " + p.cls : ""}`,
+    statsVerified: true,
+    stats: [
+      { v: r1(p.ppg), k: "PPG", pct: Math.round(pc.scoring ?? 0) || null },
+      { v: r1(p.rpg), k: "RPG", pct: Math.round(pc.rebounding ?? 0) || null },
+      { v: r1(p.apg), k: "APG", pct: Math.round(pc.playmaking ?? 0) || null },
+    ],
+  };
+  const why = archetype && (Array.isArray(archetype.why) ? archetype.why.join(" · ") : archetype.why);
   return (
     <div className="wrap" style={{ paddingTop: 26 }}>
       <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
@@ -198,7 +230,7 @@ function PublicProfile({ player, go }) {
         <div className="bbtns"><button className="bbtn pri" onClick={() => go("dash")}>Claim this profile</button><button className="bbtn">Not me</button></div>
       </div></div>
 
-      <ScoutCard p={p} portrait />
+      <ScoutCard p={scoutP} portrait />
 
       <div className="pf-grid">
         <div className="card">
@@ -212,29 +244,36 @@ function PublicProfile({ player, go }) {
             <tr><th>Split</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>3PT</th></tr>
             {row
               ? <tr><td><b>{row.split}</b></td><td>{row.gp}</td><td><b>{row.ppg}</b></td><td>{row.rpg}</td><td>{row.apg}</td><td>{row.tp}</td></tr>
-              : <tr><td colSpan="6" style={{ color: "var(--faint)" }}>No {tab === "hs" ? "high-school" : tab === "aau" ? "AAU" : "summer"} stats tracked yet.</td></tr>}
+              : <tr><td colSpan="6" style={{ color: "var(--faint)" }}>No {tab === "hs" ? "high-school" : "AAU"} stats tracked yet — add them by claiming this profile.</td></tr>}
           </tbody></table>
         </div>
         <div className="card">
           <p className="ttl">Percentiles vs. DMV peers</p>
-          {(p.percentiles || []).map((r) => (
-            <div className="pctrow" key={r.l}><span className="pl">{r.l}</span><span className="pb"><i style={{ width: `${r.v}%` }} /></span><span className="pv2">{r.v}</span></div>
+          {percentiles.map((r) => (
+            <div className="pctrow" key={r.l}><span className="pl">{r.l}</span><span className="pb"><i style={{ width: `${Math.max(2, r.v)}%` }} /></span><span className="pv2">{r.v}</span></div>
           ))}
+          <p style={{ fontSize: 11, color: "var(--faint)", margin: "8px 0 0" }}>Where he ranks vs. every tracked summer player — 75 means better than 75%.</p>
           <p className="ttl" style={{ margin: "16px 0 8px" }}>Archetype</p>
-          <div className="arche">{p.archetype || "—"}</div>
-          {p.archetypeRead && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "6px 0 0", lineHeight: 1.5 }}>{p.archetypeRead}</p>}
+          <div className="arche">{archetype?.label || "Rotation Contributor"}</div>
+          {why && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "6px 0 0", lineHeight: 1.5 }}>{why}</p>}
         </div>
       </div>
+
+      {arc && arc.seasons && arc.seasons.length > 0 && (
+        <div style={{ marginTop: 16 }}><DevelopmentSection arc={arc} prospect={prospect} /></div>
+      )}
 
       <div className="pf-grid">
         <div className="card">
           <p className="ttl">Recent games</p>
-          <table className="log"><tbody>
-            <tr><th>Date</th><th>Opp</th><th>PTS</th><th>REB</th><th>AST</th><th>Source</th></tr>
-            {(p.games || []).slice(0, 4).map((g, i) => (
-              <tr key={i}><td>{g.date}</td><td>{g.opp}</td><td><b>{g.pts}</b></td><td>{g.reb}</td><td>{g.ast}</td><td><span className="bdg teal" style={{ padding: "2px 7px" }}>Verified</span></td></tr>
-            ))}
-          </tbody></table>
+          {games.length ? (
+            <table className="log"><tbody>
+              <tr><th>Date</th><th>Opp</th><th>PTS</th><th>REB</th><th>AST</th><th>Source</th></tr>
+              {games.slice(0, 6).map((g, i) => (
+                <tr key={i}><td>{g.date}</td><td>{cleanOpp(g.opp)}</td><td><b>{g.pts ?? 0}</b></td><td>{g.reb ?? 0}</td><td>{g.ast ?? 0}</td><td><span className="bdg teal" style={{ padding: "2px 7px" }}>Verified</span></td></tr>
+              ))}
+            </tbody></table>
+          ) : <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No per-game logs yet for this player.</p>}
         </div>
         <div className="card">
           <p className="ttl">Film</p>
@@ -426,9 +465,12 @@ function useData() {
       fetch("/data/capitolHoops.json").then((r) => r.json()).catch(() => ({ teams: {} })),
       fetch("/data/dmvSchools.json").then((r) => r.ok ? r.json() : { schools: [] }).catch(() => ({ schools: [] })),
       fetch("/data/schedule.json").then((r) => r.ok ? r.json() : { games: [] }).catch(() => ({ games: [] })),
-    ]).then(([pj, ch, sc, sj]) => {
+      fetch("/data/gameLogs.json").then((r) => r.ok ? r.json() : { players: {} }).catch(() => ({ players: {} })),
+    ]).then(([pj, ch, sc, sj, gj]) => {
       const prospects = pj.prospects || pj;
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
+      const gl = gj.players || {};
+      let cohort = null; try { cohort = buildArchetypeCohort(gl, ch.teams || {}); } catch (e) { cohort = null; }
       // Flatten capitolHoops players with a lead stat for marquee/board.
       const all = [];
       for (const t of Object.values(ch.teams || {})) {
@@ -436,11 +478,12 @@ function useData() {
           if (!(pl.stats && pl.stats.gp > 0 && pl.stats.ppg != null)) continue;
           const pr = prByKey[nameKey(pl.name)];
           all.push({
-            id: pr?.id || nameKey(pl.name), name: pl.name, school: t.name,
+            id: pr?.id || nameKey(pl.name), key: nameKey(pl.name), name: pl.name, school: t.name,
+            pos: pl.position || null,
             cls: (pr?.gradYear || pl.classYear) ? `'${String(pr?.gradYear || pl.classYear).slice(2)}` : "",
             meta: `${t.name}${pl.position ? " · " + pl.position : ""}`,
             headshot: pr?.headshot || null,
-            ppg: pl.stats.ppg, rpg: pl.stats.rpg, apg: pl.stats.apg,
+            ...pl.stats,
             lead: r1(pl.stats.ppg), leadK: "PPG",
             statsVerified: true,
           });
@@ -480,10 +523,51 @@ function useData() {
         return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length };
       }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
       const schedule = (sj.games || []);
-      setData({ players: all, featured, cov, teams, schedule });
+      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey });
     });
   }, []);
   return data;
+}
+
+// ---- PROSPECTS — searchable/filterable player directory --------------------
+function ProspectsView({ data, openPlayer }) {
+  const [q, setQ] = useState("");
+  const [pos, setPos] = useState("");
+  const [sort, setSort] = useState("ppg");
+  const list = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    let r = data.players.filter((p) =>
+      (!k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) &&
+      (!pos || (p.pos || "").toUpperCase().includes(pos)));
+    r = sort === "ppg" ? [...r].sort((a, b) => (b.ppg || 0) - (a.ppg || 0)) : [...r].sort((a, b) => a.name.localeCompare(b.name));
+    return r.slice(0, 120);
+  }, [q, pos, sort, data.players]);
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", fontSize: 13, padding: "10px 12px", outline: "none" };
+  return (
+    <div className="wrap" style={{ paddingTop: 24 }}>
+      <div className="hello">Prospects</div>
+      <div className="sub">{data.players.length} tracked DMV players · real stats, no fake rankings</div>
+      <div className="csearch" style={{ flexWrap: "wrap" }}>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search players or schools…" />
+        <select value={pos} onChange={(e) => setPos(e.target.value)} style={inp}>
+          <option value="">All positions</option><option value="G">Guards</option><option value="W">Wings</option><option value="F">Forwards</option><option value="C">Centers</option>
+        </select>
+        <select value={sort} onChange={(e) => setSort(e.target.value)} style={inp}>
+          <option value="ppg">Top scorers</option><option value="az">A–Z</option>
+        </select>
+      </div>
+      <div className="card" style={{ marginTop: 4 }}>
+        <table className="board"><tbody>
+          <tr><th>Player</th><th>Team</th><th>Class</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
+          {list.map((p) => (
+            <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.cls || "—"}</td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td></tr>
+          ))}
+        </tbody></table>
+        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 10 }}>No players match.</p>}
+      </div>
+      <div style={{ height: 40 }} />
+    </div>
+  );
 }
 
 export default function RebuildApp() {
@@ -501,7 +585,8 @@ export default function RebuildApp() {
     <div className="rebuild">
       <Header view={view} go={go} />
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
-      {view === "profile" && <PublicProfile player={selected || data.featured} go={go} />}
+      {view === "profile" && <PublicProfile player={selected || data.featured} data={data} go={go} />}
+      {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
       {view === "dash" && <Dashboard go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
