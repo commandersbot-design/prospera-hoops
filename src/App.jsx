@@ -1449,6 +1449,7 @@ function Profile({ prospect, onBack, onOpen }) {
 // scraped from the player's Capitol Hoops page (scripts/scrape-player-gamelogs).
 function GameLogTab({ name }) {
   const games = gameLogFor(name);
+  const isMobile = useIsMobile(560);
   if (!games.length) return <div style={{ ...mono, fontSize: 12, color: T.textMute, padding: 20 }}>No game log available yet.</div>;
   const COLS = [
     ["pts", "PTS"], ["reb", "REB"], ["ast", "AST"], ["stl", "STL"], ["blk", "BLK"], ["to", "TO"],
@@ -1473,6 +1474,29 @@ function GameLogTab({ name }) {
       <div style={{ ...mono, fontSize: 9, color: T.textMute, letterSpacing: "0.06em" }}>
         {games.length} game{games.length === 1 ? "" : "s"} · per-game box scores
       </div>
+      {isMobile ? (
+        <div style={{ display: "grid", gap: 8 }}>
+          {games.map((g, i) => {
+            const win = /^w/i.test(g.result || "");
+            return (
+              <div key={i} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+                  <span style={{ ...mono, fontSize: 12.5, color: T.text }}>{g.opp || "—"}</span>
+                  <span style={{ ...mono, fontSize: 11, color: win ? T.positive : T.textDim, whiteSpace: "nowrap" }}>{g.result || "—"} · {g.date}</span>
+                </div>
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 8 }}>
+                  {[["PTS", g.pts, true], ["REB", g.reb], ["AST", g.ast], ["STL", g.stl], ["BLK", g.blk], ["TO", g.to]].map(([l, v, hot]) => (
+                    <span key={l} style={{ ...mono, fontSize: 12 }}><b style={{ color: hot ? T.accent : T.text, fontVariantNumeric: "tabular-nums" }}>{v ?? 0}</b> <span style={{ color: T.textMute, fontSize: 9 }}>{l}</span></span>
+                  ))}
+                </div>
+                <div style={{ ...mono, fontSize: 10, color: T.textMute, marginTop: 6 }}>
+                  FG {fmtShot(g.fgm, g.fga)} · 3P {fmtShot(g.tpm, g.tpa)} · FT {fmtShot(g.ftm, g.fta)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
       <div style={{ background: T.surface, border: `1px solid ${T.border}`, overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", ...mono, fontSize: 12 }}>
           <thead>
@@ -1512,6 +1536,7 @@ function GameLogTab({ name }) {
           )}
         </table>
       </div>
+      )}
     </div>
   );
 }
