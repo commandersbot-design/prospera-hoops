@@ -168,7 +168,8 @@
 .rebuild .up h3{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:19px;margin:0 0 2px;color:var(--ink)}
 .rebuild .up .price{color:var(--muted);font-size:13px;margin-bottom:12px}.rebuild .up .price b{color:var(--ink)}
 .rebuild .up ul{margin:0 0 14px;padding:0;list-style:none;font-size:12.5px;color:var(--muted)}.rebuild .up li{padding:3px 0}.rebuild .up li:before{content:"\2713  ";color:var(--teal);font-weight:700}
-.rebuild .up .cta{display:block;width:100%;text-align:center;background:var(--orange);color:#1c0d03;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:16px;padding:13px;cursor:pointer}
+.rebuild .cta{display:block;width:100%;text-align:center;background:var(--orange);color:#1c0d03;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:16px;padding:13px;cursor:pointer}
+.rebuild .cta:disabled{opacity:.6;cursor:default}
 .rebuild .up .alt{text-align:center;font-size:12px;color:var(--gold-a);margin-top:9px;cursor:pointer}
 
 /* COACH HQ */
@@ -233,3 +234,27 @@
 .rebuild .tab{padding:9px 16px;transition:border-color .14s,background .14s,color .14s,box-shadow .14s}
 .rebuild .tab:hover:not(.on){border-color:rgba(244,242,237,.42);color:var(--ink)}
 .rebuild .tab.on{box-shadow:0 2px 13px rgba(255,106,26,.26)}
+
+/* ── Interactive polish — hover / active / focus on every CTA + the hero card ─ */
+.rebuild .claim-big,.rebuild .cta,.rebuild .claim-sm,.rebuild .bbtn,.rebuild .search button{
+  transition:transform .1s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease,filter .16s ease;
+}
+/* primary orange CTAs lift + glow */
+.rebuild .claim-big{box-shadow:0 6px 22px rgba(255,106,26,.26)}
+.rebuild .claim-big:hover{transform:translateY(-1px);box-shadow:0 11px 30px rgba(255,106,26,.42);filter:brightness(1.04)}
+.rebuild .cta:hover:not(:disabled),.rebuild .claim-sm:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(255,106,26,.34);filter:brightness(1.04)}
+.rebuild .claim-big:active,.rebuild .cta:active,.rebuild .claim-sm:active{transform:translateY(0)}
+/* secondary / banner buttons */
+.rebuild .bbtn:hover{border-color:rgba(244,242,237,.45);background:var(--raised)}
+.rebuild .bbtn.pri:hover{background:var(--orange);border-color:var(--orange);filter:brightness(1.07)}
+.rebuild .bbtn:active{transform:translateY(1px)}
+.rebuild .search button:hover{border-color:rgba(244,242,237,.45);color:var(--ink);background:var(--raised)}
+/* focus rings sitewide (accessibility + polish) */
+.rebuild input:focus,.rebuild textarea:focus,.rebuild select:focus,.rebuild .search input:focus{
+  border-color:rgba(255,106,26,.55)!important;box-shadow:0 0 0 3px rgba(255,106,26,.12)
+}
+/* hero Scout Card — premium interactive lift + bracket glow */
+.rebuild .crn{transition:border-color .2s ease}
+.rebuild .scout{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.rebuild .scout:hover{transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.5);border-color:rgba(244,242,237,.2)}
+.rebuild .scout:hover .crn{border-color:var(--orange)}
