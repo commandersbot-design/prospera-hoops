@@ -334,6 +334,10 @@ function PublicProfile({ player, data, go }) {
   const autoRead = archetype?.label
     ? `${first} profiles as a ${archetype.label.toLowerCase()} in summer-league play${why ? ` — ${why.toLowerCase()}` : ""}.`
     : `${first}'s summer-league stat line is live and verified.`;
+  const STATE_FULL = { DC: "Washington, DC", MD: "Maryland", VA: "Virginia" };
+  const loc = [prospect.city, prospect.state].filter(Boolean).join(", ");
+  const commit = prospect.commitment || (prospect.status === "uncommitted" ? "Uncommitted" : (prospect.status || null));
+  const intel = [p.school, prospect.county && `${prospect.county} County`, STATE_FULL[prospect.state] || prospect.state].filter(Boolean).join(" · ");
   const { user } = useAuth();
   const [claimOpen, setClaimOpen] = useState(false);
   const [myClaim, setMyClaim] = useState(null);
@@ -390,16 +394,29 @@ function PublicProfile({ player, data, go }) {
 
       <div className="card" style={{ marginTop: 16 }}>
         <p className="ttl">Scouting report</p>
-        <div style={{ display: "flex", gap: 22, flexWrap: "wrap", margin: "2px 0 16px" }}>
-          {measur.map(([l, v]) => (
-            <div key={l}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, lineHeight: 1.1, color: v ? "var(--ink)" : "var(--faint)" }}>{v || "—"}</div><div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>
+        <div style={{ display: "flex", gap: 0, flexWrap: "wrap", margin: "2px 0 10px", border: "1px solid var(--line)", borderRadius: 10, overflow: "hidden" }}>
+          {measur.map(([l, v], i) => (
+            <div key={l} style={{ flex: "1 0 64px", padding: "11px 12px", borderLeft: i ? "1px solid var(--line)" : "none", textAlign: "center" }}>
+              <div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--faint)", marginBottom: 4, fontWeight: 600 }}>{l}</div>
+              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, lineHeight: 1.05, color: v ? "var(--ink)" : "var(--faint)" }}>{v || "—"}</div>
+            </div>
           ))}
+        </div>
+        <p style={{ fontSize: 11, color: "var(--faint)", margin: "0 0 14px" }}>○ Unverified — self-reported, not yet measured by staff.</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", fontSize: 12.5, color: "var(--muted)", margin: "0 0 14px" }}>
+          {p.school && <span style={{ color: "var(--ink)", fontWeight: 600 }}>{cleanOpp(p.school)}</span>}
+          {loc && <><span style={{ color: "var(--faint)" }}>·</span><span>{loc}</span></>}
+          {commit && <><span style={{ color: "var(--faint)" }}>·</span><span style={{ color: commit === "Uncommitted" ? "var(--orange)" : "var(--teal)", fontWeight: 600 }}>{commit}</span></>}
         </div>
         <p className="ttl" style={{ margin: "0 0 7px" }}>The read</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>
           {hasSummary ? prospect.summary : autoRead}
           {!hasSummary && <> A full written report{hasMeasur ? "" : ", verified measurements,"} and recruiting timeline are pending — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={() => setClaimOpen(true)}>claim this profile</b> to add them, free.</>}
         </p>
+        {intel && <>
+          <p className="ttl" style={{ margin: "16px 0 6px", color: "var(--blue)" }}>DMV Intel</p>
+          <p style={{ fontSize: 12.5, color: "var(--muted)", margin: 0 }}>{intel}</p>
+        </>}
       </div>
 
       <ByTheNumbers games={games} />
