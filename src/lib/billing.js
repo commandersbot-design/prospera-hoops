@@ -34,3 +34,15 @@ export async function hasPlus() {
     return false;
   }
 }
+
+// True when the signed-in user holds an active Coach HQ subscription (plan begins
+// with "coach"). Pilot-code / admin access is layered on at the call site.
+export async function hasCoach() {
+  if (!isConfigured || !getSession()) return false;
+  try {
+    const rows = await db.select("entitlements", "select=plan&status=in.(active,trialing,past_due)&plan=like.coach*&limit=1");
+    return Array.isArray(rows) && rows.length > 0;
+  } catch {
+    return false;
+  }
+}

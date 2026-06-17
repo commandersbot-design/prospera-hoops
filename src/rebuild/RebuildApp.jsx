@@ -9,7 +9,8 @@ import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 import SCHEDULE_DATA from "../data/schedule.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
-import { startCheckout, hasPlus } from "../lib/billing.js";
+import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
+import { useCoachAccess } from "../lib/coachAccess.js";
 import { seasonStatLine } from "../components/StatLine.jsx";
 import { playerHighlights } from "../lib/highlights.js";
 
@@ -807,8 +808,44 @@ function TeamReport({ team, schedule, wl, openPlayer, headLabel = "Read" }) {
   );
 }
 
-function CoachHQ({ data, openPlayer }) {
+// Paywall for Coach-tier tabs: subscribe ($19/mo) or redeem a pilot code.
+function CoachLock({ feature, user, go, redeem }) {
+  const [busy, setBusy] = useState(false);
+  const [code, setCode] = useState("");
+  const [note, setNote] = useState("");
+  const subscribe = async () => {
+    if (!user) { setNote("Sign in first, then unlock Coach HQ."); go("dash"); return; }
+    setNote(""); setBusy(true);
+    const res = await startCheckout({ plan: "coach_monthly", email: user.email, userId: user.id });
+    setBusy(false);
+    if (!res.ok) setNote(res.reason === "unconfigured" ? "Coach HQ checkout opens at launch — we’ll email you the moment it’s live." : (res.detail || "Couldn’t start checkout — try again."));
+  };
+  const tryCode = () => { const p = redeem(code); setNote(p ? "" : "That code isn’t valid — check with your program."); };
+  return (
+    <div className="card" style={{ textAlign: "center", padding: "34px 22px" }}>
+      <div style={{ fontSize: 32 }}>🔒</div>
+      <p className="ttl" style={{ color: "var(--gold-a)", margin: "10px 0 6px" }}>{feature} · Coach HQ</p>
+      <p style={{ fontSize: 13.5, color: "var(--muted)", maxWidth: 430, margin: "0 auto 16px", lineHeight: 1.6 }}>Matchup builders, your-team analytics, opponent game plans and board export are part of <b style={{ color: "var(--ink)" }}>Coach HQ</b> — built for coaches who live on the sideline.</p>
+      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 26 }}><span style={{ color: "var(--orange)" }}>$19</span><span style={{ fontSize: 15, color: "var(--muted)" }}>/mo</span> <span style={{ fontSize: 13, color: "var(--faint)" }}>· or $149/yr</span></div>
+      <button className="cta" style={{ maxWidth: 280, margin: "14px auto 0" }} onClick={subscribe} disabled={busy}>{busy ? "Starting…" : (user ? "Unlock Coach HQ" : "Sign in to unlock")}</button>
+      <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
+        <span style={{ fontSize: 12, color: "var(--faint)" }}>Coach with a pilot code?</span>
+        <input value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && tryCode()} placeholder="Enter code" style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 8, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", fontSize: 13, padding: "8px 11px", maxWidth: 150 }} />
+        <button className="bbtn" onClick={tryCode}>Redeem</button>
+      </div>
+      {note && <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 12 }}>{note}</p>}
+    </div>
+  );
+}
+
+function CoachHQ({ data, openPlayer, go }) {
   const wl = useWatchlist();
+  const { user, isAdmin } = useAuth();
+  const { hasPass, redeem } = useCoachAccess();
+  const [coachEnt, setCoachEnt] = useState(false);
+  useEffect(() => { let live = true; if (user) hasCoach().then((v) => { if (live) setCoachEnt(v); }).catch(() => {}); else setCoachEnt(false); return () => { live = false; }; }, [user]);
+  const unlocked = isAdmin || hasPass || coachEnt;
+  const PREMIUM = { matchup: true, myteam: true }; // scout + lists are the free hook
   const [tab, setTab] = useState("scout");
   const [oppA, setOppA] = useState("");
   const [oppB, setOppB] = useState("");
@@ -823,16 +860,20 @@ function CoachHQ({ data, openPlayer }) {
     </select>
   );
   const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 50); }, [q, data.players]);
+  const leaders = useMemo(() => [...data.players].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 12), [data.players]);
   const watchPlayers = data.players.filter((p) => wl.has(p.id));
   const a = find(oppA), b = find(oppB), my = find(mine);
+  const gated = (k) => PREMIUM[k] && !unlocked;
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <div className="hello">Coach HQ</div><span className="ctx">Free this season</span>
+        <div className="hello">Coach HQ</div>
+        {unlocked ? <span className="ctx">{isAdmin ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
+          : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>Coach tier · $19/mo</span>}
       </div>
       <div className="sub">Scout opponents, build matchups, and run your team — your whole sideline brain, in one place.</div>
       <div className="tabs" style={{ margin: "16px 0", flexWrap: "wrap" }}>
-        {[["scout", "Opponent Scouting"], ["matchup", "Matchup Builder"], ["myteam", "My Team"], ["lists", "Lists & Notes"]].map(([k, l]) => <span key={k} className={`tab ${tab === k ? "on" : ""}`} onClick={() => setTab(k)}>{l}</span>)}
+        {[["scout", "Opponent Scouting"], ["matchup", "Matchup Builder"], ["myteam", "My Team"], ["lists", "Lists & Notes"]].map(([k, l]) => <span key={k} className={`tab ${tab === k ? "on" : ""}`} onClick={() => setTab(k)}>{l}{PREMIUM[k] && !unlocked ? " 🔒" : ""}</span>)}
       </div>
 
       {tab === "scout" && (
@@ -840,11 +881,25 @@ function CoachHQ({ data, openPlayer }) {
           <p className="ttl">Scout an opponent</p>
           <div style={{ marginBottom: 12 }}><Picker value={oppA} onChange={setOppA} ph="Choose a team…" /></div>
           {a ? <TeamReport team={a} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Game plan" />
-            : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report.</p>}
+            : (
+              <div>
+                <p style={{ fontSize: 13, color: "var(--muted)", margin: "0 0 18px" }}>Pick a team to pull their record, scoring threats, tendencies, and recent form — your full pre-game scouting report. Or scan the league’s top scorers below.</p>
+                <p className="ttl" style={{ margin: "0 0 4px" }}>League leaders · top scorers</p>
+                <div>
+                  {leaders.map((p, i) => (
+                    <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "26px 1fr auto", gap: 12, alignItems: "center", padding: "10px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+                      <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14, color: "var(--faint)" }}>{i + 1}</span>
+                      <span><span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 14.5, color: "var(--ink)" }}>{p.name}</span> <span style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, cleanOpp(p.school)].filter(Boolean).join(" · ")}</span></span>
+                      <span style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 15 }}>{r1(p.ppg)}</span><span style={{ fontSize: 9.5, color: "var(--faint)", textTransform: "uppercase" }}>ppg</span><span className="add" onClick={(e) => { e.stopPropagation(); wl.toggle(p.id); }}>{wl.has(p.id) ? "✓" : "+"}</span></span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
         </div>
       )}
 
-      {tab === "matchup" && (
+      {tab === "matchup" && (gated("matchup") ? <CoachLock feature="Matchup Builder" user={user} go={go} redeem={redeem} /> : (
         <div className="card">
           <p className="ttl">Build a matchup — team vs team</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
@@ -878,16 +933,16 @@ function CoachHQ({ data, openPlayer }) {
             );
           })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two teams to compare records, scoring, and the key individual matchup.</p>}
         </div>
-      )}
+      ))}
 
-      {tab === "myteam" && (
+      {tab === "myteam" && (gated("myteam") ? <CoachLock feature="My Team" user={user} go={go} redeem={redeem} /> : (
         <div className="card">
           <p className="ttl">My team</p>
           <div style={{ marginBottom: 12 }}><Picker value={mine} onChange={setMine} ph="Choose your team…" /></div>
           {my ? <TeamReport team={my} schedule={data.schedule} wl={wl} openPlayer={openPlayer} headLabel="Strengths" />
             : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick your team to see your efficiency leaders, tendencies, and recent form.</p>}
         </div>
-      )}
+      ))}
 
       {tab === "lists" && (
         <div className="ctools">
@@ -1127,7 +1182,7 @@ export default function RebuildApp() {
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
-      {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} />}
+      {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} go={go} />}
     </div>
   );
 }

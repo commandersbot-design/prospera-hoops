@@ -8,11 +8,12 @@
   --graphite: #0b0a09;
   --surface: #141110;
   --raised: #1a1614;
-  --line: rgba(244, 242, 237, 0.09);
+  --line: rgba(244, 242, 237, 0.12);
 
   --ink: #F4F2ED;
-  --muted: rgba(244, 242, 237, 0.55);
-  --faint: rgba(244, 242, 237, 0.34);
+  /* Bumped for readability — the prototype's .55/.34 read as thin grey on graphite. */
+  --muted: rgba(244, 242, 237, 0.72);
+  --faint: rgba(244, 242, 237, 0.52);
 
   --orange: #FF6A1A;
   --gold-a: #F5C451;

@@ -189,3 +189,26 @@
 .rebuild [data-anim]{opacity:0;transform:translateY(14px);animation:pr-fadeup .6s ease forwards}
 @keyframes pr-fadeup{to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.rebuild [data-anim]{animation:none;opacity:1;transform:none}.rebuild .marq-row{animation:none}}
+
+/* ── Readability & density pass ──────────────────────────────────────────────
+ * The raw prototype leans on thin, low-contrast, small type. These overrides
+ * (same specificity, later in the cascade) raise size/weight/contrast and tighten
+ * empty space in the Teams / Prospects / Coach surfaces. */
+.rebuild{font-size:16px}
+.rebuild .nav a{font-size:14.5px;font-weight:500}
+.rebuild .login{font-size:14px}
+.rebuild .sub{font-size:15px;line-height:1.5}
+.rebuild .ttl{font-size:13px;letter-spacing:.1em;color:var(--muted)}
+.rebuild .ksub{font-size:15px;line-height:1.55}
+/* Stat/board tables — larger, airier, higher-contrast rows */
+.rebuild table.board{font-size:14px}
+.rebuild table.board th,.rebuild table.log th{font-size:11px;color:var(--muted)}
+.rebuild table.board td,.rebuild table.log td{padding-top:11px;padding-bottom:11px;color:var(--muted)}
+.rebuild table.board td b{font-size:16px}
+.rebuild .wl .s{font-size:12px}
+/* Teams cards — fill the space, read at a glance */
+.rebuild .feat{padding:18px}
+.rebuild .feat .ft{font-size:15.5px;margin-bottom:7px}
+.rebuild .feat p{font-size:13.5px}
+/* Tabs / chips — easier to read and tap */
+.rebuild .tab{font-size:13.5px}

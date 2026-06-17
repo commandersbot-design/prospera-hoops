@@ -15,6 +15,8 @@
 const PRICES = {
   monthly: () => process.env.STRIPE_PRICE_PLUS_MONTHLY,
   yearly: () => process.env.STRIPE_PRICE_PLUS_YEARLY,
+  coach_monthly: () => process.env.STRIPE_PRICE_COACH_MONTHLY,
+  coach_yearly: () => process.env.STRIPE_PRICE_COACH_YEARLY,
 };
 
 export default async function handler(req, res) {
@@ -24,9 +26,10 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-    const plan = body.plan === "yearly" ? "yearly" : "monthly";
+    const plan = PRICES[body.plan] ? body.plan : "monthly";
     const price = PRICES[plan]();
     if (!price) { res.status(503).json({ error: "unconfigured", detail: `missing price for ${plan}` }); return; }
+    const isCoach = plan.startsWith("coach");
 
     const proto = (req.headers["x-forwarded-proto"] || "https").split(",")[0];
     const host = req.headers["x-forwarded-host"] || req.headers.host;
@@ -37,7 +40,7 @@ export default async function handler(req, res) {
     form.set("mode", "subscription");
     form.set("line_items[0][price]", price);
     form.set("line_items[0][quantity]", "1");
-    form.set("subscription_data[trial_period_days]", "30");
+    if (!isCoach) form.set("subscription_data[trial_period_days]", "30"); // Prospera+ trials; Coach HQ bills immediately
     form.set("allow_promotion_codes", "true");
     form.set("success_url", `${base}/dashboard?upgraded=1`);
     form.set("cancel_url", `${base}/plus`);
