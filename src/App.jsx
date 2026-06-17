@@ -2805,6 +2805,7 @@ function NewsTicker({ onOpen }) {
 // ---------------------------------------------------------------------------
 const NAV = [
   // Big Board is parked for now — no rankings product yet.
+  { key: "home", label: "Home" },
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Teams" },
   { key: "scouthq", label: "Coach HQ" },
@@ -3041,6 +3042,8 @@ function HomeLanding({ onOpenProfile, onGoView, teamsCount }) {
     for (const [slug, t] of Object.entries(CH_TEAMS)) for (const pl of t.players || []) all.push({ ...pl, school: canonicalSchool(slug, t.name) });
     return all.filter((p) => (p.stats?.gp ?? 0) >= 2 && p.stats?.ppg != null).sort((a, b) => b.stats.ppg - a.stats.ppg).slice(0, 6);
   }, []);
+  // A real, complete profile to show prospective subscribers what they're claiming.
+  const example = PROSPECT_BY_NAMEKEY[nameKey("Christian Towe")];
   const fmt = (n) => n.toLocaleString("en-US");
   const cta = (label, v, primary) => (
     <button type="button" onClick={() => onGoView(v)} style={{ ...mono, fontSize: 12.5, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, padding: "12px 20px", borderRadius: 8, cursor: "pointer", color: primary ? T.bg : T.text, background: primary ? T.accent : "transparent", border: `1px solid ${primary ? T.accent : T.border}` }}>{label}</button>
@@ -3070,6 +3073,17 @@ function HomeLanding({ onOpenProfile, onGoView, teamsCount }) {
             </div>
           ))}
         </div>
+        {example && (
+          <button type="button" onClick={() => onOpenProfile(example.id)}
+            style={{ display: "flex", alignItems: "center", gap: 14, textAlign: "left", background: T.surface, border: `1px solid ${T.accent}`, borderRadius: 10, padding: "12px 16px", cursor: "pointer", color: T.text, maxWidth: 540 }}>
+            {example.headshot ? <img src={example.headshot} alt="" style={{ width: 46, height: 46, borderRadius: "50%", objectFit: "cover", border: `1px solid ${T.border}`, flexShrink: 0 }} /> : null}
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ ...mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.accent, fontWeight: 700 }}>See a real profile · example</span>
+              <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: T.text, marginTop: 2 }}>{example.name}</span>
+              <span style={{ ...mono, fontSize: 11, color: T.textMute }}>What a tracked DMV player looks like — open it →</span>
+            </span>
+          </button>
+        )}
       </section>
       {leaders.length > 0 && (
         <section style={{ display: "grid", gap: 12 }}>
