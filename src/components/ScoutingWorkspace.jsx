@@ -778,22 +778,58 @@ function SummerPlayers({ teams = SEED_SUMMER_TEAMS, onOpen }) {
   );
 }
 
-// Tiny seed schedule so the feed renders; wire to schedule.json later. Matchups
-// chosen to line up with scraped recaps/previews so the attachment is visible.
+// Date-aware status so the feed is never stale: a game is "final" once its date
+// has passed and "upcoming" before it — derived from the date, not a hand-set flag.
+const LEAGUE_YEAR = 2026;
+const MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+function parseGameDate(s) {
+  const m = String(s || "").match(/([A-Za-z]{3,})\s+(\d{1,2})/);
+  if (!m) return null;
+  const mo = MONTHS[m[1].slice(0, 3).toLowerCase()];
+  return mo == null ? null : new Date(LEAGUE_YEAR, mo, +m[2]);
+}
+
+// Seed results so the feed renders. Pass real schedule data via `games` (a future
+// schedule.json / season feed) and this same component becomes the live slate —
+// no rewrite needed when the HS season or next summer's games arrive.
 const SEED_GAMES = [
-  { date: "Jun 1", home: "Good Counsel", away: "Coolidge", status: "final" },     // Day 10 recap
-  { date: "Jun 1", home: "DeMatha", away: "Bullis", status: "final" },            // Day 10 recap (Ledo's GotW)
-  { date: "Jun 1", home: "Wootton", away: "Broadneck", status: "final" },         // Day 10 recap
-  { date: "Jun 6", home: "Jackson-Reed", away: "Gonzaga", time: "6:15 pm", status: "scheduled" }, // preview
-  { date: "May 31", home: "Blake", away: "South River", time: "1:00 pm", status: "scheduled" },   // preview
+  { date: "May 31", home: "Blake", away: "South River" },
+  { date: "Jun 1", home: "Good Counsel", away: "Coolidge" },
+  { date: "Jun 1", home: "DeMatha", away: "Bullis" },
+  { date: "Jun 1", home: "Wootton", away: "Broadneck" },
+  { date: "Jun 6", home: "Jackson-Reed", away: "Gonzaga" },
 ];
-function SummerSchedule({ recaps = [] }) {
+const subLabel = (txt) => <div style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: A.textMut, marginBottom: 2 }}>{txt}</div>;
+
+function SummerSchedule({ recaps = [], games }) {
+  const list = useMemo(() => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return (games && games.length ? games : SEED_GAMES)
+      .map((g) => { const d = parseGameDate(g.date); return { ...g, _d: d, final: d ? d < today : g.status !== "scheduled" }; })
+      .sort((a, b) => (b._d?.getTime() || 0) - (a._d?.getTime() || 0)); // most recent first
+  }, [games]);
+  const upcoming = list.filter((g) => !g.final);
+  const results = list.filter((g) => g.final);
   return (
     <div>
-      <ZoneTitle right={`${SEED_GAMES.length} games`}>Games feed</ZoneTitle>
-      <div style={{ display: "grid", gap: 8 }}>
-        {SEED_GAMES.map((g, i) => <ScheduleRow key={i} g={g} recaps={recaps} />)}
-      </div>
+      <ZoneTitle right={`${list.length} game${list.length === 1 ? "" : "s"}`}>Games feed</ZoneTitle>
+      {upcoming.length > 0 && (
+        <div style={{ display: "grid", gap: 8, marginBottom: results.length ? 18 : 0 }}>
+          {subLabel("Upcoming")}
+          {upcoming.map((g, i) => <ScheduleRow key={"u" + i} g={g} recaps={recaps} />)}
+        </div>
+      )}
+      {results.length > 0 && (
+        <div style={{ display: "grid", gap: 8 }}>
+          {upcoming.length > 0 && subLabel("Recent results")}
+          {results.map((g, i) => <ScheduleRow key={"r" + i} g={g} recaps={recaps} />)}
+        </div>
+      )}
+      {upcoming.length === 0 && (
+        <div style={{ fontFamily: MONO, fontSize: 11.5, color: A.textFaint, lineHeight: 1.6, marginTop: 14, padding: "12px 14px", border: `1px dashed ${A.border}`, borderRadius: 10 }}>
+          Capitol Hoops Summer League has wrapped — these are recent results. Fall high-school &amp; AAU schedules will appear here as they&rsquo;re released.
+        </div>
+      )}
     </div>
   );
 }
@@ -802,7 +838,7 @@ function SummerSchedule({ recaps = [] }) {
 // preview (upcoming), pulled from the scraped coverage by matchup.
 function ScheduleRow({ g, recaps }) {
   const [open, setOpen] = useState(false);
-  const final = g.status === "final";
+  const final = g.final != null ? g.final : (g.status === "final");
   const match = useMemo(() => gameForMatchup(recaps, g.home, g.away, final ? "recap" : "preview"), [recaps, g, final]);
   return (
     <div style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 10, overflow: "hidden" }}>
