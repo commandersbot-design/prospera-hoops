@@ -1460,7 +1460,10 @@ function useData() {
       fetch("/data/gameLogs.json").then((r) => r.ok ? r.json() : { players: {} }).catch(() => ({ players: {} })),
       fetch("/data/schoolLocations.json").then((r) => r.ok ? r.json() : {}).catch(() => ({})),
       fetch("/data/gameRecaps.json").then((r) => r.ok ? r.json() : { recaps: [] }).catch(() => ({ recaps: [] })),
-    ]).then(([pj, ch, sc, gj, loc, rc]) => {
+      fetch("/data/headshots.json").then((r) => r.ok ? r.json() : {}).catch(() => ({})),
+    ]).then(([pj, ch, sc, gj, loc, rc, hs]) => {
+      const hsImg = hs || {}; // nameKey → "/headshots/<key>.jpg" (scraped from Capitol Hoops)
+      const shotFor = (name, pr) => pr?.headshot || hsImg[nameKey(name)] || null;
       const sj = { games: SCHEDULE_DATA.games || SCHEDULE_DATA };
       const recaps = (rc.recaps || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
       const recapSource = rc._source || "Capitol Hoops Summer League";
@@ -1485,7 +1488,7 @@ function useData() {
             stars: pr?.stars || null, rankings: pr?.rankings || null,
             status: pr?.status || pr?.commitment || null,
             meta: `${t.name}${pl.position ? " · " + pl.position : ""}`,
-            headshot: pr?.headshot || null,
+            headshot: shotFor(pl.name, pr),
             ...pl.stats,
             lead: r1(pl.stats.ppg), leadK: "PPG",
             statsVerified: true,
@@ -1523,7 +1526,7 @@ function useData() {
       const teams = Object.entries(ch.teams || {}).map(([slug, t]) => {
         const players = (t.players || [])
           .filter((p) => p.stats && p.stats.gp > 0 && p.stats.ppg != null)
-          .map((p) => { const pr = prByKey[nameKey(p.name)]; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: pr?.headshot || null, ...p.stats }; })
+          .map((p) => { const pr = prByKey[nameKey(p.name)]; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: shotFor(p.name, pr), ...p.stats }; })
           .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
         const ln = (t.name || "").toLowerCase();
         const ctx = /hayfield/.test(ln) ? "HS" : (/\bakt\b|warriors|3ssb|\baau\b/.test(ln) ? "AAU" : "SUMMER");
