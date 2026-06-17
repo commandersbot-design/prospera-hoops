@@ -380,6 +380,38 @@ function TheLeapCard({ seasons }) {
     </div>
   );
 }
+// Recruiting card — real commitment/offers/rankings when present, else a clean
+// claim-to-add state (the dataset has no fake recruiting-service rankings).
+function RecruitingCard({ prospect, onClaim }) {
+  const commitment = prospect.commitment;
+  const committed = !!commitment;
+  const stars = prospect.stars;
+  const rk = prospect.rankings || {};
+  const offers = Array.isArray(prospect.offers) ? prospect.offers : [];
+  const services = Array.isArray(prospect.services) ? prospect.services : [];
+  const hasRanks = stars || rk.national || rk.state || rk.position;
+  const Cell = ({ v, l, c }) => <div><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: c || "var(--ink)" }}>{v}</div><div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>;
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <p className="ttl">Recruiting</p>
+      <div style={{ display: "flex", gap: 22, flexWrap: "wrap", alignItems: "flex-start", marginBottom: (offers.length || hasRanks) ? 14 : 10 }}>
+        <Cell v={committed ? "Committed" : "Uncommitted"} l="Status" c={committed ? "var(--teal)" : "var(--ink)"} />
+        {committed && <Cell v={commitment} l="School" c="var(--orange)" />}
+        {stars && <Cell v={`${stars}★`} l="Rating" c="var(--gold-a)" />}
+        {rk.national && <Cell v={`#${rk.national}`} l="National" />}
+        {rk.state && <Cell v={`#${rk.state}`} l={`${prospect.state || ""} State`.trim()} />}
+        {rk.position && <Cell v={`#${rk.position}`} l={`${prospect.position || "Pos"}`} />}
+      </div>
+      {offers.length > 0 ? (
+        <><p className="ttl" style={{ margin: "0 0 7px" }}>Offers ({offers.length})</p><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{offers.map((o, i) => <span key={i} className="bdg" style={{ fontSize: 11.5 }}>{typeof o === "string" ? o : (o.school || o.name)}</span>)}</div></>
+      ) : (
+        <p style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.55, margin: 0 }}>{hasRanks ? "" : "No offers or national rankings logged yet. "}Players &amp; coaches — <b style={{ color: "var(--ink)", cursor: "pointer" }} onClick={onClaim}>claim this profile</b> to add commitment, offers, and your recruiting timeline.</p>
+      )}
+      {services.length > 0 && <p style={{ fontSize: 10.5, color: "var(--faint)", margin: "10px 0 0" }}>Per {services.join(", ")}</p>}
+    </div>
+  );
+}
+
 function PublicProfile({ player, data, go }) {
   const [tab, setTab] = useState("su");
   const p = player || {};
@@ -522,6 +554,7 @@ function PublicProfile({ player, data, go }) {
         </>}
       </div>
 
+      <RecruitingCard prospect={prospect} onClaim={() => setClaimOpen(true)} />
       <ByTheNumbers games={games} />
       <TheLeapCard seasons={seasons} />
 
