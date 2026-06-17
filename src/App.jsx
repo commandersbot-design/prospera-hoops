@@ -1256,38 +1256,24 @@ function Profile({ prospect, onBack, onOpen }) {
         </button>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <ShareButton name={p.name} />
-          {/* Scout-side verification — internal trust signal on the system of record.
-              The public player/parent "claim" flow needs accounts + a backend (owner-decision). */}
-          <button
-            type="button"
-            onClick={() => ver.toggleVerified(p.id)}
-            title="Scout-verified: a Prospera scout has confirmed this player's info. (Public profile claiming needs accounts — coming later.)"
-            style={{
-              ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
-              borderRadius: 6, padding: "7px 12px", cursor: "pointer",
-              color: verified ? T.bg : T.positive,
-              background: verified ? T.positive : "transparent",
-              border: `1px solid ${verified ? T.positive : "rgba(16,185,129,0.5)"}`,
-            }}
-          >
-            {verified ? "✓ Verified" : "Verify Player"}
-          </button>
-          {/* In-app manual gold-tier mark — the user's "this kid is elite" conviction. */}
-          <button
-            type="button"
-            onClick={() => gold.toggleGold(p.id)}
-            title="Gold tier is your manual apex mark; saved on this device."
-            style={{
-              ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
-              borderRadius: 6, padding: "7px 12px", cursor: "pointer",
-              color: marked ? "#2a2410" : "#d2af52",
-              background: marked ? "linear-gradient(135deg,#f1e3a8 0%,#d2af52 55%,#a9842f 100%)" : "transparent",
-              border: `1px solid ${marked ? "transparent" : "rgba(210,175,82,0.5)"}`,
-              boxShadow: marked ? "inset 0 1px 0 rgba(255,255,255,0.45)" : "none",
-            }}
-          >
-            {marked ? "♛ Gold Tier ✓" : "♛ Mark Gold Tier"}
-          </button>
+          {/* Scout-side verification — staff-only (admin). The public player/parent
+              flow is the accounts-backed "Claim profile" button below. */}
+          {auth.isAdmin && (
+            <button
+              type="button"
+              onClick={() => ver.toggleVerified(p.id)}
+              title="Scout-verified: a Prospera scout has confirmed this player's info."
+              style={{
+                ...mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700,
+                borderRadius: 6, padding: "7px 12px", cursor: "pointer",
+                color: verified ? T.bg : T.positive,
+                background: verified ? T.positive : "transparent",
+                border: `1px solid ${verified ? T.positive : "rgba(16,185,129,0.5)"}`,
+              }}
+            >
+              {verified ? "✓ Verified" : "Verify Player"}
+            </button>
+          )}
           {/* Player-facing controls. With Supabase configured this is a real
               claim → owner-approve → self-edit flow; without it, the button
               opens the email-based claim request form (honest fallback). */}
@@ -2821,7 +2807,7 @@ const NAV = [
   // Big Board is parked for now — no rankings product yet.
   { key: "prospects", label: "Prospects" },
   { key: "summer", label: "Teams" },
-  { key: "scouthq", label: "Scout HQ" },
+  { key: "scouthq", label: "Coach HQ" },
   { key: "recaps", label: "Recaps" },
   // Map is parked off the live nav (the DmvMap component + its view branch stay in
   // place to morph/repurpose later — just not surfaced to users for now).
@@ -3074,7 +3060,7 @@ function HomeLanding({ onOpenProfile, onGoView, teamsCount }) {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           {cta("Browse prospects", "prospects", true)}
           {cta("Explore teams", "summer", false)}
-          {cta("For coaches → Scout HQ", "scouthq", false)}
+          {cta("For coaches → Coach HQ", "scouthq", false)}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, maxWidth: 540 }}>
           {[["Players tracked", fmt(stats.players)], ["Teams", fmt(stats.teams)], ["Box scores", fmt(stats.boxscores)]].map(([l, v]) => (

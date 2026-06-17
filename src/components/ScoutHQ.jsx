@@ -480,11 +480,11 @@ function CoachGate({ onRedeem }) {
     <div style={{ display: "grid", gap: 18, maxWidth: 720, margin: "0 auto" }}>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Scout HQ</h1>
+          <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Coach HQ</h1>
           <Tag color={T.accent}>Coach tier</Tag><Tag color={T.warn}>🔒 Locked</Tag>
         </div>
         <div style={{ ...ui, fontSize: 13.5, color: T.textDim, lineHeight: 1.6, marginTop: 8 }}>
-          Scout HQ is the <b style={{ color: T.text }}>coach tier</b> — opponent scouting, matchup builders, and private
+          Coach HQ is the <b style={{ color: T.text }}>coach tier</b> — opponent scouting, matchup builders, and private
           notes. It's <b style={{ color: T.text }}>free for pilot programs</b>; otherwise it's part of a coach subscription.
           Base profiles, stats, team pages, and leaderboards stay free for everyone.
         </div>
@@ -558,7 +558,7 @@ export default function ScoutHQ({ teams = [], onOpenProfile }) {
       <CoachAccessBar pass={pass} onSignOut={clear} />
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Scout HQ</h1>
+          <h1 style={{ ...display, fontSize: 30, fontWeight: 800, textTransform: "uppercase", color: T.text, margin: 0 }}>Coach HQ</h1>
           <Tag color={T.accent}>Coach</Tag>
         </div>
         <div style={{ ...ui, fontSize: 12, color: T.textMute, marginTop: 4 }}>Box-score analytics + scouting tools. Estimated metrics are tagged <Tag>est</Tag>; tracked-possession metrics are <Tag color={T.warn}>locked</Tag>.</div>

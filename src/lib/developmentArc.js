@@ -115,9 +115,9 @@ function arcRead(latest, prev, realCount) {
   const dP36 = latest.derived.per36.pts != null && prev.derived.per36.pts != null ? latest.derived.per36.pts - prev.derived.per36.pts : null;
   const dPts = latest.raw.pts != null && prev.raw.pts != null ? latest.raw.pts - prev.raw.pts : null;
   if (dTs == null) return `${latest.gp} games this season — efficiency trend needs shooting volume to read cleanly.`;
-  if (dPts != null && dPts > 1.5 && dTs > 0.5) return "Scoring rose with the role — and TS% climbed too, so the jump is real improvement, not just volume.";
-  if (dPts != null && dPts > 1.5 && dTs <= 0.5) return "Scoring rose, but TS% held flat — most of the jump is volume/role, not efficiency. Watch the shot quality.";
+  if (dPts != null && dPts > 1.5 && dTs > 0.5) return "Scoring rose with his role — and he got more efficient too, so the jump is real improvement, not just more shots.";
+  if (dPts != null && dPts > 1.5 && dTs <= 0.5) return "Scoring rose, but his efficiency held flat — most of the jump is more shots and a bigger role, not better shooting.";
   if (dTs > 1) return "Efficiency improved year-over-year — getting better, not just busier.";
   if (dTs < -1) return "Efficiency dipped — likely a bigger, tougher role; read the usage band below alongside it.";
-  return "Holding his level across seasons" + (realCount < 2 ? " (thin sample — read cautiously)." : ".");
+  return "Holding his level across seasons.";
 }

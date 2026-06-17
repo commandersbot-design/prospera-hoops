@@ -61,7 +61,7 @@ function ArcChart({ chart, seasons }) {
       {[0, 0.5, 1].map((t) => <line key={t} x1={padL} x2={W - padR} y1={padT + (H - padT - padB) * t} y2={padT + (H - padT - padB) * t} stroke={A.border} strokeWidth="1" />)}
       {/* x labels */}
       {seasons.map((s, i) => (
-        <text key={s.season} x={xAt(i)} y={H - 12} fill={s.smallSample ? A.faint : A.mut} fontFamily={BODY} fontSize="11" textAnchor="middle">{s.season}{s.smallSample ? "*" : ""}</text>
+        <text key={s.season} x={xAt(i)} y={H - 12} fill={A.mut} fontFamily={BODY} fontSize="11" textAnchor="middle">{s.season}</text>
       ))}
       {series.map((ser) => {
         const yAt = yScale(ser.pts);
@@ -79,7 +79,7 @@ function ArcChart({ chart, seasons }) {
 }
 
 function Legend() {
-  const items = [["TS%", A.accent, false], ["per-36 PTS", A.sage, true], ["Prospera eval", A.gold, false]];
+  const items = [["Scoring efficiency", A.accent, false], ["Scoring pace (per 36 min)", A.sage, true], ["Prospera grade", A.gold, false]];
   return (
     <div style={{ display: "flex", gap: 18, flexWrap: "wrap", marginTop: 6 }}>
       {items.map(([l, c, dash]) => (
@@ -100,12 +100,12 @@ function RoleBand({ seasons }) {
         return (
           <div key={s.season} style={{
             border: `1px solid ${latest ? A.accent : A.border}`, background: latest ? "rgba(255, 106, 26,0.10)" : A.inset,
-            borderRadius: 8, padding: "9px 10px", opacity: s.smallSample ? 0.55 : 1,
+            borderRadius: 8, padding: "9px 10px",
           }}>
-            <Label color={latest ? A.accent : A.faint} style={{ fontSize: 9 }}>{s.season}{s.smallSample ? " · small" : ""}</Label>
+            <Label color={latest ? A.accent : A.faint} style={{ fontSize: 9 }}>{s.season}</Label>
             <div style={{ fontFamily: DISPLAY, fontSize: 15, fontWeight: 700, textTransform: "uppercase", color: A.textHi, marginTop: 3 }}>{s.context.roleTag}</div>
             <div style={{ ...num, fontSize: 11, color: A.mut, marginTop: 3 }}>
-              {s.derived.usageLoad != null ? `${s.derived.usageLoad} poss/g` : "load —"}{s.mpg != null ? ` · ${s.mpg} MPG` : " · MPG n/a"}
+              {[s.derived.usageLoad != null ? `${s.derived.usageLoad} poss/game` : null, s.mpg != null ? `${s.mpg} min/game` : null].filter(Boolean).join(" · ")}
             </div>
           </div>
         );
@@ -122,9 +122,13 @@ export function DevelopmentArc({ arc }) {
     <div style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 12, padding: "18px 20px", fontFamily: BODY, color: A.text }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <Eyebrow>Development Arc</Eyebrow>
-        <span style={{ fontFamily: BODY, fontSize: 11, color: single ? A.amber : A.mut }}>
-          {arc.tracked} season{arc.tracked === 1 ? "" : "s"} tracked{single ? " · arc builds as he's followed" : ""}{!arc.hasEval ? " · eval pending" : ""}
+        <span style={{ fontFamily: BODY, fontSize: 11, color: A.mut }}>
+          {arc.tracked} season{arc.tracked === 1 ? "" : "s"} tracked{single ? " · more fills in as we follow him" : ""}
         </span>
+      </div>
+      <div style={{ fontFamily: BODY, fontSize: 12, color: A.mut, marginTop: 6, lineHeight: 1.5 }}>
+        How he&rsquo;s grown season to season. We track <b style={{ color: A.text }}>how efficiently he scores</b> and{" "}
+        <b style={{ color: A.text }}>his role</b> &mdash; not just raw points &mdash; so the growth is real, not just more shots.
       </div>
 
       <div style={{ marginTop: 12 }}>
@@ -137,9 +141,6 @@ export function DevelopmentArc({ arc }) {
       <div style={{ fontFamily: BODY, fontSize: 13, lineHeight: 1.55, color: A.textHi, marginTop: 14, paddingLeft: 12, borderLeft: `3px solid ${A.accent}` }}>
         {arc.read}
       </div>
-      {arc.seasons.some((s) => s.smallSample) && (
-        <div style={{ fontFamily: BODY, fontSize: 10.5, color: A.faint, marginTop: 8 }}>* small sample (&lt; 5 GP) — de-emphasized, not weighted as a peer season.</div>
-      )}
     </div>
   );
 }
@@ -171,21 +172,21 @@ export function BySeasonTable({ arc }) {
   const [open, setOpen] = useState(false);
   const th = { fontFamily: BODY, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: A.mut, padding: "8px 10px", textAlign: "right", whiteSpace: "nowrap" };
   const td = { ...num, fontSize: 13, color: A.text, padding: "8px 10px", textAlign: "right" };
-  const base = [["Season", "season"], ["GP", "gp"], ["PTS", "pts"], ["TS%", "ts"], ["A:TO", "atr"]];
-  const extra = [["per36 PTS", "p36"], ["REB", "reb"], ["AST", "ast"], ["eFG%", "efg"], ["MPG", "mpg"], ["Role", "role"]];
+  const base = [["Season", "season"], ["GP", "gp"], ["PTS", "pts"], ["REB", "reb"], ["AST", "ast"]];
+  const extra = [["TS%", "ts"], ["A:TO", "atr"], ["per-36 PTS", "p36"], ["eFG%", "efg"], ["Min/G", "mpg"], ["Role", "role"]];
   const cols = open ? [...base, ...extra] : base;
   const cell = (s, k) => {
     switch (k) {
-      case "season": return s.season + (s.smallSample ? " *" : "");
+      case "season": return s.season;
       case "gp": return s.gp;
       case "pts": return fmt1(s.raw.pts);
       case "ts": return fmtPct(s.derived.ts);
       case "atr": return s.derived.atr == null ? "—" : s.derived.atr.toFixed(1);
-      case "p36": return s.derived.per36.pts == null ? "n/a" : s.derived.per36.pts.toFixed(1);
+      case "p36": return s.derived.per36.pts == null ? "—" : s.derived.per36.pts.toFixed(1);
       case "reb": return fmt1(s.raw.reb);
       case "ast": return fmt1(s.raw.ast);
       case "efg": return fmtPct(s.derived.efg);
-      case "mpg": return s.mpg == null ? "n/a" : s.mpg.toFixed(1);
+      case "mpg": return s.mpg == null ? "—" : s.mpg.toFixed(1);
       case "role": return s.context.roleTag;
       default: return "";
     }
@@ -193,7 +194,7 @@ export function BySeasonTable({ arc }) {
   return (
     <div style={{ background: A.surface, border: `1px solid ${A.border}`, borderRadius: 12, padding: "16px 20px", fontFamily: BODY, color: A.text }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10 }}>
-        <Eyebrow>By Season · the receipts</Eyebrow>
+        <Eyebrow>By Season</Eyebrow>
         <button type="button" onClick={() => setOpen((v) => !v)} style={{ fontFamily: BODY, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: A.info, background: "transparent", border: `1px solid ${A.border}`, borderRadius: 6, padding: "5px 9px", cursor: "pointer" }}>{open ? "Less" : "Full stat set"}</button>
       </div>
       <div style={{ overflowX: "auto", marginTop: 10 }}>
@@ -203,7 +204,7 @@ export function BySeasonTable({ arc }) {
             {arc.seasons.map((s, ri) => {
               const latest = ri === arc.seasons.length - 1;
               return (
-                <tr key={s.season} style={{ borderTop: `1px solid ${A.border}`, background: latest ? "rgba(255, 106, 26,0.08)" : "transparent", opacity: s.smallSample ? 0.6 : 1 }}>
+                <tr key={s.season} style={{ borderTop: `1px solid ${A.border}`, background: latest ? "rgba(255, 106, 26,0.08)" : "transparent" }}>
                   {cols.map(([l, k], i) => (
                     <td key={k} style={{ ...td, textAlign: i === 0 ? "left" : "right",
                       color: i === 0 ? (latest ? A.accent : A.textHi) : (k === "gp" ? A.faint : k === "ts" ? A.accent : k === "role" ? A.mut : A.text),
@@ -226,10 +227,10 @@ export function BySeasonTable({ arc }) {
 export function ByTheNumbers({ arc }) {
   if (!arc.multiSeason) return null;
   const metrics = [
-    { l: "TS%", pick: (s) => s.derived.ts, suffix: "%" },
-    { l: "A:TO", pick: (s) => s.derived.atr },
-    { l: "per-36 PTS", pick: (s) => s.derived.per36.pts },
-    { l: "Eval", pick: (s) => s.eval?.composite ?? null },
+    { l: "Scoring efficiency", pick: (s) => s.derived.ts, suffix: "%" },
+    { l: "Assist-to-turnover", pick: (s) => s.derived.atr },
+    { l: "Scoring pace", pick: (s) => s.derived.per36.pts },
+    { l: "Prospera grade", pick: (s) => s.eval?.composite ?? null },
   ];
   const Spark = ({ ys }) => {
     const v = ys.filter((y) => y != null); if (v.length < 2) return <div style={{ height: 22 }} />;
@@ -271,8 +272,8 @@ export function YoYLeap({ arc }) {
   return (
     <div style={{ display: "inline-flex", gap: 14, alignItems: "center", fontFamily: BODY }}>
       <span style={{ fontFamily: DISPLAY, fontSize: 13, fontWeight: 700, textTransform: "uppercase", color: A.mut }}>{prev.season}→{latest.season}</span>
-      <span style={{ display: "inline-flex", gap: 5, alignItems: "center", fontSize: 11, color: A.mut }}>TS% {deltaChip(dTs, "%")}</span>
-      <span style={{ display: "inline-flex", gap: 5, alignItems: "center", fontSize: 11, color: A.mut }}>per-36 {deltaChip(dP)}</span>
+      <span style={{ display: "inline-flex", gap: 5, alignItems: "center", fontSize: 11, color: A.mut }}>Efficiency {deltaChip(dTs, "%")}</span>
+      <span style={{ display: "inline-flex", gap: 5, alignItems: "center", fontSize: 11, color: A.mut }}>Pace {deltaChip(dP)}</span>
     </div>
   );
 }
