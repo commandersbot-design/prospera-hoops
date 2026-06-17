@@ -20,6 +20,26 @@ const slugify = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-")
 const initials = (n) => (n || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 const r1 = (n) => (n == null || Number.isNaN(+n) ? "—" : (Math.round(+n * 10) / 10).toFixed(1));
 
+// Team → state (DC/MD/VA) from schoolLocations, and public/private classification.
+// Schedule data is single-context (Capitol Hoops), so we derive these from the
+// real school the team maps to; ambiguous summer-club teams stay untagged.
+const TEAM_STATE_OVERRIDE = { dematha: "MD" };
+const PRIVATE_TEAMS = new Set(["annapolisareachristian", "boyslatin", "bullis", "concordiaprep", "dematha", "flinthill", "glenelgcountry", "gonzaga", "goodcounsel", "johncarroll", "landon", "loyolablakefield", "newhopeacademy", "potomacschool", "spalding", "stjohnsdc", "stmarysannapolis", "ststephensstagnes", "severn", "bethelacademy", "somdchristian", "takomaacademy", "virginiaacademy", "sandyspring", "clintongrace"]);
+const teamLocCands = (name) => {
+  const paren = (String(name || "").match(/\(([^)]+)\)/) || [])[1];
+  const base = String(name || "").replace(/\s*\([^)]*\)/, "").trim();
+  return [base, paren, name].filter(Boolean);
+};
+function teamState(name, locByKey) {
+  const o = TEAM_STATE_OVERRIDE[nameKey(name)]; if (o) return o;
+  for (const c of teamLocCands(name)) { const v = locByKey[nameKey(c)]; if (v && v.state) return v.state; }
+  return null;
+}
+function teamType(name, locByKey) {
+  for (const c of teamLocCands(name)) { if (PRIVATE_TEAMS.has(nameKey(c))) return "Private"; }
+  return teamState(name, locByKey) ? "Public" : null;
+}
+
 // ---- shared: Scout Card (matches prototype .scout) -------------------------
 function ScoutCard({ p, portrait, onClick }) {
   return (
@@ -702,7 +722,17 @@ function useWatchlist() {
 function TeamsView({ data, openTeam }) {
   const [q, setQ] = useState("");
   const [mode, setMode] = useState("teams"); // teams | schedule
-  const list = useMemo(() => { const k = q.trim().toLowerCase(); return data.teams.filter((t) => (!k || t.name.toLowerCase().includes(k))); }, [q, data.teams]);
+  const [states, setStates] = useState([]);
+  const [types, setTypes] = useState([]);
+  const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
+  const list = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    return data.teams.filter((t) =>
+      (!k || t.name.toLowerCase().includes(k)) &&
+      (!states.length || (t.state && states.includes(t.state))) &&
+      (!types.length || (t.type && types.includes(t.type))));
+  }, [q, states, types, data.teams]);
   const teamNames = useMemo(() => new Set(data.teams.map((t) => t.name.toLowerCase())), [data.teams]);
   const games = useMemo(() => {
     const k = q.trim().toLowerCase();
@@ -714,24 +744,45 @@ function TeamsView({ data, openTeam }) {
   }, [q, data.schedule]);
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
-      <div className="hello">Teams</div>
-      <div className="sub">{data.teams.length} teams · Capitol Hoops Summer League &amp; DMV programs</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <div className="keye">Teams</div>
+          <div className="sub" style={{ marginTop: 4 }}>{data.teams.length} teams · Capitol Hoops Summer League &amp; DMV programs</div>
+        </div>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={mode === "teams" ? "Search a team…" : "Search the schedule…"} style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
+      </div>
 
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", margin: "14px 0 4px" }}>
+      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", margin: "16px 0 8px", alignItems: "center" }}>
         <FilterChip on={mode === "teams"} onClick={() => setMode("teams")}>Teams</FilterChip>
         <FilterChip on={mode === "schedule"} onClick={() => setMode("schedule")}>Schedule</FilterChip>
+        {mode === "teams" && <>
+          {divider}
+          {["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}
+          {divider}
+          {["Public", "Private"].map((t) => <FilterChip key={t} on={types.includes(t)} onClick={() => tog(types, setTypes, t)}>{t}</FilterChip>)}
+        </>}
       </div>
-      <div className="csearch" style={{ marginTop: 10 }}><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={mode === "teams" ? "Search a team…" : "Search by team in the schedule…"} /></div>
 
       {mode === "teams" ? (
-        <div className="anat" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", marginTop: 4 }}>
+        <>
+          <div style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".12em", fontSize: 12, color: "var(--faint)", margin: "16px 0 6px" }}>{list.length} {list.length === 1 ? "team" : "teams"}</div>
           {list.length ? list.map((t) => (
-            <div className="feat" key={t.slug} style={{ cursor: "pointer" }} onClick={() => openTeam(t)}>
-              <p className="ft">{t.name}</p>
-              <p>{t.n} players{t.top ? ` · top scorer ${t.top.name} (${r1(t.top.ppg)} PPG)` : ""}</p>
+            <div key={t.slug} onClick={() => openTeam(t)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+              <div className="rav" style={{ width: 42, height: 42 }}>{initials(t.name)}</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{t.name}</span>
+                  {t.state ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--faint)", border: "1px solid var(--line)", borderRadius: 4, padding: "1px 5px" }}>{t.state}{t.type ? ` · ${t.type}` : ""}</span> : null}
+                </div>
+                <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[`${t.n} players`, t.top && `top scorer ${t.top.name}`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 15 }}>{t.top ? r1(t.top.ppg) : "—"}</div>
+                <div style={{ fontSize: 9.5, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".05em" }}>top ppg</div>
+              </div>
             </div>
-          )) : <p style={{ fontSize: 13, color: "var(--faint)", gridColumn: "1/-1" }}>No teams match those filters.</p>}
-        </div>
+          )) : <p style={{ fontSize: 13, color: "var(--faint)", marginTop: 12 }}>No teams match those filters.</p>}
+        </>
       ) : (
         <div className="card" style={{ marginTop: 4 }}>
           <p className="ttl">Capitol Hoops Summer League · schedule &amp; results</p>
@@ -1122,8 +1173,10 @@ function useData() {
       fetch("/data/capitolHoops.json").then((r) => r.json()).catch(() => ({ teams: {} })),
       fetch("/data/dmvSchools.json").then((r) => r.ok ? r.json() : { schools: [] }).catch(() => ({ schools: [] })),
       fetch("/data/gameLogs.json").then((r) => r.ok ? r.json() : { players: {} }).catch(() => ({ players: {} })),
-    ]).then(([pj, ch, sc, gj]) => {
+      fetch("/data/schoolLocations.json").then((r) => r.ok ? r.json() : {}).catch(() => ({})),
+    ]).then(([pj, ch, sc, gj, loc]) => {
       const sj = { games: SCHEDULE_DATA.games || SCHEDULE_DATA };
+      const locByKey = {}; for (const [nm, v] of Object.entries(loc || {})) locByKey[nameKey(nm)] = v;
       const prospects = pj.prospects || pj;
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
       const gl = gj.players || {};
@@ -1184,7 +1237,7 @@ function useData() {
           .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
         const ln = (t.name || "").toLowerCase();
         const ctx = /hayfield/.test(ln) ? "HS" : (/\bakt\b|warriors|3ssb|\baau\b/.test(ln) ? "AAU" : "SUMMER");
-        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length, ctx };
+        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length, ctx, state: teamState(t.name, locByKey), type: teamType(t.name, locByKey) };
       }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
       const schedule = (sj.games || []);
       setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey });
