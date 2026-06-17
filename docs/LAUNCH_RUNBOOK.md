@@ -38,17 +38,18 @@ Free tiers work without this (claim, profiles, Coach HQ via pilot codes). To ena
 
 ---
 
+## Closed before launch (parity)
+- ✅ **HS-season stats** — profile "High school" tab now populates from teamStats.json.
+- ✅ **News ticker** ("Live Wire") on the landing — news.json + auto top performances.
+- ✅ **Leaders** — public leaderboards at /leaders (PPG/RPG/APG/SPG/BPG/3P%/TS%).
+
 ## Known gaps vs the old production app (fast-follow, not blockers)
-Peripheral surfaces the old app had that the rebuild does not yet:
 - **DMV Map** (ProspectMap / Leaflet) — geocoded school map.
-- **News ticker** (src/data/news.json) — "Live Wire".
 - **Recaps feed** (public/data/gameRecaps.json).
-- **Leaders** standings view (Coach HQ has league leaders; no public Leaders page).
-- **Classes** browse-by-grad-year (Prospects has a Class filter that covers most of this).
-- **Commitments** tracker (data currently shows ~0 commitments).
+- **Classes** browse-by-grad-year (Prospects has a Class filter that already covers most of this).
+- **Commitments** tracker (data currently shows ~0 commitments — low value until data lands).
 - **Profile Film** wiring (src/data/prospectFilm.json) — currently a placeholder.
-- **HS-season stats** (src/data/teamStats.json) — the profile "High school" context tab.
 - **Richer recruiting-rankings** card (stars/national·state·position + service links) for the ~21 ranked players.
 - **Profile editor / claimed-overlay / admin-claims** UI (claim works; in-app editing does not yet).
 
-Recommended order to close post-launch: Recaps + News ticker (engagement) → Leaders + Classes (cheap) → Film + HS-season stats + recruiting card (profile depth) → Map → Profile editor.
+Recommended order to close post-launch: Recaps (engagement) → Film + recruiting card (profile depth) → Map → Profile editor.
