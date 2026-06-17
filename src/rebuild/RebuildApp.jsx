@@ -1021,7 +1021,7 @@ function CoachLock({ feature, user, go, redeem }) {
 function CoachHQ({ data, openPlayer, go }) {
   const wl = useWatchlist();
   const { user, isAdmin } = useAuth();
-  const { hasPass, redeem } = useCoachAccess();
+  const { hasPass, redeem, pass } = useCoachAccess();
   const [coachEnt, setCoachEnt] = useState(false);
   useEffect(() => { let live = true; if (user) hasCoach().then((v) => { if (live) setCoachEnt(v); }).catch(() => {}); else setCoachEnt(false); return () => { live = false; }; }, [user]);
   const unlocked = isAdmin || hasPass || coachEnt;
@@ -1049,7 +1049,7 @@ function CoachHQ({ data, openPlayer, go }) {
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div className="hello">Coach HQ</div>
-        {unlocked ? <span className="ctx">{isAdmin ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
+        {unlocked ? <span className="ctx">{isAdmin || pass?.tier === "owner" ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
           : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>Coach tier · $19/mo</span>}
       </div>
       <div className="sub">Scout opponents, build matchups, and run your team — your whole sideline brain, in one place.</div>
