@@ -21,6 +21,7 @@ import AdminClaims from "./components/AdminClaims";
 import { buildArchetypeCohort, archetypeForPlayer, LEVEL_WEIGHT, LEVEL_LABEL, LEVEL_NOTE } from "./lib/archetype";
 import StatLine, { seasonStatLine } from "./components/StatLine";
 import ScoutHQ from "./components/ScoutHQ";
+import LandingHero from "./components/LandingHero";
 import { topPerformances } from "./lib/highlights";
 
 // The map module pulls in Leaflet + markercluster + their CSS. Lazy-load it so
@@ -3304,7 +3305,22 @@ export default function App() {
         {open ? (
           <Profile prospect={open} onBack={() => { setOpenId(null); clearDeepLink(); }} onOpen={setOpenId} />
         ) : view === "home" ? (
-          <HomeLanding onOpenProfile={setOpenId} onGoView={goView} teamsCount={workspaceTeams.length} />
+          <>
+            {/* Rebuild §4.1 — graphite hero + Scout Card. Old board sits below until re-skinned. */}
+            <div style={{ background: "var(--graphite)", border: "1px solid var(--line)", borderRadius: 18, padding: isMobile ? "26px 18px" : "34px 30px", marginBottom: 22 }}>
+              <LandingHero
+                featured={{
+                  name: "Christian Towe", headshot: "/headshots/christiantowe.jpg",
+                  meta: "PG · Hayfield Secondary · Class of '27", statsVerified: true,
+                  stats: [{ label: "PPG", value: "19.8", pct: 88 }, { label: "RPG", value: "6.2", pct: 76 }, { label: "APG", value: "3.0", pct: 71 }],
+                  arc: [12, 14, 13, 17, 19.8],
+                }}
+                onClaim={() => { const t = PROSPECT_BY_NAMEKEY[nameKey("Christian Towe")]; if (t) setOpenId(t.id); }}
+                onSearch={() => goView("prospects")}
+              />
+            </div>
+            <HomeLanding onOpenProfile={setOpenId} onGoView={goView} teamsCount={workspaceTeams.length} />
+          </>
         ) : view === "prospects" ? (
           <ProspectsBoard prospects={workspaceProspects} onOpen={setOpenId} />
         ) : view === "summer" ? (
