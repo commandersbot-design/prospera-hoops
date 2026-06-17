@@ -83,7 +83,7 @@ function Header({ view, go, account }) {
     <header className="hd"><div className="hd-in">
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}<a onClick={() => go("landing")}>Board</a>{tab("coach", "Teams")}
+        {tab("landing", "Home")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {account ? <div className="av" onClick={() => go("dash")}>{initials(account.name)}</div>
@@ -284,29 +284,131 @@ function Dashboard({ go }) {
   );
 }
 
-// ---- COACH HQ --------------------------------------------------------------
+// ---- watchlist (localStorage) ---------------------------------------------
+function useWatchlist() {
+  const [ids, setIds] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_watch") || "[]"); } catch { return []; } });
+  const save = (next) => { setIds(next); try { localStorage.setItem("ph_watch", JSON.stringify(next)); } catch (e) { /* ignore */ } };
+  return { ids, has: (id) => ids.includes(id), toggle: (id) => save(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]) };
+}
+
+// ---- TEAMS — directory + detail -------------------------------------------
+function TeamsView({ data, openTeam }) {
+  const [q, setQ] = useState("");
+  const list = useMemo(() => { const k = q.trim().toLowerCase(); return data.teams.filter((t) => !k || t.name.toLowerCase().includes(k)); }, [q, data.teams]);
+  return (
+    <div className="wrap" style={{ paddingTop: 24 }}>
+      <div className="hello">Teams</div>
+      <div className="sub">{data.teams.length} teams · Capitol Hoops Summer League &amp; DMV programs</div>
+      <div className="csearch"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a team…" /></div>
+      <div className="anat" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", marginTop: 4 }}>
+        {list.map((t) => (
+          <div className="feat" key={t.slug} style={{ cursor: "pointer" }} onClick={() => openTeam(t)}>
+            <p className="ft">{t.name}</p>
+            <p>{t.n} players{t.top ? ` · top scorer ${t.top.name} (${r1(t.top.ppg)} PPG)` : ""}</p>
+          </div>
+        ))}
+      </div>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
+function TeamDetail({ team, schedule, openPlayer, back }) {
+  const games = useMemo(() => {
+    const nm = team.name.toLowerCase();
+    return (schedule || []).filter((g) => (g.home || "").toLowerCase() === nm || (g.away || "").toLowerCase() === nm)
+      .sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 12);
+  }, [team, schedule]);
+  return (
+    <div className="wrap" style={{ paddingTop: 24 }}>
+      <a onClick={back} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700 }}>← Teams</a>
+      <div className="hello" style={{ marginTop: 8 }}>{team.name}</div>
+      <div className="sub">{team.n} players{team.coach ? ` · Coach ${team.coach}` : ""}</div>
+      <div className="pf-grid" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
+        <div className="card">
+          <p className="ttl">Roster &amp; stats</p>
+          <table className="board"><tbody>
+            <tr><th>Player</th><th>Pos</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
+            {team.players.map((p) => (
+              <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.pos || "—"}</td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td></tr>
+            ))}
+          </tbody></table>
+        </div>
+        <div className="card">
+          <p className="ttl">Schedule &amp; results</p>
+          {games.length ? (
+            <table className="log"><tbody>
+              <tr><th>Date</th><th>Opp</th><th>Result</th></tr>
+              {games.map((g, i) => { const home = (g.home || "").toLowerCase() === team.name.toLowerCase(); const opp = home ? g.away : g.home; const fin = g.status === "final" && g.homeScore != null; const us = home ? g.homeScore : g.awayScore, them = home ? g.awayScore : g.homeScore; return (
+                <tr key={i}><td>{(g.dateLabel || g.date || "").replace(/,?\s*\d{4}$/, "")}</td><td>{home ? "vs " : "@ "}{opp}</td><td>{fin ? <b style={{ color: us > them ? "var(--teal)" : "var(--muted)" }}>{us > them ? "W" : "L"} {us}–{them}</b> : (g.time || "—")}</td></tr>
+              ); })}
+            </tbody></table>
+          ) : <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No scheduled games found for this team.</p>}
+        </div>
+      </div>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
+// ---- COACH HQ — full features ---------------------------------------------
 function CoachHQ({ data, openPlayer }) {
-  const board = data.players.slice(0, 6);
+  const wl = useWatchlist();
+  const [oppSlug, setOppSlug] = useState("");
+  const [q, setQ] = useState("");
+  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_notes") || ""; } catch { return ""; } });
+  const opp = data.teams.find((t) => t.slug === oppSlug) || null;
+  const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 40); }, [q, data.players]);
+  const watchPlayers = data.players.filter((p) => wl.has(p.id));
+  const teamAvg = (t, k) => t.players.length ? (t.players.reduce((s, p) => s + (p[k] || 0), 0) / t.players.length).toFixed(1) : "—";
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div className="hello">Coach HQ</div>
-      <div className="sub">Scout every opponent before tip-off.</div>
-      <div className="csearch"><input placeholder="Search players or opponents…" /><button className="cbtn">Search</button></div>
-      <div className="ctools">
-        <div className="card"><p className="ttl">Scout an opponent</p>
-          <p style={{ fontSize: 13, color: "var(--muted)", margin: "0 0 12px" }}>Pull a full breakdown — tendencies, top scorers, and a matchup plan for your next game.</p>
-          <button className="cbtn" style={{ padding: "10px 16px" }}>Build a matchup →</button>
+      <div className="sub">Scout every opponent before tip-off. <span className="ctx" style={{ marginLeft: 6 }}>Free this season</span></div>
+
+      <div className="ctools" style={{ marginTop: 14 }}>
+        <div className="card">
+          <p className="ttl">Scout an opponent</p>
+          <select value={oppSlug} onChange={(e) => setOppSlug(e.target.value)} style={{ ...inp, width: "100%", fontSize: 14, padding: "12px 14px", marginBottom: 12 }}>
+            <option value="">Choose a team…</option>
+            {data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
+          </select>
+          {opp ? (
+            <div>
+              <div className="cov" style={{ margin: "0 0 12px" }}>
+                <div className="covchip"><b>{teamAvg(opp, "ppg")}</b><span>Avg PPG / player</span></div>
+                <div className="covchip"><b>{opp.n}</b><span>Rostered</span></div>
+              </div>
+              <p className="ttl" style={{ margin: "4px 0 8px" }}>Top scorers to game-plan around</p>
+              <table className="log"><tbody>
+                <tr><th>Player</th><th>PPG</th><th>RPG</th><th>APG</th><th /></tr>
+                {opp.players.slice(0, 6).map((p) => (
+                  <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ Watching" : "+ Watch"}</span></td></tr>
+                ))}
+              </tbody></table>
+            </div>
+          ) : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick a team to pull their roster, scoring averages, and the players to plan around.</p>}
         </div>
-        <div className="card"><p className="ttl">Your watchlist</p>
-          {board.slice(0, 3).map((p) => <div className="wl" key={p.id}><span className="n">{p.name}</span><span className="s">{p.lead} {p.leadK} · {p.cls || ""}</span></div>)}
+        <div className="card">
+          <p className="ttl">Your watchlist ({watchPlayers.length})</p>
+          {watchPlayers.length ? watchPlayers.map((p) => (
+            <div className="wl" key={p.id}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
+          )) : <p style={{ fontSize: 12.5, color: "var(--faint)", margin: 0 }}>No players yet — add from the board or an opponent report.</p>}
+          <p className="ttl" style={{ margin: "16px 0 8px" }}>Private notes</p>
+          <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_notes", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Scouting notes, game plan…" style={{ ...inp, width: "100%", minHeight: 80, fontSize: 13, padding: 10, resize: "vertical" }} />
         </div>
       </div>
+
       <div className="card" style={{ marginTop: 14 }}>
-        <p className="ttl">The board</p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+          <p className="ttl" style={{ margin: 0 }}>The board</p>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search players or schools…" style={{ ...inp, fontSize: 13, padding: "8px 12px", minWidth: 220 }} />
+        </div>
         <table className="board"><tbody>
-          <tr><th>Player</th><th>Team</th><th>Class</th><th>Key stat</th><th /></tr>
+          <tr><th>Player</th><th>Team</th><th>Class</th><th>PPG</th><th /></tr>
           {board.map((p) => (
-            <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.cls || "—"}</td><td>{p.lead} {p.leadK}</td><td><span className="add">+ Watchlist</span></td></tr>
+            <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.school}</td><td>{p.cls || "—"}</td><td>{p.lead}</td><td><span className="add" onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ Watching" : "+ Watchlist"}</span></td></tr>
           ))}
         </tbody></table>
       </div>
@@ -323,7 +425,8 @@ function useData() {
       fetch("/data/prospects.json").then((r) => r.json()).catch(() => ({ prospects: [] })),
       fetch("/data/capitolHoops.json").then((r) => r.json()).catch(() => ({ teams: {} })),
       fetch("/data/dmvSchools.json").then((r) => r.ok ? r.json() : { schools: [] }).catch(() => ({ schools: [] })),
-    ]).then(([pj, ch, sc]) => {
+      fetch("/data/schedule.json").then((r) => r.ok ? r.json() : { games: [] }).catch(() => ({ games: [] })),
+    ]).then(([pj, ch, sc, sj]) => {
       const prospects = pj.prospects || pj;
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
       // Flatten capitolHoops players with a lead stat for marquee/board.
@@ -368,7 +471,16 @@ function useData() {
         summer: Object.keys(ch.teams || {}).length,
         hs: (sc.schools || sc || []).length || 0,
       };
-      setData({ players: all, featured, cov });
+      // Teams with rosters (for the Teams view + Coach HQ opponent scouting).
+      const teams = Object.entries(ch.teams || {}).map(([slug, t]) => {
+        const players = (t.players || [])
+          .filter((p) => p.stats && p.stats.gp > 0 && p.stats.ppg != null)
+          .map((p) => { const pr = prByKey[nameKey(p.name)]; return { id: pr?.id || nameKey(p.name), name: p.name, pos: p.position, cls: (pr?.gradYear || p.classYear) ? `'${String(pr?.gradYear || p.classYear).slice(2)}` : "", headshot: pr?.headshot || null, ...p.stats }; })
+          .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
+        return { slug, name: t.name, coach: t.headCoach || null, players, top: players[0] || null, n: players.length };
+      }).filter((t) => t.n > 0).sort((a, b) => a.name.localeCompare(b.name));
+      const schedule = (sj.games || []);
+      setData({ players: all, featured, cov, teams, schedule });
     });
   }, []);
   return data;
@@ -377,9 +489,11 @@ function useData() {
 export default function RebuildApp() {
   const [view, setView] = useState("landing");
   const [selected, setSelected] = useState(null);
+  const [team, setTeam] = useState(null);
   const data = useData();
   const go = (v) => { setView(v); window.scrollTo(0, 0); };
   const openPlayer = (p) => { setSelected(p); setView("profile"); window.scrollTo(0, 0); };
+  const openTeam = (t) => { setTeam(t); setView("teamDetail"); window.scrollTo(0, 0); };
 
   if (!data) return <div className="rebuild" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--muted)", fontFamily: "var(--disp)", letterSpacing: ".2em", textTransform: "uppercase", fontSize: 12 }}>Loading the board…</div>;
 
@@ -389,6 +503,8 @@ export default function RebuildApp() {
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
       {view === "profile" && <PublicProfile player={selected || data.featured} go={go} />}
       {view === "dash" && <Dashboard go={go} />}
+      {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
+      {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
       {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} />}
     </div>
   );
