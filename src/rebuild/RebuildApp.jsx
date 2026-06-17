@@ -139,7 +139,7 @@ function Header({ view, go }) {
     <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {user ? <>
@@ -153,7 +153,7 @@ function Header({ view, go }) {
       </div>
       {menuOpen && (
         <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
-          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
             : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
@@ -268,7 +268,7 @@ function Landing({ data, go, openPlayer }) {
 
       <footer><div className="wrap">
         <div className="stamp">The DMV&rsquo;s <b>home court</b></div>
-        <div className="fmore"><a>Map</a><a>Classes</a><a>Commitments</a><a>Recaps</a></div>
+        <div className="fmore"><a onClick={() => go("leaders")}>Leaders</a><a onClick={() => go("prospects")}>Classes</a><a onClick={() => go("recaps")}>Recaps</a></div>
         <div className="fnote">Real stats. No fake rankings. No hype.</div>
         <div className="fnote" style={{ marginTop: 8 }}>Missing a player headshot? Email <a href={`mailto:${HEADSHOT_EMAIL}`} style={{ color: "var(--orange)", fontWeight: 700 }}>{HEADSHOT_EMAIL}</a> to add or update one.</div>
       </div></footer>
@@ -1459,8 +1459,11 @@ function useData() {
       fetch("/data/dmvSchools.json").then((r) => r.ok ? r.json() : { schools: [] }).catch(() => ({ schools: [] })),
       fetch("/data/gameLogs.json").then((r) => r.ok ? r.json() : { players: {} }).catch(() => ({ players: {} })),
       fetch("/data/schoolLocations.json").then((r) => r.ok ? r.json() : {}).catch(() => ({})),
-    ]).then(([pj, ch, sc, gj, loc]) => {
+      fetch("/data/gameRecaps.json").then((r) => r.ok ? r.json() : { recaps: [] }).catch(() => ({ recaps: [] })),
+    ]).then(([pj, ch, sc, gj, loc, rc]) => {
       const sj = { games: SCHEDULE_DATA.games || SCHEDULE_DATA };
+      const recaps = (rc.recaps || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+      const recapSource = rc._source || "Capitol Hoops Summer League";
       const locByKey = {}; for (const [nm, v] of Object.entries(loc || {})) locByKey[nameKey(nm)] = v;
       const prospects = pj.prospects || pj;
       const prByKey = Object.fromEntries(prospects.map((p) => [nameKey(p.name || p.id), p]));
@@ -1537,7 +1540,7 @@ function useData() {
       const newsHand = (NEWS_DATA.items || []).map((it) => ({ text: it.headline, url: it.url || null, player: it.prospectId ? (all.find((p) => p.id === it.prospectId) || null) : null }));
       const newsPerf = [...all].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 8).map((p) => ({ text: `${p.name} — ${r1(p.ppg)} PPG this summer for ${cleanOpp(p.school)}`, player: p }));
       const news = [...newsHand, ...newsPerf];
-      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news });
+      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news, recaps, recapSource });
     });
   }, []);
   return data;
@@ -1668,8 +1671,40 @@ function LeadersView({ data, openPlayer }) {
   );
 }
 
+// ---- RECAPS — game previews/recaps, reported by Capitol Hoops (credited) ----
+function RecapsView({ data }) {
+  const recaps = data.recaps || [];
+  const source = "Capitol Hoops Summer League";
+  return (
+    <div className="wrap" style={{ paddingTop: 24 }}>
+      <div className="keye">Recaps</div>
+      <div className="sub" style={{ marginTop: 4 }}>Game previews &amp; recaps, reported by <b style={{ color: "var(--ink)" }}>{source}</b>. We link to the source — all credit to their writers.</div>
+      {recaps.length === 0 ? <p style={{ fontSize: 13, color: "var(--faint)", marginTop: 18 }}>No recaps yet.</p> : (
+        <div className="anat" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", marginTop: 18 }}>
+          {recaps.map((r) => (
+            <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="feat" style={{ display: "block", overflow: "hidden", padding: 0 }}>
+              {r.image && <div style={{ height: 150, background: `#10141b url("${r.image}") center/cover no-repeat` }} />}
+              <div style={{ padding: 16 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
+                  <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", background: r.type === "recap" ? "rgba(47,191,143,.15)" : "rgba(59,158,255,.15)", color: r.type === "recap" ? "var(--teal)" : "var(--blue)", borderRadius: 5, padding: "2px 7px", fontWeight: 700 }}>{r.type || "story"}</span>
+                  <span style={{ fontSize: 11, color: "var(--faint)" }}>{r.date}</span>
+                </div>
+                <p className="ft" style={{ fontSize: 14.5, lineHeight: 1.25, marginBottom: 8 }}>{r.title}</p>
+                {r.excerpt && <p style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.5, margin: "0 0 10px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{r.excerpt}</p>}
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--orange)" }}>Read on Capitol Hoops →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+      <div style={{ fontSize: 11.5, color: "var(--faint)", marginTop: 22, lineHeight: 1.5 }}>Previews &amp; recaps are written and published by {source}. Prospera Hoops links to the original articles and claims no authorship.</div>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -1706,6 +1741,7 @@ export default function RebuildApp() {
       {view === "profile" && <PublicProfile player={selected || data.featured} data={data} go={go} />}
       {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
       {view === "leaders" && <LeadersView data={data} openPlayer={openPlayer} />}
+      {view === "recaps" && <RecapsView data={data} />}
       {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
