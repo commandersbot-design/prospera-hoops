@@ -24,7 +24,7 @@ const TEAMS = [
   ["flint-hill", "Flint Hill"], ["forest-park", "Forest Park"], ["glenelg-country", "Glenelg Country"],
   ["gonzaga", "Gonzaga"], ["good-counsel", "Good Counsel"], ["good-fellas-oxon-hill", "Good Fellas (Oxon Hill)"],
   ["greenbelt-eleanor-roosevelt", "Greenbelt (Eleanor Roosevelt)"], ["grindhouse-huntingtown", "GrindHouse (Huntingtown)"],
-  ["hawks-hayfield", "Hawks (Hayfield)"], ["heritage", "Heritage"], ["jfk-kennedy", "JFK (Kennedy)"],
+  ["hawks-hayfield", "Hayfield Secondary"], ["heritage", "Heritage"], ["jfk-kennedy", "JFK (Kennedy)"],
   ["john-carroll", "John Carroll"], ["john-handley", "John Handley"], ["landon", "Landon"],
   ["loyola-blakefield", "Loyola Blakefield"], ["mustangs-meade", "Mustangs (Meade)"],
   ["new-hope-academy", "New Hope Academy"], ["patriot", "Patriot"], ["patriots-wootton", "Patriots (Wootton)"],
