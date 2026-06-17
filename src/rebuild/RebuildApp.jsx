@@ -836,20 +836,37 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
     return (schedule || []).filter((g) => (g.home || "").toLowerCase() === nm || (g.away || "").toLowerCase() === nm)
       .sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 12);
   }, [team, schedule]);
+  const ROSTER_COLS = [
+    { k: "gp", l: "GP" }, { k: "ppg", l: "PPG", tone: "ppg" }, { k: "rpg", l: "RPG", tone: "rpg" }, { k: "apg", l: "APG", tone: "apg" },
+    { k: "spg", l: "SPG", tone: "spg" }, { k: "bpg", l: "BPG", tone: "bpg" }, { k: "fgPct", l: "FG%", tone: "fgPct", pct: true }, { k: "threePct", l: "3P%", tone: "threePct", pct: true }, { k: "tsPct", l: "TS%", tone: "tsPct", pct: true },
+  ];
+  const [sort, setSort] = useState({ k: "ppg", dir: -1 });
+  const sorted = useMemo(() => [...team.players].sort((a, b) => (((a[sort.k] ?? -1) - (b[sort.k] ?? -1)) * sort.dir)), [team.players, sort]);
+  const setSortKey = (k) => setSort((s) => (s.k === k ? { k, dir: -s.dir } : { k, dir: -1 }));
+  const arrow = (k) => (sort.k === k ? (sort.dir < 0 ? " ▾" : " ▴") : "");
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <a onClick={back} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700 }}>← Teams</a>
       <div className="hello" style={{ marginTop: 8 }}>{team.name}</div>
-      <div className="sub">{team.n} players{team.coach ? ` · Coach ${team.coach}` : ""}</div>
-      <div className="pf-grid" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
+      <div className="sub">{team.n} players{team.coach ? ` · Coach ${team.coach}` : ""}{team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}</div>
+      <div className="pf-grid" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
         <div className="card">
-          <p className="ttl">Roster &amp; stats</p>
-          <table className="board"><tbody>
-            <tr><th>Player</th><th>Pos</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
-            {team.players.map((p) => (
-              <tr key={p.id}><td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</b></td><td>{p.pos || "—"}</td><td>{r1(p.ppg)}</td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td></tr>
-            ))}
-          </tbody></table>
+          <p className="ttl">Roster &amp; stats <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· tap a column to sort</span></p>
+          <div style={{ overflowX: "auto" }}>
+            <table className="board"><tbody>
+              <tr>
+                <th>Player</th><th>Pos</th>
+                {ROSTER_COLS.map((c) => <th key={c.k} onClick={() => setSortKey(c.k)} style={{ cursor: "pointer", whiteSpace: "nowrap", color: sort.k === c.k ? "var(--orange)" : undefined }}>{c.l}{arrow(c.k)}</th>)}
+              </tr>
+              {sorted.map((p) => (
+                <tr key={p.id}>
+                  <td><b onClick={() => openPlayer(p)} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>{p.name}</b></td>
+                  <td>{p.pos || "—"}</td>
+                  {ROSTER_COLS.map((c) => <td key={c.k} style={{ color: c.tone ? statTone(c.tone, p[c.k]) : "var(--muted)", fontWeight: sort.k === c.k ? 700 : 400, fontVariantNumeric: "tabular-nums" }}>{p[c.k] == null ? "—" : (c.pct ? `${r1(p[c.k])}%` : r1(p[c.k]))}</td>)}
+                </tr>
+              ))}
+            </tbody></table>
+          </div>
         </div>
         <div className="card">
           <p className="ttl">Schedule &amp; results</p>
@@ -1001,14 +1018,19 @@ function useLineups() {
 
 function LineupSide({ data, ids, setIds, label, lineups }) {
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState(null);
   const [name, setName] = useState("");
   const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
   const sel = ids.map((id) => (id ? byId[id] : null));
   const sum = (k) => sel.filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
   const filled = sel.filter(Boolean).length;
-  const fillFirst = (pid) => { const i = ids.findIndex((s) => !s); if (i >= 0) { const n = [...ids]; n[i] = pid; setIds(n); setQ(""); } };
+  const setSlot = (i, pid) => { const n = [...ids]; n[i] = pid; setIds(n); setEditing(null); setQ(""); };
   const clear = (i) => { const n = [...ids]; n[i] = null; setIds(n); };
-  const results = q.trim().length >= 2 ? data.players.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()) && !ids.includes(p.id)).slice(0, 6) : [];
+  const results = useMemo(() => {
+    const k = q.trim().toLowerCase();
+    const pool = data.players.filter((p) => !ids.includes(p.id));
+    return (k ? pool.filter((p) => p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) : [...pool].sort((a, b) => (b.ppg || 0) - (a.ppg || 0))).slice(0, 8);
+  }, [q, ids, data.players]);
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 9, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   return (
     <div>
@@ -1016,27 +1038,29 @@ function LineupSide({ data, ids, setIds, label, lineups }) {
       <div style={{ display: "grid", gap: 6 }}>
         {POSITIONS.map((pos, i) => {
           const p = sel[i];
+          const active = editing === i;
           return (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "30px 1fr auto", gap: 9, alignItems: "center", padding: "8px 10px", borderRadius: 9, border: `1px solid ${p ? "var(--line)" : "rgba(244,242,237,.06)"}`, background: p ? "var(--surface)" : "transparent" }}>
-              <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)" }}>{pos}</span>
-              {p ? <>
-                <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 9 }}><b style={{ fontFamily: "var(--disp)", fontSize: 14, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b><span className="add" onClick={() => clear(i)}>✕</span></span>
-              </> : <span style={{ color: "var(--faint)", fontSize: 12, gridColumn: "2 / span 2" }}>Empty — add a {pos === "C" ? "center" : pos === "PG" ? "point guard" : "player"}</span>}
+            <div key={i}>
+              <div onClick={() => { setEditing(active ? null : i); setQ(""); }} style={{ display: "grid", gridTemplateColumns: "30px 1fr auto", gap: 9, alignItems: "center", padding: "9px 10px", borderRadius: 9, cursor: "pointer", border: `1px solid ${active ? "var(--orange)" : p ? "var(--line)" : "rgba(244,242,237,.08)"}`, background: p || active ? "var(--surface)" : "transparent" }}>
+                <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)" }}>{pos}</span>
+                {p ? <>
+                  <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 13.5, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 9 }}><b style={{ fontFamily: "var(--disp)", fontSize: 14, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b><span className="add" onClick={(e) => { e.stopPropagation(); clear(i); }}>✕</span></span>
+                </> : <span style={{ color: active ? "var(--orange)" : "var(--faint)", fontSize: 12, gridColumn: "2 / span 2" }}>{active ? "Choose a player ↓" : `+ Select a ${pos === "C" ? "center" : pos === "PG" ? "point guard" : pos}`}</span>}
+              </div>
+              {active && (
+                <div style={{ margin: "5px 0 2px" }}>
+                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search any player for ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
+                  <div style={{ background: "var(--raised)", border: "1px solid var(--line)", borderRadius: 10, marginTop: 4, overflow: "hidden", maxHeight: 230, overflowY: "auto" }}>
+                    {results.map((r) => <div key={r.id} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
+                    {results.length === 0 && <div style={{ padding: "9px 11px", fontSize: 12, color: "var(--faint)" }}>No players match.</div>}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
-      {filled < 5 && (
-        <div style={{ position: "relative", marginTop: 8 }}>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a player to add…" style={{ ...inp, width: "100%", fontSize: 13, padding: "9px 12px" }} />
-          {results.length > 0 && (
-            <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "var(--raised)", border: "1px solid var(--line)", borderRadius: 10, marginTop: 4, zIndex: 20, overflow: "hidden" }}>
-              {results.map((p) => <div key={p.id} onClick={() => fillFirst(p.id)} style={{ padding: "9px 11px", cursor: "pointer", fontSize: 13, borderBottom: "1px solid var(--line)" }}>{p.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r1(p.ppg)} ppg · {cleanOpp(p.school)}</span></div>)}
-            </div>
-          )}
-        </div>
-      )}
       <div style={{ display: "flex", gap: 18, marginTop: 14 }}>
         {[["PPG", "ppg"], ["RPG", "rpg"], ["APG", "apg"]].map(([l, k]) => <div key={k}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 19, color: "var(--ink)" }}>{r1(sum(k))}</div><div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", marginTop: 2 }}>{l}</div></div>)}
       </div>
@@ -1091,24 +1115,46 @@ function FiveOnFive({ data }) {
   );
 }
 
+function statsFor(data, p) {
+  if (!p) return null;
+  const key = p.key || nameKey(p.name);
+  const pros = (data.prByKey && data.prByKey[key]) || {};
+  const games = (data.gl && data.gl[key] && data.gl[key].games) || [];
+  let d = null; try { d = seasonStatLine(games); } catch (e) { d = null; }
+  let arch = null; try { arch = data.cohort ? archetypeForPlayer(p.name, data.cohort, p.pos) : null; } catch (e) { arch = null; }
+  const inFt = (i) => (i ? `${Math.floor(i / 12)}'${i % 12}"` : null);
+  return {
+    p, arch,
+    ht: pros.heightInches, htStr: inFt(pros.heightInches), wt: pros.weightLbs, ws: pros.wingspanInches, wsStr: inFt(pros.wingspanInches),
+    ppg: d?.per.ppg ?? p.ppg, rpg: d?.per.rpg ?? p.rpg, apg: d?.per.apg ?? p.apg, spg: d?.per.spg ?? p.spg, bpg: d?.per.bpg ?? p.bpg,
+    fg: d?.shoot.fgPct ?? (p.fgPct != null ? `${r1(p.fgPct)}%` : null), tp: d?.shoot.tpPct ?? (p.threePct != null ? `${r1(p.threePct)}%` : null), ft: d?.shoot.ftPct ?? (p.ftPct != null ? `${r1(p.ftPct)}%` : null), efg: d?.shoot.efg, ts: d?.shoot.ts ?? (p.tsPct != null ? `${r1(p.tsPct)}%` : null),
+    ato: d?.role.ato, tov: d?.role.tovPct, gp: d?.gp ?? p.gp,
+  };
+}
 function OneOnOne({ data, openPlayer }) {
   const [p1, setP1] = useState("");
   const [p2, setP2] = useState("");
   const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_1v1") || ""; } catch (e) { return ""; } });
   const opts = useMemo(() => [...data.players].sort((a, b) => a.name.localeCompare(b.name)), [data.players]);
-  const A = data.players.find((p) => p.id === p1), B = data.players.find((p) => p.id === p2);
+  const A = statsFor(data, data.players.find((p) => p.id === p1));
+  const B = statsFor(data, data.players.find((p) => p.id === p2));
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", fontSize: 14, padding: "12px 14px" };
   const Sel = ({ value, onChange, ph }) => <select value={value} onChange={(e) => onChange(e.target.value)} style={inp}><option value="">{ph}</option>{opts.map((p) => <option key={p.id} value={p.id}>{p.name} · {cleanOpp(p.school)}</option>)}</select>;
-  const row = (l, va, vb, fmt = (x) => r1(x)) => {
-    const na = +va || 0, nb = +vb || 0;
+  const Row = ({ l, a, b, aN, bN, tone, higherBetter = true }) => {
+    const na = aN != null ? aN : (a == null ? null : parseFloat(a)), nb = bN != null ? bN : (b == null ? null : parseFloat(b));
+    const cmp = (x, y) => (na == null || nb == null || Number.isNaN(na) || Number.isNaN(nb)) ? false : (higherBetter ? x > y : x < y);
+    const aWin = cmp(na, nb), bWin = cmp(nb, na);
+    const col = (val, win) => (win ? "var(--orange)" : (tone ? statTone(tone, val) : "var(--ink)"));
     return (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
-        <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: na >= nb ? "var(--orange)" : "var(--ink)" }}>{fmt(va)}</span>
-        <span style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--faint)", whiteSpace: "nowrap" }}>{l}</span>
-        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: nb >= na ? "var(--orange)" : "var(--ink)" }}>{fmt(vb)}</span>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid var(--line)" }}>
+        <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, fontSize: 17, color: col(a, aWin), fontVariantNumeric: "tabular-nums" }}>{a == null ? "—" : a}{aWin && <span style={{ color: "var(--orange)", fontSize: 11 }}> ◄</span>}</span>
+        <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--faint)", whiteSpace: "nowrap" }}>{l}</span>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 17, color: col(b, bWin), fontVariantNumeric: "tabular-nums" }}>{bWin && <span style={{ color: "var(--orange)", fontSize: 11 }}>► </span>}{b == null ? "—" : b}</span>
       </div>
     );
   };
+  const Section = ({ t }) => <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--muted)", margin: "15px 0 5px" }}>{t}</div>;
+  const nameCell = (s, right) => <span onClick={() => openPlayer(s.p)} style={{ cursor: "pointer", textAlign: right ? "left" : "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15, lineHeight: 1.1 }}>{s.p.name}<br /><span style={{ fontSize: 10.5, color: "var(--faint)", fontFamily: "var(--sans)", fontWeight: 600 }}>{[s.p.pos, s.p.cls, cleanOpp(s.p.school)].filter(Boolean).join(" · ")}</span></span>;
   return (
     <div>
       <p className="ttl">1-on-1 read — head to head</p>
@@ -1116,18 +1162,39 @@ function OneOnOne({ data, openPlayer }) {
         <Sel value={p1} onChange={setP1} ph="Player A…" /><Sel value={p2} onChange={setP2} ph="Player B…" />
       </div>
       {A && B ? <>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, marginBottom: 8, alignItems: "center" }}>
-          <span onClick={() => openPlayer(A)} style={{ cursor: "pointer", textAlign: "right", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15 }}>{A.name}</span>
-          <span style={{ color: "var(--faint)", fontFamily: "var(--disp)" }}>vs</span>
-          <span onClick={() => openPlayer(B)} style={{ cursor: "pointer", fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 15 }}>{B.name}</span>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, marginBottom: 6, alignItems: "center" }}>
+          {nameCell(A, false)}<span style={{ color: "var(--faint)", fontFamily: "var(--disp)" }}>vs</span>{nameCell(B, true)}
         </div>
-        {row("PPG", A.ppg, B.ppg)}
-        {row("RPG", A.rpg, B.rpg)}
-        {row("APG", A.apg, B.apg)}
-        {row("3P%", A.threePct, B.threePct, (x) => x != null ? `${r1(x)}%` : "—")}
+        <Section t="Measurables" />
+        <Row l="Height" a={A.htStr} b={B.htStr} aN={A.ht} bN={B.ht} />
+        <Row l="Weight" a={A.wt ? `${A.wt} lb` : null} b={B.wt ? `${B.wt} lb` : null} aN={A.wt} bN={B.wt} />
+        <Row l="Wingspan" a={A.wsStr} b={B.wsStr} aN={A.ws} bN={B.ws} />
+        <Section t="Production · per game" />
+        <Row l="PPG" a={r1(A.ppg)} b={r1(B.ppg)} tone="ppg" />
+        <Row l="RPG" a={r1(A.rpg)} b={r1(B.rpg)} tone="rpg" />
+        <Row l="APG" a={r1(A.apg)} b={r1(B.apg)} tone="apg" />
+        <Row l="SPG" a={r1(A.spg)} b={r1(B.spg)} tone="spg" />
+        <Row l="BPG" a={r1(A.bpg)} b={r1(B.bpg)} tone="bpg" />
+        <Section t="Shooting" />
+        <Row l="FG%" a={A.fg} b={B.fg} tone="fgPct" />
+        <Row l="3P%" a={A.tp} b={B.tp} tone="threePct" />
+        <Row l="FT%" a={A.ft} b={B.ft} tone="ftPct" />
+        <Row l="eFG%" a={A.efg} b={B.efg} tone="efg" />
+        <Row l="TS%" a={A.ts} b={B.ts} tone="tsPct" />
+        <Section t="Playmaking & efficiency" />
+        <Row l="AST:TO" a={A.ato} b={B.ato} tone="ato" />
+        <Row l="TOV%" a={A.tov} b={B.tov} higherBetter={false} />
+        <Section t="Profile" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)", alignItems: "center" }}>
+          <span style={{ textAlign: "right", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 12.5, color: "var(--gold-a)" }}>{A.arch?.label || "—"}</span>
+          <span style={{ fontSize: 10, textTransform: "uppercase", color: "var(--faint)" }}>Archetype</span>
+          <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 12.5, color: "var(--gold-a)" }}>{B.arch?.label || "—"}</span>
+        </div>
+        <Row l="Games" a={A.gp} b={B.gp} />
+        <p style={{ fontSize: 10.5, color: "var(--faint)", margin: "8px 0 0" }}>◄ ► marks the edge in each row. Skill stats are tone-colored; measurables show the size advantage.</p>
         <p className="ttl" style={{ margin: "16px 0 6px" }}>The battle — your notes</p>
         <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_1v1", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Who guards whom, where the edge is, how to attack…" style={{ ...inp, minHeight: 80, resize: "vertical", fontSize: 13 }} />
-      </> : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two players to compare their lines head-to-head and log the matchup.</p>}
+      </> : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two players to compare their full lines — measurables, stats, shooting, efficiency, and archetype — head to head.</p>}
     </div>
   );
 }
@@ -1242,6 +1309,9 @@ function CoachHQ({ data, openPlayer, go }) {
           {a && b ? (() => {
             const ra = teamRecord(a, data.schedule), rb = teamRecord(b, data.schedule);
             const aa = +teamAvgPpg(a), ab = +teamAvgPpg(b);
+            const aN = teamAnalytics(a), bN = teamAnalytics(b);
+            const topReb = (t) => [...t.players].sort((x, y) => (y.rpg || 0) - (x.rpg || 0))[0];
+            const ar = topReb(a), br = topReb(b);
             const wp = (r) => r.w / Math.max(1, r.w + r.l);
             const row = (label, va, vb, better) => (
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
@@ -1260,8 +1330,20 @@ function CoachHQ({ data, openPlayer, go }) {
                 {row("Record", `${ra.w}-${ra.l}`, `${rb.w}-${rb.l}`, wp(ra) >= wp(rb) ? "a" : "b")}
                 {row("Avg PPG/player", aa, ab, aa >= ab ? "a" : "b")}
                 {row("Top scorer", a.top ? r1(a.top.ppg) : "—", b.top ? r1(b.top.ppg) : "—", (a.top?.ppg || 0) >= (b.top?.ppg || 0) ? "a" : "b")}
+                {row("Double-figure scorers", aN.scorers.length, bN.scorers.length, aN.scorers.length >= bN.scorers.length ? "a" : "b")}
+                {row("Live shooters (33%+)", aN.shooters.length, bN.shooters.length, aN.shooters.length >= bN.shooters.length ? "a" : "b")}
+                {row("Disruptive defenders", aN.stockGuys.length, bN.stockGuys.length, aN.stockGuys.length >= bN.stockGuys.length ? "a" : "b")}
+                {row("Top rebounder (RPG)", ar ? r1(ar.rpg) : "—", br ? r1(br.rpg) : "—", (ar?.rpg || 0) >= (br?.rpg || 0) ? "a" : "b")}
                 {row("Roster size", a.n, b.n, a.n >= b.n ? "a" : "b")}
-                <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 14, lineHeight: 1.5 }}><b style={{ color: "var(--orange)", fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 11, letterSpacing: ".06em" }}>Key matchup</b> — {a.top?.name} vs {b.top?.name}. Win the {aa >= ab ? a.name : b.name} scoring edge and control tempo.</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12 }}>
+                  {[[a, aN], [b, bN]].map(([t, n], i) => (
+                    <div key={i} style={{ border: "1px solid var(--line)", borderRadius: 9, padding: "9px 11px", background: "var(--surface)" }}>
+                      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", fontSize: 12.5 }}>{t.name}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 3 }}>{n.guardHeavy ? "Guard-heavy, perimeter" : n.bigs >= 2 ? "Size up front" : "Balanced"} · {n.balanced ? "scores by committee" : `${(t.top?.name || "").split(" ")[0]}-led`}</div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 12, lineHeight: 1.5 }}><b style={{ color: "var(--orange)", fontFamily: "var(--disp)", textTransform: "uppercase", fontSize: 11, letterSpacing: ".06em" }}>Key matchup</b> — {a.top?.name} vs {b.top?.name}. Win the {aa >= ab ? a.name : b.name} scoring edge{aN.guardHeavy !== bN.guardHeavy ? `; ${(aN.guardHeavy ? a : b).name} will try to push pace` : ""} and control tempo.</p>
               </div>
             );
           })() : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two teams to compare records, scoring, and the key individual matchup.</p>}
