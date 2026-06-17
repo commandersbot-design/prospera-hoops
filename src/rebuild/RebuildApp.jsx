@@ -508,10 +508,15 @@ function useData() {
         for (const pl of (t.players || [])) {
           if (!(pl.stats && pl.stats.gp > 0 && pl.stats.ppg != null)) continue;
           const pr = prByKey[nameKey(pl.name)];
+          const gy = pr?.gradYear || pl.classYear;
           all.push({
             id: pr?.id || nameKey(pl.name), key: nameKey(pl.name), name: pl.name, school: t.name,
-            pos: pl.position || null,
-            cls: (pr?.gradYear || pl.classYear) ? `'${String(pr?.gradYear || pl.classYear).slice(2)}` : "",
+            pos: pl.position || pr?.position || null,
+            cls: gy ? `'${String(gy).slice(2)}` : "",
+            gradYear: gy || null,
+            state: pr?.state || null,
+            stars: pr?.stars || null, rankings: pr?.rankings || null,
+            status: pr?.status || pr?.commitment || null,
             meta: `${t.name}${pl.position ? " · " + pl.position : ""}`,
             headshot: pr?.headshot || null,
             ...pl.stats,
@@ -560,57 +565,88 @@ function useData() {
   return data;
 }
 
-// ---- PROSPECTS — rich searchable/filterable directory (pre-rebuild depth) --
+// ---- PROSPECTS — button-filter board (pre-rebuild UX + depth) --------------
+const FilterChip = ({ on, onClick, children }) => (
+  <button type="button" onClick={onClick} style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".05em", fontSize: 12, padding: "6px 12px", borderRadius: 8, cursor: "pointer", border: `1px solid ${on ? "var(--orange)" : "var(--line)"}`, background: on ? "var(--orange)" : "transparent", color: on ? "#1c0d03" : "var(--muted)", whiteSpace: "nowrap" }}>{children}</button>
+);
+const posIn = (pos, b) => { const x = (pos || "").toUpperCase(); if (b === "G") return /G/.test(x); if (b === "W") return /W|SF/.test(x); if (b === "F") return /F|C/.test(x); return false; };
+const divider = <span style={{ width: 1, height: 20, background: "var(--line)", margin: "0 4px" }} />;
+
 function ProspectsView({ data, openPlayer }) {
+  const wl = useWatchlist();
   const [q, setQ] = useState("");
-  const [pos, setPos] = useState("");
-  const [cls, setCls] = useState("");
-  const [sort, setSort] = useState("ppg");
-  const classes = useMemo(() => [...new Set(data.players.map((p) => p.cls).filter(Boolean))].sort().reverse(), [data.players]);
+  const [states, setStates] = useState([]);
+  const [poss, setPoss] = useState([]);
+  const [cls, setCls] = useState([]);
+  const [tracked, setTracked] = useState(false);
+  const [sort, setSort] = useState("ranked");
+  const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   const list = useMemo(() => {
     const k = q.trim().toLowerCase();
     let r = data.players.filter((p) =>
       (!k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) &&
-      (!pos || (p.pos || "").toUpperCase().includes(pos)) &&
-      (!cls || p.cls === cls));
-    r = sort === "ppg" ? [...r].sort((a, b) => (b.ppg || 0) - (a.ppg || 0)) : [...r].sort((a, b) => a.name.localeCompare(b.name));
-    return r.slice(0, 150);
-  }, [q, pos, cls, sort, data.players]);
-  const archeOf = (p) => { try { return data.cohort ? (archetypeForPlayer(p.name, data.cohort, p.pos)?.label || "") : ""; } catch (e) { return ""; } };
-  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", fontSize: 13, padding: "10px 12px", outline: "none" };
-  const archePill = { display: "inline-block", fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".03em", fontSize: 10.5, color: "var(--orange)", border: "1px solid var(--accent-border,rgba(255,106,26,.4))", borderRadius: 999, padding: "2px 9px", whiteSpace: "nowrap" };
+      (!states.length || (p.state && states.includes(p.state))) &&
+      (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
+      (!cls.length || cls.includes(p.cls)) &&
+      (!tracked || wl.has(p.id)));
+    r = sort === "az" ? [...r].sort((a, b) => a.name.localeCompare(b.name)) : [...r].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
+    return r.slice(0, 250);
+  }, [q, states, poss, cls, tracked, sort, data.players, wl.ids]);
+  const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
-      <div className="hello">Prospects</div>
-      <div className="sub">{data.players.length} tracked DMV players · real stats, no fake rankings</div>
-      <div className="csearch" style={{ flexWrap: "wrap" }}>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search players or schools…" />
-        <select value={pos} onChange={(e) => setPos(e.target.value)} style={inp}>
-          <option value="">All positions</option><option value="G">Guards</option><option value="W">Wings</option><option value="F">Forwards</option><option value="C">Centers</option>
-        </select>
-        <select value={cls} onChange={(e) => setCls(e.target.value)} style={inp}>
-          <option value="">All classes</option>{classes.map((c) => <option key={c} value={c}>Class of {c}</option>)}
-        </select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} style={inp}>
-          <option value="ppg">Top scorers</option><option value="az">A–Z</option>
-        </select>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <div className="keye">Prospects</div>
+          <div className="sub" style={{ marginTop: 4 }}>The full DMV database · {data.players.length} profiles · ranked board first, the rest by summer stat</div>
+        </div>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search player or school…" style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
       </div>
-      <div style={{ ...inp, padding: 0, background: "transparent", border: "none", marginTop: 2 }}>
-        <p style={{ fontSize: 11.5, color: "var(--faint)", margin: "0 0 10px" }}>{list.length} shown{list.length >= 150 ? " (top 150 — filter to narrow)" : ""}</p>
+
+      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", margin: "16px 0 8px", alignItems: "center" }}>
+        {["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}
+        {divider}
+        {["G", "W", "F"].map((b) => <FilterChip key={b} on={poss.includes(b)} onClick={() => tog(poss, setPoss, b)}>{b}</FilterChip>)}
+        {divider}
+        {["'27", "'28", "'29", "'30"].map((c) => <FilterChip key={c} on={cls.includes(c)} onClick={() => tog(cls, setCls, c)}>{c}</FilterChip>)}
+        {divider}
+        <FilterChip on={tracked} onClick={() => setTracked(!tracked)}>☆ Tracked</FilterChip>
       </div>
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <table className="board" style={{ width: "100%" }}><tbody>
-          <tr><th style={{ paddingLeft: 16 }}>Player</th><th>Team</th><th>Class</th><th>Archetype</th><th>PPG</th><th>RPG</th><th>APG</th></tr>
-          {list.map((p) => (
-            <tr key={p.id} style={{ cursor: "pointer" }} onClick={() => openPlayer(p)}>
-              <td style={{ paddingLeft: 16 }}><b>{p.name}</b></td>
-              <td>{p.school}</td><td>{p.cls || "—"}</td>
-              <td>{archeOf(p) ? <span style={archePill}>{archeOf(p)}</span> : <span style={{ color: "var(--faint)" }}>—</span>}</td>
-              <td><b style={{ color: "var(--orange)" }}>{r1(p.ppg)}</b></td><td>{r1(p.rpg)}</td><td>{r1(p.apg)}</td>
-            </tr>
-          ))}
-        </tbody></table>
-        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No players match.</p>}
+      <div style={{ display: "flex", gap: 7, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", gap: 7 }}>
+          {[["ranked", "Ranked"], ["ppg", "PPG"], ["az", "A–Z"]].map(([v, l]) => <FilterChip key={v} on={sort === v} onClick={() => setSort(v)}>{l}</FilterChip>)}
+        </div>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", fontSize: 11, color: "var(--faint)" }}>{data.players.length} prospects · 0 ranked</span>
+      </div>
+
+      {sort === "ranked" && (
+        <div style={{ marginTop: 22 }}>
+          <div className="keye" style={{ color: "var(--gold-a)" }}>Ranked Board</div>
+          <p className="ksub" style={{ margin: "10px 0 0" }}>No prospects evaluated yet — the ranked board fills as the eval engine grades players. Until then, the full DMV is below by summer production.</p>
+        </div>
+      )}
+
+      <div style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".12em", fontSize: 12, color: "var(--faint)", margin: "24px 0 6px" }}>
+        {sort === "ranked" ? "Notable · not yet evaluated" : `${list.length} shown`}
+      </div>
+      <div>
+        {list.map((p) => (
+          <div key={p.id} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+            <div className="rav" style={{ width: 42, height: 42 }}>{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{p.name}</span>
+                {p.stars ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{p.stars}★{p.rankings && p.rankings.national ? ` · #${p.rankings.national} Natl` : ""}</span> : null}
+              </div>
+              <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), "eval pending"].filter(Boolean).join(" · ")}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
+              <div style={{ fontSize: 9, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".06em", marginTop: 3 }}>ppg · {p.gp || 0}gp{(p.gp || 0) < 3 ? " · small" : ""}</div>
+            </div>
+          </div>
+        ))}
+        {list.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No prospects match these filters.</p>}
       </div>
       <div style={{ height: 40 }} />
     </div>
