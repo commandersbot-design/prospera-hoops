@@ -130,4 +130,49 @@ card("post-launch-countdown", `${header("LAUNCH")}
   ${T(W / 2, 1086, 24, 700, C.mut, "GOES LIVE 6.18", { ls: 6, anchor: "middle" })}
   ${footer("You're already on the board — the DMV's scouting platform.")}`);
 
-console.log("\nDone → docs/social-posts/ (post-nash-statline, post-major-leap, post-leaders, post-launch-countdown)");
+// ===== STORY (1080×1920) — TRACKED. teaser, matching yesterday's SEEN. =====
+const SW = 1080, SH = 1920;
+function storyCard(name, body) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SW}" height="${SH}" viewBox="0 0 ${SW} ${SH}">${defs}
+    <rect width="${SW}" height="${SH}" fill="url(#bgGrad)"/><rect width="${SW}" height="${SH}" fill="url(#glow)"/>
+    <rect width="${SW}" height="8" fill="${C.orange}"/>${body}</svg>`;
+  fs.writeFileSync(path.join(OUT, `${name}.png`), renderPng(svg));
+  console.log(`✓ ${OUT}/${name}.png`);
+}
+const pillars = (cy, active) => {
+  const col = (p) => (p === active ? C.orange : "rgba(246,246,244,0.30)");
+  return `<text x="${SW / 2}" y="${cy}" font-family="${SD}" font-weight="700" font-size="40" letter-spacing="6" text-anchor="middle"><tspan fill="${col("SEEN")}">SEEN</tspan><tspan fill="rgba(246,246,244,0.22)">   ·   </tspan><tspan fill="${col("TRACKED")}">TRACKED</tspan><tspan fill="rgba(246,246,244,0.22)">   ·   </tspan><tspan fill="${col("HOME")}">HOME</tspan></text>`;
+};
+storyCard("story-tracked-1day", `
+  <g transform="translate(${SW / 2 - 32},92)"><svg width="64" height="64" viewBox="0 0 200 200">${EMBLEM}</svg></g>
+  <text x="${SW / 2}" y="246" font-family="${HG}" font-weight="800" font-size="30" letter-spacing="3" text-anchor="middle"><tspan fill="${C.text}">PROSPERA </tspan><tspan fill="${C.orange}">HOOPS</tspan></text>
+  <line x1="300" y1="320" x2="780" y2="320" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+  ${T(SW / 2, 600, 30, 800, C.orange, "06.17 · 1 DAY OUT", { ls: 9, anchor: "middle" })}
+  ${TD(SW / 2, 1000, 220, 800, C.text, "TRACKED.", { anchor: "middle" })}
+  ${T(SW / 2, 1078, 34, 600, C.mut, "Every game. Over time.", { anchor: "middle" })}
+  ${pillars(1240, "TRACKED")}
+  ${T(SW / 2, 1420, 30, 800, C.text, "SOMETHING BIG IS COMING.", { ls: 4, anchor: "middle" })}
+  <line x1="80" y1="1796" x2="1000" y2="1796" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+  ${T(80, 1846, 24, 700, C.mut, "THE DMV'S HOME COURT", { ls: 3 })}
+  <rect x="896" y="1820" width="104" height="46" rx="11" fill="${C.orange}"/>
+  ${T(948, 1851, 24, 800, C.bg, "06.18", { anchor: "middle" })}`);
+
+// ===== Showcase slide 3 (1080×1350) — the HOME / coverage capstone =====
+const covTile = (cx, top, big, unit) => { const w = 300, x = cx - w / 2; return `<rect x="${x}" y="${top}" width="${w}" height="206" rx="18" fill="${C.panel}" stroke="rgba(255,106,26,0.26)" stroke-width="1.5"/>
+  ${TD(cx, top + 122, 80, 800, C.orange, big, { anchor: "middle" })}
+  ${T(cx, top + 168, 19, 800, C.mut, unit, { ls: 2, anchor: "middle" })}`; };
+card("post-showcase-home", `${header("THE DMV")}
+  ${T(W / 2, 220, 24, 800, C.orange, "EVERY HOOPER · ONE HOME COURT", { ls: 4, anchor: "middle" })}
+  ${TD(W / 2, 348, 80, 800, C.text, "SEEN. TRACKED. HOME.", { anchor: "middle" })}
+  ${covTile(232, 452, "800+", "PLAYERS")}
+  ${covTile(540, 452, "61", "SUMMER TEAMS")}
+  ${covTile(848, 452, "306", "HS TEAMS")}
+  ${T(W / 2, 762, 28, 600, C.mut, "Real stats. Real development. No fake rankings.", { anchor: "middle" })}
+  ${T(W / 2, 802, 28, 600, C.mut, "Every player's already on the board — claim yours, free.", { anchor: "middle" })}
+  <rect x="282" y="884" width="516" height="76" rx="38" fill="url(#band)"/>
+  ${T(W / 2, 933, 30, 800, C.bg, "CLAIM YOUR PROFILE — FREE", { ls: 2, anchor: "middle" })}
+  ${TD(W / 2, 1076, 56, 800, C.orange, "PROSPERAHOOPS.COM", { anchor: "middle" })}
+  ${T(W / 2, 1118, 22, 700, C.mut, "LIVE 6.18", { ls: 6, anchor: "middle" })}
+  ${footer("The DMV's scouting platform — high school · summer · AAU")}`);
+
+console.log("\nDone → docs/social-posts/ (story-tracked-1day + post-nash-statline, post-major-leap, post-leaders, post-launch-countdown, post-showcase-home)");
