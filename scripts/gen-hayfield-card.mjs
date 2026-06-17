@@ -33,7 +33,7 @@ const r1 = (n) => (isFinite(n) ? (Math.round(n * 10) / 10).toFixed(1) : "—");
 const ch = JSON.parse(fs.readFileSync("public/data/capitolHoops.json", "utf8"));
 const findHawk = (re) => {
   for (const t of Object.values(ch.teams)) {
-    if (!/hawks \(hayfield\)/i.test(t.name)) continue;
+    if (!/hayfield/i.test(t.name)) continue;
     const p = (t.players || []).find((pl) => re.test(pl.name));
     if (p) return p;
   }
