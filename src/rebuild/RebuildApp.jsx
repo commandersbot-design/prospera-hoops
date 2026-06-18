@@ -894,7 +894,7 @@ function SignInForm({ onSignedIn, intro }) {
     if (remaining > 0) { setSent(true); setLeft(remaining); return; }
     setBusy(true);
     try {
-      try { localStorage.setItem("ph_role", role); } catch { /* ignore */ }
+      try { localStorage.setItem("ph_role", role); localStorage.setItem("ph_postlogin", role); } catch { /* ignore */ }
       await signIn(e2, role);
       markLinkSent(e2);
       setSent(true);
@@ -2336,6 +2336,21 @@ export default function RebuildApp() {
   const openTeam = (t) => { setTeam(t); setView("teamDetail"); pushUrl(`/t/${t.slug}`); window.scrollTo(0, 0); };
   const openClaimedPlayer = (playerId) => { const pl = data && data.players.find((p) => p.id === playerId); if (pl) openPlayer(pl); else go("prospects"); };
   const openClaimedTeam = (slug) => { const t = data && data.teams.find((x) => x.slug === slug); if (t) openTeam(t); else go("teams"); };
+
+  // One-shot: route a fresh magic-link login to the view that fits the role they
+  // picked at sign-in (Player → dashboard, Coach → Coach HQ, Scout → the board).
+  // The flag is set at send time and consumed once here, so normal page loads
+  // and session restores never hijack navigation. Fan stays put.
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const pending = localStorage.getItem("ph_postlogin");
+      if (!pending) return;
+      localStorage.removeItem("ph_postlogin");
+      const dest = { Player: "dash", Coach: "coach", Scout: "prospects" }[pending];
+      if (dest) go(dest);
+    } catch { /* ignore */ }
+  }, [user]);
 
   // Resolve the URL to a view on first load + on browser back/forward.
   useEffect(() => {
