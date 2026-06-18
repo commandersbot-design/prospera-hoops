@@ -2032,7 +2032,7 @@ export default function RebuildApp() {
     if (!data) return;
     const resolve = () => {
       const path = window.location.pathname;
-      if (path.startsWith("/p/")) { const s = path.slice(3).replace(/\/$/, ""); const pl = data.players.find((p) => slugify(p.name) === s); if (pl) { setSelected(pl); setView("profile"); return; } }
+      if (path.startsWith("/p/")) { const s = path.slice(3).replace(/\/$/, ""); const pl = data.players.find((p) => slugify(p.name) === s) || (data.ranked || []).find((p) => slugify(p.name) === s); if (pl) { setSelected(pl); setView("profile"); return; } }
       if (path.startsWith("/t/")) { const s = path.slice(3).replace(/\/$/, ""); const tm = data.teams.find((t) => t.slug === s); if (tm) { setTeam(tm); setView("teamDetail"); return; } }
       const byPath = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
       setView(byPath[path] || "landing");
