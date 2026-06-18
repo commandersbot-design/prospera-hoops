@@ -467,8 +467,9 @@ function ByTheNumbers({ games }) {
   );
 }
 
-// "The Leap" — prior season vs. latest, from multi-season game logs.
-function TheLeapCard({ seasons }) {
+// "The Leap" — prior season vs. latest, from multi-season game logs. A Prospera+
+// feature: members see the jump, everyone else sees a locked teaser.
+function TheLeapCard({ seasons, plus, go }) {
   if (!Array.isArray(seasons) || seasons.length < 2) return null;
   const sorted = [...seasons].sort((a, b) => String(a.season).localeCompare(String(b.season)));
   const prior = sorted[sorted.length - 2], latest = sorted[sorted.length - 1];
@@ -487,11 +488,24 @@ function TheLeapCard({ seasons }) {
   const gOf = (s) => s.g || s.gp || "—";
   return (
     <div className="card" style={{ marginTop: 16 }}>
-      <div className="ttl" style={{ color: "var(--blue)" }}>The Leap <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {prior.season} ({gOf(prior)}g) → {latest.season} ({gOf(latest)}g)</span></div>
-      <div style={{ display: "grid", gridTemplateColumns: "54px 1fr 1fr 60px", gap: 10, fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", margin: "10px 0 0", fontWeight: 600 }}><span /><span>Prior</span><span>Now</span><span>Δ</span></div>
-      <Row l="PTS" a={prior.ppg} b={latest.ppg} />
-      <Row l="REB" a={prior.rpg} b={latest.rpg} />
-      <Row l="AST" a={prior.apg} b={latest.apg} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div className="ttl" style={{ color: "var(--blue)", margin: 0 }}>The Leap <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {prior.season} ({gOf(prior)}g) → {latest.season} ({gOf(latest)}g)</span></div>
+        <span className="bdg gold">★ Prospera+</span>
+      </div>
+      {plus ? (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "54px 1fr 1fr 60px", gap: 10, fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", margin: "10px 0 0", fontWeight: 600 }}><span /><span>Prior</span><span>Now</span><span>Δ</span></div>
+          <Row l="PTS" a={prior.ppg} b={latest.ppg} />
+          <Row l="REB" a={prior.rpg} b={latest.rpg} />
+          <Row l="AST" a={prior.apg} b={latest.apg} />
+        </>
+      ) : (
+        <div className="lock" style={{ paddingTop: 12 }}>
+          <div className="blur" style={{ maxWidth: 420, margin: "4px auto 12px" }}><span style={{ width: "88%" }} /><span style={{ width: "70%" }} /><span style={{ width: "80%" }} /></div>
+          <div style={{ fontSize: 12.5, color: "var(--muted)", maxWidth: 360, margin: "0 auto 12px", lineHeight: 1.5 }}>See the jump from {prior.season} to {latest.season} — points, rebounds, and assists, season over season.</div>
+          <button className="claim-big" style={{ fontSize: 15, padding: "11px 18px" }} onClick={() => go && go("plus")}>🔒 Unlock The Leap with Prospera+ · $5/mo</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -779,7 +793,7 @@ function PublicProfile({ player, data, go }) {
         )}
       </div>
       <ByTheNumbers games={games} />
-      <TheLeapCard seasons={seasons} />
+      <TheLeapCard seasons={seasons} plus={plus} go={go} />
 
       {arc && arc.multiSeason ? (
         // Real trend — two or more tracked seasons. Show the development arc.
@@ -1103,7 +1117,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
             </div>
             <div>
               <div className="up"><h3>Prospera+</h3><div className="price"><b>$5/mo</b> · or $39/yr</div>
-                <ul><li>Full Development Arc</li><li>See which scouts (college coaches) viewed you + alerts</li><li>Verified badge</li><li>Printable recruiting one-pager</li></ul>
+                <ul><li>Full Development Arc</li><li>The Leap — season-over-season jump</li><li>See which scouts (college coaches) viewed you + alerts</li><li>Verified badge</li><li>Printable recruiting one-pager</li></ul>
                 <button className="cta" onClick={() => go("plus")}>Start 30-day free trial</button>
                 <div className="alt">★ or apply for a Founding spot — free for life</div>
               </div>
@@ -1146,6 +1160,7 @@ function PlusView({ go }) {
         <div style={{ fontSize: 12, color: "var(--faint)", margin: "2px 0 12px" }}>{price.sub}</div>
         <ul>
           <li>Full Development Arc — season-over-season growth + the honest read</li>
+          <li>The Leap — prior season vs. now, the jump in black and white</li>
           <li>See which scouts (college coaches) viewed you + alerts</li>
           <li>Verified badge</li>
           <li>Printable recruiting one-pager</li>
