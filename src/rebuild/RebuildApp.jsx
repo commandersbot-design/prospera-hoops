@@ -219,7 +219,7 @@ function Header({ view, go }) {
     <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("coach", "Coach HQ")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("scout", "Scout")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {user ? <>
@@ -233,7 +233,7 @@ function Header({ view, go }) {
       </div>
       {menuOpen && (
         <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
-          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("scout", "Scout")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
             : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => { lockIn(); setMenuOpen(false); }}>🔒 Lock in</a></>}
@@ -664,6 +664,7 @@ function PublicProfile({ player, data, go }) {
   const [myClaim, setMyClaim] = useState(null);
   const [plus, setPlus] = useState(false);
   const lockIn = useLockIn();
+  const wl = useWatchlist();
   useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
   useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
   return (
@@ -687,6 +688,7 @@ function PublicProfile({ player, data, go }) {
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
 
       <ScoutCard p={scoutP} portrait />
+      <button className="bbtn" style={{ width: "100%", marginTop: 12, borderColor: wl.has(p.id) ? "var(--teal)" : undefined, color: wl.has(p.id) ? "var(--teal)" : undefined }} onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ On your Scout Board" : "＋ Add to Scout Board"}</button>
 
       <div className="pf-grid">
         <div className="card">
@@ -1055,8 +1057,16 @@ function PlusView({ go }) {
 // ---- watchlist (localStorage) ---------------------------------------------
 function useWatchlist() {
   const [ids, setIds] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_watch") || "[]"); } catch { return []; } });
+  const [notes, setNotesState] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_scout_notes") || "{}"); } catch { return {}; } });
   const save = (next) => { setIds(next); try { localStorage.setItem("ph_watch", JSON.stringify(next)); } catch (e) { /* ignore */ } };
-  return { ids, has: (id) => ids.includes(id), toggle: (id) => save(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]) };
+  const saveNotes = (next) => { setNotesState(next); try { localStorage.setItem("ph_scout_notes", JSON.stringify(next)); } catch (e) { /* ignore */ } };
+  return {
+    ids, has: (id) => ids.includes(id),
+    toggle: (id) => save(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]),
+    add: (id) => { if (!ids.includes(id)) save([...ids, id]); },
+    note: (id) => notes[id] || "",
+    setNote: (id, t) => saveNotes({ ...notes, [id]: t }),
+  };
 }
 
 // ---- TEAMS — directory + detail -------------------------------------------
@@ -2067,8 +2077,59 @@ function RecapsView({ data }) {
   );
 }
 
+// ---- SCOUT BOARD — your tracked players + notes + printable report ---------
+function ScoutView({ data, openPlayer, go }) {
+  const wl = useWatchlist();
+  const players = useMemo(() => {
+    const byId = {};
+    for (const p of [...(data.players || []), ...(data.ranked || [])]) if (!byId[p.id]) byId[p.id] = p;
+    return wl.ids.map((id) => byId[id]).filter(Boolean);
+  }, [wl.ids, data.players, data.ranked]);
+  const ta = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 9, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", minHeight: 64, fontSize: 13, padding: 10, resize: "vertical", marginTop: 10 };
+  return (
+    <div className="wrap scout-board" style={{ paddingTop: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <div className="keye">Scout Board</div>
+          <div className="sub" style={{ marginTop: 4 }}>{players.length} player{players.length === 1 ? "" : "s"} tracked · notes save to this device</div>
+        </div>
+        {players.length > 0 && <button className="bbtn no-print" onClick={() => window.print()}>🖨 Print / save report</button>}
+      </div>
+      {players.length === 0 ? (
+        <div className="card" style={{ marginTop: 18 }}>
+          <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.65, margin: 0 }}>Your scout board is empty. On any profile or the Prospects board, tap <b style={{ color: "var(--ink)" }}>＋ Scout</b> (or the ☆) to add a player here — then write notes, stack them side by side, and print a one-page report.</p>
+          <button className="cta no-print" style={{ marginTop: 14 }} onClick={() => go("prospects")}>Browse the board</button>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 12, marginTop: 18 }}>
+          {players.map((p, i) => (
+            <div key={`${p.id}-${i}`} className="card" style={{ padding: 14 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 12, alignItems: "center" }}>
+                <div className="rav" style={{ width: 48, height: 48, cursor: "pointer" }} onClick={() => openPlayer(p)}>{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span onClick={() => openPlayer(p)} style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 16, color: "var(--ink)", cursor: "pointer" }}>{p.name}</span>
+                    {(p.stars || (p.rankings && p.rankings.national)) ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{[p.stars ? `${p.stars}★` : null, p.rankings && p.rankings.national ? `#${p.rankings.national} Natl` : null].filter(Boolean).join(" · ")}</span> : null}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>{[p.pos, p.cls, cleanOpp(p.school)].filter(Boolean).join(" · ")}</div>
+                </div>
+                <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                  {p.ppg != null && ["ppg", "rpg", "apg"].map((k) => <div key={k} style={{ textAlign: "right" }}><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 17, color: statTone(k, p[k]) }}>{r1(p[k])}</div><div style={{ fontSize: 8.5, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".05em" }}>{k}</div></div>)}
+                  <span className="add no-print" onClick={() => wl.toggle(p.id)} title="Remove from board" style={{ cursor: "pointer" }}>✕</span>
+                </div>
+              </div>
+              <textarea value={wl.note(p.id)} onChange={(e) => wl.setNote(p.id, e.target.value)} placeholder={`Scouting notes on ${(p.name || "").split(" ")[0]} — strengths, fit, projection, who to call…`} style={ta} />
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{ height: 40 }} />
+    </div>
+  );
+}
+
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", coach: "/coach", dash: "/dashboard", plus: "/plus" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", scout: "/scout", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -2112,6 +2173,7 @@ export default function RebuildApp() {
       {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
+      {view === "scout" && <ScoutView data={data} openPlayer={openPlayer} go={go} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
       {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} go={go} />}
       {lockIn && <WaitlistModal prefill={lockIn} onClose={() => setLockIn(null)} />}

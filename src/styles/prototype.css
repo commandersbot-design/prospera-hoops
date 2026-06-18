@@ -120,6 +120,14 @@
 .rebuild .marq-row{display:flex;gap:12px;width:max-content;animation:pr-scroll 26s linear infinite}
 @keyframes pr-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes prfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* Scout Board → clean printable one-pager (retint dark theme to ink-on-white) */
+@media print{
+  .rebuild .hd,.rebuild .ticker,.rebuild .no-print{display:none!important}
+  .rebuild{background:#fff!important}
+  .rebuild .scout-board{--ink:#111;--muted:#333;--faint:#666;--surface:#fff;--line:#cfcfcf;color:#111}
+  .rebuild .scout-board .card{background:#fff!important;border:1px solid #cfcfcf!important;box-shadow:none!important;break-inside:avoid}
+  .rebuild .scout-board textarea{background:#fff!important;color:#111!important;border:1px solid #ddd!important;min-height:48px!important}
+}
 .rebuild .pcard{position:relative;width:176px;flex:none;background:linear-gradient(165deg,var(--surface),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;overflow:hidden}
 .rebuild .pcard .prank{position:absolute;bottom:-13px;right:4px;font-family:var(--disp);font-weight:800;font-size:50px;line-height:1;color:rgba(255,255,255,.045);pointer-events:none;letter-spacing:-.02em}
 .rebuild .pcard .prank.top{color:rgba(245,196,81,.14)}
