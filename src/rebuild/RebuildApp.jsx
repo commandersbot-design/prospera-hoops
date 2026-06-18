@@ -847,7 +847,7 @@ function SignInForm({ onSignedIn, intro }) {
   useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
   if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:claims@prosperahoops.com" style={{ color: "var(--orange)" }}>claims@prosperahoops.com</a> and we’ll set you up.</p>;
   if (user) return null;
-  const send = async () => { setErr(""); if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; } setBusy(true); try { await signIn(email); setSent(true); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  const send = async () => { setErr(""); if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; } setBusy(true); try { await signIn(email); setSent(true); } catch (e) { const s = String((e && e.message) || e || ""); setErr(/rate.?limit|429|over_email_send/i.test(s) ? "Too many sign-in emails just now — wait a few minutes, then try once. (We’re raising this limit.)" : "Couldn’t send the link right now — try again in a moment."); } finally { setBusy(false); } };
   if (sent) return (
     <div>{intro}
       <p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p>
