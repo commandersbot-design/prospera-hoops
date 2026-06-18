@@ -24,7 +24,7 @@ export async function startCheckout({ plan = "monthly", email, userId, playerId 
 
 // Owner accounts get full access (Prospera+ and Coach tier) regardless of any
 // Stripe entitlement. Email is read from the session JWT payload.
-const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com"];
+const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com", "jalenf2002@gmail.com"];
 function ownerNow() {
   try {
     const t = getSession()?.access_token; if (!t) return false;

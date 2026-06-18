@@ -6,7 +6,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { auth, db, isConfigured, onAuthChange, getSession } from "./supabaseClient.js";
 
 // Owner accounts — always admin/full access, regardless of the `admins` table.
-const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com"];
+const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com", "jalenf2002@gmail.com"];
 const isOwnerEmail = (e) => OWNER_EMAILS.includes(String(e || "").trim().toLowerCase());
 
 const AuthCtx = createContext({
