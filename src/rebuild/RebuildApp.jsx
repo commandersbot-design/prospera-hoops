@@ -1773,7 +1773,7 @@ function useData() {
             pos: pl.position || pr?.position || null,
             cls: gy ? `'${String(gy).slice(2)}` : "",
             gradYear: gy || null,
-            state: pr?.state || null,
+            state: pr?.state || teamState(t.name, locByKey) || null, // school-derived state so region filters work for all
             stars: pr?.stars || null, rankings: pr?.rankings || null,
             status: pr?.status || pr?.commitment || null,
             meta: `${schoolLabel(t.name)}${pl.position ? " · " + pl.position : ""}`,
