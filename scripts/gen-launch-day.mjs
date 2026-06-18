@@ -105,13 +105,13 @@ const slide = (name, num, kicker, head, lines, opts = {}) => {
     ${head.map((ln, i) => TD(40, 392 + i * 92, 84, 800, C.text, esc(ln))).join("")}
     ${lines.map((ln, i) => T(40, 392 + head.length * 92 + 40 + i * 50, 28, 500, C.mut, esc(ln))).join("")}
     ${opts.tag ? `<rect x="40" y="1070" width="${opts.tag.length * 17 + 56}" height="62" rx="14" fill="${C.panel}" stroke="rgba(255,106,26,0.3)" stroke-width="1.5"/>${T(68, 1110, 26, 700, accent, esc(opts.tag), { ls: 1 })}` : ""}
-    ${footer(opts.foot || "Swipe →", "@PROSPERAHOOPS")}`;
+    ${footer(opts.foot || "SWIPE TO CONTINUE", "@PROSPERAHOOPS")}`;
   card(name, body);
 };
 
 slide("how-01-cover", "01", "THIS IS", ["PROSPERA", "HOOPS."],
   ["The DMV's scouting platform — high school, AAU & more.", "Real stats. Real development. No fake rankings."],
-  { tag: "SEARCH · CLAIM · TRACK", foot: "Swipe to see how →" });
+  { tag: "SEARCH · CLAIM · TRACK", foot: "SWIPE TO SEE HOW" });
 
 slide("how-02-onboard", "02", "STEP ONE", ["YOU'RE ALREADY", "ON THE BOARD."],
   ["800+ DMV players are already in the database.", "Search your name — your profile is waiting.", "Box scores from Capitol Hoops Summer League."],
@@ -127,7 +127,7 @@ slide("how-04-claim", "04", "MAKE IT YOURS", ["CLAIM YOUR", "PROFILE — FREE."]
 
 slide("how-05-coach", "05", "FOR THE SIDELINE", ["COACH HQ.", "SCOUT SMARTER."],
   ["Opponent game plans, your-team analytics,", "5-on-5 matchup builder, depth charts.", "Free during launch — built for DMV coaches."],
-  { tag: "COACHES → COACH HQ", accent: C.blue });
+  { tag: "BUILT FOR COACHES", accent: C.blue });
 
 slide("how-06-live", "06", "IT'S OPEN", ["WE'RE LIVE.", "GET ON IT."],
   ["The whole DMV, one home court.", "Search your name. Claim your profile. Free."],
