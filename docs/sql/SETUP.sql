@@ -127,6 +127,23 @@ create or replace view public.profile_scout_counts as
   from public.profile_views group by player_id;
 grant select on public.profile_scout_counts to anon, authenticated;
 
+-- ------------------------------------- user_state (account-synced Coach HQ) --
+-- One row per (user, key). Holds a signed-in user's saved Coach HQ content —
+-- watchlists, custom lineups, board/1-on-1/team notes & reads — so it follows
+-- them across devices instead of living only in the browser. RLS scopes every
+-- row to its owner. The app degrades to localStorage until this table exists.
+create table if not exists public.user_state (
+  user_id    uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  key        text not null,
+  value      jsonb,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, key)
+);
+alter table public.user_state enable row level security;
+drop policy if exists "user_state rw own" on public.user_state;
+create policy "user_state rw own" on public.user_state for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+
 -- ============================================================================
 -- MAKE YOURSELF ADMIN — sign in on the site once, then Dashboard → Auth →
 -- Users → copy your UUID and run:

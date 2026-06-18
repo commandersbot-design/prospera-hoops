@@ -134,7 +134,7 @@ slide("how-06-live", "06", "IT'S OPEN", ["WE'RE LIVE.", "GET ON IT."],
   { tag: "PROSPERAHOOPS.COM" });
 
 slide("how-07-beginning", "07", "AND WE'RE JUST GETTING STARTED", ["THIS IS", "DAY ONE."],
-  ["The more games, players, and seasons we track,", "the sharper and more immersive Prospera gets.", "Full rosters, deeper development, more tools — coming.", "Get in early. Help us build the DMV's home court."],
+  ["Players, coaches, photographers, film & scouts —", "the more the DMV adds, the sharper Prospera gets.", "Verified stats, deeper development, richer profiles.", "Get in early. Help us build the DMV's home court."],
   { tag: "THE BEST IS AHEAD", foot: "ProsperaHoops.com" });
 
 console.log("\nLaunch-day set complete → docs/social-posts/");

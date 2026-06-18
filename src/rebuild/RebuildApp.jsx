@@ -2,7 +2,7 @@
 // (the canonical reference), wired to real data + the real logo. Four views:
 // Landing · Public profile · Player dashboard · Coach HQ. Uses the .rebuild
 // scoped classes from styles/prototype.css.
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { DevelopmentSection } from "../components/DevelopmentArc";
 import { buildArc } from "../lib/developmentArc";
 import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
@@ -12,6 +12,7 @@ import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus } from "../lib/profiles.js";
+import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
@@ -838,21 +839,52 @@ function Modal({ children, onClose }) {
 }
 
 // Magic-link sign-in. Falls back to an honest email CTA when Supabase is unconfigured.
+// One magic-link per email per cooldown window. Persisted in localStorage so it
+// survives modal close/reopen and page refresh — repeat taps can't spam the email
+// service (a real risk at launch with parents/kids retrying). 60s is plenty for
+// delivery while still letting a genuine "didn't arrive" resend through.
+const LINK_COOLDOWN_S = 60;
+const linkKey = (e) => "ph_link_sent_" + String(e || "").trim().toLowerCase();
+const lastLinkAt = (e) => { try { return Number(localStorage.getItem(linkKey(e))) || 0; } catch { return 0; } };
+const markLinkSent = (e) => { try { localStorage.setItem(linkKey(e), String(Date.now())); } catch {} };
+const cooldownLeft = (e) => Math.max(0, LINK_COOLDOWN_S - Math.floor((Date.now() - lastLinkAt(e)) / 1000));
+
 function SignInForm({ onSignedIn, intro }) {
   const { configured, signIn, user } = useAuth();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [left, setLeft] = useState(0);
   useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
+  // Tick the resend cooldown down to zero.
+  useEffect(() => { if (left <= 0) return; const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000); return () => clearInterval(t); }, [left]);
   if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:claims@prosperahoops.com" style={{ color: "var(--orange)" }}>claims@prosperahoops.com</a> and we’ll set you up.</p>;
   if (user) return null;
-  const send = async () => { setErr(""); if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; } setBusy(true); try { await signIn(email); setSent(true); } catch (e) { const s = String((e && e.message) || e || ""); setErr(/rate.?limit|429|over_email_send/i.test(s) ? "Too many sign-in emails just now — wait a few minutes, then try once. (We’re raising this limit.)" : "Couldn’t send the link right now — try again in a moment."); } finally { setBusy(false); } };
+  const send = async () => {
+    setErr("");
+    const e2 = email.trim();
+    if (!/.+@.+\..+/.test(e2)) { setErr("Enter a valid email."); return; }
+    // Already sent a link to this address within the window? Don't fire another —
+    // just surface the confirmation and run the countdown.
+    const remaining = cooldownLeft(e2);
+    if (remaining > 0) { setSent(true); setLeft(remaining); return; }
+    setBusy(true);
+    try {
+      await signIn(e2);
+      markLinkSent(e2);
+      setSent(true);
+      setLeft(LINK_COOLDOWN_S);
+    } catch (e) {
+      const s = String((e && e.message) || e || "");
+      setErr(/rate.?limit|429|over_email_send/i.test(s) ? "Too many sign-in emails just now — wait a minute, then tap Resend once." : "Couldn’t send the link right now — try again in a moment.");
+    } finally { setBusy(false); }
+  };
   if (sent) return (
     <div>{intro}
       <p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p>
-      <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email}</b> — open it on this device to finish. It lands within a minute; <b style={{ color: "var(--ink)" }}>if you don’t see it, check your spam or promotions folder.</b></p>
-      <button className="bbtn" style={{ marginTop: 12 }} onClick={send} disabled={busy}>{busy ? "Resending…" : "Resend link"}</button>
+      <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email.trim()}</b> — open it on this device to finish. It lands within a minute; <b style={{ color: "var(--ink)" }}>if you don’t see it, check your spam or promotions folder.</b></p>
+      <button className="bbtn" style={{ marginTop: 12 }} onClick={send} disabled={busy || left > 0}>{busy ? "Resending…" : left > 0 ? `Resend in ${left}s` : "Resend link"}</button>
       {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
     </div>
   );
@@ -882,7 +914,7 @@ function ClaimPanel({ player, onClose }) {
       {claim ? (
         <div>
           <span className="bdg teal" style={{ display: "inline-block", marginBottom: 10 }}>{claim.status === "approved" ? "✓ You own this profile" : "Claim submitted"}</span>
-          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>{claim.status === "approved" ? "You can manage your stats, film, and recruiting info from your dashboard." : "Your claim is pending review — we’ll email you when it’s approved, usually within a day."}</p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>{claim.status === "approved" ? "You can manage your stats, film, and recruiting info from your dashboard." : "Your claim is pending review — we usually approve within a day. Check back on your dashboard."}</p>
         </div>
       ) : !user ? (
         <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Sign in to claim this profile — free. Manage your stats, film, and recruiting info.</p>} />
@@ -1096,18 +1128,61 @@ function PlusView({ go }) {
   );
 }
 
-// ---- watchlist (localStorage) ---------------------------------------------
+// ---- account-synced state --------------------------------------------------
+// Mirrors a value to localStorage (instant, offline-safe) AND to the signed-in
+// user's account (user_state table), so Coach HQ content follows them across
+// devices. On sign-in it pulls the account copy; if none exists, it migrates
+// whatever's local up to the account. Degrades to plain localStorage when signed
+// out or before the table exists. Same [value, setValue] shape as useState.
+function useSynced(key, initial) {
+  const read = () => {
+    try {
+      const r = localStorage.getItem(key);
+      if (r == null) return initial;
+      try { return JSON.parse(r); } catch { return r; } // tolerate legacy raw strings
+    } catch { return initial; }
+  };
+  const [val, setVal] = useState(read);
+  const { user } = useAuth();
+  const tRef = useRef();
+  // Re-read local when the key changes (e.g. per-team notes switching teams).
+  useEffect(() => { setVal(read()); }, [key]);
+  // On sign-in: pull the account copy, or migrate the local copy up if none.
+  useEffect(() => {
+    let live = true;
+    if (!user) return;
+    (async () => {
+      const remote = await pullState(key);
+      if (!live) return;
+      if (remote !== undefined) {
+        setVal(remote);
+        try { localStorage.setItem(key, JSON.stringify(remote)); } catch { /* ignore */ }
+      } else {
+        const local = read();
+        if (JSON.stringify(local) !== JSON.stringify(initial)) pushState(key, local);
+      }
+    })();
+    return () => { live = false; };
+  }, [user, key]);
+  const update = (next) => {
+    setVal(next);
+    try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* ignore */ }
+    clearTimeout(tRef.current);
+    tRef.current = setTimeout(() => pushState(key, next), 700); // debounce account writes
+  };
+  return [val, update];
+}
+
+// ---- watchlist (account-synced) -------------------------------------------
 function useWatchlist() {
-  const [ids, setIds] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_watch") || "[]"); } catch { return []; } });
-  const [notes, setNotesState] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_scout_notes") || "{}"); } catch { return {}; } });
-  const save = (next) => { setIds(next); try { localStorage.setItem("ph_watch", JSON.stringify(next)); } catch (e) { /* ignore */ } };
-  const saveNotes = (next) => { setNotesState(next); try { localStorage.setItem("ph_scout_notes", JSON.stringify(next)); } catch (e) { /* ignore */ } };
+  const [ids, setIds] = useSynced("ph_watch", []);
+  const [notes, setNotes] = useSynced("ph_scout_notes", {});
   return {
     ids, has: (id) => ids.includes(id),
-    toggle: (id) => save(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]),
-    add: (id) => { if (!ids.includes(id)) save([...ids, id]); },
+    toggle: (id) => setIds(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]),
+    add: (id) => { if (!ids.includes(id)) setIds([...ids, id]); },
     note: (id) => notes[id] || "",
-    setNote: (id, t) => saveNotes({ ...notes, [id]: t }),
+    setNote: (id, t) => setNotes({ ...notes, [id]: t }),
   };
 }
 
@@ -1296,11 +1371,7 @@ function coachInsights(team, opp) {
   return out;
 }
 function useTeamNotes(slug) {
-  const key = `ph_teamnote_${slug || ""}`;
-  const [note, setNote] = useState("");
-  useEffect(() => { try { setNote(localStorage.getItem(key) || ""); } catch (e) { setNote(""); } }, [key]);
-  const save = (v) => { setNote(v); try { localStorage.setItem(key, v); } catch (e) { /* ignore */ } };
-  return [note, save];
+  return useSynced(`ph_teamnote_${slug || ""}`, "");
 }
 
 function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
@@ -1377,14 +1448,14 @@ function TeamReport({ team, schedule, wl, openPlayer, mode = "opponent" }) {
 // One side of a custom 5-on-5 lineup — search-add up to 5, with summed production.
 const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
 const EMPTY5 = () => [null, null, null, null, null];
-// Saved lineups persist per-device (synced to the coach account once billing is live).
+// Saved lineups follow the signed-in coach across devices (account-synced),
+// falling back to this device's localStorage when signed out.
 function useLineups() {
-  const [list, setList] = useState(() => { try { return JSON.parse(localStorage.getItem("ph_lineups") || "[]"); } catch (e) { return []; } });
-  const persist = (next) => { setList(next); try { localStorage.setItem("ph_lineups", JSON.stringify(next)); } catch (e) { /* ignore */ } };
+  const [list, setList] = useSynced("ph_lineups", []);
   return {
     list,
-    add: (name, ids) => persist([{ id: `lu_${Date.now()}`, name: name || "Untitled", ids: [...ids] }, ...list].slice(0, 40)),
-    remove: (id) => persist(list.filter((l) => l.id !== id)),
+    add: (name, ids) => setList([{ id: `lu_${Date.now()}`, name: name || "Untitled", ids: [...ids] }, ...list].slice(0, 40)),
+    remove: (id) => setList(list.filter((l) => l.id !== id)),
   };
 }
 
@@ -1521,7 +1592,7 @@ function statsFor(data, p) {
 function OneOnOne({ data, openPlayer }) {
   const [p1, setP1] = useState("");
   const [p2, setP2] = useState("");
-  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_1v1") || ""; } catch (e) { return ""; } });
+  const [notes, setNotes] = useSynced("ph_1v1", "");
   const opts = useMemo(() => [...data.players].sort((a, b) => a.name.localeCompare(b.name)), [data.players]);
   const A = statsFor(data, data.players.find((p) => p.id === p1));
   const B = statsFor(data, data.players.find((p) => p.id === p2));
@@ -1580,7 +1651,7 @@ function OneOnOne({ data, openPlayer }) {
         <Row l="Games" a={A.gp} b={B.gp} />
         <p style={{ fontSize: 10.5, color: "var(--faint)", margin: "8px 0 0" }}>◄ ► marks the edge in each row. Skill stats are tone-colored; measurables show the size advantage.</p>
         <p className="ttl" style={{ margin: "16px 0 6px" }}>The battle — your notes</p>
-        <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_1v1", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Who guards whom, where the edge is, how to attack…" style={{ ...inp, minHeight: 80, resize: "vertical", fontSize: 13 }} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Who guards whom, where the edge is, how to attack…" style={{ ...inp, minHeight: 80, resize: "vertical", fontSize: 13 }} />
       </> : <p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Pick two players to compare their full lines — measurables, stats, shooting, efficiency, and archetype — head to head.</p>}
     </div>
   );
@@ -1635,7 +1706,7 @@ function CoachHQ({ data, openPlayer, go }) {
   const [mine, setMine] = useState("");
   const [mmode, setMmode] = useState("team"); // team | five | one
   const [q, setQ] = useState("");
-  const [notes, setNotes] = useState(() => { try { return localStorage.getItem("ph_notes") || ""; } catch (e) { return ""; } });
+  const [notes, setNotes] = useSynced("ph_notes", "");
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   const find = (slug) => data.teams.find((t) => t.slug === slug) || null;
   const Picker = ({ value, onChange, ph }) => (
@@ -1766,7 +1837,7 @@ function CoachHQ({ data, openPlayer, go }) {
               <div className="wl" key={`${p.id}-${i}`}><span className="n" onClick={() => openPlayer(p)} style={{ cursor: "pointer" }}>{p.name}</span><span className="s">{r1(p.ppg)} PPG · {p.school}</span><span className="add" onClick={() => wl.toggle(p.id)} style={{ marginLeft: 8 }}>Remove</span></div>
             )) : <p style={{ fontSize: 12.5, color: "var(--faint)", margin: 0 }}>No players yet — add from the board or a scouting report.</p>}
             <p className="ttl" style={{ margin: "16px 0 8px" }}>Game-prep notes</p>
-            <textarea value={notes} onChange={(e) => { setNotes(e.target.value); try { localStorage.setItem("ph_notes", e.target.value); } catch (er) { /* ignore */ } }} placeholder="Private notes, tags, game plan…" style={{ ...inp, width: "100%", minHeight: 90, fontSize: 13, padding: 10, resize: "vertical" }} />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Private notes, tags, game plan…" style={{ ...inp, width: "100%", minHeight: 90, fontSize: 13, padding: 10, resize: "vertical" }} />
           </div>
           <div className="card">
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
