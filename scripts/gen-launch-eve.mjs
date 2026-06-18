@@ -72,7 +72,7 @@ card("post-nash-statline", `${header("STAT DROP")}
   ${T(W / 2, 188, 24, 800, C.orange, "DOUBLE-DOUBLE · LAST NIGHT", { ls: 6, anchor: "middle" })}
   ${portrait(W / 2, 300, 76, "nashavery", "NA")}
   ${TD(W / 2, 512, 100, 800, C.text, "NASH AVERY", { anchor: "middle" })}
-  ${T(W / 2, 552, 26, 700, C.sage, "SPALDING · 6'8 WING · CLASS OF '28", { ls: 2, anchor: "middle" })}
+  ${T(W / 2, 552, 26, 700, "#FF6B6B", "SPALDING · 6'8 WING · CLASS OF '28", { ls: 2, anchor: "middle" })}
   ${T(W / 2, 612, 25, 600, C.mut, "Spalding's sophomore did a little of everything in a 75-70 win", { anchor: "middle" })}
   ${T(W / 2, 646, 25, 600, C.mut, "over The Brook — and he's been doing it all summer.", { anchor: "middle" })}
   ${tile4(174, 696, "24", "PTS")}
@@ -93,7 +93,7 @@ card("post-major-leap", `${header("THE LEAP")}
   ${T(W / 2, 188, 24, 800, C.blue, "YEAR-OVER-YEAR", { ls: 6, anchor: "middle" })}
   ${portrait(W / 2, 300, 76, "majorjones", "MJ")}
   ${TD(W / 2, 512, 100, 800, C.text, "MAJOR JONES", { anchor: "middle" })}
-  ${T(W / 2, 552, 26, 700, C.sage, "DEMATHA · GUARD · YEAR 2", { ls: 2, anchor: "middle" })}
+  ${T(W / 2, 552, 26, 700, C.blue, "DEMATHA · GUARD · YEAR 2", { ls: 2, anchor: "middle" })}
   ${T(W / 2, 612, 25, 600, C.mut, "A year ago, a role player. This summer, the engine —", { anchor: "middle" })}
   ${T(W / 2, 646, 25, 600, C.mut, "scoring up, boards nearly doubled, assists up 3.5×.", { anchor: "middle" })}
   <rect x="80" y="696" width="920" height="356" rx="20" fill="${C.panel}" stroke="rgba(59,158,255,0.30)" stroke-width="1.5"/>
