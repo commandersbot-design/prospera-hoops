@@ -1,11 +1,42 @@
 # Prospera Hoops — Launch Runbook
 
-Target: **Thu 2026-06-18**. The rebuild lives on branch `rebuild` (pushed to origin).
-Production (`main`) currently serves the OLD app behind the pre-launch holding page.
+Target: **Thu 2026-06-18 · 5:00 PM EST.**
+**STATUS:** the rebuild is **merged to `main` and deployed** to prosperahoops.com — currently
+**gated** (public sees the holding page). Verified live. The site goes public the moment you
+flip one env var.
 
 ---
 
-## 0. Pre-merge review (do tonight)
+## ⭐ GO-LIVE CHECKLIST (the only things left)
+
+**1. Supabase — run the SQL (one paste).** Dashboard → SQL Editor → New query → paste all of
+`docs/sql/SETUP.sql` → Run. This creates every table sign-up needs: admins, waitlist,
+film_submissions, claims, entitlements, profile_views. **Without this, lock-in / add-yourself /
+scout-views / claims all fail.** (Idempotent — safe to re-run.)
+
+**2. Supabase — Auth URL config.** Authentication → URL Configuration → Site URL
+`https://prosperahoops.com`; add redirect URLs `https://prosperahoops.com/**` and
+`https://www.prosperahoops.com/**`. (Makes magic-link sign-in work.)
+
+**3. Make yourself admin.** Sign in once on the live site (via `?preview=courtside`), then
+Authentication → Users → copy your UUID → run the `insert into public.admins …` line at the
+bottom of `SETUP.sql`. (Unlocks the film + "players to verify" + waitlist queues on your Dashboard.)
+
+**4. Final human test** on the real domain: `https://prosperahoops.com/?preview=courtside`
+(see §0 below for what to click).
+
+**5. 🔴 GO LIVE:** Vercel → Settings → Environment Variables → set `VITE_PRELAUNCH=false`
+(Production) → **Redeploy**. Public now. Post the launch graphics at 5pm (`PROSPERALAUNCHKIT`).
+
+**Rollback:** set `VITE_PRELAUNCH=true` → redeploy (holding page back in ~1 min).
+
+**Post-launch (fast-follow):** flip `COACH_HQ_OPEN = false` in RebuildApp.jsx once accounts/Stripe
+are set, to re-gate Coach HQ behind the Coach tier · wire Stripe (`docs/STRIPE_SETUP.md`) · build
+the MaxPreps roster scraper to fill non-summer school rosters.
+
+---
+
+## 0. Pre-merge review (now a human-test checklist)
 - Open the **Vercel preview** for the `rebuild` branch (Vercel dashboard → Deployments → `rebuild`).
 - Unlock it: append `?preview=courtside` to the preview URL once per device (it's a prod build, so it's gated like live).
 - Walk every view: Landing · a few Profiles · Prospects filters · Teams + Schedule · Coach HQ (redeem owner code `PROSPERA-OWNER-CF2E1B`).
