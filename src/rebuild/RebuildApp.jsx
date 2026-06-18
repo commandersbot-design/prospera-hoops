@@ -143,17 +143,24 @@ const useLockIn = () => React.useContext(LockInCtx);
 
 function WaitlistModal({ prefill, onClose }) {
   const { user } = useAuth();
+  const addMode = !!prefill?.addPlayer; // "add me to the database" submission
   const [email, setEmail] = useState(user?.email || "");
   const [name, setName] = useState(prefill?.player_name || "");
-  const [role, setRole] = useState(prefill?.player_id ? "player" : "player");
+  const [role, setRole] = useState("player");
+  const [school, setSchool] = useState("");
+  const [grad, setGrad] = useState("");
+  const [pos, setPos] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState("");
   const submit = async () => {
     if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; }
+    if (addMode && !name.trim()) { setErr("Enter the player’s full name."); return; }
     setBusy(true); setErr("");
     try {
-      await submitWaitlist({ email: email.trim(), name: name.trim() || null, role, player_id: prefill?.player_id || null, player_name: prefill?.player_name || null });
+      await submitWaitlist(addMode
+        ? { kind: "add_player", email: email.trim(), name: name.trim(), player_name: name.trim(), school: school.trim() || null, grad_year: grad ? (parseInt(grad, 10) || null) : null, position: pos.trim() || null, role: "player" }
+        : { email: email.trim(), name: name.trim() || null, role, player_id: prefill?.player_id || null, player_name: prefill?.player_name || null });
       setDone(true);
     } catch (e) { setErr("Couldn’t save that just now — try again in a moment."); }
     setBusy(false);
@@ -162,10 +169,27 @@ function WaitlistModal({ prefill, onClose }) {
     <Modal onClose={onClose}>
       {done ? (
         <div style={{ textAlign: "center", padding: "6px 4px" }}>
-          <div style={{ fontSize: 36 }}>🔒</div>
-          <p className="ttl" style={{ margin: "8px 0 6px", color: "var(--teal)" }}>You’re locked in.</p>
-          <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.6 }}>{prefill?.player_name ? <><b style={{ color: "var(--ink)" }}>{prefill.player_name}</b> is reserved for you. </> : ""}We saved your spot — we’ll email <b style={{ color: "var(--ink)" }}>{email}</b> a one-tap sign-in link as we open accounts. Nothing is lost.</p>
+          <div style={{ fontSize: 36 }}>{addMode ? "✅" : "🔒"}</div>
+          <p className="ttl" style={{ margin: "8px 0 6px", color: "var(--teal)" }}>{addMode ? "Submitted for review." : "You’re locked in."}</p>
+          {addMode
+            ? <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.6 }}>We verify every player before they go live — no fake profiles. Once <b style={{ color: "var(--ink)" }}>{name}</b> is added, we’ll email <b style={{ color: "var(--ink)" }}>{email}</b> a link to claim the profile.</p>
+            : <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.6 }}>{prefill?.player_name ? <><b style={{ color: "var(--ink)" }}>{prefill.player_name}</b> is reserved for you. </> : ""}We saved your spot — we’ll email <b style={{ color: "var(--ink)" }}>{email}</b> a one-tap sign-in link as we open accounts. Nothing is lost.</p>}
           <button className="cta" style={{ marginTop: 14 }} onClick={onClose}>Done</button>
+        </div>
+      ) : addMode ? (
+        <div>
+          <p className="ttl" style={{ marginTop: 0 }}>Add yourself to the board</p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 14px" }}>Not in the database yet? Drop your info — we <b style={{ color: "var(--ink)" }}>verify every player</b> before they go live, then email you to claim the profile and add stats.</p>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name *" style={INP} />
+          <input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="School / program" style={{ ...INP, marginTop: 10 }} />
+          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+            <input value={grad} onChange={(e) => setGrad(e.target.value)} placeholder="Grad year" inputMode="numeric" style={INP} />
+            <input value={pos} onChange={(e) => setPos(e.target.value)} placeholder="Position" style={INP} />
+          </div>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Your email *" onKeyDown={(e) => e.key === "Enter" && submit()} style={{ ...INP, marginTop: 10 }} />
+          {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
+          <button className="cta" style={{ marginTop: 12 }} onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit for review"}</button>
+          <p style={{ fontSize: 10.5, color: "var(--faint)", marginTop: 10, textAlign: "center" }}>Verified before going live — real players only. We’ll never share your email.</p>
         </div>
       ) : (
         <div>
@@ -262,7 +286,7 @@ function Landing({ data, go, openPlayer }) {
           <div className="search">
             <input value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" placeholder="Search your name" />
             <button>Search</button>
-            <div className={results.length ? "results on" : "results"}>
+            <div className={(results.length || q.trim()) ? "results on" : "results"}>
               {results.map((p, i) => (
                 <div className="rrow" key={`${p.id}-${i}`} onClick={() => openPlayer(p)}>
                   <div className="rav">{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
@@ -270,9 +294,17 @@ function Landing({ data, go, openPlayer }) {
                   <div className="rclaim">Claim this profile →</div>
                 </div>
               ))}
+              {q.trim() && results.length === 0 && (
+                <div className="rrow" onClick={() => lockIn({ addPlayer: true })} style={{ cursor: "pointer" }}>
+                  <div className="rav">＋</div>
+                  <div className="rinfo"><div className="n">Not on the board yet?</div><div className="m">Add yourself — we verify, then you claim it.</div></div>
+                  <div className="rclaim">Add yourself →</div>
+                </div>
+              )}
             </div>
           </div>
-          <button className="claim-big" onClick={() => lockIn()}>Lock in your free account</button>
+          <div style={{ fontSize: 12, color: "var(--faint)", marginTop: 8 }}>Not in the database? <b onClick={() => lockIn({ addPlayer: true })} style={{ color: "var(--orange)", cursor: "pointer" }}>Add yourself to the board →</b></div>
+          <button className="claim-big" style={{ marginTop: 14 }} onClick={() => lockIn()}>Lock in your free account</button>
           <div className="band">
             <div className="seal">★</div>
             <div><div className="k">Founding Member</div><div className="l"><b>Prospera+, free for life.</b> 50 spots.</div></div>
@@ -727,7 +759,8 @@ function PublicProfile({ player, data, go }) {
       <ByTheNumbers games={games} />
       <TheLeapCard seasons={seasons} />
 
-      {arc && arc.seasons && arc.seasons.length > 0 && (
+      {arc && arc.multiSeason ? (
+        // Real trend — two or more tracked seasons. Show the development arc.
         <div className="card" style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <p className="ttl" style={{ margin: 0 }}>Development Arc</p>
@@ -744,6 +777,16 @@ function PublicProfile({ player, data, go }) {
               <button className="claim-big" style={{ fontSize: 15, padding: "11px 18px" }} onClick={() => go("plus")}>🔒 Unlock with Prospera+ · $5/mo</button>
             </div>
           )}
+        </div>
+      ) : (
+        // No real trend yet — educate that more data makes the tool sharper.
+        <div className="card" style={{ marginTop: 16 }}>
+          <p className="ttl">Development Arc</p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.65, margin: 0 }}>
+            Prospera&rsquo;s development engine charts a player&rsquo;s growth <b style={{ color: "var(--ink)" }}>season over season</b> — scoring efficiency, role, and the honest read behind the numbers. {(p.name || "this player").split(" ")[0]} has one tracked season so far, so there&rsquo;s no arc to draw yet.
+            <br /><br />
+            <b style={{ color: "var(--ink)" }}>The more games and seasons we track, the sharper and more useful this read becomes.</b> <b onClick={() => setClaimOpen(true)} style={{ color: "var(--orange)", cursor: "pointer" }}>Claim this profile</b> or add stats to start building the arc.
+          </p>
         </div>
       )}
 
@@ -903,11 +946,24 @@ function Dashboard({ go, openClaimedPlayer }) {
             </div>
           )}
 
-          {isAdmin && waits && waits.length > 0 && (
+          {isAdmin && waits && waits.filter((w) => w.kind === "add_player").length > 0 && (
+            <div className="card" style={{ marginTop: 18, borderColor: "rgba(245,196,81,.4)" }}>
+              <p className="ttl" style={{ color: "var(--gold-a)" }}>Players to verify &amp; add · {waits.filter((w) => w.kind === "add_player").length}</p>
+              <div style={{ display: "grid", gap: 8, maxHeight: 360, overflowY: "auto" }}>
+                {waits.filter((w) => w.kind === "add_player").slice(0, 100).map((w) => (
+                  <div key={w.id} style={{ borderBottom: "1px solid var(--line)", paddingBottom: 8 }}>
+                    <div style={{ fontWeight: 700, fontSize: 13.5 }}>{w.player_name || w.name}{w.position ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {w.position}</span> : null}{w.grad_year ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · &rsquo;{String(w.grad_year).slice(2)}</span> : null}</div>
+                    <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[w.school, w.email].filter(Boolean).join(" · ")}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {isAdmin && waits && waits.filter((w) => w.kind !== "add_player").length > 0 && (
             <div className="card" style={{ marginTop: 18, borderColor: "rgba(47,191,143,.3)" }}>
-              <p className="ttl" style={{ color: "var(--teal)" }}>Locked in · {waits.length}</p>
+              <p className="ttl" style={{ color: "var(--teal)" }}>Locked in · {waits.filter((w) => w.kind !== "add_player").length}</p>
               <div style={{ display: "grid", gap: 8, maxHeight: 340, overflowY: "auto" }}>
-                {waits.slice(0, 100).map((w) => (
+                {waits.filter((w) => w.kind !== "add_player").slice(0, 100).map((w) => (
                   <div key={w.id} style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "baseline", borderBottom: "1px solid var(--line)", paddingBottom: 8, flexWrap: "wrap" }}>
                     <div style={{ minWidth: 0 }}><b style={{ fontSize: 13 }}>{w.email}</b>{w.player_name ? <span style={{ color: "var(--muted)", fontSize: 12 }}> · {w.player_name}</span> : null}</div>
                     <span style={{ fontSize: 11, color: "var(--faint)", textTransform: "capitalize" }}>{[w.role, w.name].filter(Boolean).join(" · ")}</span>

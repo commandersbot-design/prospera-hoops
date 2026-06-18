@@ -13,8 +13,22 @@ create table if not exists public.waitlist (
   role        text,            -- player | parent | coach | fan
   player_id   text,            -- set when locking in a specific profile
   player_name text,
+  kind        text not null default 'lockin',  -- 'lockin' | 'add_player'
+  school      text,
+  grad_year   int,
+  position    text,
+  note        text,
+  status      text not null default 'pending', -- pending | added | rejected (add_player review)
   created_at  timestamptz not null default now()
 );
+
+-- Idempotent: add the player-submission columns if an older table already exists.
+alter table public.waitlist add column if not exists kind text not null default 'lockin';
+alter table public.waitlist add column if not exists school text;
+alter table public.waitlist add column if not exists grad_year int;
+alter table public.waitlist add column if not exists position text;
+alter table public.waitlist add column if not exists note text;
+alter table public.waitlist add column if not exists status text not null default 'pending';
 
 alter table public.waitlist enable row level security;
 
