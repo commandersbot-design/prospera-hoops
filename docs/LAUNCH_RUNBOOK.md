@@ -34,6 +34,12 @@ Free tiers work without this (claim, profiles, Coach HQ via pilot codes). To ena
 - Create the Supabase `entitlements` table (SQL in `docs/STRIPE_SETUP.md`) so `hasPlus()`/`hasCoach()` can read it.
 - Until set: checkout shows "opens at launch" and nothing is charged.
 
+## 3a. Waitlist "lock in" (the day-one signup path — run the SQL)
+The primary launch CTA is **"Lock in your free account"** — a frictionless email capture with **no magic-link round-trip**, so signups can't be blocked by email deliverability. Real sign-in links go out later as you open accounts.
+- Run `docs/sql/waitlist.sql` in Supabase (one table, anon-insert + admin-read). **Do this before launch** — without it, the lock-in button shows a "try again" error.
+- See who locked in from your **Dashboard** (admin-only "Locked in · N" card).
+- Magic-link **sign-in still works** as the secondary path (header "Log in", and "Sign in to claim now" on profiles) — but nothing on the critical first-glance flow depends on an email arriving.
+
 ## 3b. Film uploads (run the SQL to turn it on)
 - Run `docs/sql/film_submissions.sql` in Supabase. Until then the Film card just shows "Add film — sign in"; submitting will no-op with a friendly retry message.
 - Free accounts get **1 upload**; more is gated behind Prospera+. Every upload is `pending` until you approve it from the **Dashboard** (admin-only "Film awaiting review" card).

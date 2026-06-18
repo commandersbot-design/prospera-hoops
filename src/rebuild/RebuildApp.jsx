@@ -13,6 +13,7 @@ import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
+import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
 import { useCoachAccess } from "../lib/coachAccess.js";
 import { seasonStatLine } from "../components/StatLine.jsx";
@@ -130,6 +131,54 @@ function ArcSvg({ points }) {
 }
 
 // ---- header ----------------------------------------------------------------
+// "Lock in" / waitlist — opened from any CTA via context (no prop-drilling).
+// Frictionless email capture so visitors reserve their account on day one
+// without waiting on a magic-link email; real sign-in links go out later.
+const LockInCtx = React.createContext(() => {});
+const useLockIn = () => React.useContext(LockInCtx);
+
+function WaitlistModal({ prefill, onClose }) {
+  const { user } = useAuth();
+  const [email, setEmail] = useState(user?.email || "");
+  const [name, setName] = useState(prefill?.player_name || "");
+  const [role, setRole] = useState(prefill?.player_id ? "player" : "player");
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  const [err, setErr] = useState("");
+  const submit = async () => {
+    if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; }
+    setBusy(true); setErr("");
+    try {
+      await submitWaitlist({ email: email.trim(), name: name.trim() || null, role, player_id: prefill?.player_id || null, player_name: prefill?.player_name || null });
+      setDone(true);
+    } catch (e) { setErr("Couldn’t save that just now — try again in a moment."); }
+    setBusy(false);
+  };
+  return (
+    <Modal onClose={onClose}>
+      {done ? (
+        <div style={{ textAlign: "center", padding: "6px 4px" }}>
+          <div style={{ fontSize: 36 }}>🔒</div>
+          <p className="ttl" style={{ margin: "8px 0 6px", color: "var(--teal)" }}>You’re locked in.</p>
+          <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.6 }}>{prefill?.player_name ? <><b style={{ color: "var(--ink)" }}>{prefill.player_name}</b> is reserved for you. </> : ""}We saved your spot — we’ll email <b style={{ color: "var(--ink)" }}>{email}</b> a one-tap sign-in link as we open accounts. Nothing is lost.</p>
+          <button className="cta" style={{ marginTop: 14 }} onClick={onClose}>Done</button>
+        </div>
+      ) : (
+        <div>
+          <p className="ttl" style={{ marginTop: 0 }}>{prefill?.player_name ? `Lock in ${prefill.player_name}` : prefill?.founding ? "Lock in a Founding spot" : "Lock in your free account"}</p>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 14px" }}>{prefill?.founding ? "Founding members keep Prospera+ free for life — only 50 spots. Reserve yours now; " : "Reserve your spot now — "}no password, nothing to wait on. We’ll email your sign-in link as we roll out accounts.</p>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@email.com" onKeyDown={(e) => e.key === "Enter" && submit()} style={INP} />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name (optional)" style={{ ...INP, marginTop: 10 }} />
+          <div style={{ display: "flex", gap: 8, margin: "12px 0 4px", flexWrap: "wrap" }}>{["player", "parent", "coach", "fan"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
+          {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
+          <button className="cta" style={{ marginTop: 12 }} onClick={submit} disabled={busy}>{busy ? "Locking in…" : "🔒 Lock in my spot"}</button>
+          <p style={{ fontSize: 10.5, color: "var(--faint)", marginTop: 10, textAlign: "center" }}>Free forever for early members. We’ll never share your email.</p>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 function Header({ view, go }) {
   const { user, signOut } = useAuth();
   const [signInOpen, setSignInOpen] = useState(false);
@@ -193,6 +242,7 @@ function Landing({ data, go, openPlayer }) {
   }, [q, data]);
   const marquee = data.players.slice(0, 8);
   const featured = data.featured;
+  const lockIn = useLockIn();
   return (
     <>
       <NewsTicker items={data.news} openPlayer={openPlayer} />
@@ -214,11 +264,11 @@ function Landing({ data, go, openPlayer }) {
               ))}
             </div>
           </div>
-          <button className="claim-big" onClick={() => go("dash")}>Claim your profile — free</button>
+          <button className="claim-big" onClick={() => lockIn()}>Lock in your free account</button>
           <div className="band">
             <div className="seal">★</div>
             <div><div className="k">Founding Member</div><div className="l"><b>Prospera+, free for life.</b> 50 spots.</div></div>
-            <div className="ap" onClick={() => go("dash")}>Apply →</div>
+            <div className="ap" onClick={() => lockIn({ founding: true })}>Apply →</div>
           </div>
         </div>
         <div data-anim style={{ animationDelay: ".12s" }}>
@@ -273,7 +323,7 @@ function Landing({ data, go, openPlayer }) {
       <section className="blk"><div className="wrap" style={{ textAlign: "center" }}>
         <div className="keye" style={{ color: "var(--gold-a)" }}>The Founding 50</div><h2>Get in on the ground floor.</h2>
         <p className="ksub" style={{ margin: "0 auto" }}>The first 50 members we approve lock in Prospera+ free, for as long as they&rsquo;re on Prospera — plus a gold Founding badge only these fifty will ever wear.</p>
-        <button className="claim-big" onClick={() => go("dash")} style={{ marginTop: 22 }}>Apply for a founding spot</button>
+        <button className="claim-big" onClick={() => lockIn({ founding: true })} style={{ marginTop: 22 }}>Apply for a founding spot</button>
       </div></section>
 
       <footer><div className="wrap">
@@ -572,6 +622,7 @@ function PublicProfile({ player, data, go }) {
   const [claimOpen, setClaimOpen] = useState(false);
   const [myClaim, setMyClaim] = useState(null);
   const [plus, setPlus] = useState(false);
+  const lockIn = useLockIn();
   useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
   useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
   return (
@@ -587,8 +638,9 @@ function PublicProfile({ player, data, go }) {
         </div></div>
       ) : (
         <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
-          <h3>Is this you?</h3><p>This profile is on Prospera but hasn&rsquo;t been claimed yet. Claim it to manage your stats, film, and recruiting info — free.</p>
-          <div className="bbtns"><button className="bbtn pri" onClick={() => setClaimOpen(true)}>Claim this profile</button><button className="bbtn" onClick={() => go("prospects")}>Not me</button></div>
+          <h3>Is this you?</h3><p>Lock in this profile now — just your email, no password, nothing to wait on. We’ll email your sign-in link as accounts roll out. Free for early members.</p>
+          <div className="bbtns"><button className="bbtn pri" onClick={() => lockIn({ player_id: p.id, player_name: p.name })}>🔒 Lock in this profile</button><button className="bbtn" onClick={() => go("prospects")}>Not me</button></div>
+          <p style={{ fontSize: 11.5, color: "var(--faint)", margin: "10px 0 0" }}>Already have access? <a onClick={() => setClaimOpen(true)} style={{ color: "var(--orange)", fontWeight: 700, cursor: "pointer" }}>Sign in to claim now →</a></p>
         </div></div>
       )}
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
@@ -778,8 +830,10 @@ function Dashboard({ go, openClaimedPlayer }) {
   const { user, isAdmin, configured, loading, signOut } = useAuth();
   const [claims, setClaims] = useState(null);
   const [filmQueue, setFilmQueue] = useState(null);
+  const [waits, setWaits] = useState(null);
   useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
   useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
+  useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
 
   // Not signed in → sign-in prompt.
@@ -834,6 +888,20 @@ function Dashboard({ go, openClaimedPlayer }) {
                       <button className="bbtn" onClick={() => reviewFilm(f.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
                       <button className="bbtn" onClick={() => reviewFilm(f.id, "rejected")}>Reject</button>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isAdmin && waits && waits.length > 0 && (
+            <div className="card" style={{ marginTop: 18, borderColor: "rgba(47,191,143,.3)" }}>
+              <p className="ttl" style={{ color: "var(--teal)" }}>Locked in · {waits.length}</p>
+              <div style={{ display: "grid", gap: 8, maxHeight: 340, overflowY: "auto" }}>
+                {waits.slice(0, 100).map((w) => (
+                  <div key={w.id} style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "baseline", borderBottom: "1px solid var(--line)", paddingBottom: 8, flexWrap: "wrap" }}>
+                    <div style={{ minWidth: 0 }}><b style={{ fontSize: 13 }}>{w.email}</b>{w.player_name ? <span style={{ color: "var(--muted)", fontSize: 12 }}> · {w.player_name}</span> : null}</div>
+                    <span style={{ fontSize: 11, color: "var(--faint)", textTransform: "capitalize" }}>{[w.role, w.name].filter(Boolean).join(" · ")}</span>
                   </div>
                 ))}
               </div>
@@ -1876,6 +1944,8 @@ export default function RebuildApp() {
   const [view, setView] = useState("landing");
   const [selected, setSelected] = useState(null);
   const [team, setTeam] = useState(null);
+  const [lockIn, setLockIn] = useState(null); // null | { player_id, player_name, founding }
+  const openLockIn = (prefill) => setLockIn(prefill || {});
   const data = useData();
   const go = (v) => { setView(v); pushUrl(VIEW_PATH[v] || "/"); window.scrollTo(0, 0); };
   const openPlayer = (p) => { setSelected(p); setView("profile"); pushUrl(`/p/${slugify(p.name)}`); window.scrollTo(0, 0); };
@@ -1900,6 +1970,7 @@ export default function RebuildApp() {
   if (!data) return <div className="rebuild" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--muted)", fontFamily: "var(--disp)", letterSpacing: ".2em", textTransform: "uppercase", fontSize: 12 }}>Loading the board…</div>;
 
   return (
+    <LockInCtx.Provider value={openLockIn}>
     <div className="rebuild">
       <Header view={view} go={go} />
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
@@ -1912,6 +1983,8 @@ export default function RebuildApp() {
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
       {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} go={go} />}
+      {lockIn && <WaitlistModal prefill={lockIn} onClose={() => setLockIn(null)} />}
     </div>
+    </LockInCtx.Provider>
   );
 }
