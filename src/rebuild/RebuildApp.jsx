@@ -234,12 +234,20 @@ function Landing({ data, go, openPlayer }) {
           <div className="covchip"><b>{data.cov.hs}</b><span>HS teams</span></div>
         </div>
         <div className="marq"><div className="marq-row">
-          {marquee.concat(marquee).map((p, i) => (
-            <div className="pcard" key={i} onClick={() => openPlayer(p)}>
-              <div className="pn">{p.name}</div><div className="pm">{p.meta}</div>
-              <div className="pp">{p.lead} <small>{p.leadK}</small></div>
-            </div>
-          ))}
+          {marquee.concat(marquee).map((p, i) => {
+            const rank = (i % marquee.length) + 1;
+            return (
+              <div className="pcard" key={i} onClick={() => openPlayer(p)}>
+                <span className={`prank${rank <= 3 ? " top" : ""}`}>{rank}</span>
+                <div className="phead">
+                  <div className="pav">{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
+                  <div className="pp" style={{ color: statTone("ppg", p.ppg) }}>{p.lead}<small>{p.leadK}</small></div>
+                </div>
+                <div className="pn">{p.name}</div>
+                <div className="pm">{[p.pos, p.cls, cleanOpp(p.school)].filter(Boolean).join(" · ")}</div>
+              </div>
+            );
+          })}
         </div></div>
       </div></section>
 

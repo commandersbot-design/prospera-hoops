@@ -119,10 +119,15 @@
 .rebuild .marq{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .rebuild .marq-row{display:flex;gap:12px;width:max-content;animation:pr-scroll 26s linear infinite}
 @keyframes pr-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.rebuild .pcard{width:170px;flex:none;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:13px;cursor:pointer}
-.rebuild .pcard .pn{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:15px;color:var(--ink)}
-.rebuild .pcard .pm{font-size:10.5px;color:var(--muted);margin-bottom:9px}
-.rebuild .pcard .pp{font-family:var(--disp);font-weight:800;font-size:21px;color:var(--ink)}.rebuild .pcard .pp small{font-family:var(--sans);font-weight:600;font-size:10px;color:var(--faint)}
+.rebuild .pcard{position:relative;width:176px;flex:none;background:linear-gradient(165deg,var(--surface),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;overflow:hidden}
+.rebuild .pcard .prank{position:absolute;bottom:-13px;right:4px;font-family:var(--disp);font-weight:800;font-size:50px;line-height:1;color:rgba(255,255,255,.045);pointer-events:none;letter-spacing:-.02em}
+.rebuild .pcard .prank.top{color:rgba(245,196,81,.14)}
+.rebuild .pcard .phead{display:flex;align-items:center;gap:8px;margin-bottom:6px;position:relative;z-index:1}
+.rebuild .pcard .pav{width:28px;height:28px;border-radius:50%;overflow:hidden;flex:none;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-family:var(--disp);font-weight:800;font-size:11px;color:var(--muted)}
+.rebuild .pcard .pav img{width:100%;height:100%;object-fit:cover;object-position:top}
+.rebuild .pcard .pp{margin-left:auto;font-family:var(--disp);font-weight:800;font-size:20px;line-height:1;color:var(--ink)}.rebuild .pcard .pp small{font-family:var(--sans);font-weight:600;font-size:9px;color:var(--faint);margin-left:2px;letter-spacing:.04em}
+.rebuild .pcard .pn{position:relative;z-index:1;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rebuild .pcard .pm{position:relative;z-index:1;font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .rebuild .anat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
 .rebuild .feat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
 .rebuild .feat .ft{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;margin:0 0 5px;color:var(--ink)}
