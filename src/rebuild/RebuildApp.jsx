@@ -17,7 +17,7 @@ import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
 import { recordScoutView, scoutViews } from "../lib/views.js";
-import { useCoachAccess } from "../lib/coachAccess.js";
+import { useCoachAccess, hydrateCoachPass } from "../lib/coachAccess.js";
 import { seasonStatLine } from "../components/StatLine.jsx";
 import { playerHighlights } from "../lib/highlights.js";
 
@@ -2246,6 +2246,9 @@ const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", 
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
+  const { user } = useAuth();
+  // On login, recover a coach's redeemed access from their account (no re-redeem).
+  useEffect(() => { if (user) hydrateCoachPass(); }, [user]);
   const [view, setView] = useState("landing");
   const [selected, setSelected] = useState(null);
   const [team, setTeam] = useState(null);

@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+import { pullState, pushState } from "./userState.js";
 
 /**
  * Coach-tier access — gates Scout HQ so it's a paid/coach feature, not something
@@ -46,7 +47,23 @@ export function redeemCoachCode(code) {
   if (!hit) return null;
   pass = { ...hit, code: norm };
   try { localStorage.setItem(KEY, JSON.stringify(pass)); } catch { /* private mode */ }
+  pushState("coach_pass", pass); // link to the account too, so it follows the coach across devices
   emit();
+  return pass;
+}
+
+// Recognize a previously-redeemed coach on a fresh login/device: pull the pass
+// from their account. If they already have a local pass, push it up instead so
+// the account is the source of truth. No-ops when signed out or before the
+// user_state table exists (then access stays per-device, as today).
+export async function hydrateCoachPass() {
+  if (pass) { pushState("coach_pass", pass); return pass; }
+  const remote = await pullState("coach_pass");
+  if (remote && remote.code) {
+    pass = remote;
+    try { localStorage.setItem(KEY, JSON.stringify(remote)); } catch { /* private mode */ }
+    emit();
+  }
   return pass;
 }
 
