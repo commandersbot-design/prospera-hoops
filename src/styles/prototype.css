@@ -119,6 +119,7 @@
 .rebuild .marq{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .rebuild .marq-row{display:flex;gap:12px;width:max-content;animation:pr-scroll 26s linear infinite}
 @keyframes pr-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes prfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .rebuild .pcard{position:relative;width:176px;flex:none;background:linear-gradient(165deg,var(--surface),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;overflow:hidden}
 .rebuild .pcard .prank{position:absolute;bottom:-13px;right:4px;font-family:var(--disp);font-weight:800;font-size:50px;line-height:1;color:rgba(255,255,255,.045);pointer-events:none;letter-spacing:-.02em}
 .rebuild .pcard .prank.top{color:rgba(245,196,81,.14)}

@@ -112,6 +112,7 @@ function ScoutCard({ p, portrait, onClick }) {
 function Badges({ p }) {
   return (
     <div className="badges">
+      {(p.stars || (p.rankings && p.rankings.national)) ? <span className="bdg gold">{[p.stars ? `${p.stars}★` : null, p.rankings && p.rankings.national ? `#${p.rankings.national} Natl` : null].filter(Boolean).join(" · ")}</span> : null}
       {p.founding && <span className="bdg gold">★ Founding</span>}
       {p.accountVerified && <span className="bdg blue">✓ Verified</span>}
       {p.accountPending && <span className="bdg blue" style={{ opacity: 0.55, border: "1px dashed rgba(59,158,255,.4)" }}>Verified — pending</span>}
@@ -245,7 +246,10 @@ function Landing({ data, go, openPlayer }) {
     return data.players.filter((p) => p.name.toLowerCase().includes(k)).slice(0, 6);
   }, [q, data]);
   const marquee = data.players.slice(0, 8);
-  const featured = data.featured;
+  const cards = (data.featuredCards && data.featuredCards.length) ? data.featuredCards : (data.featured ? [data.featured] : []);
+  const [fi, setFi] = useState(0);
+  useEffect(() => { if (cards.length < 2) return; const id = setInterval(() => setFi((i) => (i + 1) % cards.length), 4500); return () => clearInterval(id); }, [cards.length]);
+  const featured = cards.length ? cards[fi % cards.length] : null;
   const lockIn = useLockIn();
   return (
     <>
@@ -276,7 +280,8 @@ function Landing({ data, go, openPlayer }) {
           </div>
         </div>
         <div data-anim style={{ animationDelay: ".12s" }}>
-          {featured && <ScoutCard p={featured} onClick={() => openPlayer(featured)} />}
+          {featured && <div key={featured.id || featured.name} style={{ animation: "prfade .5s ease" }}><ScoutCard p={featured} onClick={() => openPlayer(featured)} /></div>}
+          {cards.length > 1 && <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 14 }}>{cards.map((c, i) => <span key={i} onClick={() => setFi(i)} title={c.name} style={{ width: i === fi ? 20 : 7, height: 7, borderRadius: 9, background: i === fi ? "var(--orange)" : "var(--line)", cursor: "pointer", transition: "all .25s" }} />)}</div>}
         </div>
       </div></section>
 
@@ -1504,13 +1509,17 @@ function CoachLock({ feature, user, go, redeem }) {
   );
 }
 
+// LAUNCH FLAG: Coach HQ is open & free for everyone until accounts go live.
+// Flip to false once sign-ins + Stripe are set up to re-gate it behind the Coach tier.
+const COACH_HQ_OPEN = true;
 function CoachHQ({ data, openPlayer, go }) {
   const wl = useWatchlist();
   const { user, isAdmin } = useAuth();
   const { hasPass, redeem, pass } = useCoachAccess();
   const [coachEnt, setCoachEnt] = useState(false);
   useEffect(() => { let live = true; if (user) hasCoach().then((v) => { if (live) setCoachEnt(v); }).catch(() => {}); else setCoachEnt(false); return () => { live = false; }; }, [user]);
-  const unlocked = isAdmin || hasPass || coachEnt;
+  const realAccess = isAdmin || hasPass || coachEnt;
+  const unlocked = COACH_HQ_OPEN || realAccess; // open & free until accounts launch
   const PREMIUM = { matchup: true, myteam: true }; // scout + lists are the free hook
   const [tab, setTab] = useState("scout");
   const [oppA, setOppA] = useState("");
@@ -1535,10 +1544,16 @@ function CoachHQ({ data, openPlayer, go }) {
     <div className="wrap" style={{ paddingTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div className="hello">Coach HQ</div>
-        {unlocked ? <span className="ctx">{isAdmin || pass?.tier === "owner" ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
-          : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>Coach tier · free first year</span>}
+        {realAccess ? <span className="ctx">{isAdmin || pass?.tier === "owner" ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
+          : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>{COACH_HQ_OPEN ? "Free preview · Coach tier at launch" : "Coach tier · free first year"}</span>}
       </div>
       <div className="sub">Scout opponents, build matchups, and run your team — your whole sideline brain, in one place.</div>
+      {COACH_HQ_OPEN && !realAccess && (
+        <div className="banner" style={{ borderColor: "rgba(245,196,81,.4)", marginTop: 14 }}><div className="ico" style={{ color: "var(--gold-a)" }}>★</div><div style={{ flex: 1 }}>
+          <h3>Coach HQ is open &amp; free during launch</h3>
+          <p>Dig into everything — matchups, your-team analytics, opponent game plans. Once accounts go live it becomes a <b style={{ color: "var(--ink)" }}>Coach-tier</b> feature ($19/mo · <b style={{ color: "var(--ink)" }}>free your first year</b>).</p>
+        </div></div>
+      )}
       <div className="tabs" style={{ margin: "16px 0", flexWrap: "wrap" }}>
         {[["scout", "Opponent Scouting"], ["matchup", "Matchup Builder"], ["myteam", "My Team"], ["lists", "Lists & Notes"]].map(([k, l]) => <span key={k} className={`tab ${tab === k ? "on" : ""}`} onClick={() => setTab(k)}>{l}{PREMIUM[k] && !unlocked ? " 🔒" : ""}</span>)}
       </div>
@@ -1740,25 +1755,23 @@ function useData() {
         });
       }
       ranked.sort((a, b) => (((a.rankings && a.rankings.national) || 9999) - ((b.rankings && b.rankings.national) || 9999)) || ((b.stars || 0) - (a.stars || 0)) || ((b.ppg || 0) - (a.ppg || 0)));
-      // Featured: a real, headshot-bearing standout (prefer one with a photo).
+      // Featured: a rotating set of real standouts — summer leaders + ranked
+      // recruits (who carry their rating/ranking badge on the card).
+      const allByKey = Object.fromEntries(all.map((p) => [p.key, p]));
+      const rankedByKey = Object.fromEntries(ranked.map((p) => [p.key, p]));
+      const buildFeatured = (p) => p && ({
+        ...p,
+        eyebrow: p.ppg != null ? "Scout Card · Summer '26" : `Scout Card · Class ${p.cls || "DMV"}`,
+        meta: `${p.school || ""}${p.cls ? " · " + p.cls : ""}`,
+        stats: p.ppg != null
+          ? [{ v: r1(p.ppg), k: "PPG", pct: 88 }, { v: r1(p.rpg), k: "RPG", pct: 70 }, { v: r1(p.apg), k: "APG", pct: 66 }]
+          : [p.stars ? { v: `${p.stars}★`, k: "RATING" } : null, p.rankings && p.rankings.national ? { v: `#${p.rankings.national}`, k: "NATIONAL" } : null, p.rankings && p.rankings.state ? { v: `#${p.rankings.state}`, k: `${p.state || ""} STATE`.trim() } : null].filter(Boolean),
+        arc: p.ppg != null ? [12, 14, 13, 17, Number(p.ppg) || 19] : null,
+      });
+      const FEATURED_NAMES = ["Christian Towe", "Drew Hill", "Major Jones", "J'Lon Lyons", "Brandon Woodard"];
+      const featuredCards = FEATURED_NAMES.map((nm) => buildFeatured(allByKey[nameKey(nm)] || rankedByKey[nameKey(nm)])).filter(Boolean);
       const withPhoto = all.find((p) => p.headshot) || all[0];
-      const featured = withPhoto && {
-        ...withPhoto,
-        eyebrow: "Scout Card · Summer '26",
-        meta: `${withPhoto.school} · ${withPhoto.cls || "DMV"}`,
-        stats: [
-          { v: r1(withPhoto.ppg), k: "PPG", pct: 88 },
-          { v: r1(withPhoto.rpg), k: "RPG", pct: 72 },
-          { v: r1(withPhoto.apg), k: "APG", pct: 70 },
-        ],
-        arc: [12, 14, 13, 17, Number(withPhoto.ppg) || 19],
-        percentiles: [{ l: "Scoring", v: 88 }, { l: "Playmaking", v: 70 }, { l: "Efficiency", v: 74 }, { l: "Rebounding", v: 60 }],
-        archetype: "Lead Guard · Shot Creator",
-        archetypeRead: "Initiates offense, scores off the dribble, and sets up teammates.",
-        summerRow: { split: "Summer '26", gp: withPhoto.gp, ppg: r1(withPhoto.ppg), rpg: r1(withPhoto.rpg), apg: r1(withPhoto.apg), tp: "—" },
-        context: { hs: null, su: { split: "Summer '26", gp: 5, ppg: r1(withPhoto.ppg), rpg: r1(withPhoto.rpg), apg: r1(withPhoto.apg), tp: "—" }, aau: null },
-        games: [],
-      };
+      const featured = featuredCards[0] || (withPhoto && buildFeatured(withPhoto));
       const cov = {
         // Use the actual board population (players with tracked stats) so the
         // landing "Players" stat matches the Prospects tab count exactly.
@@ -1811,7 +1824,7 @@ function useData() {
       const newsHand = (NEWS_DATA.items || []).map((it) => ({ text: it.headline, url: it.url || null, player: it.prospectId ? (all.find((p) => p.id === it.prospectId) || null) : null }));
       const newsPerf = [...all].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 8).map((p) => ({ text: `${p.name} — ${r1(p.ppg)} PPG this summer for ${cleanOpp(p.school)}`, player: p }));
       const news = [...newsHand, ...newsPerf];
-      setData({ players: all, ranked, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news, recaps, recapSource });
+      setData({ players: all, ranked, featured, featuredCards, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news, recaps, recapSource });
     });
   }, []);
   return data;
