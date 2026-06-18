@@ -723,7 +723,14 @@ function SignInForm({ onSignedIn, intro }) {
   if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:claims@prosperahoops.com" style={{ color: "var(--orange)" }}>claims@prosperahoops.com</a> and we’ll set you up.</p>;
   if (user) return null;
   const send = async () => { setErr(""); if (!/.+@.+\..+/.test(email)) { setErr("Enter a valid email."); return; } setBusy(true); try { await signIn(email); setSent(true); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
-  if (sent) return <div>{intro}<p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p><p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email}</b>. Open it on this device to finish.</p></div>;
+  if (sent) return (
+    <div>{intro}
+      <p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p>
+      <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email}</b> — open it on this device to finish. It lands within a minute; <b style={{ color: "var(--ink)" }}>if you don’t see it, check your spam or promotions folder.</b></p>
+      <button className="bbtn" style={{ marginTop: 12 }} onClick={send} disabled={busy}>{busy ? "Resending…" : "Resend link"}</button>
+      {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
+    </div>
+  );
   return (
     <div>
       {intro}
