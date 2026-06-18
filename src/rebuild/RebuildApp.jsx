@@ -71,7 +71,9 @@ const TrendArrow = ({ d, unit }) => (d == null || d === 0 ? null : (
 ));
 
 // ---- shared: Scout Card (matches prototype .scout) -------------------------
-const HEADSHOT_EMAIL = "headshots@prosperahoops.com";
+// Routed to the one live, monitored inbox for launch. Swap to a dedicated
+// headshots@ alias once that mailbox is wired up post-launch.
+const HEADSHOT_EMAIL = "jalen@prosperahoops.com";
 function ScoutCard({ p, portrait, onClick }) {
   return (
     <div className="scout" onClick={onClick} style={onClick ? { cursor: "pointer" } : undefined}>
@@ -873,7 +875,7 @@ function SignInForm({ onSignedIn, intro }) {
   useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
   // Tick the resend cooldown down to zero.
   useEffect(() => { if (left <= 0) return; const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000); return () => clearInterval(t); }, [left]);
-  if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:claims@prosperahoops.com" style={{ color: "var(--orange)" }}>claims@prosperahoops.com</a> and we’ll set you up.</p>;
+  if (!configured) return <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>Accounts open at launch. To claim your profile now, email <a href="mailto:jalen@prosperahoops.com" style={{ color: "var(--orange)" }}>jalen@prosperahoops.com</a> and we’ll set you up.</p>;
   if (user) return null;
   const send = async () => {
     setErr("");
