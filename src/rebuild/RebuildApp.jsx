@@ -290,7 +290,7 @@ function Landing({ data, go, openPlayer }) {
           <div className="search">
             <input value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" placeholder="Search your name" />
             <button>Search</button>
-            <div className={results.length ? "results on" : "results"}>
+            <div className={(results.length || q.trim()) ? "results on" : "results"}>
               {results.map((p, i) => (
                 <div className="rrow" key={`${p.id}-${i}`} onClick={() => openPlayer(p)}>
                   <div className="rav">{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
@@ -298,6 +298,11 @@ function Landing({ data, go, openPlayer }) {
                   <div className="rclaim">Claim this profile →</div>
                 </div>
               ))}
+              {q.trim() && results.length === 0 && (
+                <div style={{ padding: "13px 14px", fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
+                  No one matches &ldquo;{q.trim()}&rdquo; yet. Don&rsquo;t see your name? <a href="mailto:jalen@prosperahoops.com?subject=Add%20me%20to%20Prospera%20Hoops" style={{ color: "var(--orange)", fontWeight: 700 }}>Email us</a> and we&rsquo;ll get you added.
+                </div>
+              )}
             </div>
           </div>
           <button className="claim-big" onClick={() => go("dash")}>Claim your profile — free</button>

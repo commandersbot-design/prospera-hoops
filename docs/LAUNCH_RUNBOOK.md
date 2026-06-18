@@ -35,6 +35,28 @@ features degrade quietly until then — they don't block launch).
 are set, to re-gate Coach HQ behind the Coach tier · wire Stripe (`docs/STRIPE_SETUP.md`) · build
 the MaxPreps roster scraper to fill non-summer school rosters.
 
+### Post-launch backlog (deferred during launch prep, 2026-06-18)
+1. **Add-a-prospect + "what we need from you"** — the big one. A `profileNeeds(player)` audit
+   (headshot · measurements · position · grad year · HS/summer/AAU stats · film · recruiting ·
+   written report · contact) shown as a "X of 11 complete" checklist on every profile, a single
+   "send us this info" submission, and an "＋ Add yourself" CTA on Prospects + the search
+   no-results state. Everything routes to the admin review queue (reuse `claims`, no new SQL),
+   tagged NEW / UPDATE — **admin verifies before anything goes live.** (Modal already exists in
+   code as the dormant `WaitlistModal`/`addMode`; entry points were removed in the accounts-first
+   pivot.) **Until this ships, players not in the DB can only claim existing profiles — a
+   name-not-found search is a dead end.**
+2. **In-app profile editor / stat verification** — approved owners can't yet self-edit stats/film/
+   recruiting; `profile_overrides` (`saveOverride`/`getMyOverride` in profiles.js) exists but isn't
+   wired to UI and its tables aren't created. This is also where per-stat verification lives.
+3. **"Mark as Founding" admin control** — a button in the claims queue that sets the gold Founding
+   badge AND grants free Prospera+ (needs an admin entitlement-write path). Today "Founding" is
+   only a data flag + the landing promise; no mechanism to actually grant it.
+4. **Dedicated email aliases** — wire `headshots@` / `claims@` / `support@`(or `hello@`) in Google
+   Workspace, then repoint `HEADSHOT_EMAIL` + the claim-help mailto off the launch stand-in
+   `jalen@prosperahoops.com`.
+5. **Password login as a second option** — alongside magic-link (Supabase supports both). Magic-link
+   stays the default.
+
 ---
 
 ## 0. Pre-merge review (now a human-test checklist)
