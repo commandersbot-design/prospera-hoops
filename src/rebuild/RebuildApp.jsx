@@ -248,7 +248,7 @@ function Landing({ data, go, openPlayer }) {
   const marquee = data.players.slice(0, 8);
   const cards = (data.featuredCards && data.featuredCards.length) ? data.featuredCards : (data.featured ? [data.featured] : []);
   const [fi, setFi] = useState(0);
-  useEffect(() => { if (cards.length < 2) return; const id = setInterval(() => setFi((i) => (i + 1) % cards.length), 4500); return () => clearInterval(id); }, [cards.length]);
+  useEffect(() => { if (cards.length < 2) return; const id = setInterval(() => setFi((i) => (i + 1) % cards.length), 60000); return () => clearInterval(id); }, [cards.length]);
   const featured = cards.length ? cards[fi % cards.length] : null;
   const lockIn = useLockIn();
   return (
