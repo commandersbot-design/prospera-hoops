@@ -50,6 +50,23 @@ export async function setClaimStatus(claimId, status) {
   return Array.isArray(rows) ? rows[0] : rows;
 }
 
+// --- team claims (a coach owns a program) -----------------------------------
+// Reuses the claims table with a `team:<slug>` player_id, so team claims share
+// the exact same admin-review queue, RLS, and account-linking as player claims.
+// `role` is the coach's role on the program (Head Coach / Assistant / …).
+export async function submitTeamClaim({ team_slug, team_name, role, proof, message }) {
+  return submitClaim({ player_id: `team:${team_slug}`, player_name: team_name, school: team_name, role, proof, message });
+}
+
+// The signed-in user's claim for a specific team, if any.
+export async function myClaimForTeam(team_slug) {
+  return myClaimForPlayer(`team:${team_slug}`);
+}
+
+// Tell a team claim apart from a player claim, and recover its team slug.
+export const isTeamClaim = (c) => !!c && typeof c.player_id === "string" && c.player_id.startsWith("team:");
+export const teamSlugOf = (c) => (isTeamClaim(c) ? c.player_id.slice(5) : null);
+
 // --- overrides (the only player-editable data) ------------------------------
 
 // Public read: the contact-masked overlay view. Readable by anyone, so the

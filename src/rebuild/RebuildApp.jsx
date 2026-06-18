@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -930,8 +930,40 @@ function ClaimPanel({ player, onClose }) {
   );
 }
 
+// Claim a team / program — the coach equivalent of a player claim. Same
+// sign-in → role → submit → admin-verify flow, linked to the account.
+function ClaimTeamPanel({ team, onClose }) {
+  const { user } = useAuth();
+  const [claim, setClaim] = useState(null);
+  const [role, setRole] = useState("Head Coach");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  useEffect(() => { let live = true; if (user && team?.slug) myClaimForTeam(team.slug).then((c) => { if (live) setClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, team?.slug]);
+  const submit = async () => { setErr(""); setBusy(true); try { const c = await submitTeamClaim({ team_slug: team.slug, team_name: team.label || team.name, role }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  return (
+    <Modal onClose={onClose}>
+      <p className="ttl" style={{ marginTop: 0 }}>Claim {team.label || team.name}</p>
+      {claim ? (
+        <div>
+          <span className="bdg teal" style={{ display: "inline-block", marginBottom: 10 }}>{claim.status === "approved" ? "✓ You manage this team" : "Claim submitted"}</span>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>{claim.status === "approved" ? "Coach HQ for this program is unlocked on your account — scouting, matchups, and your-team tools, on any device." : "Your team claim is pending review — we usually verify within a day. Check back on your dashboard."}</p>
+        </div>
+      ) : !user ? (
+        <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Sign in to claim your program — free. Unlock Coach HQ for your team.</p>} />
+      ) : (
+        <div>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Your role with this program:</p>
+          <div style={{ display: "flex", gap: 8, margin: "10px 0 14px", flexWrap: "wrap" }}>{["Head Coach", "Assistant", "Director", "Staff"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
+          {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "0 0 8px" }}>{err}</p>}
+          <button className="cta" onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit team claim"}</button>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 // ---- PLAYER DASHBOARD ------------------------------------------------------
-function Dashboard({ go, openClaimedPlayer }) {
+function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   const { user, isAdmin, configured, loading, signOut } = useAuth();
   const [claims, setClaims] = useState(null);
   const [filmQueue, setFilmQueue] = useState(null);
@@ -989,8 +1021,8 @@ function Dashboard({ go, openClaimedPlayer }) {
                 {claimQueue.map((c) => (
                   <div key={c.id} style={{ display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", borderBottom: "1px solid var(--line)", paddingBottom: 10 }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{c.player_name || c.player_id}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
-                      <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[c.school, c.message].filter(Boolean).join(" · ") || "—"}</div>
+                      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{c.player_name || c.player_id}{isTeamClaim(c) ? <span className="bdg" style={{ marginLeft: 6 }}>TEAM</span> : null}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[isTeamClaim(c) ? "Team claim" : c.school, c.message].filter(Boolean).join(" · ") || "—"}</div>
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="bbtn" onClick={() => reviewClaim(c.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
@@ -1051,21 +1083,21 @@ function Dashboard({ go, openClaimedPlayer }) {
 
           <div className="dgrid" style={{ marginTop: 18 }}>
             <div className="card">
-              <p className="ttl">Your claimed profiles</p>
+              <p className="ttl">Your profiles &amp; teams</p>
               {claims.length === 0 ? (
                 <div>
-                  <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>You haven’t claimed a profile yet. Find yours on the board and hit <b style={{ color: "var(--ink)" }}>Claim this profile</b>.</p>
+                  <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>You haven’t claimed anything yet. Find your profile on the board and hit <b style={{ color: "var(--ink)" }}>Claim this profile</b> — or open your team and <b style={{ color: "var(--ink)" }}>Claim this team</b>.</p>
                   <button className="cta" onClick={() => go("prospects")}>Find my profile</button>
                 </div>
               ) : (
                 <div style={{ display: "grid", gap: 10 }}>
-                  {claims.map((c) => (
-                    <div key={c.id || c.player_id} className="wl" style={{ cursor: c.status === "approved" ? "pointer" : "default" }} onClick={() => c.status === "approved" && openClaimedPlayer && openClaimedPlayer(c.player_id)}>
-                      <span className="n">{c.player_name}</span>
-                      <span className="s">{c.school || ""}</span>
-                      <span className={`bdg ${c.status === "approved" ? "teal" : ""}`} style={{ marginLeft: 8 }}>{c.status === "approved" ? "✓ Owned" : "Pending"}</span>
+                  {claims.map((c) => { const teamish = isTeamClaim(c); const slug = teamSlugOf(c); return (
+                    <div key={c.id || c.player_id} className="wl" style={{ cursor: c.status === "approved" ? "pointer" : "default" }} onClick={() => c.status === "approved" && (teamish ? (openClaimedTeam && openClaimedTeam(slug)) : (openClaimedPlayer && openClaimedPlayer(c.player_id)))}>
+                      <span className="n">{c.player_name}{teamish ? <span className="bdg" style={{ marginLeft: 8 }}>TEAM</span> : null}</span>
+                      <span className="s">{teamish ? (c.role || "Program") : (c.school || "")}</span>
+                      <span className={`bdg ${c.status === "approved" ? "teal" : ""}`} style={{ marginLeft: 8 }}>{c.status === "approved" ? (teamish ? "✓ Managed" : "✓ Owned") : "Pending"}</span>
                     </div>
-                  ))}
+                  ); })}
                 </div>
               )}
             </div>
@@ -1276,6 +1308,10 @@ function TeamsView({ data, openTeam }) {
 }
 
 function TeamDetail({ team, schedule, openPlayer, back }) {
+  const { user } = useAuth();
+  const [claimOpen, setClaimOpen] = useState(false);
+  const [teamClaim, setTeamClaim] = useState(null);
+  useEffect(() => { let live = true; setTeamClaim(null); if (user && team?.slug) myClaimForTeam(team.slug).then((c) => { if (live) setTeamClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, team?.slug]);
   const games = useMemo(() => {
     const nm = team.name.toLowerCase();
     return (schedule || []).filter((g) => (g.home || "").toLowerCase() === nm || (g.away || "").toLowerCase() === nm)
@@ -1295,6 +1331,13 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
       <a onClick={back} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700 }}>← Teams</a>
       <div className="hello" style={{ marginTop: 8 }}>{team.label || team.name}</div>
       <div className="sub">{team.directory ? `${[team.city, team.state].filter(Boolean).join(", ") || "DMV"} · directory${team.n > 0 ? ` · ${team.n} ranked recruit${team.n > 1 ? "s" : ""}` : " · full roster coming"}` : `${team.n} players${team.statN != null && team.statN < team.n ? ` · ${team.statN} with summer stats` : ""}${team.coach ? ` · Coach ${team.coach}` : ""}${team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}`}</div>
+      <div style={{ marginTop: 12 }}>
+        {teamClaim?.status === "approved"
+          ? <span className="bdg teal">✓ You manage this program</span>
+          : teamClaim
+            ? <span className="bdg">Team claim pending review</span>
+            : <button className="bbtn" onClick={() => setClaimOpen(true)}>＋ Coach here? Claim this team</button>}
+      </div>
       <div className="pf-grid" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
         <div className="card">
           <p className="ttl">Roster &amp; stats <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· tap a column to sort</span></p>
@@ -1327,6 +1370,7 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
           ) : <p style={{ fontSize: 12.5, color: "var(--faint)" }}>No scheduled games found for this team.</p>}
         </div>
       </div>
+      {claimOpen && <ClaimTeamPanel team={team} onClose={() => { setClaimOpen(false); if (user && team?.slug) myClaimForTeam(team.slug).then(setTeamClaim).catch(() => {}); }} />}
       <div style={{ height: 40 }} />
     </div>
   );
@@ -1697,7 +1741,10 @@ function CoachHQ({ data, openPlayer, go }) {
   const { hasPass, redeem, pass } = useCoachAccess();
   const [coachEnt, setCoachEnt] = useState(false);
   useEffect(() => { let live = true; if (user) hasCoach().then((v) => { if (live) setCoachEnt(v); }).catch(() => {}); else setCoachEnt(false); return () => { live = false; }; }, [user]);
-  const realAccess = isAdmin || hasPass || coachEnt;
+  // An approved team claim grants this coach Coach HQ access on their account.
+  const [ownsTeam, setOwnsTeam] = useState(false);
+  useEffect(() => { let live = true; if (user) myClaims().then((cs) => { if (live) setOwnsTeam((cs || []).some((c) => c.status === "approved" && isTeamClaim(c))); }).catch(() => {}); else setOwnsTeam(false); return () => { live = false; }; }, [user]);
+  const realAccess = isAdmin || hasPass || coachEnt || ownsTeam;
   const unlocked = COACH_HQ_OPEN || realAccess; // open & free until accounts launch
   const PREMIUM = { matchup: true, myteam: true }; // scout + lists are the free hook
   const [tab, setTab] = useState("scout");
@@ -2259,6 +2306,7 @@ export default function RebuildApp() {
   const openPlayer = (p) => { setSelected(p); setView("profile"); pushUrl(`/p/${slugify(p.name)}`); window.scrollTo(0, 0); };
   const openTeam = (t) => { setTeam(t); setView("teamDetail"); pushUrl(`/t/${t.slug}`); window.scrollTo(0, 0); };
   const openClaimedPlayer = (playerId) => { const pl = data && data.players.find((p) => p.id === playerId); if (pl) openPlayer(pl); else go("prospects"); };
+  const openClaimedTeam = (slug) => { const t = data && data.teams.find((x) => x.slug === slug); if (t) openTeam(t); else go("teams"); };
 
   // Resolve the URL to a view on first load + on browser back/forward.
   useEffect(() => {
@@ -2286,7 +2334,7 @@ export default function RebuildApp() {
       {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
       {view === "leaders" && <LeadersView data={data} openPlayer={openPlayer} />}
       {view === "recaps" && <RecapsView data={data} />}
-      {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
+      {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} openClaimedTeam={openClaimedTeam} />}
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
       {view === "watchlist" && <ScoutView data={data} openPlayer={openPlayer} go={go} />}
