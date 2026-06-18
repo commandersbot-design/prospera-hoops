@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus } from "../lib/profiles.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
@@ -904,10 +904,13 @@ function Dashboard({ go, openClaimedPlayer }) {
   const [claims, setClaims] = useState(null);
   const [filmQueue, setFilmQueue] = useState(null);
   const [waits, setWaits] = useState(null);
+  const [claimQueue, setClaimQueue] = useState(null);
   useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
   useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
+  useEffect(() => { let live = true; if (user && isAdmin) listClaims("pending").then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
+  const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
 
   // Not signed in → sign-in prompt.
   if (!user) {
@@ -945,6 +948,26 @@ function Dashboard({ go, openClaimedPlayer }) {
               <h3>{pending.length === 1 ? "Claim pending review" : `${pending.length} claims pending review`}</h3>
               <p>We’re confirming {pending.length === 1 ? "your claim" : "your claims"} for {pending.map((c) => c.player_name).join(", ")}. You’ll get an email the moment {pending.length === 1 ? "it’s" : "they’re"} approved — usually within a day.</p>
             </div></div>
+          )}
+
+          {isAdmin && claimQueue && claimQueue.length > 0 && (
+            <div className="card" style={{ marginTop: 18, borderColor: "rgba(255,106,26,.4)" }}>
+              <p className="ttl" style={{ color: "var(--orange)" }}>Profile claims to review · {claimQueue.length}</p>
+              <div style={{ display: "grid", gap: 10, maxHeight: 360, overflowY: "auto" }}>
+                {claimQueue.map((c) => (
+                  <div key={c.id} style={{ display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", borderBottom: "1px solid var(--line)", paddingBottom: 10 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{c.player_name || c.player_id}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[c.school, c.message].filter(Boolean).join(" · ") || "—"}</div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button className="bbtn" onClick={() => reviewClaim(c.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
+                      <button className="bbtn" onClick={() => reviewClaim(c.id, "rejected")}>Reject</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {isAdmin && filmQueue && filmQueue.length > 0 && (

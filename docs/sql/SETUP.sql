@@ -94,6 +94,9 @@ create policy "claims read own" on public.claims for select to authenticated usi
 drop policy if exists "claims admin read" on public.claims;
 create policy "claims admin read" on public.claims for select to authenticated
   using (exists (select 1 from public.admins a where a.user_id = auth.uid()));
+drop policy if exists "claims admin update" on public.claims;
+create policy "claims admin update" on public.claims for update to authenticated
+  using (exists (select 1 from public.admins a where a.user_id = auth.uid()));
 
 -- --------------------------------------------- entitlements (Stripe, opt) ---
 create table if not exists public.entitlements (
