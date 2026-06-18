@@ -878,6 +878,7 @@ function SignInForm({ onSignedIn, intro }) {
   const [err, setErr] = useState("");
   const [left, setLeft] = useState(0);
   const [role, setRole] = useState(() => { try { return localStorage.getItem("ph_role") || ""; } catch { return ""; } });
+  const [held, setHeld] = useState(false); // true = short-circuited by cooldown (no new email fired)
   useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
   // Tick the resend cooldown down to zero.
   useEffect(() => { if (left <= 0) return; const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000); return () => clearInterval(t); }, [left]);
@@ -891,12 +892,13 @@ function SignInForm({ onSignedIn, intro }) {
     // Already sent a link to this address within the window? Don't fire another —
     // just surface the confirmation and run the countdown.
     const remaining = cooldownLeft(e2);
-    if (remaining > 0) { setSent(true); setLeft(remaining); return; }
+    if (remaining > 0) { setHeld(true); setSent(true); setLeft(remaining); return; }
     setBusy(true);
     try {
       try { localStorage.setItem("ph_role", role); localStorage.setItem("ph_postlogin", role); } catch { /* ignore */ }
       await signIn(e2, role);
       markLinkSent(e2);
+      setHeld(false);
       setSent(true);
       setLeft(LINK_COOLDOWN_S);
     } catch (e) {
@@ -907,7 +909,7 @@ function SignInForm({ onSignedIn, intro }) {
   if (sent) return (
     <div>{intro}
       <p className="ttl" style={{ margin: "4px 0 6px" }}>Check your email</p>
-      <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email.trim()}</b> — open it on this device to finish. It lands within a minute; <b style={{ color: "var(--ink)" }}>if you don’t see it, check your spam or promotions folder.</b></p>
+      <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>{held ? <>A sign-in link was <b style={{ color: "var(--ink)" }}>already sent</b> to <b style={{ color: "var(--ink)" }}>{email.trim()}</b> a moment ago — open that one. <b style={{ color: "var(--ink)" }}>Check spam or promotions</b> if you don’t see it. You can resend in {left}s.</> : <>We sent a one-tap sign-in link to <b style={{ color: "var(--ink)" }}>{email.trim()}</b> — open it on this device to finish. It lands within a minute; <b style={{ color: "var(--ink)" }}>if you don’t see it, check your spam or promotions folder.</b></>}</p>
       <button className="bbtn" style={{ marginTop: 12 }} onClick={send} disabled={busy || left > 0}>{busy ? "Resending…" : left > 0 ? `Resend in ${left}s` : "Resend link"}</button>
       {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
     </div>
