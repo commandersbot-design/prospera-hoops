@@ -10,6 +10,11 @@ UI degrades gracefully ("Prospera+ opens at launch") and nothing is charged.
    And a **Product** "Coach HQ" with two recurring **prices**:
    - $19.00 / month → copy the `price_…` id
    - $149.00 / year → copy the `price_…` id
+   **Coach HQ is free for the first year (launch offer).** Give the Coach prices a
+   **365-day free trial** (Stripe price → "Add free trial" → 365 days), or attach a
+   100%-off-for-12-months coupon at checkout. The card is collected up front and the
+   first charge ($19/mo or $149/yr) lands after 12 months. The UI already says
+   "FREE your first year · then $19/mo · or $149/yr".
 2. Developers → API keys → copy the **Secret key** (`sk_live_…`).
 3. Developers → Webhooks → **Add endpoint**:
    - URL: `https://www.prosperahoops.com/api/stripe-webhook`
@@ -59,8 +64,21 @@ create policy "own entitlement read" on public.entitlements
   Development Arc unlocks on any profile while signed in.
 - Cancel in Stripe → `customer.subscription.deleted` → status `canceled` → re-locks.
 
+## 5. Supabase — film submissions (user-uploaded film)
+Run `docs/sql/film_submissions.sql` in the SQL editor. This creates the
+`film_submissions` table (+ RLS) and the `public_film` view the profile reads.
+- Free accounts get **one** upload; additional uploads are gated behind Prospera+
+  (the Film card routes to `/plus`). The 1-free limit is enforced client-side by
+  counting the user's own rows.
+- Every upload lands `pending` and is **invisible** until you approve it. Review the
+  queue from your **Dashboard** (admin-only "Film awaiting review" card) — Approve
+  moves it into `public_film`; Reject hides it.
+- Admin = a row in `public.admins` for your user id (same table that powers Coach HQ
+  owner access).
+
 ## Files
-- `api/checkout.js` — creates the Checkout Session (30-day trial).
+- `api/checkout.js` — creates the Checkout Session (Prospera+ 30-day trial; Coach 365-day).
 - `api/stripe-webhook.js` — signature-verifies events, writes entitlements.
-- `src/lib/billing.js` — `startCheckout()` + `hasPlus()` client helpers.
-- `src/rebuild/RebuildApp.jsx` — `PlusView`, Dev-Arc gating on `hasPlus()`.
+- `src/lib/billing.js` — `startCheckout()` + `hasPlus()` / `hasCoach()` client helpers.
+- `src/lib/film.js` — film submit / list / approve helpers.
+- `src/rebuild/RebuildApp.jsx` — `PlusView`, `CoachLock`, `FilmCard`, Dev-Arc gating, admin film queue.

@@ -29,9 +29,15 @@ deploy succeeds and STILL shows the holding page (gate is ON by default in prod)
 ## 3. Billing (optional at launch — can fast-follow)
 Free tiers work without this (claim, profiles, Coach HQ via pilot codes). To enable paid:
 - Follow `docs/STRIPE_SETUP.md`: create Prospera+ ($5/mo · $39/yr) and Coach HQ ($19/mo · $149/yr) prices.
+- **Coach HQ is free for the first year** — give the Coach prices a 365-day free trial (or a 12-month 100%-off coupon). UI already reads "FREE your first year · then $19/mo · $149/yr".
 - Add Vercel env vars: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_PLUS_MONTHLY/YEARLY`, `STRIPE_PRICE_COACH_MONTHLY/YEARLY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PUBLIC_BASE_URL`.
 - Create the Supabase `entitlements` table (SQL in `docs/STRIPE_SETUP.md`) so `hasPlus()`/`hasCoach()` can read it.
-- Until set: checkout shows "Prospera+ opens at launch" and nothing is charged.
+- Until set: checkout shows "opens at launch" and nothing is charged.
+
+## 3b. Film uploads (run the SQL to turn it on)
+- Run `docs/sql/film_submissions.sql` in Supabase. Until then the Film card just shows "Add film — sign in"; submitting will no-op with a friendly retry message.
+- Free accounts get **1 upload**; more is gated behind Prospera+. Every upload is `pending` until you approve it from the **Dashboard** (admin-only "Film awaiting review" card).
+- Make sure your user id has a row in `public.admins` so the review queue appears for you.
 
 ## 4. Rollback
 - If the live rebuild has a problem: set `VITE_PRELAUNCH=true` + redeploy (back to holding page in minutes), or revert the merge commit on `main`.
@@ -48,7 +54,11 @@ Free tiers work without this (claim, profiles, Coach HQ via pilot codes). To ena
 
 ## Known gaps vs the old production app (fast-follow, not blockers)
 - **DMV Map** (ProspectMap / Leaflet) — geocoded school map.
-- **Profile Film** — intentionally user-submitted ("claim to add"); not auto-wired from prospectFilm.json.
 - **Profile editor / admin-claims** UI (claim works; in-app editing does not yet).
 
-Recommended order to close post-launch: Map → Profile editor. (Film is by design user-submitted.)
+Recommended order to close post-launch: Map → Profile editor.
+
+## Closed this round
+- ✅ **Film** — user-submitted, paywalled (1 free upload, then Prospera+), admin-approved before publish (`docs/sql/film_submissions.sql`).
+- ✅ **Coach HQ free first year** — UI offer wired; configure the Stripe 365-day trial at billing setup.
+- ✅ **Official school names + full rosters** across Teams/Coach HQ; no-stat rostered players in the database.

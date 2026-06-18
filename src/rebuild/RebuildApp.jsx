@@ -12,6 +12,7 @@ import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
+import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
 import { useCoachAccess } from "../lib/coachAccess.js";
 import { seasonStatLine } from "../components/StatLine.jsx";
@@ -433,6 +434,84 @@ function RecruitingCard({ prospect, onClaim }) {
   );
 }
 
+// Film card: shows approved film, and a paywalled upload flow. Free accounts
+// get ONE upload; more requires Prospera+. Every upload is admin-reviewed
+// before it appears publicly.
+function FilmCard({ p, go }) {
+  const { user } = useAuth();
+  const pid = p.id || nameKey(p.name);
+  const [films, setFilms] = useState([]); // approved (public)
+  const [mine, setMine] = useState(null); // this user's own submissions
+  const [plus, setPlus] = useState(false);
+  const [form, setForm] = useState({ open: false, url: "", title: "" });
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState("");
+  useEffect(() => {
+    let live = true;
+    approvedFilm(pid).then((f) => { if (live) setFilms(f || []); }).catch(() => {});
+    if (user) {
+      myFilms().then((f) => { if (live) setMine(f || []); }).catch(() => { if (live) setMine([]); });
+      hasPlus().then((v) => { if (live) setPlus(!!v); }).catch(() => {});
+    } else setMine(null);
+    return () => { live = false; };
+  }, [pid, user]);
+  const pending = (mine || []).find((f) => f.player_id === pid && f.status === "pending");
+  const usedQuota = (mine || []).filter((f) => f.status !== "rejected").length; // count across all players
+  const canUpload = plus || usedQuota < 1;
+  const fInp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 9, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", width: "100%", fontSize: 13.5, padding: "10px 12px" };
+  const submit = async () => {
+    if (!form.url.trim()) { setNote("Paste a film link first."); return; }
+    setBusy(true); setNote("");
+    try {
+      const row = await submitFilm({ player_id: pid, player_name: p.name, url: form.url.trim(), title: form.title.trim() });
+      setMine((m) => [row || { player_id: pid, status: "pending" }, ...(m || [])]);
+      setForm({ open: false, url: "", title: "" });
+    } catch (e) {
+      setNote("Couldn’t submit right now — try again in a moment.");
+    }
+    setBusy(false);
+  };
+  return (
+    <div className="card">
+      <p className="ttl">Film {films.length ? <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {films.length} clip{films.length > 1 ? "s" : ""}</span> : null}</p>
+      {films.length ? (
+        <div className="film">{films.slice(0, 4).map((f) => <a key={f.id} href={f.url} target="_blank" rel="noopener noreferrer" className="vid" title={f.title || "Watch film"}>▶</a>)}</div>
+      ) : (
+        <p style={{ fontSize: 12, color: "var(--faint)", margin: "2px 0 14px", lineHeight: 1.5 }}>{user ? "No film yet — add yours below. Every upload is reviewed before it goes live." : "Film is added by players and coaches. Claim this profile to add yours."}</p>
+      )}
+
+      {pending ? (
+        <div style={{ display: "flex", gap: 9, alignItems: "center", background: "rgba(245,196,81,.1)", border: "1px solid rgba(245,196,81,.32)", borderRadius: 10, padding: "11px 13px" }}>
+          <span>⏳</span><span style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.5 }}>Your film is <b style={{ color: "var(--ink)" }}>pending review</b> — we’ll publish it once it’s approved.</span>
+        </div>
+      ) : !user ? (
+        <button className="claim-big" onClick={() => go("dash")}>＋ Add film — sign in</button>
+      ) : canUpload ? (
+        form.open ? (
+          <div style={{ display: "grid", gap: 8 }}>
+            <input value={form.url} onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))} placeholder="Film link — YouTube, Hudl, Drive…" style={fInp} />
+            <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Title (optional) — e.g. Summer mixtape" style={fInp} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button className="cta" style={{ flex: 1 }} onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit for review"}</button>
+              <button className="bbtn" onClick={() => setForm({ open: false, url: "", title: "" })}>Cancel</button>
+            </div>
+            <p style={{ fontSize: 10.5, color: "var(--faint)", lineHeight: 1.5, margin: 0 }}>{plus ? "Prospera+ — unlimited film." : "This is your 1 free upload — more film comes with Prospera+."} Every upload is admin-reviewed before it’s published.</p>
+          </div>
+        ) : (
+          <button className="claim-big" onClick={() => setForm((f) => ({ ...f, open: true }))}>＋ Add film{plus ? "" : " · 1 free"}</button>
+        )
+      ) : (
+        <div>
+          <button className="claim-big" onClick={() => go("plus")}>🔒 Add more film with Prospera+ · $5/mo</button>
+          <p style={{ fontSize: 10.5, color: "var(--faint)", lineHeight: 1.5, margin: "8px 0 0" }}>You’ve used your free film upload. Prospera+ unlocks unlimited film.</p>
+        </div>
+      )}
+      {note && <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>{note}</p>}
+      <p style={{ fontSize: 11, color: "var(--faint)", margin: "12px 0 0", textAlign: "center" }}>Real stats. No fake rankings. No hype.</p>
+    </div>
+  );
+}
+
 function PublicProfile({ player, data, go }) {
   const [tab, setTab] = useState("su");
   const p = player || {};
@@ -604,11 +683,7 @@ function PublicProfile({ player, data, go }) {
           <p className="ttl">Game log <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {games.length} GP · verified box scores</span></p>
           <GameLog games={games} />
         </div>
-        <div className="card">
-          <p className="ttl">Film</p>
-          <div className="film"><div className="vid">▶</div><div className="vid">▶</div></div>
-          <p style={{ fontSize: 11, color: "var(--faint)", margin: "12px 0 0", textAlign: "center" }}>Real stats. No fake rankings. No hype.</p>
-        </div>
+        <FilmCard p={p} go={go} />
       </div>
       <div style={{ height: 40 }} />
     </div>
@@ -685,9 +760,12 @@ function ClaimPanel({ player, onClose }) {
 
 // ---- PLAYER DASHBOARD ------------------------------------------------------
 function Dashboard({ go, openClaimedPlayer }) {
-  const { user, configured, loading, signOut } = useAuth();
+  const { user, isAdmin, configured, loading, signOut } = useAuth();
   const [claims, setClaims] = useState(null);
+  const [filmQueue, setFilmQueue] = useState(null);
   useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
+  useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
+  const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
 
   // Not signed in → sign-in prompt.
   if (!user) {
@@ -725,6 +803,26 @@ function Dashboard({ go, openClaimedPlayer }) {
               <h3>{pending.length === 1 ? "Claim pending review" : `${pending.length} claims pending review`}</h3>
               <p>We’re confirming {pending.length === 1 ? "your claim" : "your claims"} for {pending.map((c) => c.player_name).join(", ")}. You’ll get an email the moment {pending.length === 1 ? "it’s" : "they’re"} approved — usually within a day.</p>
             </div></div>
+          )}
+
+          {isAdmin && filmQueue && filmQueue.length > 0 && (
+            <div className="card" style={{ marginTop: 18, borderColor: "rgba(245,196,81,.4)" }}>
+              <p className="ttl" style={{ color: "var(--gold-a)" }}>Film awaiting review · {filmQueue.length}</p>
+              <div style={{ display: "grid", gap: 10 }}>
+                {filmQueue.map((f) => (
+                  <div key={f.id} style={{ display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", borderBottom: "1px solid var(--line)", paddingBottom: 10 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{f.player_name || f.player_id}{f.title ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {f.title}</span> : null}</div>
+                      <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11.5, color: "var(--orange)", wordBreak: "break-all" }}>{f.url}</a>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button className="bbtn" onClick={() => reviewFilm(f.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
+                      <button className="bbtn" onClick={() => reviewFilm(f.id, "rejected")}>Reject</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           <div className="dgrid" style={{ marginTop: 18 }}>
@@ -795,7 +893,7 @@ function PlusView({ go }) {
           <li>See who viewed your profile</li>
           <li>Verified badge</li>
           <li>Printable recruiting one-pager</li>
-          <li>More film slots + recruiting alerts</li>
+          <li>Unlimited film uploads (free tier gets one) + recruiting alerts</li>
         </ul>
         <button className="cta" onClick={start} disabled={busy}>{busy ? "Starting…" : (user ? "Start 30-day free trial" : "Sign in to start")}</button>
         <div className="alt">★ or apply for a Founding spot — free for life</div>
@@ -1291,16 +1389,17 @@ function CoachLock({ feature, user, go, redeem }) {
     setNote(""); setBusy(true);
     const res = await startCheckout({ plan: "coach_monthly", email: user.email, userId: user.id });
     setBusy(false);
-    if (!res.ok) setNote(res.reason === "unconfigured" ? "Coach HQ checkout opens at launch — we’ll email you the moment it’s live." : (res.detail || "Couldn’t start checkout — try again."));
+    if (!res.ok) setNote(res.reason === "unconfigured" ? "Your free year of Coach HQ opens at launch — we’ll email you the moment it’s live." : (res.detail || "Couldn’t start checkout — try again."));
   };
   const tryCode = () => { const p = redeem(code); setNote(p ? "" : "That code isn’t valid — check with your program."); };
   return (
     <div className="card" style={{ textAlign: "center", padding: "34px 22px" }}>
       <div style={{ fontSize: 32 }}>🔒</div>
       <p className="ttl" style={{ color: "var(--gold-a)", margin: "10px 0 6px" }}>{feature} · Coach HQ</p>
-      <p style={{ fontSize: 13.5, color: "var(--muted)", maxWidth: 430, margin: "0 auto 16px", lineHeight: 1.6 }}>Matchup builders, your-team analytics, opponent game plans and board export are part of <b style={{ color: "var(--ink)" }}>Coach HQ</b> — built for coaches who live on the sideline.</p>
-      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 26 }}><span style={{ color: "var(--orange)" }}>$19</span><span style={{ fontSize: 15, color: "var(--muted)" }}>/mo</span> <span style={{ fontSize: 13, color: "var(--faint)" }}>· or $149/yr</span></div>
-      <button className="cta" style={{ maxWidth: 280, margin: "14px auto 0" }} onClick={subscribe} disabled={busy}>{busy ? "Starting…" : (user ? "Unlock Coach HQ" : "Sign in to unlock")}</button>
+      <p style={{ fontSize: 13.5, color: "var(--muted)", maxWidth: 430, margin: "0 auto 16px", lineHeight: 1.6 }}>Matchup builders, your-team analytics, opponent game plans and board export are part of <b style={{ color: "var(--ink)" }}>Coach HQ</b> — built for coaches who live on the sideline. <b style={{ color: "var(--teal)" }}>Free for your entire first year.</b></p>
+      <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 26 }}><span style={{ color: "var(--teal)" }}>FREE</span> <span style={{ fontSize: 15, color: "var(--muted)" }}>your first year</span></div>
+      <div style={{ fontSize: 12.5, color: "var(--faint)", marginTop: 5 }}>then $19/mo · or $149/yr — launch offer</div>
+      <button className="cta" style={{ maxWidth: 280, margin: "14px auto 0" }} onClick={subscribe} disabled={busy}>{busy ? "Starting…" : (user ? "Start your free year" : "Sign in to start")}</button>
       <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
         <span style={{ fontSize: 12, color: "var(--faint)" }}>Coach with a pilot code?</span>
         <input value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && tryCode()} placeholder="Enter code" style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 8, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none", fontSize: 13, padding: "8px 11px", maxWidth: 150 }} />
@@ -1343,7 +1442,7 @@ function CoachHQ({ data, openPlayer, go }) {
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div className="hello">Coach HQ</div>
         {unlocked ? <span className="ctx">{isAdmin || pass?.tier === "owner" ? "Owner" : hasPass ? "Pilot access" : "Coach access"} ✓</span>
-          : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>Coach tier · $19/mo</span>}
+          : <span className="ctx" style={{ color: "var(--gold-a)", borderColor: "rgba(245,196,81,.4)" }}>Coach tier · free first year</span>}
       </div>
       <div className="sub">Scout opponents, build matchups, and run your team — your whole sideline brain, in one place.</div>
       <div className="tabs" style={{ margin: "16px 0", flexWrap: "wrap" }}>
