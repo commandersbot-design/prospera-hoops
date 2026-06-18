@@ -1704,6 +1704,32 @@ function useData() {
         }
       }
       all.sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
+      // Ranked recruits — EVERY DMV player carrying a recruiting-service rating or
+      // ranking, whether or not they played summer league. Board players keep their
+      // summer stats; the rest come straight from the prospect DB.
+      const onBoard = Object.fromEntries(all.map((p) => [p.key, p]));
+      const isRanked = (x) => !!(x && (x.stars || (x.rankings && (x.rankings.national || x.rankings.state || x.rankings.position))));
+      const ranked = [];
+      const seenRank = new Set();
+      for (const pr of prospects) {
+        if (!isRanked(pr)) continue;
+        const k = nameKey(pr.name);
+        if (seenRank.has(k)) continue;
+        seenRank.add(k);
+        if (onBoard[k]) { ranked.push(onBoard[k]); continue; }
+        const gy = pr.gradYear || pr.classYear;
+        ranked.push({
+          id: pr.id || k, key: k, name: pr.name, school: schoolLabel(pr.school || ""),
+          pos: pr.position || null, cls: gy ? `'${String(gy).slice(2)}` : "",
+          gradYear: gy || null, state: pr.state || null,
+          stars: pr.stars || null, rankings: pr.rankings || null,
+          status: pr.status || pr.commitment || null,
+          meta: `${schoolLabel(pr.school || "")}${pr.position ? " · " + pr.position : ""}`,
+          headshot: shotFor(pr.name, pr),
+          gp: null, ppg: null, rpg: null, apg: null, lead: "—", leadK: "PPG", statsVerified: false,
+        });
+      }
+      ranked.sort((a, b) => (((a.rankings && a.rankings.national) || 9999) - ((b.rankings && b.rankings.national) || 9999)) || ((b.stars || 0) - (a.stars || 0)) || ((b.ppg || 0) - (a.ppg || 0)));
       // Featured: a real, headshot-bearing standout (prefer one with a photo).
       const withPhoto = all.find((p) => p.headshot) || all[0];
       const featured = withPhoto && {
@@ -1755,7 +1781,7 @@ function useData() {
       const newsHand = (NEWS_DATA.items || []).map((it) => ({ text: it.headline, url: it.url || null, player: it.prospectId ? (all.find((p) => p.id === it.prospectId) || null) : null }));
       const newsPerf = [...all].sort((x, y) => (y.ppg || 0) - (x.ppg || 0)).slice(0, 8).map((p) => ({ text: `${p.name} — ${r1(p.ppg)} PPG this summer for ${cleanOpp(p.school)}`, player: p }));
       const news = [...newsHand, ...newsPerf];
-      setData({ players: all, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news, recaps, recapSource });
+      setData({ players: all, ranked, featured, cov, teams, schedule, gl, cohort, prByKey, hsByKey, news, recaps, recapSource });
     });
   }, []);
   return data;
@@ -1791,20 +1817,22 @@ function ProspectsView({ data, openPlayer }) {
       (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
       (!cls.length || cls.includes(p.cls)) &&
       (!tracked || wl.has(p.id)));
-    // "Ranked" shows ONLY players with a recruiting-service rating/ranking,
-    // best first (national rank asc, then stars desc, then summer PPG).
+    // "Ranked" shows EVERY ranked DMV recruit (board or not), pre-sorted by rank
+    // in useData. Apply the same region/position/class/search/watchlist filters.
     if (sort === "ranked") {
-      const rankScore = (p) => (p.rankings && p.rankings.national) || 9999;
-      const ranked = matched
-        .filter((p) => p.stars || (p.rankings && (p.rankings.national || p.rankings.state || p.rankings.position)))
-        .sort((a, b) => (rankScore(a) - rankScore(b)) || ((b.stars || 0) - (a.stars || 0)) || ((b.ppg || 0) - (a.ppg || 0)));
-      return { list: ranked.slice(0, 250), rosterList: [] };
+      const rk = (data.ranked || []).filter((p) =>
+        (!k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) &&
+        (!states.length || (p.state && states.includes(p.state))) &&
+        (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
+        (!cls.length || cls.includes(p.cls)) &&
+        (!tracked || wl.has(p.id)));
+      return { list: rk.slice(0, 250), rosterList: [] };
     }
     const stat = matched.filter((p) => p.gp != null);
     const roster = matched.filter((p) => p.gp == null).sort((a, b) => a.name.localeCompare(b.name));
     const sorted = sort === "az" ? [...stat].sort((a, b) => a.name.localeCompare(b.name)) : [...stat].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
     return { list: sorted.slice(0, 250), rosterList: roster };
-  }, [q, states, poss, cls, tracked, sort, data.players, wl.ids]);
+  }, [q, states, poss, cls, tracked, sort, data.players, data.ranked, wl.ids]);
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   const renderRow = (p, i) => (
     <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
@@ -1812,7 +1840,7 @@ function ProspectsView({ data, openPlayer }) {
       <div style={{ minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{p.name}</span>
-          {p.stars ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{p.stars}★{p.rankings && p.rankings.national ? ` · #${p.rankings.national} Natl` : ""}</span> : null}
+          {(p.stars || (p.rankings && p.rankings.national)) ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{[p.stars ? `${p.stars}★` : null, p.rankings && p.rankings.national ? `#${p.rankings.national} Natl` : null].filter(Boolean).join(" · ")}</span> : null}
         </div>
         <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), p.gp == null ? "on roster" : null].filter(Boolean).join(" · ")}</div>
       </div>
