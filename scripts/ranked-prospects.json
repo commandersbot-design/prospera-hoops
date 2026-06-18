@@ -44,6 +44,41 @@
     { "name": "Kareem Smith-Bey", "class": 2028, "pos": "SG", "h": 76, "w": 170, "school": "St. John's DC", "city": "Washington", "state": "DC",
       "services": { "247": { "rating": 90, "national": 59, "stateRank": 1, "positionRank": 11 } } },
     { "name": "Isaiah Carter", "class": 2028, "pos": "SF", "h": 78, "w": 180, "school": "Highland School", "city": "Warrenton", "state": "VA",
-      "services": { "247": { "rating": 93, "national": 32, "stateRank": 1, "positionRank": 5 } } }
+      "services": { "247": { "rating": 93, "national": 32, "stateRank": 1, "positionRank": 5 } } },
+
+    { "name": "Baba Oladotun", "class": 2026, "pos": "SF", "h": 82, "w": 195, "school": "Blake", "city": "Silver Spring", "state": "MD",
+      "services": { "247": { "rating": 98, "national": 10, "stateRank": 1, "positionRank": null } } },
+    { "name": "Qayden Samuels", "class": 2026, "pos": "SF", "h": 77, "w": 210, "school": "Bishop McNamara", "city": "District Heights", "state": "MD",
+      "services": { "247": { "rating": 97, "national": 26, "stateRank": 2, "positionRank": null } } },
+    { "name": "Sinan Huan", "class": 2026, "pos": "C", "h": 84, "w": 225, "school": "Georgetown Prep", "city": "Rockville", "state": "MD",
+      "services": { "247": { "rating": 92, "national": 65, "stateRank": 3, "positionRank": null } } },
+    { "name": "Prince-Alexander Moody", "class": 2026, "pos": "CG", "h": 76, "w": 180, "school": "Bishop McNamara", "city": "District Heights", "state": "MD",
+      "services": { "247": { "rating": 91, "national": 86, "stateRank": 4, "positionRank": null } } },
+    { "name": "Favour Ibe", "class": 2026, "pos": "C", "h": 85, "w": 235, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
+      "services": { "247": { "rating": 90, "national": 154, "stateRank": 5, "positionRank": null } } },
+    { "name": "BJ Ranson", "class": 2026, "pos": "PG", "h": 75, "w": null, "school": "Mount Saint Joseph", "city": "Baltimore", "state": "MD",
+      "services": { "247": { "rating": 87, "national": 222, "stateRank": 6, "positionRank": null } } },
+    { "name": "Ashton Meeks", "class": 2026, "pos": "CG", "h": 70, "w": 165, "school": "DeMatha Catholic", "city": "Hyattsville", "state": "MD",
+      "services": { "247": { "rating": 86, "national": 243, "stateRank": 7, "positionRank": null } } },
+    { "name": "Jasiah Cannady", "class": 2026, "pos": "PG", "h": 73, "w": 170, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
+      "services": { "247": { "rating": 86, "national": 244, "stateRank": 8, "positionRank": null } } },
+    { "name": "Jayson Peterson", "class": 2026, "pos": "PF", "h": 80, "w": 205, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD",
+      "services": { "247": { "rating": 85, "national": null, "stateRank": 9, "positionRank": null } } },
+    { "name": "Sifeng Huan", "class": 2026, "pos": "C", "h": 82, "w": 210, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD",
+      "services": { "247": { "rating": 83, "national": null, "stateRank": 10, "positionRank": null } } },
+    { "name": "Gage Howard", "class": 2026, "pos": "C", "h": 78, "w": 225, "school": "Our Lady of Mount Carmel", "city": "Essex", "state": "MD",
+      "services": { "247": { "rating": 81, "national": null, "stateRank": 11, "positionRank": null } } },
+
+    { "name": "Jordan Smith Jr.", "class": 2026, "pos": "CG", "h": 74, "w": 200, "school": "Paul VI Catholic", "city": "Fairfax", "state": "VA",
+      "services": { "247": { "rating": 98, "national": null, "stateRank": 1, "positionRank": null } } },
+    { "name": "Darius Bivins", "class": 2026, "pos": "PG", "h": 71, "w": 160, "school": "Bishop O'Connell", "city": "Alexandria", "state": "VA",
+      "services": { "247": { "rating": 91, "national": null, "stateRank": 5, "positionRank": null } } },
+    { "name": "Phenix Card", "class": 2026, "pos": "PG", "h": 71, "w": 160, "school": "Hayfield Secondary", "city": "Alexandria", "state": "VA",
+      "services": { "247": { "rating": 81, "national": null, "stateRank": 13, "positionRank": null } } },
+
+    { "name": "Anthony Brown", "class": 2026, "pos": "PG", "h": 73, "w": 160, "school": "Archbishop Carroll", "city": "Washington", "state": "DC",
+      "services": { "247": { "rating": 91, "national": 81, "stateRank": 1, "positionRank": null } } },
+    { "name": "Jalyn Collingwood", "class": 2026, "pos": "SF", "h": 77, "w": 190, "school": "Sidwell Friends School", "city": "Washington", "state": "DC",
+      "services": { "247": { "rating": 90, "national": 104, "stateRank": 2, "positionRank": null } } }
   ]
 }
