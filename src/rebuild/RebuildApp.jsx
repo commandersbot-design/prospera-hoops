@@ -1276,35 +1276,45 @@ function useLineups() {
 }
 
 function LineupSide({ data, ids, setIds, label, lineups }) {
+  const [team, setTeam] = useState("");
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState(null);
   const [name, setName] = useState("");
   const byId = useMemo(() => Object.fromEntries(data.players.map((p) => [p.id, p])), [data.players]);
+  const rosterTeams = useMemo(() => data.teams.filter((t) => !t.directory && (t.roster || t.players || []).length).sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name)), [data.teams]);
+  const teamObj = useMemo(() => data.teams.find((t) => t.slug === team) || null, [team, data.teams]);
+  const pool = teamObj ? (teamObj.roster && teamObj.roster.length ? teamObj.roster : teamObj.players || []) : [];
+  const teamLabel = teamObj ? (teamObj.label || teamObj.name) : "";
   const sel = ids.map((id) => (id ? byId[id] : null));
   const sum = (k) => sel.filter(Boolean).reduce((s, p) => s + (p[k] || 0), 0);
   const filled = sel.filter(Boolean).length;
   const setSlot = (i, pid) => { const n = [...ids]; n[i] = pid; setIds(n); setEditing(null); setQ(""); };
   const clear = (i) => { const n = [...ids]; n[i] = null; setIds(n); };
+  const pickTeam = (slug) => { setTeam(slug); setIds(EMPTY5()); setEditing(null); setQ(""); }; // new team → fresh lineup
   const results = useMemo(() => {
     const k = q.trim().toLowerCase();
-    const pool = data.players.filter((p) => !ids.includes(p.id));
-    return (k ? pool.filter((p) => p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)) : [...pool].sort((a, b) => (b.ppg || 0) - (a.ppg || 0))).slice(0, 8);
-  }, [q, ids, data.players]);
+    const base = pool.filter((p) => !ids.includes(p.id));
+    return (k ? base.filter((p) => p.name.toLowerCase().includes(k)) : [...base].sort((a, b) => (b.ppg || 0) - (a.ppg || 0))).slice(0, 60);
+  }, [q, ids, pool]);
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 9, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   return (
     <div>
-      <p className="ttl" style={{ margin: "0 0 10px" }}>{label} <span style={{ color: filled === 5 ? "var(--teal)" : "var(--faint)", fontFamily: "var(--sans)" }}>({filled}/5)</span></p>
+      <p className="ttl" style={{ margin: "0 0 8px" }}>{label} <span style={{ color: filled === 5 ? "var(--teal)" : "var(--faint)", fontFamily: "var(--sans)" }}>({filled}/5)</span></p>
+      <select value={team} onChange={(e) => pickTeam(e.target.value)} style={{ ...inp, width: "100%", fontSize: 13, padding: "10px 12px", marginBottom: 10 }}>
+        <option value="">Pick a team…</option>
+        {rosterTeams.map((t) => <option key={t.slug} value={t.slug}>{t.label || t.name}</option>)}
+      </select>
       <div style={{ display: "grid", gap: 6 }}>
         {POSITIONS.map((pos, i) => {
           const p = sel[i];
           const active = editing === i;
           return (
             <div key={i}>
-              <div className="lslot" onClick={() => { setEditing(active ? null : i); setQ(""); }} style={{ display: "grid", gridTemplateColumns: "34px 1fr auto", gap: 10, alignItems: "center", padding: "12px 13px", borderRadius: 10, cursor: "pointer", border: `1.5px solid ${active ? "var(--orange)" : "var(--line)"}`, background: "var(--surface)" }}>
+              <div className="lslot" onClick={() => { if (!teamObj) return; setEditing(active ? null : i); setQ(""); }} style={{ display: "grid", gridTemplateColumns: "34px 1fr auto", gap: 10, alignItems: "center", padding: "12px 13px", borderRadius: 10, cursor: teamObj ? "pointer" : "not-allowed", opacity: teamObj ? 1 : 0.55, border: `1.5px solid ${active ? "var(--orange)" : "var(--line)"}`, background: "var(--surface)" }}>
                 <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 13, color: "var(--orange)" }}>{pos}</span>
                 {p
                   ? <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 14, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</span>
-                  : <span style={{ color: active ? "var(--orange)" : "var(--muted)", fontSize: 13, fontWeight: 500 }}>{active ? "Choose a player below…" : "Tap to pick a player"}</span>}
+                  : <span style={{ color: active ? "var(--orange)" : "var(--muted)", fontSize: 13, fontWeight: 500 }}>{active ? "Choose a player below…" : (teamObj ? "Tap to pick a player" : "Pick a team above first")}</span>}
                 <span style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "flex-end" }}>
                   {p && <b style={{ fontFamily: "var(--disp)", fontSize: 15, color: statTone("ppg", p.ppg) }}>{r1(p.ppg)}</b>}
                   {p
@@ -1314,7 +1324,7 @@ function LineupSide({ data, ids, setIds, label, lineups }) {
               </div>
               {active && (
                 <div style={{ margin: "6px 0 4px", border: "1px solid var(--orange)", borderRadius: 11, overflow: "hidden", background: "var(--raised)" }}>
-                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search any player for ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13.5, padding: "11px 13px", border: "none", borderBottom: "1px solid var(--line)", borderRadius: 0, background: "var(--surface)" }} />
+                  <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ${teamLabel} · ${pos}…`} style={{ ...inp, width: "100%", fontSize: 13.5, padding: "11px 13px", border: "none", borderBottom: "1px solid var(--line)", borderRadius: 0, background: "var(--surface)" }} />
                   <div style={{ maxHeight: 240, overflowY: "auto" }}>
                     {results.map((r, ri) => <div key={`${r.id}-${ri}`} onClick={() => setSlot(i, r.id)} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "11px 13px", cursor: "pointer", fontSize: 13.5, borderBottom: "1px solid var(--line)" }}><span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.name} <span style={{ color: "var(--faint)", fontSize: 11.5 }}>{r.pos || ""} · {cleanOpp(r.school)}</span></span><b style={{ fontFamily: "var(--disp)", color: statTone("ppg", r.ppg) }}>{r1(r.ppg)}</b></div>)}
                     {results.length === 0 && <div style={{ padding: "11px 13px", fontSize: 12.5, color: "var(--faint)" }}>No players match “{q}”.</div>}
