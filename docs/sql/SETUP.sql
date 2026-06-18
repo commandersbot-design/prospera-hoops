@@ -107,6 +107,23 @@ alter table public.entitlements enable row level security;
 drop policy if exists "own entitlement read" on public.entitlements;
 create policy "own entitlement read" on public.entitlements for select using (auth.uid() = user_id);
 
+-- ------------------------------------- profile views ("scouts viewed you") --
+-- A row is written when a coach-tier (scout) account opens a player's profile.
+create table if not exists public.profile_views (
+  id         uuid primary key default gen_random_uuid(),
+  player_id  text not null,
+  viewer_id  uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+alter table public.profile_views enable row level security;
+drop policy if exists "pv insert own" on public.profile_views;
+create policy "pv insert own" on public.profile_views for insert to authenticated with check (viewer_id = auth.uid());
+-- Public aggregate so a profile can show how many distinct scouts viewed it.
+create or replace view public.profile_scout_counts as
+  select player_id, count(distinct viewer_id)::int as scouts, max(created_at) as last_viewed
+  from public.profile_views group by player_id;
+grant select on public.profile_scout_counts to anon, authenticated;
+
 -- ============================================================================
 -- MAKE YOURSELF ADMIN — sign in on the site once, then Dashboard → Auth →
 -- Users → copy your UUID and run:

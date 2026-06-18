@@ -15,6 +15,7 @@ import { submitClaim, myClaimForPlayer, myClaims } from "../lib/profiles.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
+import { recordScoutView, scoutViews } from "../lib/views.js";
 import { useCoachAccess } from "../lib/coachAccess.js";
 import { seasonStatLine } from "../components/StatLine.jsx";
 import { playerHighlights } from "../lib/highlights.js";
@@ -219,7 +220,7 @@ function Header({ view, go }) {
     <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("scout", "Scout")}{tab("coach", "Coach HQ")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("watchlist", "Watchlist")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {user ? <>
@@ -233,7 +234,7 @@ function Header({ view, go }) {
       </div>
       {menuOpen && (
         <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
-          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("scout", "Scout")}{mtab("coach", "Coach HQ")}
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("watchlist", "Watchlist")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
             : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => { lockIn(); setMenuOpen(false); }}>🔒 Lock in</a></>}
@@ -659,14 +660,21 @@ function PublicProfile({ player, data, go }) {
   const loc = [prospect.city, prospect.state].filter(Boolean).join(", ");
   const commit = prospect.commitment || (prospect.status === "uncommitted" ? "Uncommitted" : (prospect.status || null));
   const intel = [p.school, prospect.county && `${prospect.county} County`, STATE_FULL[prospect.state] || prospect.state].filter(Boolean).join(" · ");
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const { hasPass } = useCoachAccess();
   const [claimOpen, setClaimOpen] = useState(false);
   const [myClaim, setMyClaim] = useState(null);
   const [plus, setPlus] = useState(false);
+  const [scouts, setScouts] = useState({ scouts: 0, last: null });
   const lockIn = useLockIn();
   const wl = useWatchlist();
+  const isOwner = myClaim?.status === "approved";
   useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
   useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
+  // "Scouts viewed you": read the count; record a view when a coach/scout opens
+  // someone else's profile.
+  useEffect(() => { let live = true; if (p?.id) scoutViews(p.id).then((v) => { if (live) setScouts(v); }).catch(() => {}); return () => { live = false; }; }, [p?.id]);
+  useEffect(() => { if (p?.id && (hasPass || isAdmin) && !isOwner) recordScoutView(p.id); }, [p?.id, hasPass, isAdmin, isOwner]);
   return (
     <div className="wrap" style={{ paddingTop: 26 }}>
       {myClaim?.status === "approved" ? (
@@ -688,7 +696,7 @@ function PublicProfile({ player, data, go }) {
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
 
       <ScoutCard p={scoutP} portrait />
-      <button className="bbtn" style={{ width: "100%", marginTop: 12, borderColor: wl.has(p.id) ? "var(--teal)" : undefined, color: wl.has(p.id) ? "var(--teal)" : undefined }} onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ On your Scout Board" : "＋ Add to Scout Board"}</button>
+      <button className="bbtn" style={{ width: "100%", marginTop: 12, borderColor: wl.has(p.id) ? "var(--teal)" : undefined, color: wl.has(p.id) ? "var(--teal)" : undefined }} onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ On your Watchlist" : "＋ Add to Watchlist"}</button>
 
       <div className="pf-grid">
         <div className="card">
@@ -758,6 +766,26 @@ function PublicProfile({ player, data, go }) {
       </div>
 
       <RecruitingCard prospect={prospect} onClaim={() => setClaimOpen(true)} />
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <p className="ttl" style={{ margin: 0 }}>👁 Scouts watching</p>
+          <span className="bdg gold">★ Prospera+</span>
+        </div>
+        {scouts.scouts > 0 ? (
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, margin: "10px 0 4px" }}>
+            <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 40, color: "var(--orange)" }}>{scouts.scouts}</span>
+            <span style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.5 }}>college coach{scouts.scouts === 1 ? "" : "es"} viewed {isOwner ? "your profile" : (p.name || "").split(" ")[0]}.</span>
+          </div>
+        ) : (
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "10px 0 4px" }}>When a college coach opens {isOwner ? "your" : "this"} profile, it shows up right here — real eyes, tracked over time.</p>
+        )}
+        {isOwner && plus ? (
+          <p style={{ fontSize: 12.5, color: "var(--teal)", margin: "8px 0 0" }}>✓ Prospera+ active — you&rsquo;ll be alerted the moment a new scout checks you out.</p>
+        ) : (
+          <button className="claim-big" style={{ fontSize: 14.5, padding: "10px 16px", marginTop: 6 }} onClick={() => go("plus")}>🔒 See who&rsquo;s watching + get scout alerts · Prospera+ · $5/mo</button>
+        )}
+      </div>
       <ByTheNumbers games={games} />
       <TheLeapCard seasons={seasons} />
 
@@ -997,7 +1025,7 @@ function Dashboard({ go, openClaimedPlayer }) {
             </div>
             <div>
               <div className="up"><h3>Prospera+</h3><div className="price"><b>$5/mo</b> · or $39/yr</div>
-                <ul><li>Full Development Arc</li><li>See who viewed your profile</li><li>Verified badge</li><li>Printable recruiting one-pager</li></ul>
+                <ul><li>Full Development Arc</li><li>See which scouts (college coaches) viewed you + alerts</li><li>Verified badge</li><li>Printable recruiting one-pager</li></ul>
                 <button className="cta" onClick={() => go("plus")}>Start 30-day free trial</button>
                 <div className="alt">★ or apply for a Founding spot — free for life</div>
               </div>
@@ -1040,7 +1068,7 @@ function PlusView({ go }) {
         <div style={{ fontSize: 12, color: "var(--faint)", margin: "2px 0 12px" }}>{price.sub}</div>
         <ul>
           <li>Full Development Arc — season-over-season growth + the honest read</li>
-          <li>See who viewed your profile</li>
+          <li>See which scouts (college coaches) viewed you + alerts</li>
           <li>Verified badge</li>
           <li>Printable recruiting one-pager</li>
           <li>Unlimited film uploads (free tier gets one) + recruiting alerts</li>
@@ -2090,14 +2118,14 @@ function ScoutView({ data, openPlayer, go }) {
     <div className="wrap scout-board" style={{ paddingTop: 24 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <div className="keye">Scout Board</div>
+          <div className="keye">Watchlist</div>
           <div className="sub" style={{ marginTop: 4 }}>{players.length} player{players.length === 1 ? "" : "s"} tracked · notes save to this device</div>
         </div>
         {players.length > 0 && <button className="bbtn no-print" onClick={() => window.print()}>🖨 Print / save report</button>}
       </div>
       {players.length === 0 ? (
         <div className="card" style={{ marginTop: 18 }}>
-          <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.65, margin: 0 }}>Your scout board is empty. On any profile or the Prospects board, tap <b style={{ color: "var(--ink)" }}>＋ Scout</b> (or the ☆) to add a player here — then write notes, stack them side by side, and print a one-page report.</p>
+          <p style={{ fontSize: 13.5, color: "var(--muted)", lineHeight: 1.65, margin: 0 }}>Your watchlist is empty. On any profile or the Prospects board, tap <b style={{ color: "var(--ink)" }}>＋ Watch</b> (or the ☆) to add a player here — then write notes, stack them side by side, and print a one-page report.</p>
           <button className="cta no-print" style={{ marginTop: 14 }} onClick={() => go("prospects")}>Browse the board</button>
         </div>
       ) : (
@@ -2129,7 +2157,7 @@ function ScoutView({ data, openPlayer, go }) {
 }
 
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", scout: "/scout", coach: "/coach", dash: "/dashboard", plus: "/plus" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", watchlist: "/watchlist", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -2173,7 +2201,7 @@ export default function RebuildApp() {
       {view === "dash" && <Dashboard go={go} openClaimedPlayer={openClaimedPlayer} />}
       {view === "plus" && <PlusView go={go} />}
       {view === "teams" && <TeamsView data={data} openTeam={openTeam} />}
-      {view === "scout" && <ScoutView data={data} openPlayer={openPlayer} go={go} />}
+      {view === "watchlist" && <ScoutView data={data} openPlayer={openPlayer} go={go} />}
       {view === "teamDetail" && team && <TeamDetail team={team} schedule={data.schedule} openPlayer={openPlayer} back={() => go("teams")} />}
       {view === "coach" && <CoachHQ data={data} openPlayer={openPlayer} go={go} />}
       {lockIn && <WaitlistModal prefill={lockIn} onClose={() => setLockIn(null)} />}
