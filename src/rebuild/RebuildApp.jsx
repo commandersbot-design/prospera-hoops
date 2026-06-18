@@ -29,7 +29,9 @@ const r1 = (n) => (n == null || Number.isNaN(+n) ? "—" : (Math.round(+n * 10) 
 // Schedule data is single-context (Capitol Hoops), so we derive these from the
 // real school the team maps to; ambiguous summer-club teams stay untagged.
 const TEAM_STATE_OVERRIDE = { dematha: "MD" };
-const PRIVATE_TEAMS = new Set(["annapolisareachristian", "boyslatin", "bullis", "concordiaprep", "dematha", "flinthill", "glenelgcountry", "gonzaga", "goodcounsel", "johncarroll", "landon", "loyolablakefield", "newhopeacademy", "potomacschool", "spalding", "stjohnsdc", "stmarysannapolis", "ststephensstagnes", "severn", "bethelacademy", "somdchristian", "takomaacademy", "virginiaacademy", "sandyspring", "clintongrace"]);
+const PRIVATE_TEAMS = new Set(["annapolisareachristian", "boyslatin", "bullis", "concordiaprep", "dematha", "flinthill", "glenelgcountry", "gonzaga", "goodcounsel", "johncarroll", "landon", "loyolablakefield", "newhopeacademy", "potomacschool", "spalding", "stjohnsdc", "stmarysannapolis", "ststephensstagnes", "severn", "bethelacademy", "somdchristian", "takomaacademy", "virginiaacademy", "sandyspring", "clintongrace", "paulvi", "calverthall", "highlandschool", "maret", "gilman", "mcdonogh", "parkschool", "holtonarms", "edmundburke", "fieldschool", "georgetownday", "nysmith", "stalbans", "bishopmcnamara", "bishopoconnell"]);
+// Name markers that reliably indicate a private/parochial school in the DMV.
+const PRIVATE_RX = /(\bcatholic\b|\bchristian\b|\bacademy\b|\bpreparatory\b|\bprep\b|\bfriends\b|\bepiscopal\b|\bjesuit\b|\bcollegiate\b|\bquaker\b|\bmontessori\b|\bsidwell\b|\bgonzaga\b|\bbishop\b|\barchbishop\b|\bcardinal\b|\bseminary\b|\bbaptist\b|\blutheran\b|\badventist\b|\bhebrew\b|\bislamic\b|\byeshiva\b|day school|country day|\bsaint\b|st\.\s|\bholy\b|our lady)/i;
 const teamLocCands = (name) => {
   const paren = (String(name || "").match(/\(([^)]+)\)/) || [])[1];
   const base = String(name || "").replace(/\s*\([^)]*\)/, "").trim();
@@ -42,7 +44,8 @@ function teamState(name, locByKey) {
 }
 function teamType(name, locByKey) {
   for (const c of teamLocCands(name)) { if (PRIVATE_TEAMS.has(nameKey(c))) return "Private"; }
-  return teamState(name, locByKey) ? "Public" : null;
+  if (PRIVATE_RX.test(name || "")) return "Private";
+  return "Public"; // default: classify every school so it lands in the filter
 }
 
 // ---- color storytelling — tone a stat by how good it is --------------------
@@ -1044,18 +1047,14 @@ function TeamsView({ data, openTeam }) {
         <>
           <div style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".12em", fontSize: 12, color: "var(--faint)", margin: "16px 0 6px" }}>{list.length} {list.length === 1 ? "team" : "teams"}</div>
           {list.length ? list.map((t) => (
-            <div key={t.slug} onClick={() => openTeam(t)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
+            <div key={t.slug} onClick={() => openTeam(t)} style={{ display: "grid", gridTemplateColumns: "42px 1fr", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
               <div className="rav" style={{ width: 42, height: 42 }}>{initials(t.name)}</div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{t.label || t.name}</span>
                   {t.state ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--faint)", border: "1px solid var(--line)", borderRadius: 4, padding: "1px 5px" }}>{t.state}{t.type ? ` · ${t.type}` : ""}</span> : null}
                 </div>
-                <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{t.directory ? (t.n > 0 ? `${t.n} ranked recruit${t.n > 1 ? "s" : ""} · full roster coming` : `${[t.city, t.state].filter(Boolean).join(", ") || "Directory"} · roster coming`) : [`${t.n} players`, t.top && `top scorer ${t.top.name}`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 15 }}>{t.top ? r1(t.top.ppg) : "—"}</div>
-                <div style={{ fontSize: 9.5, color: "var(--faint)", textTransform: "uppercase", letterSpacing: ".05em" }}>top ppg</div>
+                <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{t.directory ? (t.n > 0 ? `${t.n} ranked recruit${t.n > 1 ? "s" : ""} · full roster coming` : `${[t.city, t.state].filter(Boolean).join(", ") || "Directory"} · roster coming`) : [`${t.n} players`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
               </div>
             </div>
           )) : <p style={{ fontSize: 13, color: "var(--faint)", marginTop: 12 }}>No teams match those filters.</p>}
