@@ -5,6 +5,10 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { auth, db, isConfigured, onAuthChange, getSession } from "./supabaseClient.js";
 
+// Owner accounts — always admin/full access, regardless of the `admins` table.
+const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com"];
+const isOwnerEmail = (e) => OWNER_EMAILS.includes(String(e || "").trim().toLowerCase());
+
 const AuthCtx = createContext({
   configured: false,
   loading: false,
@@ -24,13 +28,14 @@ export function AuthProvider({ children }) {
     const u = await auth.getUser().catch(() => null);
     setUser(u);
     if (u?.id) {
-      // Admin = a row in `admins` for this user id. RLS lets a user read only
-      // their own admin row, so a hit here means "I am an admin".
+      // Owner emails are always admin. Otherwise, admin = a row in `admins` for
+      // this user id (RLS lets a user read only their own row).
+      const owner = isOwnerEmail(u.email);
       try {
         const rows = await db.select("admins", `select=user_id&user_id=eq.${u.id}`);
-        setIsAdmin(Array.isArray(rows) && rows.length > 0);
+        setIsAdmin(owner || (Array.isArray(rows) && rows.length > 0));
       } catch {
-        setIsAdmin(false);
+        setIsAdmin(owner);
       }
     } else {
       setIsAdmin(false);

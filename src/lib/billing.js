@@ -22,11 +22,22 @@ export async function startCheckout({ plan = "monthly", email, userId, playerId 
   }
 }
 
-// True when the signed-in user has an active/trialing Prospera+ subscription.
-// Reads the `entitlements` table (RLS scopes rows to the owner). Safe when the
-// table or Supabase isn't configured yet — returns false.
+// Owner accounts get full access (Prospera+ and Coach tier) regardless of any
+// Stripe entitlement. Email is read from the session JWT payload.
+const OWNER_EMAILS = ["jalen@prosperahoops.com", "danudastdiab@gmail.com"];
+function ownerNow() {
+  try {
+    const t = getSession()?.access_token; if (!t) return false;
+    const email = JSON.parse(atob(t.split(".")[1] || "")).email;
+    return OWNER_EMAILS.includes(String(email || "").trim().toLowerCase());
+  } catch { return false; }
+}
+
+// True when the signed-in user has an active/trialing Prospera+ subscription
+// (or is an owner). Reads the `entitlements` table (RLS scopes rows to the owner).
 export async function hasPlus() {
   if (!isConfigured || !getSession()) return false;
+  if (ownerNow()) return true;
   try {
     const rows = await db.select("entitlements", "select=status&status=in.(active,trialing,past_due)&limit=1");
     return Array.isArray(rows) && rows.length > 0;
@@ -36,9 +47,10 @@ export async function hasPlus() {
 }
 
 // True when the signed-in user holds an active Coach HQ subscription (plan begins
-// with "coach"). Pilot-code / admin access is layered on at the call site.
+// with "coach") or is an owner. Pilot-code / admin access is layered on at the call site.
 export async function hasCoach() {
   if (!isConfigured || !getSession()) return false;
+  if (ownerNow()) return true;
   try {
     const rows = await db.select("entitlements", "select=plan&status=in.(active,trialing,past_due)&plan=like.coach*&limit=1");
     return Array.isArray(rows) && rows.length > 0;
