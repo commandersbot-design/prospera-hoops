@@ -1,84 +1,396 @@
 {
   "_README": "Verified DMV-area ranked recruits (classes 2027 & 2028), transcribed from a manual capture of 247Sports state boards + the ESPN/SC-Next national top-100 (May 2026). Per-service data lives under each player's 'services'. 247 stars are DERIVED from 247's numeric rating via 247's published bands (>=98=5*, 90-97=4*, 80-89=3*); ESPN entries carry ESPN's national rank + 0-100 grade (ESPN doesn't publish a clean star on this view, so espn.stars stays null). Rivals isn't in the source, so it's omitted (renders 'Not listed'). DMV scope: out-of-region SCHOOLS (Oak Hill, Petersburg, and the ~95 non-DMV ESPN kids) are excluded, EXCEPT confirmed DMV-native players who attend an out-of-area prep (e.g. Jordan Hunter at Hargrave) — those are included but intentionally not given a map location, so the geographic DMV map stays focused. School names normalized to existing DB entries. Re-run: node scripts/add-ranked-prospects.mjs",
-  "espnUrlByClass": { "2027": "https://www.espn.com/college-sports/basketball/recruiting/playerrankings/_/class/2027" },
+  "espnUrlByClass": {
+    "2027": "https://www.espn.com/college-sports/basketball/recruiting/playerrankings/_/class/2027"
+  },
   "players": [
-    { "name": "Zion Green", "class": 2027, "pos": "PF", "h": 81, "w": 190, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
-      "services": { "247": { "rating": 93, "national": 34, "stateRank": 1, "positionRank": 5 }, "espn": { "rating": 86, "national": 47 } } },
-    { "name": "J'Lon Lyons", "class": 2027, "pos": "PG", "h": 75, "w": 165, "school": "Clinton Grace", "city": "Clinton", "state": "MD",
-      "services": { "247": { "rating": 91, "national": 54, "stateRank": 2, "positionRank": 14 }, "espn": { "rating": 86, "national": 44 } } },
-    { "name": "Brandon Woodard", "class": 2027, "pos": "PF", "h": 80, "w": 190, "school": "Bishop McNamara", "city": "Forestville", "state": "MD",
-      "services": { "247": { "rating": 91, "national": 60, "stateRank": 3, "positionRank": 9 }, "espn": { "rating": 85, "national": 52 } } },
-    { "name": "Jacob Canton", "class": 2027, "pos": "PG", "h": 75, "w": 180, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
-      "services": { "247": { "rating": 89, "national": 102, "stateRank": 4, "positionRank": 22 } } },
-    { "name": "Kirby Duran", "class": 2027, "pos": "PG", "h": 73, "w": 160, "school": "Bishop McNamara", "city": "District Heights", "state": "MD",
-      "services": { "247": { "rating": 86, "national": 188, "stateRank": 5, "positionRank": 35 } } },
-    { "name": "Daniel Abass", "class": 2027, "pos": "PF", "h": 79, "w": 205, "school": "DeMatha Catholic", "city": "Hyattsville", "state": "MD",
-      "services": { "247": { "rating": 85, "national": 198, "stateRank": 6, "positionRank": 31 } } },
-    { "name": "Jared Jeffers", "class": 2027, "pos": "C", "h": 81, "w": 190, "school": "DeMatha Catholic", "city": "Hyattsville", "state": "MD",
-      "services": { "247": { "rating": 83, "national": 208, "stateRank": 7, "positionRank": 22 } } },
-    { "name": "Corey Dixon", "class": 2027, "pos": "CG", "h": 74, "w": 170, "school": "Bishop O'Connell", "city": "Arlington", "state": "VA",
-      "services": { "247": { "rating": 89, "national": 104, "stateRank": 2, "positionRank": 15 } } },
-    { "name": "Brian Mitchell Jr.", "class": 2027, "pos": "SF", "h": 76, "w": 205, "school": "Paul VI Catholic", "city": "Fairfax", "state": "VA",
-      "services": { "247": { "rating": 89, "national": 127, "stateRank": 3, "positionRank": 32 } } },
-    { "name": "Jacoby Briscoe", "class": 2027, "pos": "SF", "h": 78, "w": 185, "school": "The St. James", "city": "Springfield", "state": "VA",
-      "services": { "247": { "rating": 88, "national": null, "stateRank": 4, "positionRank": null } } },
-    { "name": "Jordan Hunter", "class": 2027, "pos": "SG", "h": 74, "w": 170, "school": "Hargrave Military Academy", "city": null, "state": "VA",
-      "services": { "247": { "rating": 88, "national": null, "stateRank": 5, "positionRank": null } } },
-    { "name": "Jymin Veney", "class": 2027, "pos": "PG", "h": 75, "w": 170, "school": "St. John's DC", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 89, "national": 120, "stateRank": 1, "positionRank": 26 } } },
-    { "name": "Andrew Ross", "class": 2027, "pos": "SG", "h": 77, "w": 180, "school": "Sidwell Friends School", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 88, "national": 161, "stateRank": 2, "positionRank": 32 } } },
-    { "name": "Ian Condon", "class": 2027, "pos": "PF", "h": 79, "w": 220, "school": "Sidwell Friends School", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 88, "national": 164, "stateRank": 3, "positionRank": 23 } } },
-    { "name": "Terrence Jones", "class": 2027, "pos": "PG", "h": 72, "w": 170, "school": "St. Frances Academy", "city": "Baltimore", "state": "MD",
-      "services": { "espn": { "rating": 82, "national": 82 } } },
-
-    { "name": "Xavier Skipworth", "class": 2028, "pos": "SF", "h": 77, "w": 180, "school": "Bullis", "city": "Potomac", "state": "MD",
-      "services": { "247": { "rating": 93, "national": 25, "stateRank": 1, "positionRank": 8 } } },
-    { "name": "Braxton Bogard", "class": 2028, "pos": "PF", "h": 80, "w": 210, "school": "Archbishop Spalding", "city": "Severn", "state": "MD",
-      "services": { "247": { "rating": 92, "national": 40, "stateRank": 2, "positionRank": 2 } } },
-    { "name": "Nash Avery", "class": 2028, "pos": "PF", "h": 80, "w": 200, "school": "Archbishop Spalding", "city": "Severn", "state": "MD",
-      "services": { "247": { "rating": 92, "national": 42, "stateRank": 3, "positionRank": 3 } } },
-    { "name": "Billy Stanfield III", "class": 2028, "pos": "SF", "h": 78, "w": 185, "school": "Calvert Hall College", "city": "Towson", "state": "MD",
-      "services": { "247": { "rating": 90, "national": 60, "stateRank": 4, "positionRank": 20 } } },
-    { "name": "Kareem Smith-Bey", "class": 2028, "pos": "SG", "h": 76, "w": 170, "school": "St. John's DC", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 90, "national": 59, "stateRank": 1, "positionRank": 11 } } },
-    { "name": "Isaiah Carter", "class": 2028, "pos": "SF", "h": 78, "w": 180, "school": "Highland School", "city": "Warrenton", "state": "VA",
-      "services": { "247": { "rating": 93, "national": 32, "stateRank": 1, "positionRank": 5 } } },
-
-    { "name": "Baba Oladotun", "class": 2026, "pos": "SF", "h": 82, "w": 195, "school": "Blake", "city": "Silver Spring", "state": "MD",
-      "services": { "247": { "rating": 98, "national": 10, "stateRank": 1, "positionRank": null } } },
-    { "name": "Qayden Samuels", "class": 2026, "pos": "SF", "h": 77, "w": 210, "school": "Bishop McNamara", "city": "District Heights", "state": "MD",
-      "services": { "247": { "rating": 97, "national": 26, "stateRank": 2, "positionRank": null } } },
-    { "name": "Sinan Huan", "class": 2026, "pos": "C", "h": 84, "w": 225, "school": "Georgetown Prep", "city": "Rockville", "state": "MD",
-      "services": { "247": { "rating": 92, "national": 65, "stateRank": 3, "positionRank": null } } },
-    { "name": "Prince-Alexander Moody", "class": 2026, "pos": "CG", "h": 76, "w": 180, "school": "Bishop McNamara", "city": "District Heights", "state": "MD",
-      "services": { "247": { "rating": 91, "national": 86, "stateRank": 4, "positionRank": null } } },
-    { "name": "Favour Ibe", "class": 2026, "pos": "C", "h": 85, "w": 235, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
-      "services": { "247": { "rating": 90, "national": 154, "stateRank": 5, "positionRank": null } } },
-    { "name": "BJ Ranson", "class": 2026, "pos": "PG", "h": 75, "w": null, "school": "Mount Saint Joseph", "city": "Baltimore", "state": "MD",
-      "services": { "247": { "rating": 87, "national": 222, "stateRank": 6, "positionRank": null } } },
-    { "name": "Ashton Meeks", "class": 2026, "pos": "CG", "h": 70, "w": 165, "school": "DeMatha Catholic", "city": "Hyattsville", "state": "MD",
-      "services": { "247": { "rating": 86, "national": 243, "stateRank": 7, "positionRank": null } } },
-    { "name": "Jasiah Cannady", "class": 2026, "pos": "PG", "h": 73, "w": 170, "school": "Mt. Zion Prep", "city": "Lanham", "state": "MD",
-      "services": { "247": { "rating": 86, "national": 244, "stateRank": 8, "positionRank": null } } },
-    { "name": "Jayson Peterson", "class": 2026, "pos": "PF", "h": 80, "w": 205, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD",
-      "services": { "247": { "rating": 85, "national": null, "stateRank": 9, "positionRank": null } } },
-    { "name": "Sifeng Huan", "class": 2026, "pos": "C", "h": 82, "w": 210, "school": "St. Andrew's Episcopal", "city": "Potomac", "state": "MD",
-      "services": { "247": { "rating": 83, "national": null, "stateRank": 10, "positionRank": null } } },
-    { "name": "Gage Howard", "class": 2026, "pos": "C", "h": 78, "w": 225, "school": "Our Lady of Mount Carmel", "city": "Essex", "state": "MD",
-      "services": { "247": { "rating": 81, "national": null, "stateRank": 11, "positionRank": null } } },
-
-    { "name": "Jordan Smith Jr.", "class": 2026, "pos": "CG", "h": 74, "w": 200, "school": "Paul VI Catholic", "city": "Fairfax", "state": "VA",
-      "services": { "247": { "rating": 98, "national": null, "stateRank": 1, "positionRank": null } } },
-    { "name": "Darius Bivins", "class": 2026, "pos": "PG", "h": 71, "w": 160, "school": "Bishop O'Connell", "city": "Alexandria", "state": "VA",
-      "services": { "247": { "rating": 91, "national": null, "stateRank": 5, "positionRank": null } } },
-    { "name": "Phenix Card", "class": 2026, "pos": "PG", "h": 71, "w": 160, "school": "Hayfield Secondary", "city": "Alexandria", "state": "VA",
-      "services": { "247": { "rating": 81, "national": null, "stateRank": 13, "positionRank": null } } },
-
-    { "name": "Anthony Brown", "class": 2026, "pos": "PG", "h": 73, "w": 160, "school": "Archbishop Carroll", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 91, "national": 81, "stateRank": 1, "positionRank": null } } },
-    { "name": "Jalyn Collingwood", "class": 2026, "pos": "SF", "h": 77, "w": 190, "school": "Sidwell Friends School", "city": "Washington", "state": "DC",
-      "services": { "247": { "rating": 90, "national": 104, "stateRank": 2, "positionRank": null } } }
+    {
+      "name": "Zion Green",
+      "class": 2027,
+      "pos": "PF",
+      "h": 81,
+      "w": 190,
+      "school": "Mt. Zion Prep",
+      "city": "Lanham",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 93,
+          "national": 34,
+          "stateRank": 1,
+          "positionRank": 5
+        },
+        "espn": {
+          "rating": 86,
+          "national": 47
+        }
+      }
+    },
+    {
+      "name": "J'Lon Lyons",
+      "class": 2027,
+      "pos": "PG",
+      "h": 75,
+      "w": 165,
+      "school": "Clinton Grace",
+      "city": "Clinton",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 91,
+          "national": 54,
+          "stateRank": 2,
+          "positionRank": 14
+        },
+        "espn": {
+          "rating": 86,
+          "national": 44
+        }
+      }
+    },
+    {
+      "name": "Brandon Woodard",
+      "class": 2027,
+      "pos": "PF",
+      "h": 80,
+      "w": 190,
+      "school": "Bishop McNamara",
+      "city": "Forestville",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 91,
+          "national": 60,
+          "stateRank": 3,
+          "positionRank": 9
+        },
+        "espn": {
+          "rating": 85,
+          "national": 52
+        }
+      }
+    },
+    {
+      "name": "Jacob Canton",
+      "class": 2027,
+      "pos": "PG",
+      "h": 75,
+      "w": 180,
+      "school": "Mt. Zion Prep",
+      "city": "Lanham",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 89,
+          "national": 102,
+          "stateRank": 4,
+          "positionRank": 22
+        }
+      }
+    },
+    {
+      "name": "Kirby Duran",
+      "class": 2027,
+      "pos": "PG",
+      "h": 73,
+      "w": 160,
+      "school": "Bishop McNamara",
+      "city": "District Heights",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 86,
+          "national": 188,
+          "stateRank": 5,
+          "positionRank": 35
+        }
+      }
+    },
+    {
+      "name": "Daniel Abass",
+      "class": 2027,
+      "pos": "PF",
+      "h": 79,
+      "w": 205,
+      "school": "DeMatha Catholic",
+      "city": "Hyattsville",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 85,
+          "national": 198,
+          "stateRank": 6,
+          "positionRank": 31
+        }
+      }
+    },
+    {
+      "name": "Jared Jeffers",
+      "class": 2027,
+      "pos": "C",
+      "h": 81,
+      "w": 190,
+      "school": "DeMatha Catholic",
+      "city": "Hyattsville",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 83,
+          "national": 208,
+          "stateRank": 7,
+          "positionRank": 22
+        }
+      }
+    },
+    {
+      "name": "Corey Dixon",
+      "class": 2027,
+      "pos": "CG",
+      "h": 74,
+      "w": 170,
+      "school": "Bishop O'Connell",
+      "city": "Arlington",
+      "state": "VA",
+      "services": {
+        "247": {
+          "rating": 89,
+          "national": 104,
+          "stateRank": 2,
+          "positionRank": 15
+        }
+      }
+    },
+    {
+      "name": "Brian Mitchell Jr.",
+      "class": 2027,
+      "pos": "SF",
+      "h": 76,
+      "w": 205,
+      "school": "Paul VI Catholic",
+      "city": "Fairfax",
+      "state": "VA",
+      "services": {
+        "247": {
+          "rating": 89,
+          "national": 127,
+          "stateRank": 3,
+          "positionRank": 32
+        }
+      }
+    },
+    {
+      "name": "Jacoby Briscoe",
+      "class": 2027,
+      "pos": "SF",
+      "h": 78,
+      "w": 185,
+      "school": "The St. James",
+      "city": "Springfield",
+      "state": "VA",
+      "services": {
+        "247": {
+          "rating": 88,
+          "national": null,
+          "stateRank": 4,
+          "positionRank": null
+        }
+      }
+    },
+    {
+      "name": "Jordan Hunter",
+      "class": 2027,
+      "pos": "SG",
+      "h": 74,
+      "w": 170,
+      "school": "Hargrave Military Academy",
+      "city": null,
+      "state": "VA",
+      "services": {
+        "247": {
+          "rating": 88,
+          "national": null,
+          "stateRank": 5,
+          "positionRank": null
+        }
+      }
+    },
+    {
+      "name": "Jymin Veney",
+      "class": 2027,
+      "pos": "PG",
+      "h": 75,
+      "w": 170,
+      "school": "St. John's DC",
+      "city": "Washington",
+      "state": "DC",
+      "services": {
+        "247": {
+          "rating": 89,
+          "national": 120,
+          "stateRank": 1,
+          "positionRank": 26
+        }
+      }
+    },
+    {
+      "name": "Andrew Ross",
+      "class": 2027,
+      "pos": "SG",
+      "h": 77,
+      "w": 180,
+      "school": "Sidwell Friends School",
+      "city": "Washington",
+      "state": "DC",
+      "services": {
+        "247": {
+          "rating": 88,
+          "national": 161,
+          "stateRank": 2,
+          "positionRank": 32
+        }
+      }
+    },
+    {
+      "name": "Ian Condon",
+      "class": 2027,
+      "pos": "PF",
+      "h": 79,
+      "w": 220,
+      "school": "Sidwell Friends School",
+      "city": "Washington",
+      "state": "DC",
+      "services": {
+        "247": {
+          "rating": 88,
+          "national": 164,
+          "stateRank": 3,
+          "positionRank": 23
+        }
+      }
+    },
+    {
+      "name": "Terrence Jones",
+      "class": 2027,
+      "pos": "PG",
+      "h": 72,
+      "w": 170,
+      "school": "St. Frances Academy",
+      "city": "Baltimore",
+      "state": "MD",
+      "services": {
+        "espn": {
+          "rating": 82,
+          "national": 82
+        }
+      }
+    },
+    {
+      "name": "Xavier Skipworth",
+      "class": 2028,
+      "pos": "SF",
+      "h": 77,
+      "w": 180,
+      "school": "Bullis",
+      "city": "Potomac",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 93,
+          "national": 25,
+          "stateRank": 1,
+          "positionRank": 8
+        }
+      }
+    },
+    {
+      "name": "Braxton Bogard",
+      "class": 2028,
+      "pos": "PF",
+      "h": 80,
+      "w": 210,
+      "school": "Archbishop Spalding",
+      "city": "Severn",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 92,
+          "national": 40,
+          "stateRank": 2,
+          "positionRank": 2
+        }
+      }
+    },
+    {
+      "name": "Nash Avery",
+      "class": 2028,
+      "pos": "PF",
+      "h": 80,
+      "w": 200,
+      "school": "Archbishop Spalding",
+      "city": "Severn",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 92,
+          "national": 42,
+          "stateRank": 3,
+          "positionRank": 3
+        }
+      }
+    },
+    {
+      "name": "Billy Stanfield III",
+      "class": 2028,
+      "pos": "SF",
+      "h": 78,
+      "w": 185,
+      "school": "Calvert Hall College",
+      "city": "Towson",
+      "state": "MD",
+      "services": {
+        "247": {
+          "rating": 90,
+          "national": 60,
+          "stateRank": 4,
+          "positionRank": 20
+        }
+      }
+    },
+    {
+      "name": "Kareem Smith-Bey",
+      "class": 2028,
+      "pos": "SG",
+      "h": 76,
+      "w": 170,
+      "school": "St. John's DC",
+      "city": "Washington",
+      "state": "DC",
+      "services": {
+        "247": {
+          "rating": 90,
+          "national": 59,
+          "stateRank": 1,
+          "positionRank": 11
+        }
+      }
+    },
+    {
+      "name": "Isaiah Carter",
+      "class": 2028,
+      "pos": "SF",
+      "h": 78,
+      "w": 180,
+      "school": "Highland School",
+      "city": "Warrenton",
+      "state": "VA",
+      "services": {
+        "247": {
+          "rating": 93,
+          "national": 32,
+          "stateRank": 1,
+          "positionRank": 5
+        }
+      }
+    }
   ]
 }

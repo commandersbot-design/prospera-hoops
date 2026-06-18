@@ -1024,7 +1024,7 @@ function TeamsView({ data, openTeam }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
         <div>
           <div className="keye">Teams</div>
-          <div className="sub" style={{ marginTop: 4 }}>{data.teams.length} teams · Capitol Hoops Summer League &amp; DMV programs</div>
+          <div className="sub" style={{ marginTop: 4 }}>{data.teams.length} schools · the full DMV directory — summer rosters where we have them</div>
         </div>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={mode === "teams" ? "Search a team…" : "Search the schedule…"} style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
       </div>
@@ -1051,7 +1051,7 @@ function TeamsView({ data, openTeam }) {
                   <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{t.label || t.name}</span>
                   {t.state ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--faint)", border: "1px solid var(--line)", borderRadius: 4, padding: "1px 5px" }}>{t.state}{t.type ? ` · ${t.type}` : ""}</span> : null}
                 </div>
-                <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[`${t.n} players`, t.top && `top scorer ${t.top.name}`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
+                <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{t.directory ? (t.n > 0 ? `${t.n} ranked recruit${t.n > 1 ? "s" : ""} · full roster coming` : `${[t.city, t.state].filter(Boolean).join(", ") || "Directory"} · roster coming`) : [`${t.n} players`, t.top && `top scorer ${t.top.name}`, t.coach && `Coach ${t.coach}`].filter(Boolean).join(" · ")}</div>
               </div>
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 15 }}>{t.top ? r1(t.top.ppg) : "—"}</div>
@@ -1107,7 +1107,7 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
     <div className="wrap" style={{ paddingTop: 24 }}>
       <a onClick={back} style={{ fontSize: 12.5, color: "var(--orange)", fontWeight: 700 }}>← Teams</a>
       <div className="hello" style={{ marginTop: 8 }}>{team.label || team.name}</div>
-      <div className="sub">{team.n} players{team.statN != null && team.statN < team.n ? ` · ${team.statN} with summer stats` : ""}{team.coach ? ` · Coach ${team.coach}` : ""}{team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}</div>
+      <div className="sub">{team.directory ? `${[team.city, team.state].filter(Boolean).join(", ") || "DMV"} · directory${team.n > 0 ? ` · ${team.n} ranked recruit${team.n > 1 ? "s" : ""}` : " · full roster coming"}` : `${team.n} players${team.statN != null && team.statN < team.n ? ` · ${team.statN} with summer stats` : ""}${team.coach ? ` · Coach ${team.coach}` : ""}${team.state ? ` · ${team.state}${team.type ? " " + team.type : ""}` : ""}`}</div>
       <div className="pf-grid" style={{ gridTemplateColumns: "1.5fr 1fr" }}>
         <div className="card">
           <p className="ttl">Roster &amp; stats <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· tap a column to sort</span></p>
@@ -1125,6 +1125,7 @@ function TeamDetail({ team, schedule, openPlayer, back }) {
                 </tr>
               ))}
             </tbody></table>
+            {sorted.length === 0 && <p style={{ fontSize: 12.5, color: "var(--muted)", padding: "10px 2px 2px", lineHeight: 1.6 }}>No roster on file yet — we’re building full DMV rosters school by school. Summer-league stats fill in here, and players can claim their spot anytime.</p>}
           </div>
         </div>
         <div className="card">
@@ -1513,7 +1514,7 @@ function CoachHQ({ data, openPlayer, go }) {
   const find = (slug) => data.teams.find((t) => t.slug === slug) || null;
   const Picker = ({ value, onChange, ph }) => (
     <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...inp, width: "100%", fontSize: 14, padding: "12px 14px" }}>
-      <option value="">{ph}</option>{data.teams.map((t) => <option key={t.slug} value={t.slug}>{t.label || t.name}</option>)}
+      <option value="">{ph}</option>{data.teams.filter((t) => !t.directory).map((t) => <option key={t.slug} value={t.slug}>{t.label || t.name}</option>)}
     </select>
   );
   const board = useMemo(() => { const k = q.trim().toLowerCase(); return data.players.filter((p) => !k || p.name.toLowerCase().includes(k) || (p.school || "").toLowerCase().includes(k)).slice(0, 50); }, [q, data.players]);
@@ -1756,8 +1757,8 @@ function useData() {
         summer: Object.keys(ch.teams || {}).length,
         hs: (sc.schools || sc || []).length || 0,
       };
-      // Teams with rosters (for the Teams view + Coach HQ opponent scouting).
-      const teams = Object.entries(ch.teams || {}).map(([slug, t]) => {
+      // Summer-league teams (with rosters + stats — for Teams view + Coach HQ).
+      const summerTeams = Object.entries(ch.teams || {}).map(([slug, t]) => {
         // Full roster — every rostered player, not only summer stat-posters.
         // Players who logged no summer minutes carry null stats (render as "—").
         const roster = (t.players || [])
@@ -1767,7 +1768,27 @@ function useData() {
         const ln = (t.name || "").toLowerCase();
         const ctx = /hayfield/.test(ln) ? "HS" : (/\bakt\b|warriors|3ssb|\baau\b/.test(ln) ? "AAU" : "SUMMER");
         return { slug, name: t.name, label: schoolLabel(t.name), coach: t.headCoach || null, roster, players, top: players[0] || null, n: roster.length, statN: players.length, ctx, state: teamState(t.name, locByKey), type: teamType(t.name, locByKey) };
-      }).filter((t) => t.players.length > 0).sort((a, b) => a.label.localeCompare(b.label));
+      }).filter((t) => t.players.length > 0);
+      // Full DMV directory: EVERY school is a team. Summer teams keep their
+      // rosters/stats; the rest are directory entries (school info + any ranked
+      // recruits we have) so the site covers the whole DMV, not just summer ball.
+      const matchKey = (n) => String(n || "").toLowerCase().replace(/\bsaint\b/g, "st")
+        .replace(/\b(secondary|high|school|academy|preparatory|prep|catholic|college|christian|friends|country|the|of)\b/g, "").replace(/[^a-z0-9]/g, "");
+      const haveSchool = new Set();
+      for (const t of summerTeams) { haveSchool.add(matchKey(t.label)); haveSchool.add(matchKey(t.name)); for (const tok of String(t.slug).split("-")) { const mk = matchKey(tok); if (mk.length >= 4) haveSchool.add(mk); } }
+      const rankedBySchool = {};
+      for (const rp of ranked) { const mk = matchKey(rp.school); if (mk) (rankedBySchool[mk] = rankedBySchool[mk] || []).push(rp); }
+      const directory = [];
+      for (const s of (sc.schools || sc || [])) {
+        if (!s || !s.name) continue;
+        const mk = matchKey(s.name);
+        if (!mk || haveSchool.has(mk)) continue;
+        haveSchool.add(mk);
+        const label = schoolLabel(s.name);
+        const ros = rankedBySchool[matchKey(label)] || rankedBySchool[mk] || [];
+        directory.push({ slug: String(s.slug || mk).replace(/\//g, "-"), name: s.name, label, coach: null, roster: ros, players: [], top: null, n: ros.length, statN: 0, ctx: "HS", state: s.state || null, type: teamType(s.name, locByKey), directory: true, city: s.city || null });
+      }
+      const teams = [...summerTeams, ...directory].sort((a, b) => a.label.localeCompare(b.label));
       const schedule = (sj.games || []);
       // HS-season lines (teamStats.json), keyed by player for the profile "High school" tab.
       const hsByKey = {};
