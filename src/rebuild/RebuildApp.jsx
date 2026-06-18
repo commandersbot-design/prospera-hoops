@@ -1778,10 +1778,10 @@ function ProspectsView({ data, openPlayer }) {
   const [poss, setPoss] = useState([]);
   const [cls, setCls] = useState([]);
   const [tracked, setTracked] = useState(false);
-  const [sort, setSort] = useState("ranked");
+  const [sort, setSort] = useState("ppg");
   const [showRoster, setShowRoster] = useState(false);
   const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  // Split matches into players with summer production (the ranked/stat board)
+  // Split matches into players with summer production (the stat board)
   // and rostered players with no summer stats yet (their own section below).
   const { list, rosterList } = useMemo(() => {
     const k = q.trim().toLowerCase();
@@ -1791,6 +1791,15 @@ function ProspectsView({ data, openPlayer }) {
       (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
       (!cls.length || cls.includes(p.cls)) &&
       (!tracked || wl.has(p.id)));
+    // "Ranked" shows ONLY players with a recruiting-service rating/ranking,
+    // best first (national rank asc, then stars desc, then summer PPG).
+    if (sort === "ranked") {
+      const rankScore = (p) => (p.rankings && p.rankings.national) || 9999;
+      const ranked = matched
+        .filter((p) => p.stars || (p.rankings && (p.rankings.national || p.rankings.state || p.rankings.position)))
+        .sort((a, b) => (rankScore(a) - rankScore(b)) || ((b.stars || 0) - (a.stars || 0)) || ((b.ppg || 0) - (a.ppg || 0)));
+      return { list: ranked.slice(0, 250), rosterList: [] };
+    }
     const stat = matched.filter((p) => p.gp != null);
     const roster = matched.filter((p) => p.gp == null).sort((a, b) => a.name.localeCompare(b.name));
     const sorted = sort === "az" ? [...stat].sort((a, b) => a.name.localeCompare(b.name)) : [...stat].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
@@ -1805,7 +1814,7 @@ function ProspectsView({ data, openPlayer }) {
           <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", fontSize: 15.5, color: "var(--ink)" }}>{p.name}</span>
           {p.stars ? <span style={{ fontFamily: "var(--sans)", fontSize: 9.5, fontWeight: 700, color: "var(--gold-a)", border: "1px solid rgba(245,196,81,.4)", borderRadius: 4, padding: "1px 5px" }}>{p.stars}★{p.rankings && p.rankings.national ? ` · #${p.rankings.national} Natl` : ""}</span> : null}
         </div>
-        <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), p.gp == null ? "on roster" : "eval pending"].filter(Boolean).join(" · ")}</div>
+        <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[p.pos, p.cls, cleanOpp(p.school), p.gp == null ? "on roster" : null].filter(Boolean).join(" · ")}</div>
       </div>
       <div style={{ textAlign: "right" }}>
         <div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 22, color: p.gp == null ? "var(--faint)" : "var(--orange)", lineHeight: 1 }}>{r1(p.ppg)}</div>
@@ -1818,7 +1827,7 @@ function ProspectsView({ data, openPlayer }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
         <div>
           <div className="keye">Prospects</div>
-          <div className="sub" style={{ marginTop: 4 }}>The full DMV database · {data.players.length} profiles · ranked board first, the rest by summer stat</div>
+          <div className="sub" style={{ marginTop: 4 }}>The full DMV database · {data.players.length} profiles · sorted by summer production</div>
         </div>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search player or school…" style={{ ...inp, minWidth: 220, fontSize: 14, padding: "11px 14px" }} />
       </div>
@@ -1830,20 +1839,14 @@ function ProspectsView({ data, openPlayer }) {
         <ChipGroup label="Watchlist"><FilterChip on={tracked} onClick={() => setTracked(!tracked)}>☆ Tracked</FilterChip></ChipGroup>
       </div>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between" }}>
-        <ChipGroup label="Sort by">{[["ranked", "Ranked"], ["ppg", "PPG"], ["az", "A–Z"]].map(([v, l]) => <FilterChip key={v} on={sort === v} onClick={() => setSort(v)}>{l}</FilterChip>)}</ChipGroup>
-        <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", fontSize: 11.5, color: "var(--faint)" }}>{data.players.length} prospects · 0 ranked</span>
+        <ChipGroup label="Sort by">{[["ppg", "PPG"], ["ranked", "Ranked"], ["az", "A–Z"]].map(([v, l]) => <FilterChip key={v} on={sort === v} onClick={() => setSort(v)}>{l}</FilterChip>)}</ChipGroup>
+        <span style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", fontSize: 11.5, color: "var(--faint)" }}>{data.players.length} players</span>
       </div>
-
-      {sort === "ranked" && (
-        <div style={{ marginTop: 22 }}>
-          <div className="keye" style={{ color: "var(--gold-a)" }}>Ranked Board</div>
-          <p className="ksub" style={{ margin: "10px 0 0" }}>No prospects evaluated yet — the ranked board fills as the eval engine grades players. Until then, the full DMV is below by summer production.</p>
-        </div>
-      )}
 
       <div style={{ fontFamily: "var(--disp)", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".12em", fontSize: 12, color: "var(--faint)", margin: "24px 0 6px" }}>
-        {sort === "ranked" ? "Notable · not yet evaluated" : `${list.length} shown`}
+        {sort === "ranked" ? `${list.length} ranked ${list.length === 1 ? "recruit" : "recruits"}` : `${list.length} shown`}
       </div>
+      {sort === "ranked" && <p style={{ fontSize: 11.5, color: "var(--faint)", margin: "-2px 0 8px", lineHeight: 1.5, maxWidth: 560 }}>Players carrying a recruiting-service rating or a national / state / position ranking. Everyone else is on the PPG board.</p>}
       <div>
         {list.map(renderRow)}
         {list.length === 0 && rosterList.length === 0 && <p style={{ fontSize: 12.5, color: "var(--faint)", padding: 18 }}>No prospects match these filters.</p>}
