@@ -184,6 +184,7 @@ function Header({ view, go }) {
   const [signInOpen, setSignInOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = (id, label) => { go(id); setMenuOpen(false); };
+  const lockIn = useLockIn();
   const tab = (id, label) => <a className={view === id ? "on" : ""} onClick={() => go(id)}>{label}</a>;
   const mtab = (id, label) => <a className={view === id ? "on" : ""} onClick={() => nav(id)}>{label}</a>;
   return (
@@ -198,7 +199,7 @@ function Header({ view, go }) {
           <a className="login" onClick={() => signOut()}>Log out</a>
         </> : <>
           <a className="login" onClick={() => setSignInOpen(true)}>Log in</a>
-          <button className="claim-sm" onClick={() => go("prospects")}>Claim your profile</button>
+          <button className="claim-sm" onClick={() => lockIn()}>🔒 Lock in</button>
         </>}
         <button className="nav-burger" aria-label="Menu" onClick={() => setMenuOpen((v) => !v)}>{menuOpen ? "✕" : "☰"}</button>
       </div>
@@ -207,7 +208,7 @@ function Header({ view, go }) {
           {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
-            : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
+            : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => { lockIn(); setMenuOpen(false); }}>🔒 Lock in</a></>}
         </div>
       )}
       {signInOpen && <Modal onClose={() => setSignInOpen(false)}><p className="ttl" style={{ marginTop: 0 }}>Sign in to Prospera</p><SignInForm onSignedIn={() => setSignInOpen(false)} intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Enter your email and we’ll send a one-tap sign-in link — no password.</p>} /></Modal>}
