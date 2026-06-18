@@ -7,26 +7,27 @@ flip one env var.
 
 ---
 
-## ⭐ GO-LIVE CHECKLIST (the only things left)
+## ⭐ GO-LIVE CHECKLIST (accounts-first — waitlist dropped)
 
-**1. Supabase — run the SQL (one paste).** Dashboard → SQL Editor → New query → paste all of
-`docs/sql/SETUP.sql` → Run. This creates every table sign-up needs: admins, waitlist,
-film_submissions, claims, entitlements, profile_views. **Without this, lock-in / add-yourself /
-scout-views / claims all fail.** (Idempotent — safe to re-run.)
+Signup is now **"Sign in → claim your profile"** (magic link). The `claims` table already
+exists, so **no SETUP.sql is required for launch.**
 
-**2. Supabase — Auth URL config.** Authentication → URL Configuration → Site URL
-`https://prosperahoops.com`; add redirect URLs `https://prosperahoops.com/**` and
-`https://www.prosperahoops.com/**`. (Makes magic-link sign-in work.)
+**1. Supabase — Auth URL config (the one required step).** Authentication → URL Configuration →
+Site URL `https://prosperahoops.com`; add redirect URLs `https://prosperahoops.com/**` and
+`https://www.prosperahoops.com/**`. (Makes the magic-link sign-in land back on the site.) ✔ admin
+row already inserted.
 
-**3. Make yourself admin.** Sign in once on the live site (via `?preview=courtside`), then
-Authentication → Users → copy your UUID → run the `insert into public.admins …` line at the
-bottom of `SETUP.sql`. (Unlocks the film + "players to verify" + waitlist queues on your Dashboard.)
+**2. Final human test** on `https://prosperahoops.com/?preview=courtside` — incl. **Log in → check
+the magic-link email arrives → click it → claim a profile.**
 
-**4. Final human test** on the real domain: `https://prosperahoops.com/?preview=courtside`
-(see §0 below for what to click).
-
-**5. 🔴 GO LIVE:** Vercel → Settings → Environment Variables → set `VITE_PRELAUNCH=false`
+**3. 🔴 GO LIVE:** Vercel → Settings → Environment Variables → set `VITE_PRELAUNCH=false`
 (Production) → **Redeploy**. Public now. Post the launch graphics at 5pm (`PROSPERALAUNCHKIT`).
+
+**Email note:** magic-link sign-in uses Supabase's email — fine for moderate volume, but it's
+rate-limited (~3–4/hr) and can land in spam. For a big push, add custom SMTP (Resend) later.
+
+**Optional later:** run `docs/sql/SETUP.sql` to enable film uploads + "scouts viewed you" (those
+features degrade quietly until then — they don't block launch).
 
 **Rollback:** set `VITE_PRELAUNCH=true` → redeploy (holding page back in ~1 min).
 

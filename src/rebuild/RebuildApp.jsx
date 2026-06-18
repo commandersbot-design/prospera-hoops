@@ -228,7 +228,7 @@ function Header({ view, go }) {
           <a className="login" onClick={() => signOut()}>Log out</a>
         </> : <>
           <a className="login" onClick={() => setSignInOpen(true)}>Log in</a>
-          <button className="claim-sm" onClick={() => lockIn()}>🔒 Lock in</button>
+          <button className="claim-sm" onClick={() => go("prospects")}>Claim your profile</button>
         </>}
         <button className="nav-burger" aria-label="Menu" onClick={() => setMenuOpen((v) => !v)}>{menuOpen ? "✕" : "☰"}</button>
       </div>
@@ -237,7 +237,7 @@ function Header({ view, go }) {
           {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("watchlist", "Watchlist")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
-            : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => { lockIn(); setMenuOpen(false); }}>🔒 Lock in</a></>}
+            : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
         </div>
       )}
       {signInOpen && <Modal onClose={() => setSignInOpen(false)}><p className="ttl" style={{ marginTop: 0 }}>Sign in to Prospera</p><SignInForm onSignedIn={() => setSignInOpen(false)} intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Enter your email and we’ll send a one-tap sign-in link — no password.</p>} /></Modal>}
@@ -287,7 +287,7 @@ function Landing({ data, go, openPlayer }) {
           <div className="search">
             <input value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" placeholder="Search your name" />
             <button>Search</button>
-            <div className={(results.length || q.trim()) ? "results on" : "results"}>
+            <div className={results.length ? "results on" : "results"}>
               {results.map((p, i) => (
                 <div className="rrow" key={`${p.id}-${i}`} onClick={() => openPlayer(p)}>
                   <div className="rav">{p.headshot ? <img src={p.headshot} alt="" /> : initials(p.name)}</div>
@@ -295,21 +295,13 @@ function Landing({ data, go, openPlayer }) {
                   <div className="rclaim">Claim this profile →</div>
                 </div>
               ))}
-              {q.trim() && results.length === 0 && (
-                <div className="rrow" onClick={() => lockIn({ addPlayer: true })} style={{ cursor: "pointer" }}>
-                  <div className="rav">＋</div>
-                  <div className="rinfo"><div className="n">Not on the board yet?</div><div className="m">Add yourself — we verify, then you claim it.</div></div>
-                  <div className="rclaim">Add yourself →</div>
-                </div>
-              )}
             </div>
           </div>
-          <div style={{ fontSize: 12, color: "var(--faint)", marginTop: 8 }}>Not in the database? <b onClick={() => lockIn({ addPlayer: true })} style={{ color: "var(--orange)", cursor: "pointer" }}>Add yourself to the board →</b></div>
-          <button className="claim-big" style={{ marginTop: 14 }} onClick={() => lockIn()}>Lock in your free account</button>
+          <button className="claim-big" onClick={() => go("dash")}>Claim your profile — free</button>
           <div className="band">
             <div className="seal">★</div>
             <div><div className="k">Founding Member</div><div className="l"><b>Prospera+, free for life.</b> 50 spots.</div></div>
-            <div className="ap" onClick={() => lockIn({ founding: true })}>Apply →</div>
+            <div className="ap" onClick={() => go("dash")}>Apply →</div>
           </div>
         </div>
         <div data-anim style={{ animationDelay: ".12s" }}>
@@ -365,7 +357,7 @@ function Landing({ data, go, openPlayer }) {
       <section className="blk"><div className="wrap" style={{ textAlign: "center" }}>
         <div className="keye" style={{ color: "var(--gold-a)" }}>The Founding 50</div><h2>Get in on the ground floor.</h2>
         <p className="ksub" style={{ margin: "0 auto" }}>The first 50 members we approve lock in Prospera+ free, for as long as they&rsquo;re on Prospera — plus a gold Founding badge only these fifty will ever wear.</p>
-        <button className="claim-big" onClick={() => lockIn({ founding: true })} style={{ marginTop: 22 }}>Apply for a founding spot</button>
+        <button className="claim-big" onClick={() => go("dash")} style={{ marginTop: 22 }}>Apply for a founding spot</button>
       </div></section>
 
       <footer><div className="wrap">
@@ -688,9 +680,8 @@ function PublicProfile({ player, data, go }) {
         </div></div>
       ) : (
         <div className="banner orange"><div className="ico">★</div><div style={{ flex: 1 }}>
-          <h3>Is this you?</h3><p>Lock in this profile now — just your email, no password, nothing to wait on. We’ll email your sign-in link as accounts roll out. Free for early members.</p>
-          <div className="bbtns"><button className="bbtn pri" onClick={() => lockIn({ player_id: p.id, player_name: p.name })}>🔒 Lock in this profile</button><button className="bbtn" onClick={() => go("prospects")}>Not me</button></div>
-          <p style={{ fontSize: 11.5, color: "var(--faint)", margin: "10px 0 0" }}>Already have access? <a onClick={() => setClaimOpen(true)} style={{ color: "var(--orange)", fontWeight: 700, cursor: "pointer" }}>Sign in to claim now →</a></p>
+          <h3>Is this you?</h3><p>This profile is on Prospera but hasn&rsquo;t been claimed yet. Claim it to manage your stats, film, and recruiting info — free.</p>
+          <div className="bbtns"><button className="bbtn pri" onClick={() => setClaimOpen(true)}>Claim this profile</button><button className="bbtn" onClick={() => go("prospects")}>Not me</button></div>
         </div></div>
       )}
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
