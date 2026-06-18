@@ -17,14 +17,22 @@ Site URL `https://prosperahoops.com`; add redirect URLs `https://prosperahoops.c
 `https://www.prosperahoops.com/**`. (Makes the magic-link sign-in land back on the site.) ✔ admin
 row already inserted.
 
-**2. Final human test** on `https://prosperahoops.com/?preview=courtside` — incl. **Log in → check
-the magic-link email arrives → click it → claim a profile.**
+**2. 🧪 Final end-to-end test (do this on your PHONE)** at
+`https://prosperahoops.com/?preview=courtside` — this single test proves the whole chain:
+  - Open sign-in → pick a **role** (e.g. **Coach**) → enter your email → **Send**.
+  - Confirm the email arrives **in the inbox** (not spam), from **"Prospera Hoops"**.
+  - Click the link → you should be **auto-routed to Coach HQ** (Player → dashboard, Scout → board).
+  - Bonus: open a team → **Claim this team** → approve it from your **dashboard** queue → Coach HQ unlocks.
+  - Also tap **Save changes** in Supabase → Auth → Emails first if you haven't (sender = `jalen@`).
 
-**3. 🔴 GO LIVE:** Vercel → Settings → Environment Variables → set `VITE_PRELAUNCH=false`
-(Production) → **Redeploy**. Public now. Post the launch graphics at 5pm (`PROSPERALAUNCHKIT`).
+**3. 🔴 GO LIVE (manual — nothing is automatic):** Vercel → Settings → Environment Variables → set
+`VITE_PRELAUNCH=false` (Production) → **Redeploy** (the flag is baked in at build time, so a redeploy
+is required). Start the redeploy ~**4:57pm** so it's live by 5:00. Then post the graphics
+(`PROSPERALAUNCHKIT`). Rollback: set `VITE_PRELAUNCH=true` → redeploy.
 
-**Email note:** magic-link sign-in uses Supabase's email — fine for moderate volume, but it's
-rate-limited (~3–4/hr) and can land in spam. For a big push, add custom SMTP (Resend) later.
+**Email:** ✅ custom SMTP via **Resend** is live (100/hr, inbox delivery from the verified domain,
+sender `jalen@prosperahoops.com`). The `user_state` table is created — account-synced Coach HQ +
+coach access linking are active.
 
 **Optional later:** run `docs/sql/SETUP.sql` to enable film uploads + "scouts viewed you" (those
 features degrade quietly until then — they don't block launch).
