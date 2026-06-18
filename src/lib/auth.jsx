@@ -60,8 +60,8 @@ export function AuthProvider({ children }) {
     return off;
   }, [refreshUser]);
 
-  const signIn = useCallback(async (email) => {
-    await auth.signInWithMagicLink(email);
+  const signIn = useCallback(async (email, role) => {
+    await auth.signInWithMagicLink(email, undefined, role ? { role } : undefined);
   }, []);
 
   const signOut = useCallback(async () => {

@@ -877,6 +877,7 @@ function SignInForm({ onSignedIn, intro }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [left, setLeft] = useState(0);
+  const [role, setRole] = useState(() => { try { return localStorage.getItem("ph_role") || ""; } catch { return ""; } });
   useEffect(() => { if (user && onSignedIn) onSignedIn(user); }, [user]);
   // Tick the resend cooldown down to zero.
   useEffect(() => { if (left <= 0) return; const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000); return () => clearInterval(t); }, [left]);
@@ -885,6 +886,7 @@ function SignInForm({ onSignedIn, intro }) {
   const send = async () => {
     setErr("");
     const e2 = email.trim();
+    if (!role) { setErr("Tell us who you are — Player, Coach, Scout, or Fan."); return; }
     if (!/.+@.+\..+/.test(e2)) { setErr("Enter a valid email."); return; }
     // Already sent a link to this address within the window? Don't fire another —
     // just surface the confirmation and run the countdown.
@@ -892,7 +894,8 @@ function SignInForm({ onSignedIn, intro }) {
     if (remaining > 0) { setSent(true); setLeft(remaining); return; }
     setBusy(true);
     try {
-      await signIn(e2);
+      try { localStorage.setItem("ph_role", role); } catch { /* ignore */ }
+      await signIn(e2, role);
       markLinkSent(e2);
       setSent(true);
       setLeft(LINK_COOLDOWN_S);
@@ -912,6 +915,10 @@ function SignInForm({ onSignedIn, intro }) {
   return (
     <div>
       {intro}
+      <p style={{ fontSize: 12, color: "var(--muted)", margin: "0 0 8px", fontWeight: 600 }}>I&rsquo;m signing in as…</p>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+        {["Player", "Coach", "Scout", "Fan"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}
+      </div>
       <input value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} type="email" placeholder="you@email.com" style={INP} />
       {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
       <button className="cta" style={{ marginTop: 12 }} onClick={send} disabled={busy}>{busy ? "Sending…" : "Send magic link"}</button>

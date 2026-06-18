@@ -67,7 +67,7 @@ function authHeaders(json = true) {
 export const auth = {
   // Send a one-tap magic link to the given email. create_user defaults to true,
   // so this both signs up and signs in.
-  async signInWithMagicLink(email, redirectTo) {
+  async signInWithMagicLink(email, redirectTo, data) {
     if (!isConfigured) throw new Error("Supabase not configured");
     const r = await fetch(`${URL}/auth/v1/otp`, {
       method: "POST",
@@ -75,6 +75,8 @@ export const auth = {
       body: JSON.stringify({
         email: email.trim().toLowerCase(),
         options: { email_redirect_to: redirectTo || window.location.origin },
+        // user_metadata set on the account at first signup (e.g. { role }).
+        ...(data && Object.keys(data).length ? { data } : {}),
       }),
     });
     if (!r.ok) {
