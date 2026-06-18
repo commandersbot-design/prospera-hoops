@@ -18,7 +18,7 @@ Box scores credited to **Capitol Hoops Summer League** on every stat card.
 | **🔴 5:00 PM** | **Feed post** | `launch-live.png` | **THE DROP — we're live** |
 | **5:00 PM** | Story | `launch-live-story.png` | HOME pillar + link sticker |
 | **5:20 PM** | **Reel** | demo video (script below) | 35–45s walkthrough |
-| **5:45 PM** | **Feed carousel** | `how-01…how-06` (6 slides) | the "how it works" deck |
+| **5:45 PM** | **Feed carousel** | `how-01…how-07` (7 slides) | the "how it works" deck |
 | **7:30 PM** | Story | screen-record of a real profile | "You're already on the board 👀" |
 | **8:30 PM** | Feed post | `post-nash-statline.png` (or Major) | a real standout → "find him on Prospera" |
 
@@ -34,6 +34,8 @@ Box scores credited to **Capitol Hoops Summer League** on every stat card.
 >
 > You're already on the board. Search your name, claim your profile — **free.**
 >
+> And this is just **Day One** — the more games, players & seasons we track, the sharper and more immersive it gets. We're only getting started. 📈
+>
 > 📲 **prosperahoops.com** (link in bio)
 > Box scores: Capitol Hoops Summer League.
 
@@ -44,11 +46,11 @@ Box scores credited to **Capitol Hoops Summer League** on every stat card.
 
 ---
 
-## ▶ 5:45 PM — "HOW IT WORKS" carousel (`how-01` → `how-06`)
+## ▶ 5:45 PM — "HOW IT WORKS" carousel (`how-01` → `how-07`)
 
-Post all 6 in order. One caption for the carousel:
+Post all 7 in order. One caption for the carousel:
 
-> How Prospera Hoops works, in 6 swipes 👉
+> How Prospera Hoops works, in 7 swipes 👉
 >
 > 1️⃣ The DMV's scouting platform — HS, AAU & more
 > 2️⃣ You're already on the board — 800+ players, search your name
@@ -56,8 +58,9 @@ Post all 6 in order. One caption for the carousel:
 > 4️⃣ Claim your profile free — add film, recruiting info, contact
 > 5️⃣ Coaches: **Coach HQ** — game plans, analytics, matchup builder (free at launch)
 > 6️⃣ We're live → **prosperahoops.com**
+> 7️⃣ **This is Day One** — it gets sharper & more immersive the more we track
 >
-> Real data only. The more we track, the sharper it gets. 📲 Link in bio.
+> Real data only. We're just getting started. 📲 Link in bio.
 
 `#ProsperaHoops #DMVHoops #DMVBasketball #CapitolHoops #PlayerDevelopment #DMVScouting`
 
@@ -104,6 +107,6 @@ audio low under it. (I can't render the video for you, but this is the exact sho
 | `launch-live.png` | 5pm feed drop |
 | `launch-live-story.png` | 5pm story (HOME) |
 | `launch-countdown-today.png` | morning + 1-hr countdown |
-| `how-01-cover` … `how-06-live` | the 6-slide "how it works" carousel |
+| `how-01-cover` … `how-07-beginning` | the 7-slide "how it works" carousel |
 | `post-nash-statline.png` / `post-major-leap.png` | evening standout posts |
 | `post-showcase-home.png` | SEEN·TRACKED·HOME capstone (alt) |

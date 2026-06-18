@@ -100,7 +100,7 @@ card("launch-countdown-today", `${header("06.18")}
 const slide = (name, num, kicker, head, lines, opts = {}) => {
   const accent = opts.accent || C.orange;
   const body = `${header("")}
-    ${T(40, 150, 22, 800, accent, num, { ls: 2 })}<text x="84" y="150" font-family="${HG}" font-weight="700" font-size="22" fill="${C.faint}" letter-spacing="2">/ 06</text>
+    ${T(40, 150, 22, 800, accent, num, { ls: 2 })}<text x="84" y="150" font-family="${HG}" font-weight="700" font-size="22" fill="${C.faint}" letter-spacing="2">/ 07</text>
     ${T(40, 300, 24, 800, accent, kicker, { ls: 5 })}
     ${head.map((ln, i) => TD(40, 392 + i * 92, 84, 800, C.text, esc(ln))).join("")}
     ${lines.map((ln, i) => T(40, 392 + head.length * 92 + 40 + i * 50, 28, 500, C.mut, esc(ln))).join("")}
@@ -131,6 +131,10 @@ slide("how-05-coach", "05", "FOR THE SIDELINE", ["COACH HQ.", "SCOUT SMARTER."],
 
 slide("how-06-live", "06", "IT'S OPEN", ["WE'RE LIVE.", "GET ON IT."],
   ["The whole DMV, one home court.", "Search your name. Claim your profile. Free."],
-  { tag: "PROSPERAHOOPS.COM", foot: "ProsperaHoops.com" });
+  { tag: "PROSPERAHOOPS.COM" });
+
+slide("how-07-beginning", "07", "AND WE'RE JUST GETTING STARTED", ["THIS IS", "DAY ONE."],
+  ["The more games, players, and seasons we track,", "the sharper and more immersive Prospera gets.", "Full rosters, deeper development, more tools — coming.", "Get in early. Help us build the DMV's home court."],
+  { tag: "THE BEST IS AHEAD", foot: "ProsperaHoops.com" });
 
 console.log("\nLaunch-day set complete → docs/social-posts/");
