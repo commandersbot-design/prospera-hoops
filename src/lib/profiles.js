@@ -5,16 +5,29 @@ import { db, getSession, isConfigured } from "./supabaseClient.js";
 
 const enc = encodeURIComponent;
 
+// The signed-in user's email, decoded from the session JWT (no network call).
+function claimantEmail() {
+  try {
+    const t = getSession()?.access_token;
+    if (!t) return null;
+    return JSON.parse(atob(t.split(".")[1] || "")).email || null;
+  } catch {
+    return null;
+  }
+}
+
 // --- claims -----------------------------------------------------------------
 
-// Submit a claim linking the signed-in user to a player record.
+// Submit a claim linking the signed-in user to a player record. We stamp the
+// claimant's email into `proof` so the admin can see WHO is claiming and verify
+// it before approving.
 export async function submitClaim({ player_id, player_name, school, role, proof, message }) {
   const rows = await db.insert("claims", {
     player_id,
     player_name,
     school: school || null,
     role,
-    proof: proof || null,
+    proof: proof || claimantEmail() || null,
     message: message || null,
     status: "pending",
   });

@@ -1053,6 +1053,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontWeight: 700, fontSize: 13.5 }}>{c.player_name || c.player_id}{isTeamClaim(c) ? <span className="bdg" style={{ marginLeft: 6 }}>TEAM</span> : null}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
                       <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[isTeamClaim(c) ? "Team claim" : c.school, c.message].filter(Boolean).join(" · ") || "—"}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--blue)", marginTop: 2 }}>Claimed by: <b style={{ color: "var(--ink)" }}>{c.proof || (c.user_id ? `account ${String(c.user_id).slice(0, 8)}…` : "unknown")}</b></div>
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="bbtn" onClick={() => reviewClaim(c.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
