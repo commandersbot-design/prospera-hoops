@@ -933,10 +933,11 @@ function ClaimPanel({ player, onClose }) {
   const { user } = useAuth();
   const [claim, setClaim] = useState(null);
   const [role, setRole] = useState("player");
+  const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   useEffect(() => { let live = true; if (user && player?.id) myClaimForPlayer(player.id).then((c) => { if (live) setClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, player?.id]);
-  const submit = async () => { setErr(""); setBusy(true); try { const c = await submitClaim({ player_id: player.id, player_name: player.name, school: player.school, role }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  const submit = async () => { setErr(""); if (!name.trim()) { setErr("Enter your name so we can verify you."); return; } setBusy(true); try { const c = await submitClaim({ player_id: player.id, player_name: player.name, school: player.school, role, name: name.trim() }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
   const first = (player.name || "").split(" ")[0] || "this player";
   return (
     <Modal onClose={onClose}>
@@ -950,8 +951,10 @@ function ClaimPanel({ player, onClose }) {
         <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Sign in to claim this profile — free. Manage your stats, film, and recruiting info.</p>} />
       ) : (
         <div>
-          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Your relationship to {first}:</p>
-          <div style={{ display: "flex", gap: 8, margin: "10px 0 14px" }}>{["player", "parent", "coach"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Tell us who you are so we can verify this claim:</p>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" style={{ ...INP, marginTop: 10 }} />
+          <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "12px 0 0" }}>Your relationship to {first}:</p>
+          <div style={{ display: "flex", gap: 8, margin: "8px 0 14px" }}>{["player", "parent", "coach"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
           {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "0 0 8px" }}>{err}</p>}
           <button className="cta" onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit claim"}</button>
         </div>
@@ -966,10 +969,11 @@ function ClaimTeamPanel({ team, onClose }) {
   const { user } = useAuth();
   const [claim, setClaim] = useState(null);
   const [role, setRole] = useState("Head Coach");
+  const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   useEffect(() => { let live = true; if (user && team?.slug) myClaimForTeam(team.slug).then((c) => { if (live) setClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, team?.slug]);
-  const submit = async () => { setErr(""); setBusy(true); try { const c = await submitTeamClaim({ team_slug: team.slug, team_name: team.label || team.name, role }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
+  const submit = async () => { setErr(""); if (!name.trim()) { setErr("Enter your name so we can verify you."); return; } setBusy(true); try { const c = await submitTeamClaim({ team_slug: team.slug, team_name: team.label || team.name, role, name: name.trim() }); setClaim(c || { status: "pending" }); } catch (e) { setErr(String(e.message || e)); } finally { setBusy(false); } };
   return (
     <Modal onClose={onClose}>
       <p className="ttl" style={{ marginTop: 0 }}>Claim {team.label || team.name}</p>
@@ -982,8 +986,10 @@ function ClaimTeamPanel({ team, onClose }) {
         <SignInForm intro={<p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 12px" }}>Sign in to claim your program — free. Unlock Coach HQ for your team.</p>} />
       ) : (
         <div>
-          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Your role with this program:</p>
-          <div style={{ display: "flex", gap: 8, margin: "10px 0 14px", flexWrap: "wrap" }}>{["Head Coach", "Assistant", "Director", "Staff"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
+          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6, margin: "0 0 4px" }}>Signed in as <b style={{ color: "var(--ink)" }}>{user.email}</b>. Tell us who you are so we can verify this claim:</p>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" style={{ ...INP, marginTop: 10 }} />
+          <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "12px 0 0" }}>Your role with this program:</p>
+          <div style={{ display: "flex", gap: 8, margin: "8px 0 14px", flexWrap: "wrap" }}>{["Head Coach", "Assistant", "Director", "Staff"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}</div>
           {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "0 0 8px" }}>{err}</p>}
           <button className="cta" onClick={submit} disabled={busy}>{busy ? "Submitting…" : "Submit team claim"}</button>
         </div>

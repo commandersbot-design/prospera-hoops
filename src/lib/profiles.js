@@ -21,13 +21,16 @@ function claimantEmail() {
 // Submit a claim linking the signed-in user to a player record. We stamp the
 // claimant's email into `proof` so the admin can see WHO is claiming and verify
 // it before approving.
-export async function submitClaim({ player_id, player_name, school, role, proof, message }) {
+export async function submitClaim({ player_id, player_name, school, role, proof, message, name }) {
+  // "Claimed by" = the claimant's typed name + their account email, so the admin
+  // can verify identity at a glance.
+  const by = [name && String(name).trim(), claimantEmail()].filter(Boolean).join(" · ");
   const rows = await db.insert("claims", {
     player_id,
     player_name,
     school: school || null,
     role,
-    proof: proof || claimantEmail() || null,
+    proof: proof || by || null,
     message: message || null,
     status: "pending",
   });
@@ -67,8 +70,8 @@ export async function setClaimStatus(claimId, status) {
 // Reuses the claims table with a `team:<slug>` player_id, so team claims share
 // the exact same admin-review queue, RLS, and account-linking as player claims.
 // `role` is the coach's role on the program (Head Coach / Assistant / …).
-export async function submitTeamClaim({ team_slug, team_name, role, proof, message }) {
-  return submitClaim({ player_id: `team:${team_slug}`, player_name: team_name, school: team_name, role, proof, message });
+export async function submitTeamClaim({ team_slug, team_name, role, proof, message, name }) {
+  return submitClaim({ player_id: `team:${team_slug}`, player_name: team_name, school: team_name, role, proof, message, name });
 }
 
 // The signed-in user's claim for a specific team, if any.
