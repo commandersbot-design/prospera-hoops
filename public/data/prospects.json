@@ -5581,7 +5581,7 @@
       "id": "aidenyarborough",
       "name": "Aiden Yarborough",
       "position": "G",
-      "gradYear": null,
+      "gradYear": 2029,
       "school": "Bullis",
       "city": null,
       "state": null,
@@ -26691,6 +26691,32 @@
           "rivals": null
         }
       }
+    },
+    {
+      "id": "cameronfloyd",
+      "name": "Cameron Floyd",
+      "position": "G",
+      "gradYear": 2031,
+      "school": "Hayfield Secondary School",
+      "city": "Alexandria",
+      "state": "VA",
+      "county": "Fairfax",
+      "heightInches": 70,
+      "weightLbs": 147,
+      "wingspanInches": null,
+      "stars": null,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": null
+      },
+      "aau": "Washington Warriors 14U",
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "summary": "REAL PROSPECT — class of 2031 (8th grade) guard at Hayfield Secondary, playing 14U for the Washington Warriors. Notable physical development: now 5'10\" / 147 lbs, up from 5'6\" / 130 lbs in 2025. Stats and a full scouting report are pending.",
+      "statLines": []
     }
   ]
 }

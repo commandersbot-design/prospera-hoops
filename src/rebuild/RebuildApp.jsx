@@ -1986,6 +1986,27 @@ function useData() {
           });
         }
       }
+      // Also surface prospect-DB players who aren't in Capitol Hoops (manually
+      // added prospects, middle schoolers, anyone not in summer league) — with
+      // null stats, so real DMV kids who'd otherwise be invisible are searchable
+      // and filterable. Skip the fictional sample rows.
+      const boardKeys = new Set(all.map((p) => p.key));
+      for (const pr of prospects) {
+        const k = nameKey(pr.name || "");
+        if (!pr.name || !k || boardKeys.has(k) || /^(sample|placeholder|example)/i.test(pr.name)) continue;
+        boardKeys.add(k);
+        const gy = pr.gradYear || pr.classYear;
+        all.push({
+          id: pr.id || k, key: k, name: pr.name, school: schoolLabel(pr.school || ""),
+          pos: pr.position || null, cls: gy ? `'${String(gy).slice(2)}` : "",
+          gradYear: gy || null, state: pr.state || null,
+          stars: pr.stars || null, rankings: pr.rankings || null,
+          status: pr.status || pr.commitment || null,
+          meta: `${schoolLabel(pr.school || "")}${pr.position ? " · " + pr.position : ""}`,
+          headshot: shotFor(pr.name, pr),
+          ...NO_STATS, lead: "—", leadK: "PPG", statsVerified: false,
+        });
+      }
       all.sort((a, b) => (b.ppg ?? -1) - (a.ppg ?? -1));
       // Ranked recruits — EVERY DMV player carrying a recruiting-service rating or
       // ranking, whether or not they played summer league. Board players keep their
