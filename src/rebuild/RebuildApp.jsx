@@ -2098,12 +2098,21 @@ const ChipGroup = ({ label, children }) => (
 const posIn = (pos, b) => { const x = (pos || "").toUpperCase(); if (b === "G") return /G/.test(x); if (b === "W") return /W|SF/.test(x); if (b === "F") return /F|C/.test(x); return false; };
 const divider = <span style={{ width: 1, height: 20, background: "var(--line)", margin: "0 4px" }} />;
 
+// School level from a class label like "'27": HS = grad years '26–'30, Middle
+// School = '31 and later (8th grade or younger in 2026). Unknown class counts as
+// HS (the dataset is HS today), but never as Middle School.
+const clsYear = (c) => { const m = /(\d{2})/.exec(String(c || "")); return m ? parseInt(m[1], 10) : null; };
+// Middle School = grad years '31–'34 (8th grade down to ~5th in 2026). Bounding
+// the top end keeps impossible/typo'd years (e.g. '39) out of the section.
+const matchesLevel = (level, c) => { if (!level) return true; const y = clsYear(c); if (y == null) return level === "hs"; return level === "ms" ? (y >= 31 && y <= 34) : y <= 30; };
+
 function ProspectsView({ data, openPlayer }) {
   const wl = useWatchlist();
   const [q, setQ] = useState("");
   const [states, setStates] = useState([]);
   const [poss, setPoss] = useState([]);
   const [cls, setCls] = useState([]);
+  const [level, setLevel] = useState("");
   const [tracked, setTracked] = useState(false);
   const [sort, setSort] = useState("ppg");
   const [showRoster, setShowRoster] = useState(false);
@@ -2117,6 +2126,7 @@ function ProspectsView({ data, openPlayer }) {
       (!states.length || (p.state && states.includes(p.state))) &&
       (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
       (!cls.length || cls.includes(p.cls)) &&
+      matchesLevel(level, p.cls) &&
       (!tracked || wl.has(p.id)));
     // "Ranked" shows EVERY ranked DMV recruit (board or not), pre-sorted by rank
     // in useData. Apply the same region/position/class/search/watchlist filters.
@@ -2126,6 +2136,7 @@ function ProspectsView({ data, openPlayer }) {
         (!states.length || (p.state && states.includes(p.state))) &&
         (!poss.length || poss.some((b) => posIn(p.pos, b))) &&
         (!cls.length || cls.includes(p.cls)) &&
+        matchesLevel(level, p.cls) &&
         (!tracked || wl.has(p.id)));
       return { list: rk.slice(0, 250), rosterList: [] };
     }
@@ -2133,7 +2144,7 @@ function ProspectsView({ data, openPlayer }) {
     const roster = matched.filter((p) => p.gp == null).sort((a, b) => a.name.localeCompare(b.name));
     const sorted = sort === "az" ? [...stat].sort((a, b) => a.name.localeCompare(b.name)) : [...stat].sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
     return { list: sorted.slice(0, 250), rosterList: roster };
-  }, [q, states, poss, cls, tracked, sort, data.players, data.ranked, wl.ids]);
+  }, [q, states, poss, cls, level, tracked, sort, data.players, data.ranked, wl.ids]);
   const inp = { background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, color: "var(--ink)", fontFamily: "var(--sans)", outline: "none" };
   const renderRow = (p, i) => (
     <div key={`${p.id}-${i}`} onClick={() => openPlayer(p)} style={{ display: "grid", gridTemplateColumns: "42px 1fr auto", gap: 13, alignItems: "center", padding: "11px 2px", borderBottom: "1px solid var(--line)", cursor: "pointer" }}>
@@ -2165,6 +2176,7 @@ function ProspectsView({ data, openPlayer }) {
         <ChipGroup label="Region">{["DC", "MD", "VA"].map((s) => <FilterChip key={s} on={states.includes(s)} onClick={() => tog(states, setStates, s)}>{s}</FilterChip>)}</ChipGroup>
         <ChipGroup label="Position">{["G", "W", "F"].map((b) => <FilterChip key={b} on={poss.includes(b)} onClick={() => tog(poss, setPoss, b)}>{b}</FilterChip>)}</ChipGroup>
         <ChipGroup label="Class">{["'27", "'28", "'29", "'30"].map((c) => <FilterChip key={c} on={cls.includes(c)} onClick={() => tog(cls, setCls, c)}>{c}</FilterChip>)}</ChipGroup>
+        <ChipGroup label="Level"><FilterChip on={level === "hs"} onClick={() => setLevel(level === "hs" ? "" : "hs")}>High School</FilterChip><FilterChip on={level === "ms"} onClick={() => setLevel(level === "ms" ? "" : "ms")}>Middle School</FilterChip></ChipGroup>
         <ChipGroup label="Watchlist"><FilterChip on={tracked} onClick={() => setTracked(!tracked)}>☆ Tracked</FilterChip></ChipGroup>
       </div>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between" }}>
