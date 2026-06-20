@@ -26716,7 +26716,19 @@
       "offers": [],
       "traits": [],
       "summary": "REAL PROSPECT — class of 2031 (8th grade) guard at Hayfield Secondary, playing 14U for the Washington Warriors. Notable physical development: now 5'10\" / 147 lbs, up from 5'6\" / 130 lbs in 2025. Stats and a full scouting report are pending.",
-      "statLines": []
+      "statLines": [],
+      "growth": [
+        {
+          "label": "2025",
+          "heightInches": 66,
+          "weightLbs": 130
+        },
+        {
+          "label": "2026",
+          "heightInches": 70,
+          "weightLbs": 147
+        }
+      ]
     }
   ]
 }

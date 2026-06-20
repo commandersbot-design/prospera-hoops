@@ -516,6 +516,34 @@ function TheLeapCard({ seasons, plus, go }) {
     </div>
   );
 }
+// Physical development — height & weight over time. The development story for
+// players (e.g. young prospects) whose growth shows up before the stat line does.
+function PhysicalGrowthCard({ growth }) {
+  if (!Array.isArray(growth) || growth.length < 2) return null;
+  const sorted = [...growth].sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  const prior = sorted[0], latest = sorted[sorted.length - 1];
+  const ft = (inch) => (inch != null ? `${Math.floor(inch / 12)}'${inch % 12}"` : "—");
+  const dIn = (latest.heightInches != null && prior.heightInches != null) ? latest.heightInches - prior.heightInches : null;
+  const dLb = (latest.weightLbs != null && prior.weightLbs != null) ? latest.weightLbs - prior.weightLbs : null;
+  const Row = ({ l, a, b, d, unit }) => (
+    <div style={{ display: "grid", gridTemplateColumns: "74px 1fr 1fr 64px", gap: 10, alignItems: "center", padding: "9px 0", borderTop: "1px solid var(--line)" }}>
+      <span style={{ fontSize: 10.5, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--faint)", fontWeight: 600 }}>{l}</span>
+      <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: "var(--muted)", fontVariantNumeric: "tabular-nums" }}>{a}</span>
+      <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 18, color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{b}</span>
+      <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 14, color: d > 0 ? "var(--orange)" : "var(--faint)", fontVariantNumeric: "tabular-nums" }}>{d != null && d !== 0 ? (d > 0 ? `+${d}${unit}` : `${d}${unit}`) : ""}</span>
+    </div>
+  );
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <div className="ttl" style={{ color: "var(--blue)" }}>Physical Development <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· {prior.label} → {latest.label}</span></div>
+      <div style={{ display: "grid", gridTemplateColumns: "74px 1fr 1fr 64px", gap: 10, fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", margin: "10px 0 0", fontWeight: 600 }}><span /><span>{prior.label}</span><span>{latest.label}</span><span>Δ</span></div>
+      <Row l="Height" a={ft(prior.heightInches)} b={ft(latest.heightInches)} d={dIn} unit={"\""} />
+      <Row l="Weight" a={prior.weightLbs != null ? `${prior.weightLbs}` : "—"} b={latest.weightLbs != null ? `${latest.weightLbs}` : "—"} d={dLb} unit="lb" />
+      <p style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.5, margin: "12px 0 0" }}>Real measured growth, year over year — the development that shows up before the stat line does.</p>
+    </div>
+  );
+}
+
 // Recruiting card — real commitment/offers/rankings when present, else a clean
 // claim-to-add state (the dataset has no fake recruiting-service rankings).
 function RecruitingCard({ prospect, onClaim }) {
@@ -800,6 +828,7 @@ function PublicProfile({ player, data, go }) {
         )}
       </div>
       <ByTheNumbers games={games} />
+      <PhysicalGrowthCard growth={p.growth} />
       <TheLeapCard seasons={seasons} plus={plus} go={go} />
 
       {arc && arc.multiSeason ? (
@@ -1986,6 +2015,7 @@ function useData() {
             status: pr?.status || pr?.commitment || null,
             meta: `${schoolLabel(t.name)}${pl.position ? " · " + pl.position : ""}`,
             headshot: shotFor(pl.name, pr),
+            growth: pr?.growth || null,
             ...(has ? pl.stats : NO_STATS),
             lead: has ? r1(pl.stats.ppg) : "—", leadK: "PPG",
             statsVerified: has,
@@ -2010,6 +2040,7 @@ function useData() {
           status: pr.status || pr.commitment || null,
           meta: `${schoolLabel(pr.school || "")}${pr.position ? " · " + pr.position : ""}`,
           headshot: shotFor(pr.name, pr),
+          growth: pr.growth || null,
           ...NO_STATS, lead: "—", leadK: "PPG", statsVerified: false,
         });
       }
@@ -2142,7 +2173,7 @@ function ProspectsView({ data, openPlayer }) {
   const [level, setLevel] = useState("");
   const [tracked, setTracked] = useState(false);
   const [sort, setSort] = useState("ppg");
-  const [showRoster, setShowRoster] = useState(false);
+  const [showRoster, setShowRoster] = useState(true);
   const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   // Split matches into players with summer production (the stat board)
   // and rostered players with no summer stats yet (their own section below).
@@ -2224,8 +2255,8 @@ function ProspectsView({ data, openPlayer }) {
         <div style={{ marginTop: 30 }}>
           <div onClick={() => setShowRoster((s) => !s)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "13px 14px", border: "1px solid var(--line)", borderRadius: 12, background: "var(--surface)", cursor: "pointer" }}>
             <div>
-              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", fontSize: 13.5, color: "var(--ink)" }}>On rosters · no summer stats yet <span style={{ color: "var(--orange)" }}>{rosterList.length}</span></div>
-              <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}>Full team rosters from Capitol Hoops — tracked &amp; searchable. Stat lines fill in as they log summer games.</div>
+              <div style={{ fontFamily: "var(--disp)", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", fontSize: 13.5, color: "var(--ink)" }}>More prospects · stats pending <span style={{ color: "var(--orange)" }}>{rosterList.length}</span></div>
+              <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}>The full DMV database — every tracked player, listed and searchable. Stat lines fill in as they play.</div>
             </div>
             <span style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 12, color: "var(--orange)", whiteSpace: "nowrap" }}>{showRoster ? "Hide ▴" : "Show ▾"}</span>
           </div>
