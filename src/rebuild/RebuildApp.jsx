@@ -1036,7 +1036,7 @@ function SignInForm({ onSignedIn, intro }) {
   const send = async () => {
     setErr("");
     const e2 = email.trim();
-    if (!role) { setErr("Tell us who you are — Player, Coach, Scout, or Fan."); return; }
+    if (!role) { setErr("Tell us who you are — Player, Parent, Coach, Scout, or Fan."); return; }
     if (!/.+@.+\..+/.test(e2)) { setErr("Enter a valid email."); return; }
     // Already sent a link to this address within the window? Don't fire another —
     // just surface the confirmation and run the countdown.
@@ -1068,7 +1068,7 @@ function SignInForm({ onSignedIn, intro }) {
       {intro}
       <p style={{ fontSize: 12, color: "var(--muted)", margin: "0 0 8px", fontWeight: 600 }}>I&rsquo;m signing in as…</p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-        {["Player", "Coach", "Scout", "Fan"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}
+        {["Player", "Parent", "Coach", "Scout", "Fan"].map((r) => <FilterChip key={r} on={role === r} onClick={() => setRole(r)}>{r}</FilterChip>)}
       </div>
       <input value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} type="email" placeholder="you@email.com" style={INP} />
       {err && <p style={{ color: "#ff7a7a", fontSize: 12, margin: "8px 0 0" }}>{err}</p>}
@@ -2574,7 +2574,7 @@ export default function RebuildApp() {
       const pending = localStorage.getItem("ph_postlogin");
       if (!pending) return;
       localStorage.removeItem("ph_postlogin");
-      const dest = { Player: "dash", Coach: "coach", Scout: "prospects" }[pending];
+      const dest = { Player: "dash", Parent: "dash", Coach: "coach", Scout: "prospects" }[pending];
       if (dest) go(dest);
     } catch { /* ignore */ }
   }, [user]);
