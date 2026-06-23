@@ -184,4 +184,7 @@ export const db = {
       body: JSON.stringify(row),
     });
   },
+  del(table, query) {
+    return rest(`${table}?${query}`, { method: "DELETE", headers: { ...authHeaders(false), Prefer: "return=minimal" } });
+  },
 };

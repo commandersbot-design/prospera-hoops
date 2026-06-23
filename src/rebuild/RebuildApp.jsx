@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -1157,6 +1157,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   useEffect(() => { let live = true; if (user && isAdmin) listClaims("pending").then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
   const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
+  const unclaim = async (c) => { if (!window.confirm(`Unclaim ${c.player_name}? You can always claim it again.`)) return; try { await removeClaim(c.id); setClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
 
   // Not signed in → sign-in prompt.
   if (!user) {
@@ -1175,7 +1176,9 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
 
   const approved = (claims || []).filter((c) => c.status === "approved");
   const pending = (claims || []).filter((c) => c.status !== "approved");
-  const firstName = (approved[0]?.player_name || user.email || "").split(/[ @]/)[0];
+  // Greet by the account, never by a claimed player's name (an admin or parent
+  // may own someone else's profile).
+  const firstName = ((user.email || "").split("@")[0] || "").replace(/^./, (ch) => ch.toUpperCase());
 
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
@@ -1279,6 +1282,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                       <span className="n">{c.player_name}{teamish ? <span className="bdg" style={{ marginLeft: 8 }}>TEAM</span> : null}</span>
                       <span className="s">{teamish ? (c.role || "Program") : (c.school || "")}</span>
                       <span className={`bdg ${c.status === "approved" ? "teal" : ""}`} style={{ marginLeft: 8 }}>{c.status === "approved" ? (teamish ? "✓ Managed" : "✓ Owned") : "Pending"}</span>
+                      <button className="bbtn" style={{ marginLeft: 8, fontSize: 11, padding: "4px 10px", color: "#ff7a7a" }} onClick={(e) => { e.stopPropagation(); unclaim(c); }}>Unclaim</button>
                     </div>
                   ); })}
                 </div>

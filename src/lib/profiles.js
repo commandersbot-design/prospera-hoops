@@ -43,6 +43,12 @@ export async function myClaims() {
   return (await db.select("claims", "select=*&order=created_at.desc")) || [];
 }
 
+// Withdraw (un-claim) a claim you submitted. RLS lets a user delete only their
+// own claims. Works for both player and team claims.
+export async function removeClaim(claimId) {
+  return db.del("claims", `id=eq.${enc(claimId)}`);
+}
+
 // The signed-in user's claim for a specific player, if any.
 export async function myClaimForPlayer(playerId) {
   if (!getSession()) return null;
