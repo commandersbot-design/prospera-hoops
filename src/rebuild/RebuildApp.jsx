@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -658,7 +658,7 @@ function FilmCard({ p, go }) {
 // the profile_overrides overlay (bio / film / self-reported measurables /
 // academics / recruiting status / socials / contact). Stats stay system-owned.
 const OVR_EMPTY = { bio: "", film_links: [], height: "", weight: "", wingspan: "", gpa: "", grad_year: "", positions: "", recruiting_status: "Open", sat: "", act: "", ncaa_status: "", major: "", instagram: "", twitter: "", hudl: "", contact_email: "", contact_phone: "", contact_public: false };
-function ProfileEditorRb({ playerId, onClose, onSaved }) {
+function ProfileEditorRb({ playerId, playerName, onClose, onSaved }) {
   const [d, setD] = useState(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -672,9 +672,9 @@ function ProfileEditorRb({ playerId, onClose, onSaved }) {
   const save = async () => {
     setErr(""); setMsg(""); setBusy(true);
     try {
-      const payload = { ...d, film_links: (d.film_links || []).filter((x) => x && x.url && x.url.trim()), grad_year: d.grad_year ? (Number(d.grad_year) || null) : null };
+      const payload = { ...d, player_name: playerName || null, film_links: (d.film_links || []).filter((x) => x && x.url && x.url.trim()), grad_year: d.grad_year ? (Number(d.grad_year) || null) : null };
       await saveOverride(playerId, payload);
-      setMsg("Saved ✓ Your profile is updated."); onSaved && onSaved();
+      setMsg("Saved ✓ Sent for review — your changes go live once we approve them (usually within a day)."); onSaved && onSaved();
     } catch (e) { setErr("Couldn’t save — make sure your claim is approved, then try again."); }
     finally { setBusy(false); }
   };
@@ -738,7 +738,7 @@ function ProfileEditorRb({ playerId, onClose, onSaved }) {
 }
 
 // Public read of the override overlay — the player's own info on their profile.
-function OwnerInfoCard({ ovr, name }) {
+function OwnerInfoCard({ ovr, name, pending }) {
   if (!ovr) return null;
   const first = (name || "").split(" ")[0] || "This player";
   const film = (ovr.film_links || []).filter((f) => f && f.url);
@@ -753,8 +753,9 @@ function OwnerInfoCard({ ovr, name }) {
     <div className="card" style={{ marginTop: 16 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <p className="ttl" style={{ margin: 0 }}>From {first}</p>
-        <span className="bdg teal">✓ Player-provided</span>
+        {pending ? <span className="bdg">⏳ Pending review</span> : <span className="bdg teal">✓ Player-provided</span>}
       </div>
+      {pending && <p style={{ fontSize: 12, color: "var(--muted)", margin: "8px 0 0", lineHeight: 1.5 }}>Only you can see this — it goes public once we approve it.</p>}
       {ovr.bio && <p style={{ fontSize: 13.5, color: "var(--ink)", lineHeight: 1.6, margin: "12px 0 0" }}>{ovr.bio}</p>}
       {ovr.recruiting_status && ovr.recruiting_status !== "Open" && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "10px 0 0" }}>Recruiting: <b style={{ color: "var(--ink)" }}>{ovr.recruiting_status}</b></p>}
       {measur.length > 0 && <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>{measur.map(([l, v]) => <Pill key={l} l={`${l} · self`} v={v} />)}</div>}
@@ -825,7 +826,9 @@ function PublicProfile({ player, data, go }) {
   const lockIn = useLockIn();
   const wl = useWatchlist();
   const isOwner = myClaim?.status === "approved";
-  useEffect(() => { let live = true; if (p?.id) getOverride(p.id).then((o) => { if (live) setOvr(o); }).catch(() => {}); return () => { live = false; }; }, [p?.id]);
+  // Owners load their own overlay (incl. pending edits, only they see); everyone
+  // else sees only the published overlay (public_profiles view).
+  useEffect(() => { let live = true; if (!p?.id) { setOvr(null); return; } (isOwner ? getMyOverride(p.id) : getOverride(p.id)).then((o) => { if (live) setOvr(o); }).catch(() => {}); return () => { live = false; }; }, [p?.id, isOwner]);
   useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
   useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
   // "Scouts viewed you": read the count; record a view when a coach/scout opens
@@ -850,7 +853,7 @@ function PublicProfile({ player, data, go }) {
         </div></div>
       )}
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
-      {isOwner && editing && <ProfileEditorRb playerId={p.id} onClose={() => setEditing(false)} onSaved={() => getOverride(p.id).then(setOvr).catch(() => {})} />}
+      {isOwner && editing && <ProfileEditorRb playerId={p.id} playerName={p.name} onClose={() => setEditing(false)} onSaved={() => getMyOverride(p.id).then(setOvr).catch(() => {})} />}
 
       <ScoutCard p={scoutP} portrait />
       <button className="bbtn" style={{ width: "100%", marginTop: 12, borderColor: wl.has(p.id) ? "var(--teal)" : undefined, color: wl.has(p.id) ? "var(--teal)" : undefined }} onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ On your Watchlist" : "＋ Add to Watchlist"}</button>
@@ -922,7 +925,7 @@ function PublicProfile({ player, data, go }) {
         </>}
       </div>
 
-      <OwnerInfoCard ovr={ovr} name={p.name} />
+      <OwnerInfoCard ovr={ovr} name={p.name} pending={isOwner && ovr && ovr.published === false} />
       <RecruitingCard prospect={prospect} onClaim={() => setClaimOpen(true)} />
 
       <div className="card" style={{ marginTop: 16 }}>
@@ -1144,6 +1147,10 @@ function ClaimTeamPanel({ team, onClose }) {
   );
 }
 
+// Does a profile override actually carry player-entered content worth reviewing?
+const ovrHasContent = (o) => !!(o && (o.bio || (o.film_links && o.film_links.length) || o.height || o.weight || o.wingspan || o.gpa || o.positions || (o.recruiting_status && o.recruiting_status !== "Open") || o.sat || o.act || o.ncaa_status || o.major || o.instagram || o.twitter || o.hudl || o.contact_email || o.contact_phone));
+const ovrSummary = (o) => [o.bio ? "bio" : null, (o.film_links && o.film_links.length) ? `${o.film_links.length} film` : null, (o.height || o.weight || o.wingspan) ? "measurables" : null, (o.recruiting_status && o.recruiting_status !== "Open") ? o.recruiting_status : null, (o.contact_email || o.contact_phone) ? "contact" : null, (o.instagram || o.twitter || o.hudl) ? "socials" : null].filter(Boolean).join(" · ");
+
 // ---- PLAYER DASHBOARD ------------------------------------------------------
 function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   const { user, isAdmin, configured, loading, signOut } = useAuth();
@@ -1151,13 +1158,17 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   const [filmQueue, setFilmQueue] = useState(null);
   const [waits, setWaits] = useState(null);
   const [claimQueue, setClaimQueue] = useState(null);
+  const [ovrQueue, setOvrQueue] = useState(null);
   useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
+  useEffect(() => { let live = true; if (user && isAdmin) listPendingOverrides().then((o) => { if (live) setOvrQueue((o || []).filter(ovrHasContent)); }).catch(() => { if (live) setOvrQueue([]); }); else setOvrQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listClaims("pending").then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
   const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
   const unclaim = async (c) => { if (!window.confirm(`Unclaim ${c.player_name}? You can always claim it again.`)) return; try { await removeClaim(c.id); setClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
+  const approveOvr = async (o) => { try { await setOverridePublished(o.player_id, true); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
+  const rejectOvr = async (o) => { try { await rejectOverride(o.player_id); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
 
   // Not signed in → sign-in prompt.
   if (!user) {
@@ -1213,6 +1224,28 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="bbtn" onClick={() => reviewClaim(c.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
                       <button className="bbtn" onClick={() => reviewClaim(c.id, "rejected")}>Reject</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isAdmin && ovrQueue && ovrQueue.length > 0 && (
+            <div className="card" style={{ marginTop: 18, borderColor: "rgba(59,158,255,.4)" }}>
+              <p className="ttl" style={{ color: "var(--blue)" }}>Profile edits to review · {ovrQueue.length}</p>
+              <div style={{ display: "grid", gap: 10, maxHeight: 360, overflowY: "auto" }}>
+                {ovrQueue.map((o) => (
+                  <div key={o.player_id} style={{ display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", borderBottom: "1px solid var(--line)", paddingBottom: 10 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13.5 }}>{o.player_name || o.player_id}<span style={{ color: "var(--muted)", fontWeight: 400 }}> · player-submitted</span></div>
+                      <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{ovrSummary(o) || "—"}</div>
+                      {o.bio ? <div style={{ fontSize: 11.5, color: "var(--faint)", marginTop: 2, maxWidth: 460 }}>“{String(o.bio).slice(0, 120)}{o.bio.length > 120 ? "…" : ""}”</div> : null}
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button className="bbtn" onClick={() => openClaimedPlayer && openClaimedPlayer(o.player_id)}>View</button>
+                      <button className="bbtn" onClick={() => approveOvr(o)} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
+                      <button className="bbtn" onClick={() => rejectOvr(o)}>Reject</button>
                     </div>
                   </div>
                 ))}

@@ -116,13 +116,33 @@ export async function getMyOverride(playerId) {
 }
 
 // Owner write: upsert the overlay. RLS only permits this when the user has an
-// approved claim for player_id, so a hostile client cannot edit someone else.
+// approved claim for player_id. Every save resets `published` to false, so edits
+// go back into the admin review queue and never publish without an admin's OK
+// (RLS also blocks a client from setting published=true on its own row).
 export async function saveOverride(playerId, data) {
   const row = {
     player_id: playerId,
     ...data,
+    published: false,
     updated_at: new Date().toISOString(),
   };
   const rows = await db.upsert("profile_overrides", row, "player_id");
   return Array.isArray(rows) ? rows[0] : rows;
+}
+
+// --- admin: review player profile edits -------------------------------------
+
+// All unpublished overrides awaiting review (admin RLS returns every row).
+export async function listPendingOverrides() {
+  return (await db.select("profile_overrides", "select=*&published=eq.false&order=updated_at.desc")) || [];
+}
+
+// Admin: publish (approve) a player's edits so they go live.
+export async function setOverridePublished(playerId, published) {
+  return db.update("profile_overrides", `player_id=eq.${enc(playerId)}`, { published });
+}
+
+// Admin: reject a player's edits (clears the overlay row).
+export async function rejectOverride(playerId) {
+  return db.del("profile_overrides", `player_id=eq.${enc(playerId)}`);
 }
