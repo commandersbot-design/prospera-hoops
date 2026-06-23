@@ -16,8 +16,10 @@ const FROM = "Prospera Hoops <jalen@prosperahoops.com>";
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).json({ error: "method_not_allowed" }); return; }
   const RESEND = process.env.RESEND_API_KEY;
-  const SB_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
-  const SB_ANON = process.env.SUPABASE_ANON_KEY;
+  // Reuse the existing VITE_ Supabase vars if the un-prefixed ones aren't set —
+  // Vercel exposes every project env var to serverless functions either way.
+  const SB_URL = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
+  const SB_ANON = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
   if (!RESEND || !SB_URL || !SB_ANON) { res.status(503).json({ error: "unconfigured" }); return; }
 
   const auth = req.headers.authorization || "";
