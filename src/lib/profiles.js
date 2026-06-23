@@ -5,16 +5,18 @@ import { db, getSession, isConfigured } from "./supabaseClient.js";
 
 const enc = encodeURIComponent;
 
-// The signed-in user's email, decoded from the session JWT (no network call).
-function claimantEmail() {
+// A claim from the session JWT, decoded without a network call.
+function jwtClaim(key) {
   try {
     const t = getSession()?.access_token;
     if (!t) return null;
-    return JSON.parse(atob(t.split(".")[1] || "")).email || null;
+    return JSON.parse(atob(t.split(".")[1] || ""))[key] || null;
   } catch {
     return null;
   }
 }
+const claimantEmail = () => jwtClaim("email");
+const currentUid = () => jwtClaim("sub");
 
 // --- claims -----------------------------------------------------------------
 
@@ -37,10 +39,13 @@ export async function submitClaim({ player_id, player_name, school, role, proof,
   return Array.isArray(rows) ? rows[0] : rows;
 }
 
-// All claims the signed-in user has made (RLS scopes this to them).
+// All claims the signed-in user PERSONALLY made. We filter by user_id explicitly
+// (not just RLS) because an admin's "claims admin read" policy would otherwise
+// return everyone's claims — "Your profiles & teams" must only be your own.
 export async function myClaims() {
-  if (!getSession()) return [];
-  return (await db.select("claims", "select=*&order=created_at.desc")) || [];
+  const uid = currentUid();
+  if (!uid) return [];
+  return (await db.select("claims", `select=*&user_id=eq.${enc(uid)}&order=created_at.desc`)) || [];
 }
 
 // Withdraw (un-claim) a claim you submitted. RLS lets a user delete only their
@@ -49,10 +54,13 @@ export async function removeClaim(claimId) {
   return db.del("claims", `id=eq.${enc(claimId)}`);
 }
 
-// The signed-in user's claim for a specific player, if any.
+// The signed-in user's OWN claim for a specific player, if any. Filter by user_id
+// so an admin (who can read all claims) doesn't get someone else's claim back and
+// wrongly resolve as the owner of a profile they don't own.
 export async function myClaimForPlayer(playerId) {
-  if (!getSession()) return null;
-  const rows = await db.select("claims", `select=*&player_id=eq.${enc(playerId)}&limit=1`);
+  const uid = currentUid();
+  if (!uid) return null;
+  const rows = await db.select("claims", `select=*&player_id=eq.${enc(playerId)}&user_id=eq.${enc(uid)}&limit=1`);
   return Array.isArray(rows) && rows.length ? rows[0] : null;
 }
 
