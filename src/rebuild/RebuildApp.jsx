@@ -1171,6 +1171,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   const unclaim = async (c) => { if (!window.confirm(`Unclaim ${c.player_name}? You can always claim it again.`)) return; try { await removeClaim(c.id); setClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
   const approveOvr = async (o) => { try { await setOverridePublished(o.player_id, true); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
   const rejectOvr = async (o) => { try { await rejectOverride(o.player_id); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
+  const revokeClaim = async (c) => { if (!window.confirm(`Revoke the claim on ${c.player_name || "this profile"}${c.claimant_email ? ` by ${c.claimant_email}` : ""}? They lose ownership.`)) return; try { await removeClaim(c.id); setAllClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); setClaimQueue((q) => (q || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
 
   // Not signed in → sign-in prompt.
   if (!user) {
@@ -1265,7 +1266,10 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                       <div style={{ fontWeight: 700, fontSize: 13 }}>{c.player_name || c.player_id}{isTeamClaim(c) ? <span className="bdg" style={{ marginLeft: 6 }}>TEAM</span> : null}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
                       <div style={{ fontSize: 11.5, color: "var(--blue)" }}>Claimed by: {c.proof || c.claimant_email || (c.user_id ? `account ${String(c.user_id).slice(0, 8)}…` : "—")}</div>
                     </div>
-                    <span className={`bdg ${c.status === "approved" ? "teal" : ""}`}>{c.status === "approved" ? "✓ Approved" : c.status === "rejected" ? "Rejected" : "Pending"}</span>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      <span className={`bdg ${c.status === "approved" ? "teal" : ""}`}>{c.status === "approved" ? "✓ Approved" : c.status === "rejected" ? "Rejected" : "Pending"}</span>
+                      <button className="bbtn" style={{ fontSize: 10.5, padding: "3px 9px", color: "#ff7a7a" }} onClick={() => revokeClaim(c)}>Revoke</button>
+                    </div>
                   </div>
                 ))}
               </div>
