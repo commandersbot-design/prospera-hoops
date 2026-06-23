@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -654,6 +654,118 @@ function FilmCard({ p, go }) {
   );
 }
 
+// In-app profile editor — only the owner of an APPROVED claim can save. Writes
+// the profile_overrides overlay (bio / film / self-reported measurables /
+// academics / recruiting status / socials / contact). Stats stay system-owned.
+const OVR_EMPTY = { bio: "", film_links: [], height: "", weight: "", wingspan: "", gpa: "", grad_year: "", positions: "", recruiting_status: "Open", sat: "", act: "", ncaa_status: "", major: "", instagram: "", twitter: "", hudl: "", contact_email: "", contact_phone: "", contact_public: false };
+function ProfileEditorRb({ playerId, onClose, onSaved }) {
+  const [d, setD] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  useEffect(() => { let live = true; getMyOverride(playerId).then((row) => { if (live) setD({ ...OVR_EMPTY, ...(row || {}), film_links: (row && row.film_links) || [] }); }).catch(() => { if (live) setD({ ...OVR_EMPTY }); }); return () => { live = false; }; }, [playerId]);
+  if (!d) return <div className="card" style={{ marginTop: 12 }}><p style={{ fontSize: 13, color: "var(--muted)", margin: 0 }}>Loading your profile…</p></div>;
+  const set = (k) => (e) => setD((p) => ({ ...p, [k]: e.target.value }));
+  const setFilm = (i, k) => (e) => setD((p) => { const fl = p.film_links.slice(); fl[i] = { ...fl[i], [k]: e.target.value }; return { ...p, film_links: fl }; });
+  const addFilm = () => setD((p) => ({ ...p, film_links: [...(p.film_links || []), { label: "", url: "" }] }));
+  const rmFilm = (i) => setD((p) => ({ ...p, film_links: p.film_links.filter((_, j) => j !== i) }));
+  const save = async () => {
+    setErr(""); setMsg(""); setBusy(true);
+    try {
+      const payload = { ...d, film_links: (d.film_links || []).filter((x) => x && x.url && x.url.trim()), grad_year: d.grad_year ? (Number(d.grad_year) || null) : null };
+      await saveOverride(playerId, payload);
+      setMsg("Saved ✓ Your profile is updated."); onSaved && onSaved();
+    } catch (e) { setErr("Couldn’t save — make sure your claim is approved, then try again."); }
+    finally { setBusy(false); }
+  };
+  const lab = { fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", fontWeight: 700, display: "block", marginBottom: 5 };
+  const F = ({ l, children }) => <label style={{ display: "block" }}><span style={lab}>{l}</span>{children}</label>;
+  const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 };
+  return (
+    <div className="card" style={{ marginTop: 12, borderColor: "rgba(47,191,143,.4)" }}>
+      <p className="ttl" style={{ color: "var(--teal)" }}>Edit my profile</p>
+      <p style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.5, margin: "0 0 14px" }}>You control this section. Stats, rankings &amp; evaluation stay Prospera-owned. Height / weight / class show publicly as <b style={{ color: "var(--ink)" }}>self-reported</b>.</p>
+      <div style={{ display: "grid", gap: 14 }}>
+        <F l="Bio"><textarea value={d.bio} onChange={set("bio")} placeholder="Who you are, your game, your goals." style={{ ...INP, minHeight: 80, resize: "vertical" }} /></F>
+        <div>
+          <span style={lab}>Film links</span>
+          {(d.film_links || []).map((fl, i) => (
+            <div key={i} style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+              <input value={fl.label || ""} onChange={setFilm(i, "label")} placeholder="Label (e.g. Mixtape)" style={{ ...INP, flex: "1 1 120px" }} />
+              <input value={fl.url || ""} onChange={setFilm(i, "url")} placeholder="https://…" style={{ ...INP, flex: "2 1 200px" }} />
+              <button className="bbtn" onClick={() => rmFilm(i)} style={{ color: "#ff7a7a" }}>Remove</button>
+            </div>
+          ))}
+          <button className="bbtn" onClick={addFilm}>＋ Add film link</button>
+        </div>
+        <div style={grid}>
+          <F l="Height"><input value={d.height} onChange={set("height")} placeholder={"6'2\""} style={INP} /></F>
+          <F l="Weight"><input value={d.weight} onChange={set("weight")} placeholder="180 lb" style={INP} /></F>
+          <F l="Wingspan"><input value={d.wingspan} onChange={set("wingspan")} placeholder={"6'5\""} style={INP} /></F>
+          <F l="Class of"><input type="number" value={d.grad_year} onChange={set("grad_year")} placeholder="2027" style={INP} /></F>
+          <F l="Positions"><input value={d.positions} onChange={set("positions")} placeholder="PG / SG" style={INP} /></F>
+          <F l="Recruiting"><select value={d.recruiting_status} onChange={set("recruiting_status")} style={INP}><option>Open</option><option>Receiving interest</option><option>Has offers</option><option>Committed</option></select></F>
+        </div>
+        <div style={grid}>
+          <F l="GPA"><input value={d.gpa} onChange={set("gpa")} placeholder="3.6" style={INP} /></F>
+          <F l="SAT"><input value={d.sat} onChange={set("sat")} placeholder="1180" style={INP} /></F>
+          <F l="ACT"><input value={d.act} onChange={set("act")} placeholder="24" style={INP} /></F>
+          <F l="NCAA"><select value={d.ncaa_status} onChange={set("ncaa_status")} style={INP}><option value="">—</option><option>Not started</option><option>Registered</option><option>Eligible</option><option>Certified</option></select></F>
+          <F l="Major"><input value={d.major} onChange={set("major")} placeholder="Business" style={INP} /></F>
+        </div>
+        <div style={grid}>
+          <F l="Instagram"><input value={d.instagram} onChange={set("instagram")} placeholder="@you" style={INP} /></F>
+          <F l="Twitter / X"><input value={d.twitter} onChange={set("twitter")} placeholder="@you" style={INP} /></F>
+          <F l="Hudl"><input value={d.hudl} onChange={set("hudl")} placeholder="Hudl URL" style={INP} /></F>
+        </div>
+        <div style={grid}>
+          <F l="Contact email"><input type="email" value={d.contact_email} onChange={set("contact_email")} placeholder="coaches' email" style={INP} /></F>
+          <F l="Contact phone"><input value={d.contact_phone} onChange={set("contact_phone")} placeholder="optional" style={INP} /></F>
+        </div>
+        <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12.5, color: "var(--muted)", cursor: "pointer" }}>
+          <input type="checkbox" checked={!!d.contact_public} onChange={(e) => setD((p) => ({ ...p, contact_public: e.target.checked }))} />
+          Show my contact publicly (off = Prospera-only). Recommended off until you’re ready.
+        </label>
+        {err && <p style={{ color: "#ff7a7a", fontSize: 12.5, margin: 0 }}>{err}</p>}
+        {msg && <p style={{ color: "var(--teal)", fontSize: 12.5, fontWeight: 700, margin: 0 }}>{msg}</p>}
+        <div style={{ display: "flex", gap: 10 }}>
+          <button className="cta" onClick={save} disabled={busy}>{busy ? "Saving…" : "Save profile"}</button>
+          <button className="bbtn" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Public read of the override overlay — the player's own info on their profile.
+function OwnerInfoCard({ ovr, name }) {
+  if (!ovr) return null;
+  const first = (name || "").split(" ")[0] || "This player";
+  const film = (ovr.film_links || []).filter((f) => f && f.url);
+  const measur = [["Height", ovr.height], ["Weight", ovr.weight], ["Wingspan", ovr.wingspan], ["GPA", ovr.gpa], ["Class", ovr.grad_year ? `'${String(ovr.grad_year).slice(2)}` : null], ["Pos", ovr.positions]].filter(([, v]) => v);
+  const acad = [["SAT", ovr.sat], ["ACT", ovr.act], ["NCAA", ovr.ncaa_status], ["Major", ovr.major]].filter(([, v]) => v);
+  const socials = [["Instagram", ovr.instagram, (v) => `https://instagram.com/${String(v).replace(/^@/, "")}`], ["Twitter", ovr.twitter, (v) => `https://x.com/${String(v).replace(/^@/, "")}`], ["Hudl", ovr.hudl, (v) => (/^https?:/.test(v) ? v : `https://${v}`)]].filter(([, v]) => v);
+  const hasAny = ovr.bio || film.length || measur.length || acad.length || socials.length || (ovr.recruiting_status && ovr.recruiting_status !== "Open") || ovr.contact_email || ovr.contact_phone;
+  if (!hasAny) return null;
+  const Pill = ({ l, v }) => <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, padding: "8px 12px" }}><div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", fontWeight: 700 }}>{l}</div><div style={{ fontFamily: "var(--disp)", fontWeight: 800, fontSize: 16, color: "var(--ink)" }}>{v}</div></div>;
+  const href = (u) => (/^https?:/.test(u) ? u : `https://${u}`);
+  return (
+    <div className="card" style={{ marginTop: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <p className="ttl" style={{ margin: 0 }}>From {first}</p>
+        <span className="bdg teal">✓ Player-provided</span>
+      </div>
+      {ovr.bio && <p style={{ fontSize: 13.5, color: "var(--ink)", lineHeight: 1.6, margin: "12px 0 0" }}>{ovr.bio}</p>}
+      {ovr.recruiting_status && ovr.recruiting_status !== "Open" && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "10px 0 0" }}>Recruiting: <b style={{ color: "var(--ink)" }}>{ovr.recruiting_status}</b></p>}
+      {measur.length > 0 && <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>{measur.map(([l, v]) => <Pill key={l} l={`${l} · self`} v={v} />)}</div>}
+      {acad.length > 0 && <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>{acad.map(([l, v]) => <Pill key={l} l={l} v={v} />)}</div>}
+      {film.length > 0 && <div style={{ marginTop: 12 }}><div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--faint)", fontWeight: 700, marginBottom: 6 }}>Film</div>{film.map((f, i) => <a key={i} href={href(f.url)} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", marginRight: 12, color: "var(--orange)", fontWeight: 700, fontSize: 13 }}>▶ {f.label || "Film"}</a>)}</div>}
+      {socials.length > 0 && <div style={{ marginTop: 12, display: "flex", gap: 14 }}>{socials.map(([l, v, mk]) => <a key={l} href={mk(v)} target="_blank" rel="noopener noreferrer" style={{ color: "var(--blue)", fontWeight: 700, fontSize: 13 }}>{l}</a>)}</div>}
+      {(ovr.contact_email || ovr.contact_phone) && <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "12px 0 0" }}>Contact: {ovr.contact_email && <a href={`mailto:${ovr.contact_email}`} style={{ color: "var(--orange)" }}>{ovr.contact_email}</a>}{ovr.contact_email && ovr.contact_phone ? " · " : ""}{ovr.contact_phone || ""}</p>}
+    </div>
+  );
+}
+
 function PublicProfile({ player, data, go }) {
   const [tab, setTab] = useState("su");
   const p = player || {};
@@ -708,9 +820,12 @@ function PublicProfile({ player, data, go }) {
   const [myClaim, setMyClaim] = useState(null);
   const [plus, setPlus] = useState(false);
   const [scouts, setScouts] = useState({ scouts: 0, last: null });
+  const [editing, setEditing] = useState(false);
+  const [ovr, setOvr] = useState(null);
   const lockIn = useLockIn();
   const wl = useWatchlist();
   const isOwner = myClaim?.status === "approved";
+  useEffect(() => { let live = true; if (p?.id) getOverride(p.id).then((o) => { if (live) setOvr(o); }).catch(() => {}); return () => { live = false; }; }, [p?.id]);
   useEffect(() => { let live = true; setMyClaim(null); if (user && p?.id) myClaimForPlayer(p.id).then((c) => { if (live) setMyClaim(c); }).catch(() => {}); return () => { live = false; }; }, [user, p?.id]);
   useEffect(() => { let live = true; if (user) hasPlus().then((v) => { if (live) setPlus(v); }).catch(() => {}); else setPlus(false); return () => { live = false; }; }, [user]);
   // "Scouts viewed you": read the count; record a view when a coach/scout opens
@@ -721,8 +836,8 @@ function PublicProfile({ player, data, go }) {
     <div className="wrap" style={{ paddingTop: 26 }}>
       {myClaim?.status === "approved" ? (
         <div className="banner" style={{ borderColor: "rgba(47,191,143,.4)" }}><div className="ico" style={{ color: "var(--teal)" }}>✓</div><div style={{ flex: 1 }}>
-          <h3>You own this profile</h3><p>Manage your stats, film, and recruiting info from your dashboard.</p>
-          <div className="bbtns"><button className="bbtn pri" onClick={() => go("dash")}>Go to dashboard</button></div>
+          <h3>You own this profile</h3><p>Add your bio, film, recruiting info, and self-reported measurables — right here.</p>
+          <div className="bbtns"><button className="bbtn pri" onClick={() => setEditing((s) => !s)}>{editing ? "Close editor" : "✏️ Edit my profile"}</button><button className="bbtn" onClick={() => go("dash")}>Dashboard</button></div>
         </div></div>
       ) : myClaim ? (
         <div className="banner orange"><div className="ico">⏳</div><div style={{ flex: 1 }}>
@@ -735,6 +850,7 @@ function PublicProfile({ player, data, go }) {
         </div></div>
       )}
       {claimOpen && <ClaimPanel player={p} onClose={() => setClaimOpen(false)} />}
+      {isOwner && editing && <ProfileEditorRb playerId={p.id} onClose={() => setEditing(false)} onSaved={() => getOverride(p.id).then(setOvr).catch(() => {})} />}
 
       <ScoutCard p={scoutP} portrait />
       <button className="bbtn" style={{ width: "100%", marginTop: 12, borderColor: wl.has(p.id) ? "var(--teal)" : undefined, color: wl.has(p.id) ? "var(--teal)" : undefined }} onClick={() => wl.toggle(p.id)}>{wl.has(p.id) ? "✓ On your Watchlist" : "＋ Add to Watchlist"}</button>
@@ -806,6 +922,7 @@ function PublicProfile({ player, data, go }) {
         </>}
       </div>
 
+      <OwnerInfoCard ovr={ovr} name={p.name} />
       <RecruitingCard prospect={prospect} onClaim={() => setClaimOpen(true)} />
 
       <div className="card" style={{ marginTop: 16 }}>
