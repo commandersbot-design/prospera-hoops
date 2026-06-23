@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride, listPendingClaimsAdmin } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride, listPendingClaimsAdmin, listAllClaimsAdmin } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -1159,8 +1159,10 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   const [waits, setWaits] = useState(null);
   const [claimQueue, setClaimQueue] = useState(null);
   const [ovrQueue, setOvrQueue] = useState(null);
+  const [allClaims, setAllClaims] = useState(null);
   useEffect(() => { let live = true; if (user) myClaims().then((c) => { if (live) setClaims(c || []); }).catch(() => { if (live) setClaims([]); }); else setClaims(null); return () => { live = false; }; }, [user]);
   useEffect(() => { let live = true; if (user && isAdmin) listPendingOverrides().then((o) => { if (live) setOvrQueue((o || []).filter(ovrHasContent)); }).catch(() => { if (live) setOvrQueue([]); }); else setOvrQueue(null); return () => { live = false; }; }, [user, isAdmin]);
+  useEffect(() => { let live = true; if (user && isAdmin) listAllClaimsAdmin().then((c) => { if (live) setAllClaims(c || []); }).catch(() => { if (live) setAllClaims([]); }); else setAllClaims(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listPendingClaimsAdmin().then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
@@ -1247,6 +1249,23 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                       <button className="bbtn" onClick={() => approveOvr(o)} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
                       <button className="bbtn" onClick={() => rejectOvr(o)}>Reject</button>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isAdmin && allClaims && allClaims.length > 0 && (
+            <div className="card" style={{ marginTop: 18 }}>
+              <p className="ttl">All claims · {allClaims.length} <span style={{ color: "var(--faint)", fontWeight: 400, fontFamily: "var(--sans)", textTransform: "none", letterSpacing: 0 }}>· who claimed what</span></p>
+              <div style={{ display: "grid", gap: 8, maxHeight: 420, overflowY: "auto" }}>
+                {allClaims.map((c) => (
+                  <div key={c.id} style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", borderBottom: "1px solid var(--line)", paddingBottom: 8 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>{c.player_name || c.player_id}{isTeamClaim(c) ? <span className="bdg" style={{ marginLeft: 6 }}>TEAM</span> : null}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--blue)" }}>Claimed by: {c.proof || c.claimant_email || (c.user_id ? `account ${String(c.user_id).slice(0, 8)}…` : "—")}</div>
+                    </div>
+                    <span className={`bdg ${c.status === "approved" ? "teal" : ""}`}>{c.status === "approved" ? "✓ Approved" : c.status === "rejected" ? "Rejected" : "Pending"}</span>
                   </div>
                 ))}
               </div>

@@ -81,6 +81,16 @@ export async function listPendingClaimsAdmin() {
   return listClaims("pending");
 }
 
+// Admin: EVERY claim (pending + approved + rejected) WITH the claimant's email —
+// the "who claimed what" roster. Empty if the function isn't installed.
+export async function listAllClaimsAdmin() {
+  try {
+    const rows = await db.rpc("admin_all_claims");
+    if (Array.isArray(rows)) return rows;
+  } catch { /* function not installed yet */ }
+  return [];
+}
+
 // Admin: approve / reject. Approving a claim is what unlocks self-edit (an RLS
 // policy on profile_overrides checks for an approved claim).
 export async function setClaimStatus(claimId, status) {
