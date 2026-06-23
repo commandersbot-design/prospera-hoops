@@ -62,6 +62,17 @@ export async function listClaims(status = "pending") {
   return (await db.select("claims", q)) || [];
 }
 
+// Admin: pending claims WITH the claimant's email resolved from auth.users (via a
+// security-definer function — the client can't read auth.users directly). Falls
+// back to the plain query if the function isn't installed yet.
+export async function listPendingClaimsAdmin() {
+  try {
+    const rows = await db.rpc("admin_pending_claims");
+    if (Array.isArray(rows)) return rows;
+  } catch { /* function not installed yet */ }
+  return listClaims("pending");
+}
+
 // Admin: approve / reject. Approving a claim is what unlocks self-edit (an RLS
 // policy on profile_overrides checks for an approved claim).
 export async function setClaimStatus(claimId, status) {

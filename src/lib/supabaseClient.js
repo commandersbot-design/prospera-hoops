@@ -187,4 +187,9 @@ export const db = {
   del(table, query) {
     return rest(`${table}?${query}`, { method: "DELETE", headers: { ...authHeaders(false), Prefer: "return=minimal" } });
   },
+  // Call a Postgres function (RPC). Used for admin-only joins (e.g. resolving a
+  // claimant's email from auth.users via a security-definer function).
+  rpc(fn, args) {
+    return rest(`rpc/${fn}`, { method: "POST", headers: { ...authHeaders() }, body: JSON.stringify(args || {}) });
+  },
 };

@@ -11,7 +11,7 @@ import TEAM_STATS from "../data/teamStats.json";
 import NEWS_DATA from "../data/news.json";
 import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
-import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride } from "../lib/profiles.js";
+import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride, listPendingClaimsAdmin } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
@@ -1163,7 +1163,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   useEffect(() => { let live = true; if (user && isAdmin) listPendingOverrides().then((o) => { if (live) setOvrQueue((o || []).filter(ovrHasContent)); }).catch(() => { if (live) setOvrQueue([]); }); else setOvrQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listFilms("pending").then((f) => { if (live) setFilmQueue(f || []); }).catch(() => { if (live) setFilmQueue([]); }); else setFilmQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
-  useEffect(() => { let live = true; if (user && isAdmin) listClaims("pending").then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
+  useEffect(() => { let live = true; if (user && isAdmin) listPendingClaimsAdmin().then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
   const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
   const unclaim = async (c) => { if (!window.confirm(`Unclaim ${c.player_name}? You can always claim it again.`)) return; try { await removeClaim(c.id); setClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
@@ -1219,7 +1219,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontWeight: 700, fontSize: 13.5 }}>{c.player_name || c.player_id}{isTeamClaim(c) ? <span className="bdg" style={{ marginLeft: 6 }}>TEAM</span> : null}{c.role ? <span style={{ color: "var(--muted)", fontWeight: 400 }}> · {c.role}</span> : null}</div>
                       <div style={{ fontSize: 11.5, color: "var(--muted)" }}>{[isTeamClaim(c) ? "Team claim" : c.school, c.message].filter(Boolean).join(" · ") || "—"}</div>
-                      <div style={{ fontSize: 11.5, color: "var(--blue)", marginTop: 2 }}>Claimed by: <b style={{ color: "var(--ink)" }}>{c.proof || (c.user_id ? `account ${String(c.user_id).slice(0, 8)}…` : "unknown")}</b></div>
+                      <div style={{ fontSize: 11.5, color: "var(--blue)", marginTop: 2 }}>Claimed by: <b style={{ color: "var(--ink)" }}>{c.proof || c.claimant_email || (c.user_id ? `account ${String(c.user_id).slice(0, 8)}…` : "unknown")}</b></div>
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="bbtn" onClick={() => reviewClaim(c.id, "approved")} style={{ borderColor: "var(--teal)", color: "var(--teal)" }}>Approve</button>
