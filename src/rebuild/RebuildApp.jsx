@@ -13,6 +13,7 @@ import OFFICIAL_SCHOOL_NAMES from "../data/officialSchoolNames.json";
 import { useAuth } from "../lib/auth.jsx";
 import { submitClaim, myClaimForPlayer, myClaims, listClaims, setClaimStatus, submitTeamClaim, myClaimForTeam, isTeamClaim, teamSlugOf, getOverride, getMyOverride, saveOverride, removeClaim, listPendingOverrides, setOverridePublished, rejectOverride, listPendingClaimsAdmin, listAllClaimsAdmin } from "../lib/profiles.js";
 import { pullState, pushState } from "../lib/userState.js";
+import { notifyClaimApproved } from "../lib/notify.js";
 import { submitFilm, myFilms, approvedFilm, listFilms, setFilmStatus } from "../lib/film.js";
 import { submitWaitlist, listWaitlist } from "../lib/waitlist.js";
 import { startCheckout, hasPlus, hasCoach } from "../lib/billing.js";
@@ -1167,7 +1168,7 @@ function Dashboard({ go, openClaimedPlayer, openClaimedTeam }) {
   useEffect(() => { let live = true; if (user && isAdmin) listWaitlist().then((w) => { if (live) setWaits(w || []); }).catch(() => { if (live) setWaits([]); }); else setWaits(null); return () => { live = false; }; }, [user, isAdmin]);
   useEffect(() => { let live = true; if (user && isAdmin) listPendingClaimsAdmin().then((c) => { if (live) setClaimQueue(c || []); }).catch(() => { if (live) setClaimQueue([]); }); else setClaimQueue(null); return () => { live = false; }; }, [user, isAdmin]);
   const reviewFilm = async (id, status) => { try { await setFilmStatus(id, status); setFilmQueue((q) => (q || []).filter((f) => f.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
-  const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); } catch (e) { /* keep row; admin can retry */ } };
+  const reviewClaim = async (id, status) => { try { await setClaimStatus(id, status); setClaimQueue((q) => (q || []).filter((c) => c.id !== id)); if (status === "approved") notifyClaimApproved(id); } catch (e) { /* keep row; admin can retry */ } };
   const unclaim = async (c) => { if (!window.confirm(`Unclaim ${c.player_name}? You can always claim it again.`)) return; try { await removeClaim(c.id); setClaims((cs) => (cs || []).filter((x) => x.id !== c.id)); } catch (e) { /* ignore */ } };
   const approveOvr = async (o) => { try { await setOverridePublished(o.player_id, true); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
   const rejectOvr = async (o) => { try { await rejectOverride(o.player_id); setOvrQueue((q) => (q || []).filter((x) => x.player_id !== o.player_id)); } catch (e) { /* keep; retry */ } };
