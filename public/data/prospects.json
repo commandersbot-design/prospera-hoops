@@ -26729,6 +26729,32 @@
           "weightLbs": 147
         }
       ]
+    },
+    {
+      "id": "austincompton",
+      "name": "Austin Compton",
+      "position": "PG",
+      "gradYear": 2029,
+      "school": "South Lakes",
+      "city": "Reston",
+      "state": "VA",
+      "county": "Fairfax",
+      "heightInches": null,
+      "weightLbs": null,
+      "wingspanInches": null,
+      "stars": null,
+      "rankings": {
+        "national": null,
+        "position": null,
+        "state": null
+      },
+      "aau": null,
+      "status": "uncommitted",
+      "commitment": null,
+      "offers": [],
+      "traits": [],
+      "summary": "REAL PROSPECT — class of 2029 point guard at South Lakes (Reston, VA), a rising sophomore. Stats, measurements, film, and a full scouting report are pending.",
+      "statLines": []
     }
   ]
 }
