@@ -7,11 +7,11 @@ Slides: `1-result.png` → `2-standouts.png` → `3-comeback.png` → `4-next.pn
 
 ## Main carousel caption (Instagram / Facebook)
 
-OT HEARTBREAK in the Capitol Hoops Summer League playoffs. 🦅
+BATTLE TO THE BUZZER in the Capitol Hoops Summer League playoffs. 🦅
 
-**Hayfield 71, Colonels 75** — final after overtime in a game tied **13 times** with **11 lead changes.**
+The Hawks went toe-to-toe to the wire — tied **13 times**, **11 lead changes**, knotted at **65 through regulation** before an OT finish (Hayfield 71, Colonels 75).
 
-Down 6 at the half, the Hawks ripped off a **38–32 second half (52% FG, 50% from three)** to force OT before falling in the extra frame.
+Down 6 at the half, Hayfield answered with a **38–32 second half (52% FG, 50% from three)** to force overtime.
 
 WHO SHOWED UP ⬇️
 🔸 Chase Jackson — 24 PTS (7-14 FG, 8-8 FT), 4 STL, +12
@@ -30,7 +30,7 @@ Stats: LegitGM / Capitol Hoops Summer League
 
 ## Short / Story version
 
-🦅 OT HEARTBREAK — Hayfield 71, Colonels 75 (OT)
+🦅 BATTLE TO THE BUZZER — Hayfield took it to OT (71–75)
 Down 6 at half → 38–32 surge to force overtime.
 Jackson 24 · Towe 19 · Cage 14.
 The Hawks aren't done. Next up: [OPPONENT · DATE].
