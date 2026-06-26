@@ -27,7 +27,7 @@ WHO SHOWED UP ⬇️
 **Next up — catch the Hawks at EAST COAST LIVE 🏀**
 Henrico Sports & Events Center · June 26–27
 • Fri 6/26 — 3:20 vs Liberty Christian · 5:50 vs Independence
-• Sat 6/27 — 4:50 vs Myers Park (NC) · 7:10 vs Wilson
+• Sat 6/27 — 4:50 vs Myers Park (NC) · 7:10 vs Wilson (SC)
 
 Full box scores, game logs and development tracking → ProsperaHoops.com
 Stats: LegitGM / Capitol Hoops Summer League
@@ -61,13 +61,8 @@ Next: East Coast Live, June 26–27 @ Henrico. 🦅 ProsperaHoops.com
 1. **Result** — "Battle to the Buzzer." Hayfield 71, Colonels 75 (OT). Forced overtime; 27/38/6 vs 33/32/10. Tied 13×, 11 lead changes, regulation 65–65. Jackson 24 · Towe 19 · Cage 14.
 2. **Standouts** — Chase Jackson 24 · Christian Towe 19 · Grant Cage 14 + bench spark Candin Sweet.
 3. **The Comeback** — Down 6 at half, the Hawks went 38–32 in the second on 52% FG / 50% from three to force OT.
-4. **Next Up** — East Coast Live HS Showcase, Henrico Sports & Events Center, June 26–27 (4-game slate).
+4. **Next Up** — East Coast Live HS Showcase, Henrico Sports & Events Center, June 26–27 (Liberty Christian, Independence, Myers Park NC, Wilson SC).
 5. **Defense Travels** — 11 team steals, 15 turnovers forced, 2 blocks, 20 defensive boards. Sweet's glue line off the bench.
 6. **Chase Jackson** — Star of the night: 24 PTS, 50% FG, perfect 8-8 FT, 4 STL, team-best +12. (G · 2028 · 6'2)
 7. **Owned the Glass** — 33 rebounds, 13 offensive, 12 second-chance points. Moore 7 · Towe 6 · Cage 5 · Sweet 5.
 8. **Money at the Line** — 21-28 FT (75%); Jackson 8-8, Cage 6-6, Sow 2-2 all perfect under pressure.
-
----
-
-### Note on the 4th showcase game
-The 7:10 PM Saturday opponent ("vs WILSON") was partially obscured in the source graphic — confirm the exact program (e.g. Wilson HS / Woodrow Wilson) before posting.

@@ -68,7 +68,7 @@ const NEXT = {
     ] },
     { label: "SAT · JUNE 27", games: [
       ["4:50 PM", "MYERS PARK (NC)", "CT 5"],
-      ["7:10 PM", "WILSON", "CT 5"],
+      ["7:10 PM", "WILSON (SC)", "CT 5"],
     ] },
   ],
 };
@@ -85,7 +85,7 @@ const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="$
 const pill = (cx, y, txt, col = C.sky, fs = 18) => { const w = txt.length * (fs * 0.6) + 42; return `<rect x="${cx - w / 2}" y="${y - fs - 2}" width="${w}" height="${fs + 14}" rx="${(fs + 14) / 2}" fill="none" stroke="${col}" stroke-width="1.5"/>${T(cx, y, fs, 700, col, esc(txt), { ls: 2, anchor: "middle" })}`; };
 
 // Shared chrome: brand header + Hayfield band + slide kicker.
-function chrome(kicker) {
+function chrome(kicker, bandTop = GAME.round, bandBot = GAME.date) {
   return `<rect width="${W}" height="${H}" fill="url(#bgGrad)"/><rect width="${W}" height="${H}" fill="url(#glow)"/>
   ${emblemAt(40, 36, 60)}
   <text x="116" y="70" font-family="${HG}" font-weight="800" font-size="28"><tspan fill="${C.text}">PROSPERA</tspan><tspan fill="${C.orange}" dx="8">HOOPS</tspan></text>
@@ -95,8 +95,8 @@ function chrome(kicker) {
   <image href="${HAWK}" x="62" y="160" width="94" height="84" preserveAspectRatio="xMidYMid meet"/>
   ${T(176, 196, 46, 800, C.ink, "HAYFIELD HAWKS", { font: SD })}
   ${T(176, 228, 15, 700, C.inkSoft, "ALEXANDRIA, VA · BOYS BASKETBALL", { ls: 1 })}
-  ${T(W - 64, 198, 17, 800, C.ink, GAME.round, { ls: 2, anchor: "end" })}
-  ${T(W - 64, 228, 14, 700, C.inkSoft, GAME.date, { ls: 1, anchor: "end" })}
+  ${bandTop ? T(W - 64, 198, 17, 800, C.ink, bandTop, { ls: 2, anchor: "end" }) : ""}
+  ${bandBot ? T(W - 64, 228, 14, 700, C.inkSoft, bandBot, { ls: 1, anchor: "end" }) : ""}
   ${kicker ? T(W / 2, 318, 22, 800, C.sky, kicker, { ls: 3, anchor: "middle" }) : ""}`;
 }
 const footer = (note) => `
@@ -216,7 +216,7 @@ function slideNext() {
     <line x1="118" y1="${y + 18}" x2="${W - 112}" y2="${y + 18}" stroke="${C.line}" stroke-width="1.5"/>`;
   const D = NEXT.days;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
-    ${chrome("")}
+    ${chrome("", "", "")}
     ${T(W / 2, 350, 22, 800, C.sky, "NEXT UP — CATCH THE HAWKS", { ls: 3, anchor: "middle" })}
     ${T(W / 2, 432, 72, 800, C.hawk, esc(NEXT.event), { font: SD, anchor: "middle" })}
     ${T(W / 2, 474, 18, 700, C.text, esc(NEXT.kind), { ls: 1, anchor: "middle" })}
