@@ -56,12 +56,21 @@ const TEAM = [
   ["FG", "22-56", "39%"], ["3PT", "6-18", "33%"], ["FT", "21-28", "75%"],
   ["REB", "33", ""], ["STL", "11", ""], ["AST", "5", ""],
 ];
-// --- NEXT UP (real-world fact — filled from the user; null = render TBA) ------
+// --- NEXT UP — East Coast Live HS Showcase schedule (from the team's IG) -------
 const NEXT = {
-  teaser: "THE HAWKS AREN'T DONE",
-  opponent: null,   // e.g. "vs WARRIORS"
-  when: null,       // e.g. "SAT · 6.28 · 7:00 PM"
-  where: null,      // e.g. "DEMATHA"
+  event: "EAST COAST LIVE",
+  kind: "HS SHOWCASE · HENRICO SPORTS & EVENTS CENTER",
+  dates: "JUNE 26–27, 2026",
+  days: [
+    { label: "FRI · JUNE 26", games: [
+      ["3:20 PM", "LIBERTY CHRISTIAN", "CT 7"],
+      ["5:50 PM", "INDEPENDENCE", "CT 8"],
+    ] },
+    { label: "SAT · JUNE 27", games: [
+      ["4:50 PM", "MYERS PARK (NC)", "CT 5"],
+      ["7:10 PM", "WILSON", "CT 5"],
+    ] },
+  ],
 };
 
 // ============================== HELPERS ======================================
@@ -198,28 +207,113 @@ function slideComeback() {
 
 // ============================== SLIDE 4 · NEXT UP ============================
 function slideNext() {
-  const haveNext = NEXT.opponent && NEXT.when;
+  const gameRow = (y, g) => `
+    ${TD(118, y, 31, 800, C.hawk, esc(g[0]), {})}
+    ${T(300, y, 31, 700, C.text, "vs " + esc(g[1]), { font: SD })}
+    ${T(W - 112, y, 20, 700, C.mut, esc(g[2]), { ls: 1, anchor: "end" })}`;
+  const dayHdr = (y, label) => `
+    ${T(118, y, 21, 800, C.sky, esc(label), { ls: 3 })}
+    <line x1="118" y1="${y + 18}" x2="${W - 112}" y2="${y + 18}" stroke="${C.line}" stroke-width="1.5"/>`;
+  const D = NEXT.days;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
     ${chrome("")}
-    ${T(W / 2, 470, 24, 800, C.sky, "NEXT UP", { ls: 8, anchor: "middle" })}
-    ${T(W / 2, 588, 92, 800, C.text, esc(NEXT.teaser.split(" ").slice(0, 2).join(" ")), { font: SD, anchor: "middle" })}
-    ${T(W / 2, 676, 92, 800, C.hawk, esc(NEXT.teaser.split(" ").slice(2).join(" ")), { font: SD, anchor: "middle" })}
-    <rect x="150" y="760" width="${W - 300}" height="${haveNext ? 250 : 180}" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>
-    ${haveNext
-      ? `${T(W / 2, 836, 48, 800, C.text, esc(NEXT.opponent), { font: SD, anchor: "middle" })}
-         ${T(W / 2, 900, 26, 700, C.hawk, esc(NEXT.when), { ls: 2, anchor: "middle" })}
-         ${NEXT.where ? T(W / 2, 948, 20, 600, C.mut, esc(NEXT.where), { ls: 1, anchor: "middle" }) : ""}`
-      : `${T(W / 2, 840, 40, 800, C.text, "MATCHUP TBA", { font: SD, anchor: "middle" })}
-         ${T(W / 2, 892, 20, 600, C.mut, "Bracket set soon — follow for the next tip", { anchor: "middle" })}`}
-    ${T(W / 2, 1110, 24, 600, C.text, "Full box scores, game logs and development tracking:", { anchor: "middle" })}
-    ${T(W / 2, 1156, 30, 800, C.orange, "ProsperaHoops.com", { anchor: "middle" })}
+    ${T(W / 2, 350, 22, 800, C.sky, "NEXT UP — CATCH THE HAWKS", { ls: 3, anchor: "middle" })}
+    ${T(W / 2, 432, 72, 800, C.hawk, esc(NEXT.event), { font: SD, anchor: "middle" })}
+    ${T(W / 2, 474, 18, 700, C.text, esc(NEXT.kind), { ls: 1, anchor: "middle" })}
+    ${T(W / 2, 508, 21, 800, C.mut, esc(NEXT.dates), { ls: 2, anchor: "middle" })}
+    <rect x="70" y="552" width="${W - 140}" height="558" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>
+    ${dayHdr(612, D[0].label)}
+    ${gameRow(678, D[0].games[0])}
+    ${gameRow(742, D[0].games[1])}
+    ${dayHdr(846, D[1].label)}
+    ${gameRow(912, D[1].games[0])}
+    ${gameRow(976, D[1].games[1])}
+    ${T(W / 2, 1168, 24, 600, C.text, "Live stats and game logs all weekend at", { anchor: "middle" })}
+    ${T(W / 2, 1206, 28, 800, C.orange, "ProsperaHoops.com", { anchor: "middle" })}
     ${footer("Real stats. Real eyes. The DMV's home court.")}
   </svg>`;
   fs.writeFileSync(path.join(OUT, "4-next.png"), renderPng(svg));
+}
+
+// ===================== shared blocks for the angle slides ====================
+const heroNum = (num, fs, label, yNum = 588, yLab = 640) =>
+  `${TD(W / 2, yNum, fs, 800, C.hawk, esc(num), { anchor: "middle" })}
+   ${T(W / 2, yLab, 24, 800, C.mut, esc(label), { ls: 5, anchor: "middle" })}`;
+function trio(y, h, items) { // items: [[num,label], ...]
+  const n = items.length;
+  let s = `<rect x="80" y="${y}" width="${W - 160}" height="${h}" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>`;
+  items.forEach(([num, label], i) => {
+    const cx = 80 + (W - 160) * (i + 0.5) / n;
+    s += `${TD(cx, y + Math.round(h * 0.56), 58, 800, C.hawk, esc(num), { anchor: "middle" })}
+          ${T(cx, y + Math.round(h * 0.8), 15, 700, C.mut, esc(label), { ls: 1, anchor: "middle" })}`;
+  });
+  return s;
+}
+const callout = (y, h, kicker, big, sub) =>
+  `<rect x="80" y="${y}" width="${W - 160}" height="${h}" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>
+   ${T(W / 2, y + 44, 16, 800, C.sky, esc(kicker), { ls: 4, anchor: "middle" })}
+   ${T(W / 2, y + 96, 40, 800, C.text, esc(big), { font: SD, anchor: "middle" })}
+   ${T(W / 2, y + 134, 21, 600, C.mut, esc(sub), { anchor: "middle" })}`;
+const NOTE = "Single game · 6.24.26 playoff · official box score";
+const angle = (file, eyebrow, body) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
+    ${chrome("")}
+    ${T(W / 2, 356, 22, 800, C.sky, eyebrow, { ls: 5, anchor: "middle" })}
+    ${body}
+    ${footer(NOTE)}
+  </svg>`;
+  fs.writeFileSync(path.join(OUT, file), renderPng(svg));
+};
+
+// ---- Slide 5 · DEFENSE TRAVELS ----
+function slideDefense() {
+  angle("5-defense.png", "DEFENSE TRAVELS",
+    `${heroNum("11", 210, "TEAM STEALS", 588, 642)}
+     ${trio(696, 168, [["15", "TURNOVERS FORCED"], ["2", "BLOCKS"], ["20", "DEF REBOUNDS"]])}
+     ${callout(892, 158, "OFF THE BENCH — THE GLUE", "CANDIN SWEET", "5 REB · 2 STL · 1 BLK in 23 minutes")}
+     ${T(W / 2, 1116, 22, 600, C.text, "Jackson (4), Towe (2) and Sweet (2) lived in the passing lanes —", { anchor: "middle" })}
+     ${T(W / 2, 1148, 22, 600, C.text, "disruption that flipped defense into transition all night.", { anchor: "middle" })}`);
+}
+// ---- Slide 6 · CHASE JACKSON (hero) ----
+function slideJackson() {
+  const cols = [["50%", "FG · 7-14"], ["100%", "FT · 8-8"], ["4", "STEALS"], ["+12", "PLUS-MINUS"]];
+  const grid = `<rect x="80" y="806" width="${W - 160}" height="168" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>` +
+    cols.map((c, i) => { const cx = 80 + (W - 160) * (i + 0.5) / 4;
+      return `${TD(cx, 902, 52, 800, C.hawk, esc(c[0]), { anchor: "middle" })}${T(cx, 938, 15, 700, C.mut, esc(c[1]), { ls: 1, anchor: "middle" })}`; }).join("");
+  angle("6-jackson.png", "STAR OF THE NIGHT",
+    `${T(W / 2, 448, 74, 800, C.text, "CHASE JACKSON", { font: SD, anchor: "middle" })}
+     ${T(W / 2, 490, 17, 700, C.mut, "GUARD · CLASS OF 2028 · 6'2 · @envyy12._", { ls: 1, anchor: "middle" })}
+     ${TD(W / 2, 702, 192, 800, C.hawk, "24", { anchor: "middle" })}
+     ${T(W / 2, 750, 22, 800, C.mut, "POINTS · TEAM HIGH", { ls: 4, anchor: "middle" })}
+     ${grid}
+     ${T(W / 2, 1086, 22, 600, C.text, "A game-high 24 on 50% shooting — a perfect 8-for-8 at the line —", { anchor: "middle" })}
+     ${T(W / 2, 1118, 22, 600, C.text, "with 4 steals and a team-best +12 whenever he was on the floor.", { anchor: "middle" })}`);
+}
+// ---- Slide 7 · OWNED THE GLASS ----
+function slideGlass() {
+  angle("7-glass.png", "OWNED THE GLASS",
+    `${heroNum("33", 200, "TOTAL REBOUNDS", 588, 642)}
+     ${trio(696, 168, [["13", "OFFENSIVE BOARDS"], ["12", "2ND-CHANCE PTS"], ["20", "DEFENSIVE"]])}
+     ${callout(892, 158, "ON THE BOARDS", "MOORE 7 · TOWE 6", "Cage 5 · Sweet 5 · Bauman 4")}
+     ${T(W / 2, 1116, 22, 600, C.text, "Thirteen offensive boards became 12 second-chance points —", { anchor: "middle" })}
+     ${T(W / 2, 1148, 22, 600, C.text, "the extra possessions that kept the comeback alive.", { anchor: "middle" })}`);
+}
+// ---- Slide 8 · MONEY AT THE LINE ----
+function slideLine() {
+  angle("8-line.png", "MONEY AT THE LINE",
+    `${heroNum("75%", 192, "TEAM FREE THROWS · 21-28", 588, 642)}
+     ${T(W / 2, 720, 18, 800, C.sky, "PERFECT FROM THE STRIPE", { ls: 4, anchor: "middle" })}
+     ${trio(752, 168, [["8-8", "JACKSON"], ["6-6", "CAGE"], ["2-2", "SOW"]])}
+     ${T(W / 2, 1008, 22, 600, C.text, "When the game tightened, the Hawks didn't flinch at the line —", { anchor: "middle" })}
+     ${T(W / 2, 1040, 22, 600, C.text, "three players perfect, 21-of-28 as a team under playoff pressure.", { anchor: "middle" })}`);
 }
 
 slideResult();
 slideStandouts();
 slideComeback();
 slideNext();
-console.log(`Playoff pack → ${OUT}/  (1-result, 2-standouts, 3-comeback, 4-next)  ·  Hayfield ${GAME.hay}-${GAME.col} OT`);
+slideDefense();
+slideJackson();
+slideGlass();
+slideLine();
+console.log(`Playoff pack (8 slides) → ${OUT}/  ·  Hayfield ${GAME.hay}-${GAME.col} OT`);
