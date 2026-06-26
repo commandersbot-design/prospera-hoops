@@ -99,9 +99,9 @@ const footer = (note) => `
 // ============================== SLIDE 1 · RESULT =============================
 function slideResult() {
   const teamBlock = (cx, label, score, sub, isHay) => `
-    <text x="${cx}" y="560" font-family="${SD}" font-weight="800" font-size="${isHay ? 196 : 170}" fill="${isHay ? C.hawk : C.them}" text-anchor="middle">${score}</text>
-    ${T(cx, 632, 34, 800, isHay ? C.text : C.mut, label, { font: SD, anchor: "middle" })}
-    ${T(cx, 668, 16, 700, isHay ? C.hawk : C.faint, sub, { ls: 2, anchor: "middle" })}`;
+    <text x="${cx}" y="600" font-family="${SD}" font-weight="800" font-size="${isHay ? 190 : 156}" fill="${isHay ? C.hawk : C.them}" text-anchor="middle">${score}</text>
+    ${T(cx, 666, 34, 800, isHay ? C.text : C.mut, label, { font: SD, anchor: "middle" })}
+    ${T(cx, 700, 16, 700, isHay ? C.hawk : C.faint, sub, { ls: 2, anchor: "middle" })}`;
   const periodRow = (y, p) => {
     const [lab, h, c] = p; const hi = h > c;
     return `${T(W / 2, y, 19, 700, C.mut, lab, { ls: 2, anchor: "middle" })}
@@ -110,21 +110,22 @@ function slideResult() {
   };
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
     ${chrome("")}
-    ${T(W / 2, 366, 26, 800, C.mut, GAME.league, { ls: 3, anchor: "middle" })}
-    ${T(W / 2, 420, 64, 800, C.hawk, "OT HEARTBREAK", { font: SD, anchor: "middle" })}
-    ${teamBlock(290, "HAYFIELD", GAME.hay, "HAWKS", true)}
-    ${T(W / 2, 520, 40, 700, C.faint, "—", { anchor: "middle" })}
-    ${teamBlock(790, "COLONELS", GAME.col, "FINAL / OT", false)}
-    <rect x="120" y="724" width="${W - 240}" height="232" rx="20" fill="${C.panel}" stroke="${C.line}" stroke-width="1.5"/>
-    ${T(W / 2, 766, 16, 800, C.sky, "BY THE PERIOD", { ls: 4, anchor: "middle" })}
-    ${periodRow(820, GAME.periods[0])}
-    ${periodRow(872, GAME.periods[1])}
+    ${T(W / 2, 356, 22, 800, C.mut, "CAPITOL HOOPS SUMMER LEAGUE · PLAYOFFS", { ls: 2, anchor: "middle" })}
+    ${T(W / 2, 414, 56, 800, C.hawk, "BATTLE TO THE BUZZER", { font: SD, anchor: "middle" })}
+    ${teamBlock(290, "HAYFIELD", GAME.hay, "FORCED OVERTIME", true)}
+    ${T(W / 2, 554, 40, 700, C.faint, "—", { anchor: "middle" })}
+    ${teamBlock(790, "COLONELS", GAME.col, "FINAL · OT", false)}
+    <rect x="120" y="734" width="${W - 240}" height="226" rx="20" fill="${C.panel}" stroke="${C.line}" stroke-width="1.5"/>
+    ${T(W / 2, 774, 16, 800, C.sky, "HOW EVEN IT WAS", { ls: 4, anchor: "middle" })}
+    ${periodRow(824, GAME.periods[0])}
+    ${periodRow(874, GAME.periods[1])}
     ${periodRow(924, GAME.periods[2])}
-    ${pill(290, 1024, GAME.flow[0], C.skyLine === C.skyLine ? C.sky : C.sky)}
+    ${pill(290, 1024, GAME.flow[0])}
     ${pill(540, 1024, GAME.flow[1])}
     ${pill(790, 1024, GAME.flow[2])}
-    ${T(W / 2, 1130, 22, 600, C.text, "Down 6 at the half — the Hawks ripped off a 38–32 surge to", { anchor: "middle" })}
-    ${T(W / 2, 1162, 22, 600, C.text, "force overtime before falling in the extra frame.", { anchor: "middle" })}
+    ${T(W / 2, 1116, 22, 600, C.text, "Tied 13 times and knotted at 65 through regulation — the Hawks", { anchor: "middle" })}
+    ${T(W / 2, 1148, 22, 600, C.text, "erased a halftime deficit to drag a playoff fight into overtime.", { anchor: "middle" })}
+    ${T(W / 2, 1204, 27, 800, C.orange, "JACKSON 24  ·  TOWE 19  ·  CAGE 14", { ls: 1, anchor: "middle" })}
     ${footer("Official box score · LegitGM / Capitol Hoops Summer League · single game")}
   </svg>`;
   fs.writeFileSync(path.join(OUT, "1-result.png"), renderPng(svg));
