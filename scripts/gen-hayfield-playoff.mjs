@@ -47,7 +47,7 @@ const GAME = {
 const STARS = [
   { name: "CHASE JACKSON", big: "24", unit: "PTS", l1: "7-14 FG · 8-8 FT", l2: "2-6 3PT · 4 STL · +12", tag: "TEAM HIGH" },
   { name: "CHRISTIAN TOWE", big: "19", unit: "PTS", l1: "7-18 FG · 6 REB", l2: "2 STL · 1 BLK · 1 AST", tag: "TWO-WAY" },
-  { name: "GRANT CAGE", big: "14", unit: "PTS", l1: "2-7 3PT · 6-6 FT", l2: "5 REB · 1 AST", tag: "STRETCH G" },
+  { name: "GRANT CAGE", big: "14", unit: "PTS", l1: "6-6 FT · A PERFECT NIGHT", l2: "5 REB · 1 AST", tag: "MOTOR" },
 ];
 // Bench glue line for the standouts slide footer.
 const GLUE = "OFF THE BENCH — CANDIN SWEET: 5 REB · 2 STL · 1 BLK";
@@ -72,6 +72,14 @@ const NEXT = {
     ] },
   ],
 };
+
+// Live game-by-game logs for the data slide (never hand-transcribed).
+const GL = JSON.parse(fs.readFileSync("public/data/gameLogs.json", "utf8"));
+const toweGames = (() => {
+  const norm = (s) => s.toLowerCase().replace(/[^a-z]/g, "");
+  const key = Object.keys(GL.players).find((k) => norm(k) === "christiantowe");
+  return ((key && GL.players[key].games) || []).slice().sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+})();
 
 // ============================== HELPERS ======================================
 const defs = `<defs>${FONT_SD}${FONT_HG}
@@ -255,12 +263,12 @@ const callout = (y, h, kicker, big, sub) =>
    ${T(W / 2, y + 96, 40, 800, C.text, esc(big), { font: SD, anchor: "middle" })}
    ${T(W / 2, y + 134, 21, 600, C.mut, esc(sub), { anchor: "middle" })}`;
 const NOTE = "Single game · 6.24.26 playoff · official box score";
-const angle = (file, eyebrow, body) => {
+const angle = (file, eyebrow, body, note = NOTE) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
     ${chrome("")}
     ${T(W / 2, 356, 22, 800, C.sky, eyebrow, { ls: 5, anchor: "middle" })}
     ${body}
-    ${footer(NOTE)}
+    ${footer(note)}
   </svg>`;
   fs.writeFileSync(path.join(OUT, file), renderPng(svg));
 };
@@ -298,14 +306,52 @@ function slideGlass() {
      ${T(W / 2, 1116, 22, 600, C.text, "Thirteen offensive boards became 12 second-chance points —", { anchor: "middle" })}
      ${T(W / 2, 1148, 22, 600, C.text, "the extra possessions that kept the comeback alive.", { anchor: "middle" })}`);
 }
-// ---- Slide 8 · MONEY AT THE LINE ----
-function slideLine() {
-  angle("8-line.png", "MONEY AT THE LINE",
-    `${heroNum("75%", 192, "TEAM FREE THROWS · 21-28", 588, 642)}
-     ${T(W / 2, 720, 18, 800, C.sky, "PERFECT FROM THE STRIPE", { ls: 4, anchor: "middle" })}
-     ${trio(752, 168, [["8-8", "JACKSON"], ["6-6", "CAGE"], ["2-2", "SOW"]])}
-     ${T(W / 2, 1008, 22, 600, C.text, "When the game tightened, the Hawks didn't flinch at the line —", { anchor: "middle" })}
-     ${T(W / 2, 1040, 22, 600, C.text, "three players perfect, 21-of-28 as a team under playoff pressure.", { anchor: "middle" })}`);
+// ---- Slide 8 · POWERED BY PROSPERA (capabilities) ----
+function slidePowered() {
+  const feat = (y, label, sub) =>
+    `<rect x="70" y="${y}" width="${W - 140}" height="84" rx="14" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.25"/>
+     <rect x="70" y="${y}" width="6" height="84" rx="3" fill="${C.hawk}"/>
+     ${T(106, y + 37, 25, 800, C.text, esc(label), { font: SD })}
+     ${T(106, y + 65, 16.5, 600, C.mut, esc(sub), {})}`;
+  const FEATS = [
+    ["REAL, VERIFIED STATS", "No fake numbers or invented rankings. Ever."],
+    ["FULL GAME-BY-GAME LOGS", "Every game tracked — points, boards, splits, +/-."],
+    ["DEVELOPMENT TRACKING", "Height, weight and production charted over time."],
+    ["SEEN BY COLLEGE COACHES", "Profiles built to get players to the next level."],
+    ["CLAIM YOUR PROFILE — FREE", "Players and parents manage their own page."],
+    ["THE DMV'S HOME COURT", "Local high-school and AAU hoops, all in one place."],
+  ];
+  let y = 500; const rows = FEATS.map((f) => { const s = feat(y, f[0], f[1]); y += 96; return s; }).join("");
+  angle("8-prospera.png", "WHAT EVERY HAWK GETS",
+    `${T(W / 2, 426, 56, 800, C.hawk, "POWERED BY PROSPERA", { font: SD, anchor: "middle" })}
+     ${rows}
+     ${T(W / 2, 1142, 26, 800, C.orange, "Build the profile → ProsperaHoops.com", { anchor: "middle" })}`,
+    "Real stats. Real eyes. The DMV's home court.");
+}
+// ---- Slide 9 · SEASON ARC (live game-log data) ----
+function slideArc() {
+  const pts = toweGames.map((g) => g.pts);
+  const maxV = Math.max(...pts) + 4, n = pts.length;
+  const bx = 140, bw = W - 280, baseY = 818, maxH = 296, slot = bw / n, bwid = Math.min(80, slot * 0.62);
+  const floorY = baseY - (17 / maxV) * maxH;
+  let bars = "";
+  pts.forEach((v, i) => {
+    const cx = bx + slot * i + slot / 2, hh = (v / maxV) * maxH;
+    bars += `<rect x="${cx - bwid / 2}" y="${baseY - hh}" width="${bwid}" height="${hh}" rx="8" fill="url(#barHay)"/>
+      ${TD(cx, baseY - hh - 14, 30, 800, C.hawk, v, { anchor: "middle" })}
+      ${T(cx, baseY + 34, 18, 700, C.mut, "G" + (i + 1), { ls: 1, anchor: "middle" })}`;
+  });
+  angle("9-arc.png", "EVERY GAME, TRACKED",
+    `${T(W / 2, 432, 40, 800, C.text, "CHRISTIAN TOWE", { font: SD, anchor: "middle" })}
+     ${T(W / 2, 470, 16, 700, C.mut, "SUMMER SCORING · GAME BY GAME", { ls: 2, anchor: "middle" })}
+     <line x1="${bx}" y1="${baseY}" x2="${W - bx}" y2="${baseY}" stroke="${C.line}" stroke-width="2"/>
+     <line x1="${bx}" y1="${floorY}" x2="${W - bx}" y2="${floorY}" stroke="${C.skyLine}" stroke-width="1.5" stroke-dasharray="6 7"/>
+     ${T(bx - 14, floorY + 5, 16, 800, C.sky, "17", { anchor: "end" })}
+     ${bars}
+     ${callout(884, 158, "CONSISTENCY", "17+ IN ALL SIX GAMES", "19.7 PPG across the summer — every game logged on Prospera")}
+     ${T(W / 2, 1118, 22, 600, C.text, "This is the game log every player gets on Prospera —", { anchor: "middle" })}
+     ${T(W / 2, 1150, 22, 600, C.text, "every game, every stat, tracked and verified.", { anchor: "middle" })}`,
+    "Live game logs · Capitol Hoops Summer League · through 6.24.26");
 }
 
 slideResult();
@@ -315,5 +361,6 @@ slideNext();
 slideDefense();
 slideJackson();
 slideGlass();
-slideLine();
-console.log(`Playoff pack (8 slides) → ${OUT}/  ·  Hayfield ${GAME.hay}-${GAME.col} OT`);
+slidePowered();
+slideArc();
+console.log(`Playoff pack (9 slides) → ${OUT}/  ·  Hayfield ${GAME.hay}-${GAME.col} OT`);
