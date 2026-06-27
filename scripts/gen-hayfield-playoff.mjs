@@ -104,10 +104,11 @@ const hsData = (name) => {
 const headshot = (cx, cy, r, name, ring = C.hawk) => {
   const d = hsData(name); if (!d) return "";
   const id = "hs" + (_hsId++);
-  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
-    <circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="#0C1117"/>
-    <image href="${d}" x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})"/>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${ring}" stroke-width="3.5"/>`;
+  const x = cx - r, y = cy - r, s = r * 2, rad = Math.round(r * 0.16);
+  return `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${rad}"/></clipPath>
+    <rect x="${x - 2}" y="${y - 2}" width="${s + 4}" height="${s + 4}" rx="${rad + 2}" fill="#0C1117"/>
+    <image href="${d}" x="${x}" y="${y}" width="${s}" height="${s}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})"/>
+    <rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${rad}" fill="none" stroke="${ring}" stroke-width="3.5"/>`;
 };
 
 // Shared chrome: brand header + Hayfield band + slide kicker.
