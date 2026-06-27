@@ -6,6 +6,7 @@
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs";
 import path from "path";
+import { renderCloser } from "./lib/prospera-closer.mjs";
 
 const OUT = "docs/social-posts/playoff-0624";
 fs.mkdirSync(OUT, { recursive: true });
@@ -263,9 +264,9 @@ const callout = (y, h, kicker, big, sub) =>
    ${T(W / 2, y + 96, 40, 800, C.text, esc(big), { font: SD, anchor: "middle" })}
    ${T(W / 2, y + 134, 21, 600, C.mut, esc(sub), { anchor: "middle" })}`;
 const NOTE = "Single game · 6.24.26 playoff · official box score";
-const angle = (file, eyebrow, body, note = NOTE) => {
+const angle = (file, eyebrow, body, note = NOTE, bandTop, bandBot) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
-    ${chrome("")}
+    ${chrome("", bandTop, bandBot)}
     ${T(W / 2, 356, 22, 800, C.sky, eyebrow, { ls: 5, anchor: "middle" })}
     ${body}
     ${footer(note)}
@@ -306,27 +307,14 @@ function slideGlass() {
      ${T(W / 2, 1116, 22, 600, C.text, "Thirteen offensive boards became 12 second-chance points —", { anchor: "middle" })}
      ${T(W / 2, 1148, 22, 600, C.text, "the extra possessions that kept the comeback alive.", { anchor: "middle" })}`);
 }
-// ---- Slide 8 · POWERED BY PROSPERA (capabilities) ----
+// ---- Slide 8 · POWERED BY PROSPERA — the reusable closer (shared module) ----
 function slidePowered() {
-  const feat = (y, label, sub) =>
-    `<rect x="70" y="${y}" width="${W - 140}" height="84" rx="14" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.25"/>
-     <rect x="70" y="${y}" width="6" height="84" rx="3" fill="${C.hawk}"/>
-     ${T(106, y + 37, 25, 800, C.text, esc(label), { font: SD })}
-     ${T(106, y + 65, 16.5, 600, C.mut, esc(sub), {})}`;
-  const FEATS = [
-    ["REAL, VERIFIED STATS", "No fake numbers or invented rankings. Ever."],
-    ["FULL GAME-BY-GAME LOGS", "Every game tracked — points, boards, splits, +/-."],
-    ["DEVELOPMENT TRACKING", "Height, weight and production charted over time."],
-    ["SEEN BY COLLEGE COACHES", "Profiles built to get players to the next level."],
-    ["CLAIM YOUR PROFILE — FREE", "Players and parents manage their own page."],
-    ["THE DMV'S HOME COURT", "Local high-school and AAU hoops, all in one place."],
-  ];
-  let y = 500; const rows = FEATS.map((f) => { const s = feat(y, f[0], f[1]); y += 96; return s; }).join("");
-  angle("8-prospera.png", "WHAT EVERY HAWK GETS",
-    `${T(W / 2, 426, 56, 800, C.hawk, "POWERED BY PROSPERA", { font: SD, anchor: "middle" })}
-     ${rows}
-     ${T(W / 2, 1142, 26, 800, C.orange, "Build the profile → ProsperaHoops.com", { anchor: "middle" })}`,
-    "Real stats. Real eyes. The DMV's home court.");
+  renderCloser(path.join(OUT, "8-prospera.png"), {
+    team: "HAYFIELD HAWKS",
+    location: "ALEXANDRIA, VA · BOYS BASKETBALL",
+    mark: "brand-kit/hayfield-hawk-white.png",
+    eyebrow: "WHAT EVERY HAWK GETS",
+  });
 }
 // ---- Slide 9 · SEASON ARC (live game-log data) ----
 function slideArc() {
@@ -351,7 +339,7 @@ function slideArc() {
      ${callout(884, 158, "CONSISTENCY", "17+ IN ALL SIX GAMES", "19.7 PPG across the summer — every game logged on Prospera")}
      ${T(W / 2, 1118, 22, 600, C.text, "This is the game log every player gets on Prospera —", { anchor: "middle" })}
      ${T(W / 2, 1150, 22, 600, C.text, "every game, every stat, tracked and verified.", { anchor: "middle" })}`,
-    "Live game logs · Capitol Hoops Summer League · through 6.24.26");
+    "Live game logs · Capitol Hoops Summer League · through 6.24.26", "SUMMER LEAGUE", "2026 SEASON");
 }
 
 slideResult();
