@@ -93,6 +93,23 @@ const TD = (x, y, s, w, fill, txt, o = {}) => T(x, y, s, w, fill, txt, { ...o, f
 const emblemAt = (x, y, s) => `<g transform="translate(${x},${y})"><svg width="${s}" height="${s}" viewBox="0 0 200 200">${EMBLEM}</svg></g>`;
 const pill = (cx, y, txt, col = C.sky, fs = 18) => { const w = txt.length * (fs * 0.6) + 42; return `<rect x="${cx - w / 2}" y="${y - fs - 2}" width="${w}" height="${fs + 14}" rx="${(fs + 14) / 2}" fill="none" stroke="${col}" stroke-width="1.5"/>${T(cx, y, fs, 700, col, esc(txt), { ls: 2, anchor: "middle" })}`; };
 
+// circular headshot with orange ring — surface the kid wherever they're named
+let _hsId = 0;
+const hsData = (name) => {
+  const b = "public/headshots/" + String(name).toLowerCase().replace(/[^a-z]/g, "");
+  for (const e of [".jpg", ".png", ".webp"]) if (fs.existsSync(b + e))
+    return `data:image/${e === ".png" ? "png" : e === ".webp" ? "webp" : "jpeg"};base64,` + fs.readFileSync(b + e).toString("base64");
+  return null;
+};
+const headshot = (cx, cy, r, name, ring = C.hawk) => {
+  const d = hsData(name); if (!d) return "";
+  const id = "hs" + (_hsId++);
+  return `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+    <circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="#0C1117"/>
+    <image href="${d}" x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${ring}" stroke-width="3.5"/>`;
+};
+
 // Shared chrome: brand header + Hayfield band + slide kicker.
 function chrome(kicker, bandTop = GAME.round, bandBot = GAME.date) {
   return `<rect width="${W}" height="${H}" fill="url(#bgGrad)"/><rect width="${W}" height="${H}" fill="url(#glow)"/>
@@ -106,7 +123,7 @@ function chrome(kicker, bandTop = GAME.round, bandBot = GAME.date) {
   ${T(176, 228, 15, 700, C.inkSoft, "ALEXANDRIA, VA · BOYS BASKETBALL", { ls: 1 })}
   ${bandTop ? T(W - 64, 198, 17, 800, C.ink, bandTop, { ls: 2, anchor: "end" }) : ""}
   ${bandBot ? T(W - 64, 228, 14, 700, C.inkSoft, bandBot, { ls: 1, anchor: "end" }) : ""}
-  ${kicker ? T(W / 2, 318, 22, 800, C.sky, kicker, { ls: 3, anchor: "middle" }) : ""}`;
+  ${kicker ? T(W / 2, 356, 22, 800, C.sky, esc(kicker), { ls: 5, anchor: "middle" }) : ""}`;
 }
 const footer = (note) => `
   ${note ? T(W / 2, 1252, 16, 500, C.faint, note, { anchor: "middle" }) : ""}
@@ -128,7 +145,7 @@ function slideResult() {
   };
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
     ${chrome("")}
-    ${T(W / 2, 356, 22, 800, C.mut, "CAPITOL HOOPS SUMMER LEAGUE · PLAYOFFS", { ls: 2, anchor: "middle" })}
+    ${T(W / 2, 356, 22, 800, C.sky, "CAPITOL HOOPS SUMMER LEAGUE · PLAYOFFS", { ls: 5, anchor: "middle" })}
     ${T(W / 2, 414, 56, 800, C.hawk, "BATTLE TO THE BUZZER", { font: SD, anchor: "middle" })}
     ${teamBlock(290, "HAYFIELD", GAME.hay, "FORCED OVERTIME", true)}
     ${T(W / 2, 554, 40, 700, C.faint, "—", { anchor: "middle" })}
@@ -153,16 +170,18 @@ function slideResult() {
 function slideStandouts() {
   const card = (top, d) => {
     const x = 70, w = W - 140, h = 268;
+    const hsCx = x + 134, hsCy = top + 134, tx = x + 268;
     return `<rect x="${x}" y="${top}" width="${w}" height="${h}" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>
-      ${T(x + 40, top + 78, 40, 800, C.text, esc(d.name), { font: SD })}
-      ${T(x + 40, top + 120, 22, 600, C.mut, esc(d.l1), {})}
-      ${T(x + 40, top + 156, 22, 600, C.mut, esc(d.l2), {})}
-      ${pill(x + 132, top + 220, d.tag, C.sky, 16)}
-      ${TD(x + w - 120, top + 150, 116, 800, C.hawk, d.big, { anchor: "middle" })}
-      ${T(x + w - 120, top + 200, 22, 800, C.mut, d.unit, { ls: 4, anchor: "middle" })}`;
+      ${headshot(hsCx, hsCy, 92, d.name)}
+      ${T(tx, top + 92, 40, 800, C.text, esc(d.name), { font: SD })}
+      ${T(tx, top + 134, 22, 600, C.mut, esc(d.l1), {})}
+      ${T(tx, top + 170, 22, 600, C.mut, esc(d.l2), {})}
+      ${pill(tx + 72, top + 224, d.tag, C.sky, 16)}
+      ${TD(x + w - 116, top + 150, 112, 800, C.hawk, d.big, { anchor: "middle" })}
+      ${T(x + w - 116, top + 198, 22, 800, C.mut, d.unit, { ls: 4, anchor: "middle" })}`;
   };
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
-    ${chrome("WHO SHOWED UP")}
+    ${chrome("STANDOUTS")}
     ${card(372, STARS[0])}
     ${card(660, STARS[1])}
     ${card(948, STARS[2])}
@@ -226,7 +245,7 @@ function slideNext() {
   const D = NEXT.days;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs}
     ${chrome("", "", "")}
-    ${T(W / 2, 350, 22, 800, C.sky, "NEXT UP — CATCH THE HAWKS", { ls: 3, anchor: "middle" })}
+    ${T(W / 2, 356, 22, 800, C.sky, "NEXT UP — CATCH THE HAWKS", { ls: 5, anchor: "middle" })}
     ${T(W / 2, 432, 72, 800, C.hawk, esc(NEXT.event), { font: SD, anchor: "middle" })}
     ${T(W / 2, 474, 18, 700, C.text, esc(NEXT.kind), { ls: 1, anchor: "middle" })}
     ${T(W / 2, 508, 21, 800, C.mut, esc(NEXT.dates), { ls: 2, anchor: "middle" })}
@@ -280,23 +299,25 @@ function slideDefense() {
     `${heroNum("11", 210, "TEAM STEALS", 588, 642)}
      ${trio(696, 168, [["15", "TURNOVERS FORCED"], ["2", "BLOCKS"], ["20", "DEF REBOUNDS"]])}
      ${callout(892, 158, "OFF THE BENCH — THE GLUE", "CANDIN SWEET", "5 REB · 2 STL · 1 BLK in 23 minutes")}
+     ${headshot(168, 968, 56, "Candin Sweet")}
      ${T(W / 2, 1116, 22, 600, C.text, "Jackson (4), Towe (2) and Sweet (2) lived in the passing lanes —", { anchor: "middle" })}
      ${T(W / 2, 1148, 22, 600, C.text, "disruption that flipped defense into transition all night.", { anchor: "middle" })}`);
 }
 // ---- Slide 6 · CHASE JACKSON (hero) ----
 function slideJackson() {
   const cols = [["50%", "FG · 7-14"], ["100%", "FT · 8-8"], ["4", "STEALS"], ["+12", "PLUS-MINUS"]];
-  const grid = `<rect x="80" y="806" width="${W - 160}" height="168" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>` +
+  const grid = `<rect x="80" y="886" width="${W - 160}" height="160" rx="20" fill="${C.panel}" stroke="${C.skyLine}" stroke-width="1.5"/>` +
     cols.map((c, i) => { const cx = 80 + (W - 160) * (i + 0.5) / 4;
-      return `${TD(cx, 902, 52, 800, C.hawk, esc(c[0]), { anchor: "middle" })}${T(cx, 938, 15, 700, C.mut, esc(c[1]), { ls: 1, anchor: "middle" })}`; }).join("");
+      return `${TD(cx, 980, 50, 800, C.hawk, esc(c[0]), { anchor: "middle" })}${T(cx, 1016, 15, 700, C.mut, esc(c[1]), { ls: 1, anchor: "middle" })}`; }).join("");
   angle("6-jackson.png", "STAR OF THE NIGHT",
-    `${T(W / 2, 448, 74, 800, C.text, "CHASE JACKSON", { font: SD, anchor: "middle" })}
-     ${T(W / 2, 490, 17, 700, C.mut, "GUARD · CLASS OF 2028 · 6'2 · @envyy12._", { ls: 1, anchor: "middle" })}
-     ${TD(W / 2, 702, 192, 800, C.hawk, "24", { anchor: "middle" })}
-     ${T(W / 2, 750, 22, 800, C.mut, "POINTS · TEAM HIGH", { ls: 4, anchor: "middle" })}
+    `${headshot(W / 2, 478, 100, "Chase Jackson")}
+     ${T(W / 2, 634, 56, 800, C.text, "CHASE JACKSON", { font: SD, anchor: "middle" })}
+     ${T(W / 2, 670, 16, 700, C.mut, "GUARD · CLASS OF 2028 · 6'2 · @envyy12._", { ls: 1, anchor: "middle" })}
+     ${TD(W / 2, 800, 130, 800, C.hawk, "24", { anchor: "middle" })}
+     ${T(W / 2, 842, 20, 800, C.mut, "POINTS · TEAM HIGH", { ls: 4, anchor: "middle" })}
      ${grid}
-     ${T(W / 2, 1086, 22, 600, C.text, "A game-high 24 on 50% shooting — a perfect 8-for-8 at the line —", { anchor: "middle" })}
-     ${T(W / 2, 1118, 22, 600, C.text, "with 4 steals and a team-best +12 whenever he was on the floor.", { anchor: "middle" })}`);
+     ${T(W / 2, 1098, 22, 600, C.text, "A game-high 24 on 50% shooting — a perfect 8-for-8 at the line —", { anchor: "middle" })}
+     ${T(W / 2, 1130, 22, 600, C.text, "with 4 steals and a team-best +12 whenever he was on the floor.", { anchor: "middle" })}`);
 }
 // ---- Slide 7 · OWNED THE GLASS ----
 function slideGlass() {
@@ -320,7 +341,7 @@ function slidePowered() {
 function slideArc() {
   const pts = toweGames.map((g) => g.pts);
   const maxV = Math.max(...pts) + 4, n = pts.length;
-  const bx = 140, bw = W - 280, baseY = 818, maxH = 296, slot = bw / n, bwid = Math.min(80, slot * 0.62);
+  const bx = 140, bw = W - 280, baseY = 842, maxH = 224, slot = bw / n, bwid = Math.min(80, slot * 0.62);
   const floorY = baseY - (17 / maxV) * maxH;
   let bars = "";
   pts.forEach((v, i) => {
@@ -330,15 +351,16 @@ function slideArc() {
       ${T(cx, baseY + 34, 18, 700, C.mut, "G" + (i + 1), { ls: 1, anchor: "middle" })}`;
   });
   angle("9-arc.png", "EVERY GAME, TRACKED",
-    `${T(W / 2, 432, 40, 800, C.text, "CHRISTIAN TOWE", { font: SD, anchor: "middle" })}
-     ${T(W / 2, 470, 16, 700, C.mut, "SUMMER SCORING · GAME BY GAME", { ls: 2, anchor: "middle" })}
+    `${headshot(W / 2, 438, 56, "Christian Towe")}
+     ${T(W / 2, 556, 38, 800, C.text, "CHRISTIAN TOWE", { font: SD, anchor: "middle" })}
+     ${T(W / 2, 588, 15, 700, C.mut, "SUMMER SCORING · GAME BY GAME", { ls: 2, anchor: "middle" })}
      <line x1="${bx}" y1="${baseY}" x2="${W - bx}" y2="${baseY}" stroke="${C.line}" stroke-width="2"/>
      <line x1="${bx}" y1="${floorY}" x2="${W - bx}" y2="${floorY}" stroke="${C.skyLine}" stroke-width="1.5" stroke-dasharray="6 7"/>
      ${T(bx - 14, floorY + 5, 16, 800, C.sky, "17", { anchor: "end" })}
      ${bars}
-     ${callout(884, 158, "CONSISTENCY", "17+ IN ALL SIX GAMES", "19.7 PPG across the summer — every game logged on Prospera")}
-     ${T(W / 2, 1118, 22, 600, C.text, "This is the game log every player gets on Prospera —", { anchor: "middle" })}
-     ${T(W / 2, 1150, 22, 600, C.text, "every game, every stat, tracked and verified.", { anchor: "middle" })}`,
+     ${callout(898, 150, "CONSISTENCY", "17+ IN ALL SIX GAMES", "19.7 PPG across the summer — every game logged on Prospera")}
+     ${T(W / 2, 1110, 22, 600, C.text, "This is the game log every player gets on Prospera —", { anchor: "middle" })}
+     ${T(W / 2, 1142, 22, 600, C.text, "every game, every stat, tracked and verified.", { anchor: "middle" })}`,
     "Live game logs · Capitol Hoops Summer League · through 6.24.26", "SUMMER LEAGUE", "2026 SEASON");
 }
 

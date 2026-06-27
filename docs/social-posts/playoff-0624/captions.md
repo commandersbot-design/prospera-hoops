@@ -16,7 +16,7 @@ The Hawks went toe-to-toe to the wire — tied **13 times**, **11 lead changes**
 
 Down 6 at the half, Hayfield answered with a **38–32 second half (52% FG, 50% from three)** to force overtime.
 
-WHO SHOWED UP ⬇️
+STANDOUTS ⬇️
 🔸 Chase Jackson — 24 PTS (7-14 FG, perfect 8-8 FT), 4 STL, +12
 🔸 Christian Towe — 19 PTS, 6 REB, 2 STL, 1 BLK
 🔸 Grant Cage — 14 PTS, 5 REB
