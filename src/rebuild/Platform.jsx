@@ -71,7 +71,7 @@ const TOOLS = [["arc","trend","Development Arc"],["ranker","chart","Percentile R
 const ORDER = ["agents","nil","college","pro","sponsors","euro","juco","eybl"];
 // feature = [icon, title, desc, liveKey?]  — liveKey wires a working mini-tool
 const AUD = {
-  agents:{label:"Agents",icon:"book",tag:"Run your roster like a business",tool:"compare",care:"You care most about managing clients and placing them where they'll win.",features:[["users","Client roster hub","Every client's film, stats, and status in one place."],["route","Opportunity pipeline","Track programs, contacts, and where each client stands."],["present","Shareable one-pagers","Generate a clean stat-and-film profile to pitch any program.","onepager"]]},
+  agents:{label:"Agents",icon:"book",tag:"Run your roster like a business",tool:"compare",care:"You care most about managing clients and placing them where they'll win.",features:[["users","Client roster hub","Every client's film, stats, and status in one place."],["route","Opportunity pipeline","Track programs, contacts, and where each client stands."],["present","Shareable one-pagers","One profile, reshaped into a recruiting sheet, NIL kit, or transfer profile — copy the link and pitch.","onepager"]]},
   nil:{label:"NIL agents",icon:"coin",tag:"Turn audience into income",tool:"ranker",care:"You care most about brand value, deal flow, and staying compliant.",features:[["chart","Athlete brand profile","Centralize each athlete's audience stats, content, and reach."],["list","Deal tracker","Log every NIL agreement, deliverable, and payment in one place.","dealtracker"],["shield","Compliance records","Keep documentation organized and inside the rules."]]},
   college:{label:"College teams",icon:"building",tag:"Scout deeper, decide faster",tool:"directory",care:"You care most about efficient evaluation and finding players who fit your system.",features:[["search","Searchable player database","Filter and shortlist players by position, class, region, and stats."],["folder","Organized film library","Player-uploaded and staff-tagged clips in one place."],["chart","Stat-based comparisons","Compare recruits side by side on the numbers in their profiles."]]},
   pro:{label:"Pro scouts",icon:"chart",tag:"Evaluate like a front office",tool:"compare",care:"You care most about projectable production and clean comparisons against benchmarks.",features:[["trend","Benchmarked development arc","See a prospect's trajectory against higher-level benchmarks."],["users","Head-to-head comparison","Stack two prospects on the metrics your board weighs."],["clip","Verified production log","Every game logged and verifiable — no inflated numbers."]]},
@@ -247,39 +247,66 @@ const TOOL_COMPONENTS = { arc:DevelopmentArc, ranker:PercentileRanker, compare:P
 
 /* ---------------- live role features ---------------- */
 const OP_ROSTER = [
-  { name:"Devin Jones", pos:"G", cls:"2027", school:"Riverside Prep (VA)", ppg:23.6, rpg:8.8, apg:6.1, ts:"58%" },
-  { name:"Marcus Reed", pos:"G", cls:"2026", school:"Southlake Academy", ppg:26.1, rpg:4.2, apg:3.2, ts:"55%" },
-  { name:"Tre Ellis", pos:"G", cls:"2027", school:"Northgate HS", ppg:17.4, rpg:3.9, apg:8.9, ts:"60%" },
-  { name:"Kai Vance", pos:"F", cls:"2026", school:"Riverside Prep (VA)", ppg:19.8, rpg:9.6, apg:4.1, ts:"54%" },
+  { name:"Devin Jones", pos:"G", cls:"2027", school:"Riverside Prep (VA)", ht:"6'4\"", wt:"185 lb", wing:"6'8\"", ppg:23.6, rpg:8.8, apg:6.1, ts:"58%", fg:"49%", tp:"38%", film:"hudl.com/devin-jones", contact:"coach.riverside@email.com", followers:"41.2K", engagement:"7.4%", markets:"VA · DC · MD", pillars:["Game film","Training","Community"], credits:24, gpa:"3.4", elig:"2 yrs" },
+  { name:"Marcus Reed", pos:"G", cls:"2026", school:"Southlake Academy", ht:"6'2\"", wt:"180 lb", wing:"6'5\"", ppg:26.1, rpg:4.2, apg:3.2, ts:"55%", fg:"46%", tp:"36%", film:"hudl.com/marcus-reed", contact:"coach.southlake@email.com", followers:"88.6K", engagement:"9.1%", markets:"GA · Southeast", pillars:["Highlights","Brand deals","Lifestyle"], credits:30, gpa:"3.1", elig:"1 yr" },
+  { name:"Tre Ellis", pos:"G", cls:"2027", school:"Northgate HS", ht:"6'0\"", wt:"170 lb", wing:"6'3\"", ppg:17.4, rpg:3.9, apg:8.9, ts:"60%", fg:"48%", tp:"40%", film:"hudl.com/tre-ellis", contact:"coach.northgate@email.com", followers:"22.8K", engagement:"6.2%", markets:"OH · Midwest", pillars:["Playmaking reels","Skills work","Team"], credits:18, gpa:"3.7", elig:"3 yrs" },
+  { name:"Kai Vance", pos:"F", cls:"2026", school:"Riverside Prep (VA)", ht:"6'8\"", wt:"215 lb", wing:"7'0\"", ppg:19.8, rpg:9.6, apg:4.1, ts:"54%", fg:"52%", tp:"33%", film:"hudl.com/kai-vance", contact:"coach.riverside@email.com", followers:"35.0K", engagement:"8.0%", markets:"VA · DC", pillars:["Above-rim","Training","Community"], credits:28, gpa:"3.2", elig:"1 yr" },
 ];
+const OP_TEMPLATES = [
+  { k:"recruiting", label:"Recruiting", sub:"for college coaches" },
+  { k:"nil", label:"NIL kit", sub:"for sponsors" },
+  { k:"transfer", label:"Transfer", sub:"for 4-yr staffs" },
+];
+function StatGrid({ cells }) {
+  return <div style={{display:"grid",gridTemplateColumns:`repeat(${cells.length},1fr)`,gap:8}}>{cells.map(([l,v],i)=>(<div key={i} className="statcell" style={{textAlign:"center"}}><p style={{fontSize:16,fontWeight:600,margin:0,color:"var(--text-primary)"}}>{v}</p><p style={{fontSize:10,color:"var(--text-muted)",margin:"2px 0 0"}}>{l}</p></div>))}</div>;
+}
+function KVRow({ items }) {
+  return <div style={{marginTop:10,display:"flex",gap:16,flexWrap:"wrap",fontSize:12.5,color:"var(--text-2)"}}>{items.map(([l,v],i)=>(<span key={i}><b style={{color:"var(--text-primary)"}}>{v}</b> {l}</span>))}</div>;
+}
 function OnePagerWidget() {
   const [i, setI] = useState(0);
+  const [tpl, setTpl] = useState("recruiting");
   const [copied, setCopied] = useState(false);
   const p = OP_ROSTER[i];
+  const meta = OP_TEMPLATES.find((t) => t.k === tpl);
   const origin = (typeof window !== "undefined" && window.location?.origin) || "https://prosperahoops.com";
   const link = `${origin}/p/${slugify(p.name)}`;
   const copy = () => { try { navigator.clipboard?.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1600); } catch {} };
   return (
     <div className="live">
-      <div className="live-hd"><span className="live-tag">Live feature</span><span style={{fontSize:12,color:"var(--text-muted)"}}>Shareable one-pager — pick a client, copy the link</span></div>
-      <div style={{marginBottom:12}}>
+      <div className="live-hd"><span className="live-tag">Live feature</span><span style={{fontSize:12,color:"var(--text-muted)"}}>Shareable one-pager — one profile, {meta.sub}</span></div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",marginBottom:12}}>
         <select value={i} onChange={(e)=>setI(+e.target.value)}>{OP_ROSTER.map((r,idx)=><option key={idx} value={idx}>{r.name} · {r.school}</option>)}</select>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>{OP_TEMPLATES.map((t)=>(<button key={t.k} onClick={()=>setTpl(t.k)} style={tabStyle(t.k===tpl)}>{t.label}</button>))}</div>
       </div>
       <div className="op-card">
-        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
           <div className="avatar" style={{width:46,height:46,fontSize:15}}>{initialsOf(p.name)}</div>
           <div style={{flex:1,minWidth:0}}>
             <p style={{fontWeight:600,fontSize:17,margin:0,color:"var(--text-primary)"}}>{p.name}</p>
             <p style={{fontSize:12.5,color:"var(--text-muted)",margin:"2px 0 0"}}>{[p.pos,p.cls,p.school].filter(Boolean).join(" · ")}</p>
           </div>
+          <span style={{fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:".06em",color:"var(--accent)",background:"var(--accent-soft)",border:"1px solid var(--accent-line)",padding:"3px 8px",borderRadius:999,whiteSpace:"nowrap"}}>{meta.label}</span>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-          {[["PPG",p.ppg],["RPG",p.rpg],["APG",p.apg],["TS%",p.ts]].map(([l,v],idx)=>(<div key={idx} className="statcell" style={{textAlign:"center"}}><p style={{fontSize:16,fontWeight:600,margin:0,color:"var(--text-primary)"}}>{v}</p><p style={{fontSize:10,color:"var(--text-muted)",margin:"2px 0 0"}}>{l}</p></div>))}
-        </div>
+        {tpl==="recruiting" && <>
+          <KVRow items={[["ht",p.ht],["wt",p.wt],["wing",p.wing]]}/>
+          <div style={{marginTop:10}}><StatGrid cells={[["PPG",p.ppg],["RPG",p.rpg],["APG",p.apg],["TS%",p.ts]]}/></div>
+          <div style={{marginTop:10,fontSize:12.5,color:"var(--text-2)"}}>▶ Film: {p.film} &nbsp;·&nbsp; ✉ {p.contact}</div>
+        </>}
+        {tpl==="nil" && <>
+          <StatGrid cells={[["Followers",p.followers],["Engagement",p.engagement],["Reach",p.markets]]}/>
+          <div style={{marginTop:12,display:"flex",gap:6,flexWrap:"wrap"}}>{p.pillars.map((c,idx)=><span key={idx} className="chip on">{c}</span>)}</div>
+          <div style={{marginTop:10,fontSize:12.5,color:"var(--text-2)"}}>Brand fit: {p.ppg} PPG on the court plus a {p.engagement} engaged audience across {p.markets}.</div>
+        </>}
+        {tpl==="transfer" && <>
+          <StatGrid cells={[["PPG",p.ppg],["RPG",p.rpg],["APG",p.apg],["FG%",p.fg]]}/>
+          <KVRow items={[["credits",p.credits],["GPA",p.gpa],["eligibility",p.elig]]}/>
+          <div style={{marginTop:10,fontSize:12.5,color:"var(--text-2)"}}>✓ Verified production — every game logged and confirmed for four-year staffs.</div>
+        </>}
       </div>
       <div className="op-link">{link}</div>
       <button className="lbtn primary" onClick={copy}><Icon name={copied?"check":"copy"} size={14}/>{copied?"Copied":"Copy share link"}</button>
-      <p style={{fontSize:11,color:"var(--text-muted)",margin:"10px 0 0"}}>Every client has a public profile at this link — the shareable one-pager an agent sends a program. (Sample profile in this demo.)</p>
+      <p style={{fontSize:11,color:"var(--text-muted)",margin:"10px 0 0"}}>One profile, reshaped for whoever you&apos;re pitching — the link opens {p.name.split(" ")[0]}&apos;s public Prospera profile. (Sample data in this demo.)</p>
     </div>
   );
 }
