@@ -1,14 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /* ------------------------------------------------------------------ *
  * Prospera — "Explore the Platform" page
- * Drop this in e.g. src/pages/Platform.jsx and add a route to /platform.
- * Pure React + inline SVG. No external deps. Theme is scoped to `.pp`
- * so it won't affect the rest of your app.
- * If you use TypeScript, rename to Platform.tsx (JSX is valid TS).
- * Pass an optional onBack prop to control the "Back to main site" link,
- * e.g. <Platform onBack={() => navigate('/')} />
+ * Interactive, role-framed demo of the toolkit. The five tools run on
+ * curated SAMPLE prospects (clean multi-season narratives). Two role
+ * features are genuinely live: a shareable one-pager and an NIL deal
+ * tracker (saved to the browser). Theme scoped to `.pp`.
+ *   <Platform onBack={() => go('landing')} />
  * ------------------------------------------------------------------ */
+
+const slugify = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const initialsOf = (nm) => String(nm || "").split(" ").filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
 const ICONS = {
   home:'<path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/>',
@@ -39,6 +41,8 @@ const ICONS = {
   flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
   lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   star:'<path d="M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 18.8 6.1 21.8l1.1-6.5L2.5 9.8l6.5-.9z"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
 };
 function Icon({ name, size = 24 }) {
   return (
@@ -65,9 +69,10 @@ const TOOL_DESC = {
 };
 const TOOLS = [["arc","trend","Development Arc"],["ranker","chart","Percentile Ranker"],["compare","users","Player Comparison"],["pathway","route","Pathway Planner"],["directory","search","Recruiting Directory"]];
 const ORDER = ["agents","nil","college","pro","sponsors","euro","juco","eybl"];
+// feature = [icon, title, desc, liveKey?]  — liveKey wires a working mini-tool
 const AUD = {
-  agents:{label:"Agents",icon:"book",tag:"Run your roster like a business",tool:"compare",care:"You care most about managing clients and placing them where they'll win.",features:[["users","Client roster hub","Every client's film, stats, and status in one place."],["route","Opportunity pipeline","Track programs, contacts, and where each client stands."],["present","Shareable one-pagers","Generate a clean stat-and-film profile to pitch any program."]]},
-  nil:{label:"NIL agents",icon:"coin",tag:"Turn audience into income",tool:"ranker",care:"You care most about brand value, deal flow, and staying compliant.",features:[["chart","Athlete brand profile","Centralize each athlete's audience stats, content, and reach."],["list","Deal tracker","Log every NIL agreement, deliverable, and payment in one place."],["shield","Compliance records","Keep documentation organized and inside the rules."]]},
+  agents:{label:"Agents",icon:"book",tag:"Run your roster like a business",tool:"compare",care:"You care most about managing clients and placing them where they'll win.",features:[["users","Client roster hub","Every client's film, stats, and status in one place."],["route","Opportunity pipeline","Track programs, contacts, and where each client stands."],["present","Shareable one-pagers","Generate a clean stat-and-film profile to pitch any program.","onepager"]]},
+  nil:{label:"NIL agents",icon:"coin",tag:"Turn audience into income",tool:"ranker",care:"You care most about brand value, deal flow, and staying compliant.",features:[["chart","Athlete brand profile","Centralize each athlete's audience stats, content, and reach."],["list","Deal tracker","Log every NIL agreement, deliverable, and payment in one place.","dealtracker"],["shield","Compliance records","Keep documentation organized and inside the rules."]]},
   college:{label:"College teams",icon:"building",tag:"Scout deeper, decide faster",tool:"directory",care:"You care most about efficient evaluation and finding players who fit your system.",features:[["search","Searchable player database","Filter and shortlist players by position, class, region, and stats."],["folder","Organized film library","Player-uploaded and staff-tagged clips in one place."],["chart","Stat-based comparisons","Compare recruits side by side on the numbers in their profiles."]]},
   pro:{label:"Pro scouts",icon:"chart",tag:"Evaluate like a front office",tool:"compare",care:"You care most about projectable production and clean comparisons against benchmarks.",features:[["trend","Benchmarked development arc","See a prospect's trajectory against higher-level benchmarks."],["users","Head-to-head comparison","Stack two prospects on the metrics your board weighs."],["clip","Verified production log","Every game logged and verifiable — no inflated numbers."]]},
   sponsors:{label:"Sponsors",icon:"hands",tag:"Find the right athletes for your brand",tool:"directory",care:"You care most about reach, fit, and proof before you spend.",features:[["search","Audience-based search","Filter athletes by reach, market, sport, and audience."],["chart","Brand-fit profiles","Real audience stats and content in one media kit."],["list","Deal + deliverable tracking","Track every agreement and deliverable in one place."]]},
@@ -76,7 +81,7 @@ const AUD = {
   eybl:{label:"EYBL / AAU",icon:"ball",tag:"Get seen before the offers start",tool:"arc",care:"You care most about early exposure and a profile college coaches trust.",features:[["video","Verified player profile","Verified measurements, stats, and highlights coaches can trust."],["search","Listed for college coaches","Get discoverable in a directory coaches filter by position and class."],["trend","Season stat log","Log each game and track your production and growth over time."]]},
 };
 
-/* ---------------- tools ---------------- */
+/* ---------------- tools (sample data) ---------------- */
 function DevelopmentArc() {
   const METRICS = {
     pts:{label:"Points",unit:"PPG",vals:[8.1,14.2,12.6,19.4],proj:22.5,max:28,note:"Dipped junior year — moved to a stacked roster, then broke out as a senior."},
@@ -240,6 +245,78 @@ function RecruitingDirectory() {
 
 const TOOL_COMPONENTS = { arc:DevelopmentArc, ranker:PercentileRanker, compare:PlayerComparison, pathway:PathwayPlanner, directory:RecruitingDirectory };
 
+/* ---------------- live role features ---------------- */
+const OP_ROSTER = [
+  { name:"Devin Jones", pos:"G", cls:"2027", school:"Riverside Prep (VA)", ppg:23.6, rpg:8.8, apg:6.1, ts:"58%" },
+  { name:"Marcus Reed", pos:"G", cls:"2026", school:"Southlake Academy", ppg:26.1, rpg:4.2, apg:3.2, ts:"55%" },
+  { name:"Tre Ellis", pos:"G", cls:"2027", school:"Northgate HS", ppg:17.4, rpg:3.9, apg:8.9, ts:"60%" },
+  { name:"Kai Vance", pos:"F", cls:"2026", school:"Riverside Prep (VA)", ppg:19.8, rpg:9.6, apg:4.1, ts:"54%" },
+];
+function OnePagerWidget() {
+  const [i, setI] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const p = OP_ROSTER[i];
+  const origin = (typeof window !== "undefined" && window.location?.origin) || "https://prosperahoops.com";
+  const link = `${origin}/p/${slugify(p.name)}`;
+  const copy = () => { try { navigator.clipboard?.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1600); } catch {} };
+  return (
+    <div className="live">
+      <div className="live-hd"><span className="live-tag">Live feature</span><span style={{fontSize:12,color:"var(--text-muted)"}}>Shareable one-pager — pick a client, copy the link</span></div>
+      <div style={{marginBottom:12}}>
+        <select value={i} onChange={(e)=>setI(+e.target.value)}>{OP_ROSTER.map((r,idx)=><option key={idx} value={idx}>{r.name} · {r.school}</option>)}</select>
+      </div>
+      <div className="op-card">
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
+          <div className="avatar" style={{width:46,height:46,fontSize:15}}>{initialsOf(p.name)}</div>
+          <div style={{flex:1,minWidth:0}}>
+            <p style={{fontWeight:600,fontSize:17,margin:0,color:"var(--text-primary)"}}>{p.name}</p>
+            <p style={{fontSize:12.5,color:"var(--text-muted)",margin:"2px 0 0"}}>{[p.pos,p.cls,p.school].filter(Boolean).join(" · ")}</p>
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+          {[["PPG",p.ppg],["RPG",p.rpg],["APG",p.apg],["TS%",p.ts]].map(([l,v],idx)=>(<div key={idx} className="statcell" style={{textAlign:"center"}}><p style={{fontSize:16,fontWeight:600,margin:0,color:"var(--text-primary)"}}>{v}</p><p style={{fontSize:10,color:"var(--text-muted)",margin:"2px 0 0"}}>{l}</p></div>))}
+        </div>
+      </div>
+      <div className="op-link">{link}</div>
+      <button className="lbtn primary" onClick={copy}><Icon name={copied?"check":"copy"} size={14}/>{copied?"Copied":"Copy share link"}</button>
+      <p style={{fontSize:11,color:"var(--text-muted)",margin:"10px 0 0"}}>Every client has a public profile at this link — the shareable one-pager an agent sends a program. (Sample profile in this demo.)</p>
+    </div>
+  );
+}
+
+const DEAL_KEY = "pp_deal_tracker_demo";
+const DEAL_STATUS = ["Pitched", "Agreed", "Delivered", "Paid"];
+function DealTracker() {
+  const [deals, setDeals] = useState(() => { try { return JSON.parse(localStorage.getItem(DEAL_KEY)) || []; } catch { return []; } });
+  const [form, setForm] = useState({ athlete:"", brand:"", amount:"", status:"Pitched" });
+  useEffect(() => { try { localStorage.setItem(DEAL_KEY, JSON.stringify(deals)); } catch {} }, [deals]);
+  const add = () => { if (!form.athlete.trim() || !form.brand.trim()) return; setDeals((d) => [{ id: Date.now() + "" + d.length, ...form }, ...d]); setForm({ athlete:"", brand:"", amount:"", status:"Pitched" }); };
+  const remove = (id) => setDeals((d) => d.filter((x) => x.id !== id));
+  const total = deals.reduce((a, d) => a + (parseFloat(String(d.amount).replace(/[^0-9.]/g, "")) || 0), 0);
+  const stCol = (s) => s === "Paid" ? "var(--accent)" : s === "Delivered" ? "#4d97e6" : s === "Agreed" ? "#d9a441" : "var(--text-muted)";
+  return (
+    <div className="live">
+      <div className="live-hd"><span className="live-tag">Live feature</span><span style={{fontSize:12,color:"var(--text-muted)"}}>NIL deal tracker — saved on this device</span></div>
+      <div className="deal-form">
+        <input className="fld" placeholder="Athlete" value={form.athlete} onChange={(e)=>setForm({...form,athlete:e.target.value})}/>
+        <input className="fld" placeholder="Brand" value={form.brand} onChange={(e)=>setForm({...form,brand:e.target.value})}/>
+        <input className="fld" placeholder="$ amount" value={form.amount} onChange={(e)=>setForm({...form,amount:e.target.value})} style={{maxWidth:110,flex:"none"}}/>
+        <select value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}>{DEAL_STATUS.map((s)=><option key={s} value={s}>{s}</option>)}</select>
+        <button className="lbtn primary" onClick={add}>Add deal</button>
+      </div>
+      {deals.length===0 ? <p style={{fontSize:13,color:"var(--text-muted)",textAlign:"center",padding:"14px 0"}}>No deals yet — add one above. It saves locally and persists on reload.</p> : (
+        <>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"4px 0 8px"}}><span style={{fontSize:12,color:"var(--text-muted)"}}>{deals.length} deal{deals.length!==1?"s":""}</span><span style={{fontSize:13,fontWeight:600,color:"var(--text-primary)"}}>Total ${total.toLocaleString()}</span></div>
+          <div style={{display:"flex",flexDirection:"column",gap:7}}>
+            {deals.map((d)=>(<div key={d.id} className="deal-row"><div style={{flex:1,minWidth:0}}><p style={{fontSize:14,fontWeight:500,margin:0,color:"var(--text-primary)"}}>{d.athlete} <span style={{color:"var(--text-muted)",fontWeight:400}}>· {d.brand}</span></p><p style={{fontSize:11.5,margin:"1px 0 0",color:stCol(d.status)}}>{d.status}</p></div><span style={{fontSize:14,fontWeight:600,color:"var(--text-primary)"}}>{d.amount?`$${d.amount}`:"—"}</span><button className="deal-x" onClick={()=>remove(d.id)} aria-label="Remove"><Icon name="x" size={14}/></button></div>))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+const LIVE_FEATURES = { onepager: OnePagerWidget, dealtracker: DealTracker };
+
 const CSS = `
 .pp{--bg:#0b0f14;--bg-soft:#121822;--card:#161d28;--card-hover:#1c2532;--line:#26313f;--line-soft:#1e2733;--text:#f2f5f8;--text-2:#a7b3c2;--text-3:#6f7d8e;--accent:#ff5a1f;--accent-soft:rgba(255,90,31,0.14);--accent-line:rgba(255,90,31,0.42);--radius:12px;--surface-1:#121822;--surface-2:#161d28;--bg-accent:rgba(255,90,31,0.14);--text-accent:#ff5a1f;--border:#1e2733;--border-strong:#2b3745;--border-accent:rgba(255,90,31,0.42);--text-primary:#f2f5f8;--text-secondary:#a7b3c2;--text-muted:#6f7d8e;background:var(--bg);color:var(--text);min-height:100vh;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
 .pp *{box-sizing:border-box;}
@@ -272,10 +349,14 @@ const CSS = `
 .pp .panel h2{font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-0.01em;line-height:1.15;margin:0;}
 .pp .care{color:var(--text-2);font-size:clamp(14px,1.8vw,16px);margin-top:10px;max-width:58ch;}
 .pp .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-top:24px;}
-.pp .feat{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:18px;}
+.pp .feat{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:18px;position:relative;}
+.pp .feat.live-card{cursor:pointer;border-color:var(--accent-line);}
+.pp .feat.live-card:hover{background:var(--card-hover);}
+.pp .feat.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--bg-accent);}
 .pp .feat .ic{width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
 .pp .feat h3{font-size:15px;font-weight:600;letter-spacing:-0.01em;margin:0;}
 .pp .feat p{color:var(--text-2);font-size:13px;margin-top:5px;line-height:1.5;}
+.pp .feat .livetag{position:absolute;top:12px;right:12px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:2px 7px;border-radius:999px;}
 .pp .cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;background:var(--accent);color:#0b0f14;font-weight:600;font-size:14px;padding:11px 20px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;}
 .pp .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .pp .tbtn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:10px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;background:var(--bg-soft);color:var(--text-2);border:1px solid var(--line-soft);}
@@ -283,29 +364,44 @@ const CSS = `
 .pp .tbtn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line);}
 .pp .tool-desc{color:var(--text-2);font-size:13px;margin-bottom:14px;max-width:60ch;}
 .pp .tool-card{background:var(--surface-1);border-radius:14px;padding:1.1rem 1.25rem;}
-.pp .avatar{border-radius:50%;background:var(--bg-accent);color:var(--text-accent);display:flex;align-items:center;justify-content:center;font-weight:500;flex:none;}
+.pp .avatar{border-radius:50%;background:var(--bg-accent);color:var(--text-accent);display:flex;align-items:center;justify-content:center;font-weight:600;flex:none;}
 .pp .chip{padding:5px 11px;border-radius:999px;font-size:12px;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-2);border:1px solid var(--line-soft);}
 .pp .chip.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line);}
 .pp .statcell{background:var(--surface-2);border-radius:8px;padding:9px 10px;}
 .pp .rd-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
 .pp .rd-lbl{font-size:12px;color:var(--text-3);width:64px;flex:none;}
 .pp .rd-card{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+.pp .live{background:var(--surface-1);border:1px solid var(--accent-line);border-radius:14px;padding:16px 18px;margin-top:16px;}
+.pp .live-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.pp .live-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:3px 9px;border-radius:999px;}
+.pp .op-card{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;}
+.pp .op-link{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--text-2);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px;margin-bottom:10px;overflow-x:auto;white-space:nowrap;}
+.pp .lbtn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;background:var(--surface-2);color:var(--text);border:1px solid var(--border);}
+.pp .lbtn.primary{background:var(--accent);color:#0b0f14;border-color:var(--accent);}
+.pp .deal-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.pp .fld{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-family:inherit;font-size:13px;flex:1;min-width:110px;}
+.pp .deal-row{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;}
+.pp .deal-x{background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;padding:4px;border-radius:6px;}
+.pp .deal-x:hover{color:var(--accent);background:var(--bg-accent);}
 .pp .cta-band{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:var(--bg-soft);border:1px solid var(--line-soft);border-radius:16px;padding:26px clamp(20px,3vw,32px);margin-top:44px;}
 .pp .cta-band h2{font-size:clamp(19px,2.4vw,23px);font-weight:700;margin:0;}
 .pp .cta-band p{color:var(--text-2);font-size:14px;margin-top:6px;max-width:52ch;}
 .pp .cta-lg{flex:none;background:var(--accent);color:#0b0f14;font-weight:600;font-size:15px;padding:13px 24px;border-radius:11px;text-decoration:none;white-space:nowrap;}
 .pp .foot{margin-top:40px;color:var(--text-3);font-size:12px;border-top:1px solid var(--line-soft);padding-top:18px;}
-.pp select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-family:inherit;}
+.pp select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;}
 .pp input[type=range]{accent-color:var(--accent);}
 `;
 
 export default function Platform({ onBack }) {
   const [aud, setAud] = useState("agents");
   const [tool, setTool] = useState("arc");
+  const [liveOpen, setLiveOpen] = useState(null);
   const toolbarRef = useRef(null);
   const d = AUD[aud];
   const openTool = (k) => { setTool(k); setTimeout(() => toolbarRef.current && toolbarRef.current.scrollIntoView({ behavior:"smooth", block:"start" }), 0); };
   const ToolComp = TOOL_COMPONENTS[tool];
+  const LiveComp = liveOpen ? LIVE_FEATURES[liveOpen] : null;
+  const pickAud = (k) => { setAud(k); setLiveOpen(null); };
   return (
     <div className="pp">
       <style>{CSS}</style>
@@ -318,16 +414,21 @@ export default function Platform({ onBack }) {
       <div className="wrap">
         <div className="eyebrow"><span className="dot"/> Prospera Live · interactive platform demo</div>
         <h1>One data engine.<br/><span>Every level of the game.</span></h1>
-        <p className="sub">This is a live look at the Prospera toolkit — not slides. Pick who you&apos;re talking to, see the tools framed for them, then click through the real, working tools below. Sample data shown.</p>
+        <p className="sub">This is a live look at the Prospera toolkit — not slides. Pick who you&apos;re talking to, see the tools framed for them, then click through the real, working tools below. Sample data shown; the ⚡ Live features actually work.</p>
         <div className="howto">
-          {[["1","Pick who you are","Choose your role and the platform reframes around what you care about."],["2","See your tools","Each role gets the three tools that matter most to them, up front."],["3","Try them live","Scroll down and actually use every tool — real interaction, real data."]].map((s)=>(<div key={s[0]} className="step"><span className="num">{s[0]}</span><div><p className="st">{s[1]}</p><p className="sd">{s[2]}</p></div></div>))}
+          {[["1","Pick who you are","Choose your role and the platform reframes around what you care about."],["2","See your tools","Each role gets the tools that matter most, up front — the Live ones actually work."],["3","Try them live","Scroll down and actually use every tool — real interaction, real data."]].map((s)=>(<div key={s[0]} className="step"><span className="num">{s[0]}</span><div><p className="st">{s[1]}</p><p className="sd">{s[2]}</p></div></div>))}
         </div>
-        <div className="pills">{ORDER.map((k)=>(<button key={k} className={"pill"+(k===aud?" active":"")} onClick={()=>setAud(k)}><Icon name={AUD[k].icon} size={16}/>{AUD[k].label}</button>))}</div>
+        <div className="pills">{ORDER.map((k)=>(<button key={k} className={"pill"+(k===aud?" active":"")} onClick={()=>pickAud(k)}><Icon name={AUD[k].icon} size={16}/>{AUD[k].label}</button>))}</div>
         <div className="panel">
           <span className="badge">{d.label}</span>
           <h2>{d.tag}</h2>
           <p className="care">{d.care}</p>
-          <div className="grid">{d.features.map((f,i)=>(<div key={i} className="feat"><div className="ic"><Icon name={f[0]} size={21}/></div><h3>{f[1]}</h3><p>{f[2]}</p></div>))}</div>
+          <div className="grid">{d.features.map((f,i)=>{const live=f[3];const on=liveOpen===live;return (
+            <div key={i} className={"feat"+(live?" live-card":"")+(on?" on":"")} onClick={live?()=>setLiveOpen(on?null:live):undefined}>
+              {live && <span className="livetag">Live ▾</span>}
+              <div className="ic"><Icon name={f[0]} size={21}/></div><h3>{f[1]}</h3><p>{f[2]}</p>
+            </div>);})}</div>
+          {LiveComp && <LiveComp/>}
           <button className="cta" onClick={()=>openTool(d.tool)}>Open the live {TOOL_LABEL[d.tool]} <Icon name="route" size={15}/></button>
         </div>
         <div className="section-title">Live tools — click through them</div>
@@ -335,7 +436,7 @@ export default function Platform({ onBack }) {
         <p className="tool-desc">{TOOL_DESC[tool]}</p>
         <ToolComp/>
         <div className="cta-band"><div><h2>Want this built out for your program?</h2><p>Book a walkthrough and we&apos;ll tailor these tools to your roster, your data, and your workflow.</p></div><a className="cta-lg" href="mailto:danudastdiab@gmail.com?subject=Prospera%20walkthrough">Book a walkthrough →</a></div>
-        <p className="foot">Prospera — interactive demo with sample data. Every tool is populated from data users log or that the platform already tracks; nothing here depends on automated clipping or algorithmic scoring.</p>
+        <p className="foot">Prospera — interactive demo. The five tools use sample prospects; the Live features work for real (the deal tracker saves to your browser only). Nothing here depends on automated clipping or algorithmic scoring.</p>
       </div>
     </div>
   );
