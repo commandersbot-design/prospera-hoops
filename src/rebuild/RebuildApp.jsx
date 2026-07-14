@@ -4,7 +4,6 @@
 // scoped classes from styles/prototype.css.
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { DevelopmentSection } from "../components/DevelopmentArc";
-import ExplorePlatform from "../pages/ExplorePlatform.jsx";
 import { buildArc } from "../lib/developmentArc";
 import { buildArchetypeCohort, archetypeForPlayer } from "../lib/archetype";
 import SCHEDULE_DATA from "../data/schedule.json";
@@ -225,7 +224,7 @@ function Header({ view, go }) {
     <header className="hd"><div className="hd-in" style={{ position: "relative" }}>
       <a className="logo" onClick={() => go("landing")} title="Home"><img src={LOGO} alt="Prospera Hoops" /></a>
       <nav className="nav">
-        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("watchlist", "Watchlist")}{tab("coach", "Coach HQ")}{tab("explore", "Explore the Platform")}
+        {tab("landing", "Home")}{tab("prospects", "Prospects")}{tab("leaders", "Leaders")}{tab("recaps", "Recaps")}{tab("teams", "Teams")}{tab("watchlist", "Watchlist")}{tab("coach", "Coach HQ")}
       </nav>
       <div className="hd-r">
         {user ? <>
@@ -239,7 +238,7 @@ function Header({ view, go }) {
       </div>
       {menuOpen && (
         <div className="nav-menu" onMouseLeave={() => setMenuOpen(false)}>
-          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("watchlist", "Watchlist")}{mtab("coach", "Coach HQ")}{mtab("explore", "Explore the Platform")}
+          {mtab("landing", "Home")}{mtab("prospects", "Prospects")}{mtab("leaders", "Leaders")}{mtab("recaps", "Recaps")}{mtab("teams", "Teams")}{mtab("watchlist", "Watchlist")}{mtab("coach", "Coach HQ")}
           <div className="mdiv" />
           {user ? <>{mtab("dash", "My Dashboard")}<a onClick={() => { signOut(); setMenuOpen(false); }}>Log out</a></>
             : <><a onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>Log in</a><a onClick={() => nav("prospects")}>Claim your profile</a></>}
@@ -2570,7 +2569,7 @@ function ScoutView({ data, openPlayer, go }) {
 }
 
 // View ↔ URL mapping for the simple state router (History API).
-const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", watchlist: "/watchlist", coach: "/coach", dash: "/dashboard", plus: "/plus", explore: "/explore" };
+const VIEW_PATH = { landing: "/", prospects: "/prospects", leaders: "/leaders", recaps: "/recaps", teams: "/teams", watchlist: "/watchlist", coach: "/coach", dash: "/dashboard", plus: "/plus" };
 const pushUrl = (path) => { try { if (window.location.pathname !== path) window.history.pushState({}, "", path); } catch (e) { /* ignore */ } };
 
 export default function RebuildApp() {
@@ -2624,8 +2623,7 @@ export default function RebuildApp() {
   return (
     <LockInCtx.Provider value={openLockIn}>
     <div className="rebuild">
-      {view !== "explore" && <Header view={view} go={go} />}
-      {view === "explore" && <ExplorePlatform onBack={() => go("landing")} />}
+      <Header view={view} go={go} />
       {view === "landing" && <Landing data={data} go={go} openPlayer={openPlayer} />}
       {view === "profile" && <PublicProfile player={selected || data.featured} data={data} go={go} />}
       {view === "prospects" && <ProspectsView data={data} openPlayer={openPlayer} />}
